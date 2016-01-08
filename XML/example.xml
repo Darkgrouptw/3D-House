@@ -1,5 +1,4 @@
 <layer>
-
     <element>
         <type>Base/Basic</type>
         <transform>1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1</transform>
@@ -9,7 +8,6 @@
             <thickness>0.5</thickness>
         </property>
     </element> 
-   
     <element>
         <type>Wall/NoWindow</type>
         <transform>0,0,1,0,1,0,0,0,0,1,0,0,17.5,8.5,0.5,1</transform>
@@ -19,7 +17,6 @@
             <thickness>0.5</thickness>
         </property> 
     </element>   
-   
     <element>
         <type>Wall/NoWindow</type>
         <transform>0,0,1,0,-1,0,0,0,0,-1,0,0,-17.5,8.5,0.5,1</transform>
@@ -29,7 +26,6 @@
             <thickness>0.5</thickness>
         </property> 
     </element>
-
     <element>
         <type>Wall/NoWindow</type>
         <transform>1,0,0,0,0,0,-1,0,0,1,0,0,0,8.5,-7.5,1</transform>
@@ -39,7 +35,6 @@
             <thickness>0.5</thickness>
         </property>
     </element>
-
     <element>
         <type>Wall/Triangle</type>
         <transform>0,0,1,0,0,1,0,0,-1,0,0,0,17.5,21.5,0,1</transform>
@@ -50,7 +45,6 @@
             <ratio>0.5,0.5,1</ratio>
         </property>
     </element> 
-
     <element>
         <type>Wall/Triangle</type>
         <transform>0,0,-1,0,0,1,0,0,1,0,0,0,-17.5,21.5,0,1</transform>
@@ -61,10 +55,10 @@
             <ratio>0.5,0.5,1</ratio>
         </property>
     </element>
-
     <element>
         <type>Roof/Gable</type>
         <transform>0,0,1,0,0,1,0,0,-1,0,0,0,0,21.5,0,1</transform>
+		<texture>Roof.jpg</texture>
         <property>
             <height>5</height>
             <width>8</width>
@@ -73,5 +67,4 @@
             <ratio>0.5,0.5,1</ratio>
         </property>
     </element> 
- 
 </layer> 

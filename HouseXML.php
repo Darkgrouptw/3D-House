@@ -30,18 +30,25 @@ class HouseXML
 			$elements = $layers->item($i)->getElementsByTagName('element');
 			for($j = 0; $j < $elements->length; $j++)
 			{
-				$this->RenderList = $this->RenderList."{\n";
+				if($j == 0)
+					$this->RenderList = $this->RenderList."{\n";
+				else
+					$this->RenderList = $this->RenderList."		{\n";
 				
 				
 				//拿出這些 XML
 				$typeNode = $elements->item($j)->getElementsByTagName('type');
+				$textureNode = $elements->item($j)->getElementsByTagName('texture');
 				$propertyNode = $elements->item($j)->getElementsByTagName('property');
 				$transformNode = $elements->item($j)->getElementsByTagName('transform');
 				
 				$nodeStr = "";
 				$endStr = "";
 				if($transformNode->length != 0)
-					$this->MatrixBind($nodeStr, $transformNode->item(0), $endStr);
+					$this->MatrixBind($nodeStr, $transformNode->item(0));
+				
+				//if($textureNode->length != 0)
+				//	$this->TextureBind($nodeStr, $textureNode->item(0), $endStr);
 				
 				if($typeNode->length != 0)
 				{
@@ -80,12 +87,12 @@ class HouseXML
 		echo "<script>\n";
 		echo "SceneJS.setConfigs\n";
 		echo "({\n";
-		echo "pluginPath:\"./js/plugins\"\n";
+		echo "pluginPath:\"js/plugins\"\n";
 		echo "})\n\n";
 		
 		echo "var scene = SceneJS.createScene\n\n";
 		echo "({".$this->RenderList;
-		echo "\n})\n</script>\n";
+		echo "\n});\n</script>\n";
 	}
 	
 	
@@ -93,9 +100,19 @@ class HouseXML
 	///////////////////////////////////////////////////////////////////////////////
 	// 把 Matrix 的東西，傳到string裡
 	///////////////////////////////////////////////////////////////////////////////
-	private function MatrixBind(&$str, $transform, &$endStr)
+	private function MatrixBind(&$str, $transform)
 	{
 		$str = "			type: \"matrix\",\n			elements:[".$transform->textContent."],\n\n";
+	}
+	///////////////////////////////////////////////////////////////////////////////
+	// 把 Texture 的東西，傳到string裡
+	///////////////////////////////////////////////////////////////////////////////
+	private function TextureBind(&$str, $texture, &$endStr)
+	{
+		$str = $str."node:\n[{\n";
+		$str = $str."type: \"texture\",\n";
+		$str = $str."src: \"Images/".$texture->textContent."\",\n\n";
+		$endStr = $endStr."}]\n";
 	}
 	///////////////////////////////////////////////////////////////////////////////
 	// 把 Type 的東西，傳到string裡
