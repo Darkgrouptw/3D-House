@@ -2,6 +2,7 @@
     <element>
         <type>Base/Basic</type>
         <transform>1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1</transform>
+		<texture>superman.jpg</texture>
         <property>
             <height>10</height>
             <width>20</width>
@@ -11,6 +12,7 @@
     <element>
         <type>Wall/NoWindow</type>
         <transform>0,0,1,0,1,0,0,0,0,1,0,0,17.5,8.5,0.5,1</transform>
+		<texture>Roof.jpg</texture>
         <property>
             <height>8</height>
             <width>7.5</width>
@@ -20,6 +22,7 @@
     <element>
         <type>Wall/NoWindow</type>
         <transform>0,0,1,0,-1,0,0,0,0,-1,0,0,-17.5,8.5,0.5,1</transform>
+		<texture>Roof.jpg</texture>
         <property>
             <height>8</height>
             <width>7.5</width>
@@ -29,6 +32,7 @@
     <element>
         <type>Wall/NoWindow</type>
         <transform>1,0,0,0,0,0,-1,0,0,1,0,0,0,8.5,-7.5,1</transform>
+		<texture>Roof.jpg</texture>
         <property>
             <height>8</height>
             <width>18</width>
@@ -38,6 +42,7 @@
     <element>
         <type>Wall/Triangle</type>
         <transform>0,0,1,0,0,1,0,0,-1,0,0,0,17.5,21.5,0,1</transform>
+		<texture>Roof.jpg</texture>
         <property>
             <height>5</height>
             <width>8</width>
@@ -48,6 +53,7 @@
     <element>
         <type>Wall/Triangle</type>
         <transform>0,0,-1,0,0,1,0,0,1,0,0,0,-17.5,21.5,0,1</transform>
+		<texture>Roof.jpg</texture>
         <property>
             <height>5</height>
             <width>8</width>
@@ -58,7 +64,6 @@
     <element>
         <type>Roof/Gable</type>
         <transform>0,0,1,0,0,1,0,0,-1,0,0,0,0,21.5,0,1</transform>
-		<texture>Roof.jpg</texture>
         <property>
             <height>5</height>
             <width>8</width>

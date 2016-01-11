@@ -47,8 +47,8 @@ class HouseXML
 				if($transformNode->length != 0)
 					$this->MatrixBind($nodeStr, $transformNode->item(0));
 				
-				//if($textureNode->length != 0)
-				//	$this->TextureBind($nodeStr, $textureNode->item(0), $endStr);
+				if($textureNode->length != 0)
+					$this->TextureBind($nodeStr, $textureNode->item(0), $endStr);
 				
 				if($typeNode->length != 0)
 				{
@@ -57,10 +57,10 @@ class HouseXML
 						$this->PropertyBind($nodeStr, $propertyNode);
 				}
 				//多套一層name，這樣scene.js 才可以pick
-				$nameWrapStr="type: \"name\",\n nodes:[{".$nodeStr."\n".$endStr."}]";
+				$nameWrapStr="				type: \"name\",\n\n 				nodes:\n				[{\n".$nodeStr."\n".$endStr."				}]\n";
 				//多套一層material，這樣才可以個別改顏色
-				$materialWrapStr="type: \"material\",\n color:{ r:0.3, g:0.3, b:0.45 },\n nodes:[{".$nameWrapStr."}]";
-				$this->RenderList = $this->RenderList.$materialWrapStr."		},\n";
+				$materialWrapStr="			type: \"material\",\n 			color:{ r:0.3, g:0.3, b:0.45 },\n\n 			nodes:\n			[{\n".$nameWrapStr."			}]";
+				$this->RenderList = $this->RenderList.$materialWrapStr."\n		},\n";
 			}
 		}
 		$this->RenderList = substr($this->RenderList, 0, strlen($this->RenderList) -2)."]";
@@ -68,30 +68,26 @@ class HouseXML
 	}
 	function Draw()
 	{
-		$this->RenderList = "\ntype: \"scene\",\n".
-					"canvasId: \"archcanvas\",\n".
-					"nodes:\n".
-					"[{\n".
-						"	type: 	\"cameras/orbit\",\n".
-						"	yaw: 0,\n".
-						"	pitch: -30,\n".
-						"	zoom: 100,\n".
-						"	zoomSensitivity: 5.0,\n".
-						"	showCursor: false,\n\n".
-						"	nodes:\n".
-						"	[{\n".
-							"		type:		\"material\",\n".
-							"		color:		{r:0.3, g:0.3, b:0.45},\n\n".
+		$this->RenderList = "	type: \"scene\",\n".
+					"	canvasId: \"archcanvas\",\n".
+					"	nodes:\n".
+					"	[{\n".
+						"		type: 	\"cameras/orbit\",\n".
+						"		yaw: 0,\n".
+						"		pitch: -30,\n".
+						"		zoom: 100,\n".
+						"		zoomSensitivity: 5.0,\n".
+						"		showCursor: false,\n\n".
 						$this->RenderList.
-						"\n	}]\n}]";
+						"\n	}]";
 		
 		if($this->DebugMode)
 			echo $this->RenderList;
 		echo "<script>\n";
 		echo "SceneJS.setConfigs\n";
 		echo "({\n";
-		echo "pluginPath:\"js/plugins\"\n";
-		echo "})\n\n";
+		echo "	pluginPath:\"js/plugins\"\n";
+		echo "});\n\n";
 		
 
 		echo "var scene = SceneJS.createScene\n\n";
@@ -109,16 +105,16 @@ class HouseXML
 	///////////////////////////////////////////////////////////////////////////////
 	private function MatrixBind(&$str, $transform)
 	{
-		$str = "			type: \"matrix\",\n			elements:[".$transform->textContent."],\n\n";
+		$str = "					type: \"matrix\",\n					elements:[".$transform->textContent."],\n\n";
 	}
 	///////////////////////////////////////////////////////////////////////////////
 	// 把 Texture 的東西，傳到string裡
 	///////////////////////////////////////////////////////////////////////////////
 	private function TextureBind(&$str, $texture, &$endStr)
 	{
-		$str = $str."node:\n[{\n";
-		$str = $str."type: \"texture\",\n";
-		$str = $str."src: \"Images/".$texture->textContent."\",\n\n";
+		$str = $str."					nodes:\n					[{\n";
+		$str = $str."						type: \"texture\",\n";
+		$str = $str."						src: \"Images/".$texture->textContent."\",\n\n";
 		$endStr = $endStr."}]\n";
 	}
 	///////////////////////////////////////////////////////////////////////////////
@@ -126,8 +122,8 @@ class HouseXML
 	///////////////////////////////////////////////////////////////////////////////
 	private function TypeBind(&$str, $type, &$endStr)
 	{
-		$str = $str."			nodes:\n			[{\n				type: \"".$type->textContent."\",\n";
-		$endStr =  "			".$endStr."}]\n";
+		$str = $str."						nodes:\n						[{\n							type: \"".$type->textContent."\",\n";
+		$endStr =  "						".$endStr."					}]\n";
 	}
 	///////////////////////////////////////////////////////////////////////////////
 	// 把 Property 的東西，傳到string裡
@@ -145,9 +141,9 @@ class HouseXML
 			{
 				$strlist = explode(",",$item->textContent);
 				if(count($strlist) == 1)
-					$str = $str."				".$item->nodeName.": ".$item->textContent.",\n";
+					$str = $str."							".$item->nodeName.": ".$item->textContent.",\n";
 				else if(count($strlist) == 3)
-					$str = $str."				".$item->nodeName.": {x: ".$strlist[0].", y: ".$strlist[1].", z: ".$strlist[2]."},\n";
+					$str = $str."							".$item->nodeName.": {x: ".$strlist[0].", y: ".$strlist[1].", z: ".$strlist[2]."},\n";
 					
 			}
 		}
