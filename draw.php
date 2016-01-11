@@ -7,10 +7,10 @@
 	<title>3D House - Draw</title>
 	
 	<!-- Bootstrap -->
-	<link href = "../Bootstrap/css/bootstrap.min.css" rel = "stylesheet">
 	
 	<link href = "css/style.css" rel = "stylesheet">
 	<script src = "js/scenejs.js"></script>
+	<script src="js/ui.js"></script>
 	<?php
 		include	"HouseXML.php";
 		
@@ -45,6 +45,16 @@
 ?>
 </head>
 <body>
+	<div id="codewrapper" style="display: none" >
+            <div id="srcbutton">
+
+                <div id="dragsquare" data-draggable="true"></div>
+                <p> source </p>
+            </div>
+            <div id="uiarea">
+            </div>
+            
+        </div>
 	<?php
 		if($OpenSuccess)
 		{
@@ -54,6 +64,7 @@
 		else
 			PrintError($ErrorStr);
 	?>
+
 </body>
 </html>
 </html>

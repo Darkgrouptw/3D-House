@@ -56,8 +56,11 @@ class HouseXML
 					if($propertyNode->length != 0)
 						$this->PropertyBind($nodeStr, $propertyNode);
 				}
-				
-				$this->RenderList = $this->RenderList.$nodeStr."\n".$endStr."		},\n";
+				//多套一層name，這樣scene.js 才可以pick
+				$nameWrapStr="type: \"name\",\n nodes:[{".$nodeStr."\n".$endStr."}]";
+				//多套一層material，這樣才可以個別改顏色
+				$materialWrapStr="type: \"material\",\n color:{ r:0.3, g:0.3, b:0.45 },\n nodes:[{".$nameWrapStr."}]";
+				$this->RenderList = $this->RenderList.$materialWrapStr."		},\n";
 			}
 		}
 		$this->RenderList = substr($this->RenderList, 0, strlen($this->RenderList) -2)."]";
@@ -90,9 +93,13 @@ class HouseXML
 		echo "pluginPath:\"js/plugins\"\n";
 		echo "})\n\n";
 		
+
 		echo "var scene = SceneJS.createScene\n\n";
 		echo "({".$this->RenderList;
-		echo "\n});\n</script>\n";
+		echo "\n})\n";
+		echo "UIinit(true)\n";
+		echo "ScenePick()\n";
+		echo"</script>\n";
 	}
 	
 	
