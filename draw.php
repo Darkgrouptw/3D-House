@@ -55,7 +55,7 @@
         </div>            
     </div>
 	<input type="button" class="RightUpButton" value="CoolButton">
-	<?php    
+	<?php
 		if($OpenSuccess)
 		{
 			echo "<canvas id = \"archcanvas\"></canvas>";
