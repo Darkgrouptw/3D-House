@@ -56,6 +56,7 @@
             </div>
             
         </div>
+    <input type="button" class="RightUpButton" value="CoolButton">
 	<?php
 		if($OpenSuccess)
 		{
