@@ -59,7 +59,7 @@ class HouseXML
 				//多套一層name，這樣scene.js 才可以pick
 				$nameWrapStr="				type: \"name\",\n\n 				nodes:\n				[{\n".$nodeStr."\n".$endStr."				}]\n";
 				//多套一層material，這樣才可以個別改顏色
-				$materialWrapStr="			type: \"material\",\n 			color:{ r:0.3, g:0.3, b:0.45 },\n\n 			nodes:\n			[{\n".$nameWrapStr."			}]";
+				$materialWrapStr="			type: \"material\",\n 			color:{ r:0.8, g:0.8, b:0.8 },\n\n 			nodes:\n			[{\n".$nameWrapStr."			}]";
 				$this->RenderList = $this->RenderList.$materialWrapStr."\n		},\n";
 			}
 		}
@@ -114,7 +114,8 @@ class HouseXML
 	{
 		$str = $str."					nodes:\n					[{\n";
 		$str = $str."						type: \"texture\",\n";
-		$str = $str."						src: \"Images/".$texture->textContent."\",\n\n";
+		$str = $str."						src: \"Images/".$texture->textContent."\",\n";
+		$str = $str."						applyTo: \"color\",\n\n";
 		$endStr = $endStr."}]\n";
 	}
 	///////////////////////////////////////////////////////////////////////////////

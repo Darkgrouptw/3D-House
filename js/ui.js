@@ -71,7 +71,7 @@ function ScenePick(){
                 var material;
                 if(lastid>0){
                     material=scene.findNode(lastid);
-                    material.setColor({ r:0.3, g:0.3, b:0.45});
+                    material.setColor({ r:1, g:1, b:1});
                 }
                 var id=hit.nodeId;
                 //這是我知道name被material包住，正常藥用id來找但現在id都還沒定
@@ -89,7 +89,7 @@ function ScenePick(){
                 uiPanel.style.display='none';
                 if(lastid>0){
                     material=scene.findNode(lastid);
-                    material.setColor({ r:0.3, g:0.3, b:0.45});
+                    material.setColor({ r:0.8, g:0.8, b:0.8});
                 }
                 console.log('Nothing picked!');
             });

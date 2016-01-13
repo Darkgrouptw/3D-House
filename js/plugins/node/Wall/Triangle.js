@@ -21,7 +21,6 @@
 		
 		if(params.ratio) { ratio = params.ratio; }
 		else { ratio = { x: 0.5, y: 0.5, z: 1.0 }; }
-
         var coreId = "Wall/Triangle" + width + "_" + height + "_" + thickness + (params.wire ? "wire" : "_solid");
 
         // If a node core already exists for a prim with the given properties,
@@ -53,13 +52,20 @@
             coreId: coreId,
             positions: positionSet,
             normals: "auto",
+			uv: new Float32Array([
+				1,0,0,0,ratio.x,1,		// Front
+				1,0,0,0,ratio.x,1,		// Back
+				0,0,0,0,0,0,0,0,0,0,	// Side A
+				0,0,0,0,0,0,0,0,0,0,	// Side B
+				0,0,0,0,0,0,0,0,0,0		// Side C
+			]),
             indices: 
 			[
-				2, 1, 0, 			// Front
-				3, 4, 5,			// Back
-				3, 5, 2, 3, 0, 2,	// Side A
-				3, 0, 1, 3, 4, 1,	// Side B
-				2, 5, 4, 2, 1, 4	// Side C
+				2, 1, 0, 				// Front
+				3, 4, 5,				// Back
+				3, 5, 2, 3, 0, 2,		// Side A
+				3, 0, 1, 3, 4, 1,		// Side B
+				2, 5, 4, 2, 1, 4		// Side C
             ]
         };
 		

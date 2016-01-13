@@ -47,16 +47,15 @@
 </head>
 <body>
 	<div id="codewrapper" style="display: none" >
-            <div id="srcbutton">
-
-                <div id="dragsquare" data-draggable="true"></div>
-                <p> source </p>
-            </div>
-            <div id="uiarea">
-            </div>
-            
+        <div id="srcbutton">
+            <div id="dragsquare" data-draggable="true"></div>
+            <p> source </p>
         </div>
-	<?php
+        <div id="uiarea">
+        </div>            
+    </div>
+	<input type="button" class="RightUpButton" value="CoolButton">
+	<?php    
 		if($OpenSuccess)
 		{
 			echo "<canvas id = \"archcanvas\"></canvas>";

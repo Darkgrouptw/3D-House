@@ -1,0 +1,9 @@
+diff a/draw.php b/draw.php	(rejected hunks)
+@@ -56,6 +56,7 @@
+             </div>
+             
+         </div>
++    <input type="button" class="RightUpButton" value="CoolButton">
+ 	<?php
+ 		if($OpenSuccess)
+ 		{
