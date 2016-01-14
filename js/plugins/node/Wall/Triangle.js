@@ -29,14 +29,35 @@
 
 		positionSet = new Float32Array(
 		[
-			-width, -height, -thickness,									// front 1
-			width, -height, -thickness,										// front 2
-			(width * ratio.x + -width * ratio.y) / 2, height, -thickness,	// front 3
-			-width, -height, thickness,										// back 1
-			width, -height, thickness,										// back 2
-			(width * ratio.x + -width * ratio.y) / 2, height, thickness,	// back 3
-		]);
+			// Left Triangle
+			-width, -height, -thickness,
+			width, -height, -thickness,
+			(width * ratio.x + -width * ratio.y) / 2, height, -thickness,
+			
+			// Back Face
+			width, -height, -thickness,
+			(width * ratio.x + -width * ratio.y) / 2, height, -thickness,
+			(width * ratio.x + -width * ratio.y) / 2, height, thickness,
+			width, -height, thickness,
+			
+			// Front Face
+			-width, -height, -thickness,
+			(width * ratio.x + -width * ratio.y) / 2, height, -thickness,
+			(width * ratio.x + -width * ratio.y) / 2, height, thickness,
+			-width, -height, thickness,
+			
+			// Buttom Face
+			-width, -height, -thickness,
+			width, -height, -thickness,
+			width, -height, thickness,
+			-width, -height, thickness,
 		
+			// Right Triangle
+			-width, -height, thickness,
+			width, -height, thickness,
+			(width * ratio.x + -width * ratio.y) / 2, height, thickness
+		]);
+		console.log(positionSet);
 		for(var pidx = 0; pidx < positionSet.length; pidx = pidx + 3)
 		{
 			positionSet[pidx] = positionSet[pidx] + center.x;
@@ -51,21 +72,27 @@
             primitive: params.wire ? "lines" : "triangles",
             coreId: coreId,
             positions: positionSet,
-            normals: "auto",
+            normals: new Float32Array([
+				0,0,-1,0,0,-1,0,0,-1,
+				0,0,0,0,0,0,0,0,0,0,0,0,
+				0,0,0,0,0,0,0,0,0,0,0,0,
+				0,0,0,0,0,0,0,0,0,0,0,0,
+				0,0,1,0,0,1,0,0,1
+			]),
 			uv: new Float32Array([
-				1,0,0,0,ratio.x,1,		// Front
-				1,0,0,0,ratio.x,1,		// Back
-				0,0,0,0,0,0,0,0,0,0,	// Side A
-				0,0,0,0,0,0,0,0,0,0,	// Side B
-				0,0,0,0,0,0,0,0,0,0		// Side C
+				0,0,1,0,ratio.x,1,
+				1,0,1,1,0,1,0,0,
+				1,1,0,1,0,0,1,0,
+				0,1,0,0,1,0,1,1,
+				0,0,1,0,ratio.y,1
 			]),
             indices: 
 			[
-				2, 1, 0, 				// Front
-				3, 4, 5,				// Back
-				3, 5, 2, 3, 0, 2,		// Side A
-				3, 0, 1, 3, 4, 1,		// Side B
-				2, 5, 4, 2, 1, 4		// Side C
+				0, 1, 2,
+				3, 4, 5, 3, 5, 6,
+				7, 8, 9, 7, 9, 10,
+				11, 12, 13, 11, 13, 14,
+				15, 16, 17,
             ]
         };
 		
