@@ -1,4 +1,3 @@
-<!-- !>
 <html lang = "en">
 <head>
 	<meta charset = "utf-8">
@@ -54,7 +53,7 @@
         <div id="uiarea">
         </div>            
     </div>
-	<input type="button" class="RightUpButton" value="CoolButton">
+	<input type="button" class="RightUpButton" value="關閉貼圖" onclick="">
 	<?php
 		if($OpenSuccess)
 		{

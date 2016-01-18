@@ -57,7 +57,7 @@
 			width, -height, thickness,
 			(width * ratio.x + -width * ratio.y) / 2, height, thickness
 		]);
-		console.log(positionSet);
+		
 		for(var pidx = 0; pidx < positionSet.length; pidx = pidx + 3)
 		{
 			positionSet[pidx] = positionSet[pidx] + center.x;
