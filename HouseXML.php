@@ -57,7 +57,7 @@ class HouseXML
 						$this->PropertyBind($nodeStr, $propertyNode);
 				}
 				//多套一層name，這樣scene.js 才可以pick
-				$nameWrapStr="				type: \"name\",\n\n 				nodes:\n				[{\n".$nodeStr."\n".$endStr."				}]\n";
+				$nameWrapStr="				type: \"name\",\n\n 	name: \"".$textureNode->item(0)->textContent."\",	nodes:\n				[{\n".$nodeStr."\n".$endStr."				}]\n";
 				//多套一層material，這樣才可以個別改顏色
 				$materialWrapStr="			type: \"material\",\n 			color:{ r:0.8, g:0.8, b:0.8 },\n\n 			nodes:\n			[{\n".$nameWrapStr."			}]";
 				$this->RenderList = $this->RenderList.$materialWrapStr."\n		},\n";

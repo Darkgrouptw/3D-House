@@ -74,6 +74,7 @@ function ScenePick(){
                     material.setColor({ r:1, g:1, b:1});
                 }
                 var id=hit.nodeId;
+                console.log(id);
                 //這是我知道name被material包住，正常藥用id來找但現在id都還沒定
                 material=scene.findNode(id).parent;
                 material.setColor({r:0.7,g:0.7,b:0.3});
@@ -102,4 +103,20 @@ function ScenePick(){
 }
 function UIlog(log){
     console.log(log);
+}
+var hasTexture=true;
+function textureToggle(){
+    console.log("textureToggle");
+    var box=scene.findNodes();
+    for(var i=0;i<box.length;i++){
+        if(box[i].getType()=="texture"){
+            if(hasTexture){
+                box[i]._initTexture();
+            }else{
+                var src=box[i].getParent().getParent().getName();
+                box[i].setSrc("Images/"+src+"");
+            }
+        }
+    }
+    hasTexture=!hasTexture;
 }

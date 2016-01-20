@@ -53,7 +53,7 @@
         <div id="uiarea">
         </div>            
     </div>
-	<input type="button" class="RightUpButton" value="關閉貼圖" onclick="">
+	<input type="button" class="RightUpButton" value="關閉貼圖" onclick="textureToggle()">
 	<?php
 		if($OpenSuccess)
 		{
