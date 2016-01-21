@@ -11,6 +11,13 @@
 	<link href = "css/style.css" rel = "stylesheet">
 	<script src = "js/scenejs.js"></script>
 	<script src="js/ui.js"></script>
+	<script src="js/ModelConverter.js"></script>
+
+	<input type="button" class="MultiObjButtonStyle" value="Export as multiple .obj" onclick="multiObjButtonFunc()">
+	<input type="button" class="OneObjButtonStyle" value="Export as one .obj" onclick="oneObjButtonFunc()">
+	<input type="button" class="MultiStlButtonStyle" value="Export as multiple .stl" onclick="multiStlButtonFunc()">
+	<input type="button" class="OneStlButtonStyle" value="Export as one .stl" onclick="oneStlButtonFunc()">
+
 	<?php
 		include	"HouseXML.php";
 		

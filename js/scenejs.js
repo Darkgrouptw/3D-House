@@ -23,6 +23,21 @@
  * http://xeolabs.com/
  *
  */
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Model Export Button Functions
+function multiStlButtonFunc(){
+    convertToMultiStl(scene.nodes[0].nodes[0]);
+}
+function oneStlButtonFunc(){
+    convertToOneStl(scene.nodes[0].nodes[0]);
+}
+function multiObjButtonFunc(){
+    convertToMultiObj(scene.nodes[0].nodes[0]);
+}
+function oneObjButtonFunc(){
+    convertToOneObj(scene.nodes[0].nodes[0]);
+}
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ;// Only define RequireJS if not already present
 if (undefined === require) {;/*
@@ -211,6 +226,8 @@ function glEnumToString(value) {
   return (name !== undefined) ? name :
       ("*UNKNOWN WebGL ENUM (0x" + value.toString(16) + ")");
 }
+
+
 
 /**
  * Returns the string version of a WebGL argument.
