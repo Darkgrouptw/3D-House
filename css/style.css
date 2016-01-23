@@ -89,3 +89,51 @@ body
     cursor: pointer;
     color: white;
 }
+
+.MultiObjButtonStyle
+{
+    position: fixed;
+    top: 200;
+    right: 20;
+    width: 150px;
+    background: #477AAE;
+    height: 35px;
+    cursor: pointer;
+    color: white;
+}
+
+.OneObjButtonStyle
+{
+    position: fixed;
+    top: 250;
+    right: 20;
+    width: 150px;
+    background: #477AAE;
+    height: 35px;
+    cursor: pointer;
+    color: white;
+}
+
+.MultiStlButtonStyle
+{
+    position: fixed;
+    top: 200;
+    right: 200;
+    width: 150px;
+    background: #477AAE;
+    height: 35px;
+    cursor: pointer;
+    color: white;
+}
+
+.OneStlButtonStyle
+{
+    position: fixed;
+    top: 250;
+    right: 200;
+    width: 150px;
+    background: #477AAE;
+    height: 35px;
+    cursor: pointer;
+    color: white;
+}
