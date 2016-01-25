@@ -119,7 +119,7 @@ class HouseXML
 	{
 		$str = $str."						nodes:\n						[{\n";
 		$str = $str."							type: \"texture\",\n";
-		$str = $str."							src: \"Images/".$texture->textContent."\",\n";
+		$str = $str."							src: \"Images/GeometryTexture/".$texture->textContent."\",\n";
 		$str = $str."							applyTo: \"color\",\n\n";
 		$endStr = $endStr."}]\n";
 	}
