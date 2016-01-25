@@ -59,11 +59,12 @@ class HouseXML
 						$this->PropertyBind($nodeStr, $propertyNode);
 				}
 				//多套一層name，這樣scene.js 才可以pick
-				$nameWrapStr="				type: \"name\",\n\n 	name: \"".$textureNode->item(0)->textContent."\",	nodes:\n				[{\n".$nodeStr."\n".$endStr."	}]\n";
+				$nameWrapStr="					type: \"name\",\n 					name: \"".$textureNode->item(0)->textContent."\",\n\n					nodes:\n					[{\n".$nodeStr."\n".$endStr."				}]\n";
 				//多套一層material，這樣才可以個別改顏色
-				$materialWrapStr="			type: \"material\",\n 			color:{ r:0.8, g:0.8, b:0.8 },\n\n 			nodes:\n			[{\n".$nameWrapStr."			}]\n";
+				
+				$materialWrapStr="				type: \"material\",\n 				color:{ r:0.8, g:0.8, b:0.8 },\n\n 				nodes:\n				[{\n".$nameWrapStr."				}]\n";
 				//再套一層name，儲存方屋資訊
-				$nameDoubleWrapStr="		type: \"name\",\n\n 	name:	\"".$posInformation->item(0)->textContent."\",									nodes:\n 			[{\n".$materialWrapStr."		}]";
+				$nameDoubleWrapStr="			type: \"name\",\n 			name: \"".$posInformation->item(0)->textContent."\",\n\n			nodes:\n 			[{\n".$materialWrapStr."		}]";
 				$this->RenderList = $this->RenderList.$nameDoubleWrapStr."\n		},\n";
 			}
 		}
@@ -94,8 +95,8 @@ class HouseXML
 		echo "});\n\n";
 		
 
-		echo "var scene = SceneJS.createScene\n\n";
-		echo "({".$this->RenderList;
+		echo "var scene = SceneJS.createScene\n";
+		echo "({\n".$this->RenderList;
 		echo "\n})\n";
 		echo "UIinit(true)\n";
 		echo "ScenePick()\n";
@@ -109,17 +110,17 @@ class HouseXML
 	///////////////////////////////////////////////////////////////////////////////
 	private function MatrixBind(&$str, $transform)
 	{
-		$str = "					type: \"matrix\",\n					elements:[".$transform->textContent."],\n\n";
+		$str = "						type: \"matrix\",\n						elements:[".$transform->textContent."],\n\n";
 	}
 	///////////////////////////////////////////////////////////////////////////////
 	// 把 Texture 的東西，傳到string裡
 	///////////////////////////////////////////////////////////////////////////////
 	private function TextureBind(&$str, $texture, &$endStr)
 	{
-		$str = $str."					nodes:\n					[{\n";
-		$str = $str."						type: \"texture\",\n";
-		$str = $str."						src: \"Images/".$texture->textContent."\",\n";
-		$str = $str."						applyTo: \"color\",\n\n";
+		$str = $str."						nodes:\n						[{\n";
+		$str = $str."							type: \"texture\",\n";
+		$str = $str."							src: \"Images/".$texture->textContent."\",\n";
+		$str = $str."							applyTo: \"color\",\n\n";
 		$endStr = $endStr."}]\n";
 	}
 	///////////////////////////////////////////////////////////////////////////////
@@ -127,8 +128,8 @@ class HouseXML
 	///////////////////////////////////////////////////////////////////////////////
 	private function TypeBind(&$str, $type, &$endStr)
 	{
-		$str = $str."						nodes:\n						[{\n							type: \"".$type->textContent."\",\n";
-		$endStr =  "						".$endStr."					}]\n";
+		$str = $str."							nodes:\n							[{\n								type: \"".$type->textContent."\",\n";
+		$endStr =  "							".$endStr."						}]\n";
 	}
 	///////////////////////////////////////////////////////////////////////////////
 	// 把 Property 的東西，傳到string裡
@@ -146,9 +147,9 @@ class HouseXML
 			{
 				$strlist = explode(",",$item->textContent);
 				if(count($strlist) == 1)
-					$str = $str."							".$item->nodeName.": ".$item->textContent.",\n";
+					$str = $str."								".$item->nodeName.": ".$item->textContent.",\n";
 				else if(count($strlist) == 3)
-					$str = $str."							".$item->nodeName.": {x: ".$strlist[0].", y: ".$strlist[1].", z: ".$strlist[2]."},\n";
+					$str = $str."								".$item->nodeName.": {x: ".$strlist[0].", y: ".$strlist[1].", z: ".$strlist[2]."},\n";
 					
 			}
 		}
