@@ -14,6 +14,7 @@
     <script src = "js/utility.js"></script>
     <script src = "js/layout.js"></script>
     <script src = "js/interact.js"></script>
+    <script src = "js/ModelConverter.js"></script>
 
 	<?php
 		include	"HouseXML.php";
