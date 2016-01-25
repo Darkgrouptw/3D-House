@@ -41,6 +41,8 @@ class HouseXML
 				$textureNode = $elements->item($j)->getElementsByTagName('texture');
 				$propertyNode = $elements->item($j)->getElementsByTagName('property');
 				$transformNode = $elements->item($j)->getElementsByTagName('transform');
+				//kaism
+				$posInformation = $elements->item($j)->getElementsByTagName('pos');
 				
 				$nodeStr = "";
 				$endStr = "";
@@ -57,10 +59,12 @@ class HouseXML
 						$this->PropertyBind($nodeStr, $propertyNode);
 				}
 				//多套一層name，這樣scene.js 才可以pick
-				$nameWrapStr="				type: \"name\",\n\n 	name: \"".$textureNode->item(0)->textContent."\",	nodes:\n				[{\n".$nodeStr."\n".$endStr."				}]\n";
+				$nameWrapStr="				type: \"name\",\n\n 	name: \"".$textureNode->item(0)->textContent."\",	nodes:\n				[{\n".$nodeStr."\n".$endStr."	}]\n";
 				//多套一層material，這樣才可以個別改顏色
-				$materialWrapStr="			type: \"material\",\n 			color:{ r:0.8, g:0.8, b:0.8 },\n\n 			nodes:\n			[{\n".$nameWrapStr."			}]";
-				$this->RenderList = $this->RenderList.$materialWrapStr."\n		},\n";
+				$materialWrapStr="			type: \"material\",\n 			color:{ r:0.8, g:0.8, b:0.8 },\n\n 			nodes:\n			[{\n".$nameWrapStr."			}]\n";
+				//再套一層name，儲存方屋資訊
+				$nameDoubleWrapStr="		type: \"name\",\n\n 	name:	\"".$posInformation->item(0)->textContent."\",									nodes:\n 			[{\n".$materialWrapStr."		}]";
+				$this->RenderList = $this->RenderList.$nameDoubleWrapStr."\n		},\n";
 			}
 		}
 		$this->RenderList = substr($this->RenderList, 0, strlen($this->RenderList) -2)."]";

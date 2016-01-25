@@ -3,9 +3,10 @@
         <type>Base/Basic</type>
         <transform>1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1</transform>
 		<texture>Ground.jpg</texture>
+        <pos>base</pos>
         <property>
-            <height>10</height>
-            <width>20</width>
+            <height>8</height>
+            <width>18</width>
             <thickness>0.5</thickness>
         </property>
     </element> 
@@ -13,6 +14,7 @@
         <type>Wall/NoWindow</type>
         <transform>0,0,1,0,1,0,0,0,0,1,0,0,17.5,8.5,0.5,1</transform>
 		<texture>Wall.jpg</texture>
+        <pos>rightWall</pos>
         <property>
             <height>8</height>
             <width>7.5</width>
@@ -23,6 +25,7 @@
         <type>Wall/NoWindow</type>
         <transform>0,0,1,0,-1,0,0,0,0,-1,0,0,-17.5,8.5,0.5,1</transform>
 		<texture>Wall.jpg</texture>
+        <pos>leftWall</pos>
         <property>
             <height>8</height>
             <width>7.5</width>
@@ -33,6 +36,7 @@
         <type>Wall/NoWindow</type>
         <transform>1,0,0,0,0,0,-1,0,0,1,0,0,0,8.5,-7.5,1</transform>
 		<texture>Wall.jpg</texture>
+        <pos>backWall</pos>
         <property>
             <height>8</height>
             <width>18</width>
@@ -43,6 +47,7 @@
         <type>Wall/Triangle</type>
         <transform>0,0,1,0,0,1,0,0,-1,0,0,0,17.5,21.5,0,1</transform>
 		<texture>Wall.jpg</texture>
+        <pos>rightTriangle</pos>
         <property>
             <height>5</height>
             <width>8</width>
@@ -54,6 +59,7 @@
         <type>Wall/Triangle</type>
         <transform>0,0,-1,0,0,1,0,0,1,0,0,0,-17.5,21.5,0,1</transform>
 		<texture>Wall.jpg</texture>
+        <pos>leftTriangle</pos>
         <property>
             <height>5</height>
             <width>8</width>
@@ -65,6 +71,7 @@
         <type>Roof/Gable</type>
         <transform>0,0,1,0,0,1,0,0,-1,0,0,0,0,21.5,0,1</transform>
 		<texture>Roof.jpg</texture>
+        <pos>roof</pos>
         <property>
             <height>5</height>
             <width>8</width>
