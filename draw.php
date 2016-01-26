@@ -30,7 +30,7 @@
 				$XML = new HouseXML();
 				$XML->init($FileLocation);
 				$OpenSuccess = true;
-				echo "<script src = 'js/setup.js'></script>\n";
+				//echo "<script src = 'js/setup.js'></script>\n";
 			}
 			else
 				$ErrorStr = "檔案不存在";
@@ -58,7 +58,7 @@
         <div id="uiarea">
         </div>            
     </div>
-    <div id = "Top" class = "topcanvas"></div>
+    <div id = "Top"></div>
 	
 	<input type="button" class="RightUpButton" value="關閉貼圖" onclick="textureToggle()">
 	<input type="button" class="MultiObjButtonStyle" value="Export as multiple .obj" onclick="multiObjButtonFunc()">

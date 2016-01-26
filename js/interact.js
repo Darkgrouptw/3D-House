@@ -11,7 +11,7 @@ function MainbtnClick()
 function BtnAnimation(open)
 {
     var mainsize = Math.round(GetElement('Main').clientHeight);
-    var bottomsize = mainsize/5;
+    var bottomsize = mainsize/6;
     var btnsize = bottomsize/2;
     var img = GetElement('mainbtnimg');
     if (open) 

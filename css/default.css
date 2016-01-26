@@ -5,21 +5,18 @@ html, body{
     overflow:hidden;
 }
 #Top{
-    height: 8%;
+    position: absolute;
+    width:100%;
+    top: 0%;
     display:block;
-    margin-top: 1%;
-    
-}
-.topcanvas{
-    font-size: 24px;
-    background-color: #ECF5FF;
-    text-align: center;
+    background-color:rgba(191, 191, 191, 0.8);
 }
 
 #Main{
-    height:92%;
+    height:100%;
     display:block;
 }
+
 .maincanvas{
     color: #FFFFFF;
     font-size: 24px;

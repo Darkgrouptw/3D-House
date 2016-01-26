@@ -1,7 +1,7 @@
 function setlayout(){
     //get the bottom height to dynamic change other element size
     var mainsize = Math.round(GetElement('Main').clientHeight);
-    var bottomsize = mainsize/5;
+    var bottomsize = mainsize/6;
     var btnsize = bottomsize/2;
     //change button
     var RoutinProcess = function(E) 
@@ -16,20 +16,14 @@ function setlayout(){
     RoutinProcess('Subaddbtn');
     RoutinProcess('Subdecoratebtn');
     
-    // var mainbtn = document.getElementById('Mainbtn');
-    // var subaddbtn = document.getElementById('Subaddbtn');
-    // var subdecorate = document.getElementById('Subdecoratebtn');
-    // changesize(mainbtn, btnsize, btnsize);
-    // changesize(subaddbtn, btnsize, btnsize);
-    // changesize(subdecorate, btnsize, btnsize);
-    // mainbtn.style.bottom = btnsize/4 + "px";
-    // mainbtn.style.right = mainbtn.style.bottom;
-    // mainbtn.style.bottom = btnsize/4 + "px";
-    // mainbtn.style.right = mainbtn.style.bottom;
-    // mainbtn.style.bottom = btnsize/4 + "px";
-    // mainbtn.style.right = mainbtn.style.bottom;
+    //change canvas
+    changesize(GetElement('Top'), -1, btnsize/1.5);
+    changesize(GetElement('Main'),-1,mainsize);
+    changesize(GetElement('archcanvas'),window.innerWidth,mainsize);
     //change tool bar 
     changesize(GetElement('Toolbar'), -1, bottomsize);
+
+   
     //change the toolbar imgsize
     var CSSSTYLE = document.createElement("STYLE");
     var liimg = document.createTextNode(".bottom.bar img {height: " + bottomsize/2 +"px;  margin-top:" + bottomsize/4 + "px;}");
