@@ -40,6 +40,8 @@ SceneJS.Types.addType("cameras/orbit", {
 
         var lastX;
         var lastY;
+        var last1X;
+        var last1Y;
         var dragging = false;
         var lookatDirty = false;
 
@@ -82,9 +84,18 @@ SceneJS.Types.addType("cameras/orbit", {
         }
 
         function touchStart(event) {
-            lastX = event.targetTouches[0].clientX;
-            lastY = event.targetTouches[0].clientY;
-            dragging = true;
+			if(event.targetTouches.length != 1){
+				lastX = event.targetTouches[0].clientX;
+				lastY = event.targetTouches[0].clientY;
+				last1X = event.targetTouches[1].clientX;
+				last1Y = event.targetTouches[1].clientY;
+				dragging = true;
+			}
+			else{
+				lastX = event.targetTouches[0].clientX;
+				lastY = event.targetTouches[0].clientY;
+				dragging = true;
+			}
         }
 
         function mouseUp() {
@@ -102,9 +113,18 @@ SceneJS.Types.addType("cameras/orbit", {
         }
 
         function touchMove(event) {
-            var posX = event.targetTouches[0].clientX;
-            var posY = event.targetTouches[0].clientY;
-            actionMove(posX, posY);
+			if(event.targetTouches.length != 1){
+				var posX = event.targetTouches[0].clientX;
+				var posY = event.targetTouches[0].clientY;
+				var pos1X = event.targetTouches[1].clientX;
+				var pos1Y = event.targetTouches[1].clientY;
+				touchScale(posX, posY,pos1X, pos1Y);
+			}
+			else{
+				var posX = event.targetTouches[0].clientX;
+				var posY = event.targetTouches[0].clientY;
+				actionMove(posX, posY);
+			}
         }
 
         function actionMove(posX, posY) {
@@ -120,6 +140,43 @@ SceneJS.Types.addType("cameras/orbit", {
             }
         }
 
+		function touchScale(posX, posY,pos1X, pos1Y) {
+            var delta = 0;
+			var len_orix = lastX - last1X;	
+			var len_oriy = lastY - last1Y;
+			var len_ori = Math.sqrt(len_orix*len_orix + len_oriy*len_oriy);
+			
+			var len_movex = posX - pos1X;
+			var len_movey = posY - pos1Y;
+			var len_move = Math.sqrt(len_movex*len_movex + len_movey*len_movey);
+			
+			
+            if (!event) event = window.event;
+            if (dragging) {
+                delta = (len_move - len_ori) / 120;
+                if (window.opera) delta = -delta;
+            } else if (event.detail) {
+                delta = -event.detail / 3;
+            }
+            if (delta) {
+                if (delta > 0) {
+                    zoom -= zoomSensitivity;
+                } else {
+                    zoom += zoomSensitivity;
+                }
+            }
+            if (event.preventDefault) {
+                event.preventDefault();
+            }
+            event.returnValue = false;
+            update();
+
+			lastX = posX;
+			lastY = posY;
+			last1X = pos1X;
+			last1Y = pos1Y;
+        }
+		
         function mouseWheel(event) {
             var delta = 0;
             if (!event) event = window.event;
@@ -150,6 +207,7 @@ SceneJS.Types.addType("cameras/orbit", {
         canvas.addEventListener('touchstart', touchStart, true);
         canvas.addEventListener('touchmove', touchMove, true);
         canvas.addEventListener('touchend', touchEnd, true);
+		canvas.addEventListener('touchscale', touchScale, true);
         canvas.addEventListener('mousewheel', mouseWheel, true);
         canvas.addEventListener('DOMMouseScroll', mouseWheel, true);
 
