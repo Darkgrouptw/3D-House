@@ -1,8 +1,7 @@
 function setlayout(){
     //get the bottom height to dynamic change other element size
-    var mainsize = Math.round(GetElement('Main').clientHeight);
-    var bottomsize = mainsize/6;
-    var btnsize = bottomsize/2;
+    var bottomsize = Math.round(window.innerHeight/6);
+    var btnsize = Math.round(bottomsize/2);
     //change button
     var RoutinProcess = function(E) 
     { 
@@ -17,18 +16,27 @@ function setlayout(){
     RoutinProcess('Subdecoratebtn');
     
     //change canvas
-    changesize(GetElement('Top'), -1, btnsize/1.5);
-    changesize(GetElement('Main'),-1,mainsize);
-    changesize(GetElement('archcanvas'),window.innerWidth,mainsize);
+    //Toptoolbar
+    changesize(GetElement('Top'), -1, btnsize/1.5); 
+    //change the toptoolbar <i> size
+    var CSSSTYLE = document.createElement("STYLE");
+    var toptoolbarsize = btnsize/1.5;
+    var isize = document.createTextNode(".top.bar i {height:" + toptoolbarsize/2 + "px;  margin-top:" + toptoolbarsize/4 + "px;  font-size:" + toptoolbarsize/2 + "px;}");
+    CSSSTYLE.appendChild(isize);
+    document.head.appendChild(CSSSTYLE);
+    GetStyle('ExportContent').top = toptoolbarsize + "px";
+    //MainCanvas
+    changesize(GetElement('archcanvas'),window.innerWidth,window.innerHeight);
     //change tool bar 
     changesize(GetElement('Toolbar'), -1, bottomsize);
-
-   
+    changesize(GetElement('SubToolbar'), -1, bottomsize);
+    GetStyle('SubToolbar').bottom = bottomsize + "px";
     //change the toolbar imgsize
-    var CSSSTYLE = document.createElement("STYLE");
     var liimg = document.createTextNode(".bottom.bar img {height: " + bottomsize/2 +"px;  margin-top:" + bottomsize/4 + "px;}");
     CSSSTYLE.appendChild(liimg);
     document.head.appendChild(CSSSTYLE);
+    
+    
 }
 
 function changesize(element, width, height){
