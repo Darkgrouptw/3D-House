@@ -2,13 +2,16 @@
 <head>
 	<meta charset = "utf-8">
 	<meta http-equiv = "X-UA-Compatible" content = "IE=edge">
-	<meta name = "viewport" content = "width=device-width, initial-scale=1">
+	<!--<meta name="apple-mobile-web-app-capable" content="yes" /> -->
+    <meta name="mobile-web-app-capable" content="yes" /> 
+	<meta name="viewport" content="width=device-width, user-scalable=no" />
 	
 	<title>3D House - Draw</title>
 	
 	<link href = "css/reset.css" rel = "stylesheet">
 	<link href = "css/style.css" rel = "stylesheet">
     <link href = "css/default.css" rel = "stylesheet">
+    <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">
 	<script src = "js/scenejs.js"></script>
 	<script src="js/ui.js"></script>
     <script src = "js/utility.js"></script>
@@ -58,13 +61,25 @@
         <div id="uiarea">
         </div>            
     </div>
-    <div id = "Top"></div>
+    <div id = "Top" class = "top bar">
+        <ul>
+            <li><i class = "fa fa-caret-square-o-down" onclick = "ExportClick()">  Export</i></li>
+            <div id = "ExportContent" class = "subcontent">
+                <p><i onclick="multiObjButtonFunc()">Export as multiple .obj</i></p>
+                <p><i onclick="oneObjButtonFunc()">Export as one .obj</i></p>
+                <p><i onclick="multiStlButtonFunc()">Export as multiple .stl</i></p>
+                <p><i onclick="oneStlButtonFunc()">Export as one .stl</i></p>
+                <p><i class="fa fa-times" onclick = "CloseExport()">  close</i></p>
+            </div>
+            <li><i class = "fa fa-file">  Save</i></li>
+        </ul>
+    </div>
 	
 	<input type="button" class="RightUpButton" value="關閉貼圖" onclick="textureToggle()">
-	<input type="button" class="MultiObjButtonStyle" value="Export as multiple .obj" onclick="multiObjButtonFunc()">
+	<!--<input type="button" class="MultiObjButtonStyle" value="Export as multiple .obj" onclick="multiObjButtonFunc()">
 	<input type="button" class="OneObjButtonStyle" value="Export as one .obj" onclick="oneObjButtonFunc()">
 	<input type="button" class="MultiStlButtonStyle" value="Export as multiple .stl" onclick="multiStlButtonFunc()">
-	<input type="button" class="OneStlButtonStyle" value="Export as one .stl" onclick="oneStlButtonFunc()">
+	<input type="button" class="OneStlButtonStyle" value="Export as one .stl" onclick="oneStlButtonFunc()">-->
 	
     <div id = "Main" class = "maincanvas">
 	<?php
@@ -90,11 +105,18 @@
             <img id = "mainbtnimg" src = "./Images/add.png">
         </div>
         
+        <div id = "SubToolbar" class = "bottom bar">
+            <ul id = "SubToolbarContent">
+                
+                <li id = "SubToolbarClose" style = "float: right;"><img src = "./images/cross2.png" onclick = "CloseSubToolbarClick()"></li>
+            </ul>
+        </div>
+        
         <div id = "Toolbar" class = "bottom bar">
             <ul>
                 <li><img src = "./Images/icon-window.png"></li>
                 <li><img src = "./Images/icon-door.png"></li>
-                <li><img src = "./Images/icon-roof.png"></li>
+                <li><img src = "./Images/icon-roof.png" onclick = "RoofClick()"></li>
                 <li style = "float: right;"><img src = "./images/cross2.png" onclick = "CloseToolbarClick()"></li>
             </ul>
         </div>
