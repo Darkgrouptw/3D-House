@@ -23,15 +23,7 @@
  * http://xeolabs.com/
  *
  */
-
-;// Only define RequireJS if not already present
-if (undefined === require) {;/*
- RequireJS 2.1.6 Copyright (c) 2010-2012, The Dojo Foundation All Rights Reserved.
- Available via the MIT or new BSD license.
- see: http://github.com/jrburke/requirejs for details
- */
-
- //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Model Export Button Functions
 function multiStlButtonFunc(){
     convertToMultiStl(scene.nodes[0].nodes[0]);
@@ -47,7 +39,12 @@ function oneObjButtonFunc(){
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
+;// Only define RequireJS if not already present
+if (undefined === require) {;/*
+ RequireJS 2.1.6 Copyright (c) 2010-2012, The Dojo Foundation All Rights Reserved.
+ Available via the MIT or new BSD license.
+ see: http://github.com/jrburke/requirejs for details
+ */
 var requirejs,require,define;
 (function(ba){function J(b){return"[object Function]"===N.call(b)}function K(b){return"[object Array]"===N.call(b)}function z(b,c){if(b){var d;for(d=0;d<b.length&&(!b[d]||!c(b[d],d,b));d+=1);}}function O(b,c){if(b){var d;for(d=b.length-1;-1<d&&(!b[d]||!c(b[d],d,b));d-=1);}}function t(b,c){return ha.call(b,c)}function m(b,c){return t(b,c)&&b[c]}function H(b,c){for(var d in b)if(t(b,d)&&c(b[d],d))break}function S(b,c,d,m){c&&H(c,function(c,l){if(d||!t(b,l))m&&"string"!==typeof c?(b[l]||(b[l]={}),S(b[l],
     c,d,m)):b[l]=c});return b}function v(b,c){return function(){return c.apply(b,arguments)}}function ca(b){throw b;}function da(b){if(!b)return b;var c=ba;z(b.split("."),function(b){c=c[b]});return c}function B(b,c,d,m){c=Error(c+"\nhttp://requirejs.org/docs/errors.html#"+b);c.requireType=b;c.requireModules=m;d&&(c.originalError=d);return c}function ia(b){function c(a,f,C){var e,n,b,c,d,T,k,g=f&&f.split("/");e=g;var l=j.map,h=l&&l["*"];if(a&&"."===a.charAt(0))if(f){e=m(j.pkgs,f)?g=[f]:g.slice(0,g.length-
@@ -229,6 +226,8 @@ function glEnumToString(value) {
   return (name !== undefined) ? name :
       ("*UNKNOWN WebGL ENUM (0x" + value.toString(16) + ")");
 }
+
+
 
 /**
  * Returns the string version of a WebGL argument.
@@ -13305,14 +13304,18 @@ new (function () {
 
 
             if (params.src) { // Load from URL
-                var texture = this._initTexture(params.preloadColor);
+                //var texture = this._initTexture(params.preloadColor);
+                this._initTexture(params.preloadColor);
                 this._core.src = params.src;
-                this._loadTexture(texture, params.src, params.preloadSrc);
+                //this._loadTexture(texture, params.src, params.preloadSrc);
+                this._loadTexture(params.src, params.preloadSrc);
 
             } else if (params.image) { // Create from image
-                var texture = this._initTexture(params.preloadColor);
+                //var texture = this._initTexture(params.preloadColor);
+                this._initTexture(params.preloadColor);
                 this._core.image = params.image;
-                this._setTextureImage(texture, params.image);
+                //this._setTextureImage(texture, params.image);
+                this._setTextureImage(params.image);
 
             } else if (params.target) { // Render to this texture
                 this.getScene().getNode(params.target,
@@ -13324,12 +13327,16 @@ new (function () {
             this._core.webglRestored = function () {
                 
                 if (self._core.image) {
-                    var texture = this._initTexture(params.preloadColor);
-                    self._setTextureImage(texture, self._core.image);
+                    //var texture = this._initTexture(params.preloadColor);
+                    //self._setTextureImage(texture, self._core.image);
+                    self._initTexture(params.preloadColor);
+                    self._setTextureImage(self._core.image);
 
                 } else if (self._core.src) {
-                    var texture = this._initTexture(params.preloadColor);
-                    self._loadTexture(texture, self._core.src);
+                    //var texture = this._initTexture(params.preloadColor);
+                    //self._loadTexture(texture, self._core.src);
+                    self._initTexture(params.preloadColor);
+                    self._loadTexture(self._core.src);
 
                 } else if (self._core.target) {
 //                    self.getScene().getNode(params.target,
@@ -13384,10 +13391,11 @@ new (function () {
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, preloadColor);
         this._setCoreTexture(texture);
 
-        return texture;
+        //return texture;
     };
 
-    SceneJS.TextureMap.prototype._loadTexture = function (texture, src, preloadSrc) {
+    //SceneJS.TextureMap.prototype._loadTexture = function (texture, src, preloadSrc) {
+    SceneJS.TextureMap.prototype._loadTexture = function (src, preloadSrc) {
         var self = this;
         var taskId = SceneJS_sceneStatusModule.taskStarted(this, "Loading texture");
         var image = new Image();
@@ -13399,7 +13407,8 @@ new (function () {
 
             preloadImage.onload = function () {
                 if (!loaded) {
-                    self._setTextureImage(texture, preloadImage);
+                    //self._setTextureImage(texture, preloadImage);
+                    self._setTextureImage(preloadImage);
                     SceneJS_sceneStatusModule.taskFinished(taskId);
                     taskFinished = true;
                     self._engine.display.imageDirty = true; 
@@ -13410,7 +13419,8 @@ new (function () {
         }
 
         image.onload = function () {
-            self._setTextureImage(texture, image);
+            //self._setTextureImage(texture, image);
+            self._setTextureImage(image);
             if (!taskFinished) {
                 SceneJS_sceneStatusModule.taskFinished(taskId);
             }
@@ -13432,11 +13442,12 @@ new (function () {
         }
     };
 
-    SceneJS.TextureMap.prototype._setTextureImage = function (texture, image) {
-
+    //SceneJS.TextureMap.prototype._setTextureImage = function (texture, image) {
+    SceneJS.TextureMap.prototype._setTextureImage = function (image) {
         var gl = this._engine.canvas.gl;
 
-        var texture = gl.createTexture();
+        //var texture = gl.createTexture();
+         var texture = this._core.texture ? this._core.texture.texture : gl.createTexture(); 
         gl.bindTexture(gl.TEXTURE_2D, texture);
 
         var maxTextureSize = SceneJS_configsModule.configs.maxTextureSize;
@@ -13510,7 +13521,8 @@ new (function () {
         this._core.image = image;
         this._core.src = null;
         this._core.target = null;
-        this._initTexture(image);
+        //this._initTexture(image);
+        this._setTextureImage(image);
     };
 
     SceneJS.TextureMap.prototype.setTarget = function (target) {
