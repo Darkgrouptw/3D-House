@@ -125,7 +125,7 @@
             <height>5</height>
             <width>8</width>
             <thickness>1</thickness>
-            <deep>18</deep> <!--This tag I will rename it to depth -->
+            <deep>18</deep>
             <ratio>0.5,0.5,1</ratio>
         </property>
     </element> 
