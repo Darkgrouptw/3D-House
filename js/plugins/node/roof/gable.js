@@ -1,7 +1,7 @@
 var w,h,d,rx,ry,th;
 
 
-    SceneJS.Types.addType("Roof/Gable", 
+    SceneJS.Types.addType("roof/gable", 
 	{
         construct:function (params) { this.addNode(build.call(this, params)); },
         setCenter:function(point){
@@ -174,7 +174,7 @@ var w,h,d,rx,ry,th;
 		if(params.ratio) { ratio = params.ratio; }
 		else { ratio = { x: 0.5, y: 0.5, z: 1.0 }; }
 
-        var coreId = "Roof/Gable" + width + "_" + height + "_" + thickness + "_" + deep + (params.wire ? "wire" : "_solid");
+        var coreId = "roof/gable" + width + "_" + height + "_" + thickness + "_" + deep + (params.wire ? "wire" : "_solid");
 
         // If a node core already exists for a prim with the given properties,
         // then for efficiency we'll share that core rather than create another geometry

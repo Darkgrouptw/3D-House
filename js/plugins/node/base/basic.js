@@ -1,4 +1,4 @@
-    SceneJS.Types.addType("Wall/NoWindow", 
+    SceneJS.Types.addType("base/basic", 
 	{
         construct:function (params) { this.addNode(build.call(this, params)); },
         setCenter:function(point){
@@ -84,13 +84,12 @@
             positionSet = geometry.getPositions();
             return positionSet[1];
         },
-        callBaseCalibration:function(){
+        callBaseCalibration:function(high){
             var backWall=-1;
             var rightWall=-1;
             var leftWall=-1;
             var frontWall=-1;
             var roof=-1;
-            var base=-1;
             var nodes=scene.findNodes();
             for(var i=0;i<nodes.length;i++){
                 var n = nodes[i];
@@ -103,42 +102,86 @@
                     else if(n.getName()=="leftWall")leftWall=n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
                     else if(n.getName()=="rightWall")rightWall=n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
                     else if(n.getName()=="roof")roof=n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
-                    else if(n.getName()=="base")base=n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
                 }
             }
-            if(base == -1){
-                console.log("ERROR");
-                return;
-            }
-            if(frontWall!=-1 && frontWall.getID() == this.getID()){
+            var havefrontWall = false;
+            var havebackWall = false;
+            var defaulthigh=0;
+            var baseCenter=this.getCenter();
+            var baseCenterX=baseCenter.x;
+            var baseCenterY=baseCenter.y;
+            var baseCenterZ=baseCenter.z;
+            if(frontWall!=-1){
+                havefrontWall = true;
+                frontWall.setWidth(this.getWidth());
+                if(high)frontWall.setHeight(high*1);
 
-            }
-            else if(backWall!=-1 && backWall.getID() == this.getID()){
-                base.setWidth(this.getWidth())
-                base.callBaseCalibration(this.getHeight());
-            }
-            else if(leftWall!=-1 && leftWall.getID() == this.getID()){
-                if(backWall !=-1 && frontWall !=-1){
-                }else if(frontWall != -1){
+                frontWall.setCenterX(baseCenterX);
+                frontWall.setCenterY(baseCenterY+this.getThickness()+frontWall.getHeight());
+                frontWall.setCenterZ(baseCenterZ+this.getHeight()-frontWall.getThickness());
 
-                }else if(backWall != -1){
-                    base.setHeight(this.getWidth()+backWall.getThickness());
-                    base.callBaseCalibration(this.getHeight());
+                defaulthigh=frontWall.getHeight();
+            }
+            if(backWall!=-1){
+                havebackWall = true;
+                backWall.setWidth(this.getWidth());
+                if(high)backWall.setHeight(high*1);
+
+                backWall.setCenterX(baseCenterX);
+                backWall.setCenterY(baseCenterY+this.getThickness()+backWall.getHeight());
+                backWall.setCenterZ(baseCenterZ-this.getHeight()+backWall.getThickness());
+
+                defaulthigh=backWall.getHeight();
+            }
+            if(leftWall!=-1){
+                if(havebackWall && havefrontWall){
+
+                }
+                else if(havefrontWall){
+
+                }else if(havebackWall){
+                    leftWall.setWidth(this.getHeight()-backWall.getThickness());
+                    if(high)leftWall.setHeight(high*1);
+
+                    leftWall.setCenterX(baseCenterX-this.getWidth()+leftWall.getThickness());
+                    leftWall.setCenterY(baseCenterY+this.getThickness()+leftWall.getHeight());
+                    leftWall.setCenterZ(baseCenterZ+backWall.getThickness());
+
+                    defaulthigh=leftWall.getHeight();
                 }else{
 
                 }
             }
-            else if(rightWall!=-1 && rightWall.getID() == this.getID()){
-                if(backWall !=-1 && frontWall !=-1){
+            if(rightWall!=-1){
+                if(havebackWall && havefrontWall){
 
-                }else if(frontWall != -1){
-
-                }else if(backWall != -1){
-                    base.setHeight(this.getWidth()+backWall.getThickness());
-                    base.callBaseCalibration(this.getHeight());
-                }else{
-                    
                 }
+                else if(havefrontWall){
+
+                }else if(havebackWall){
+                    rightWall.setWidth(this.getHeight()-backWall.getThickness());
+                    if(high)rightWall.setHeight(high*1);
+
+                    rightWall.setCenterX(baseCenterX+this.getWidth()-rightWall.getThickness());
+                    rightWall.setCenterY(baseCenterY+this.getThickness()+rightWall.getHeight());
+                    rightWall.setCenterZ(baseCenterZ+backWall.getThickness());
+
+                    defaulthigh=rightWall.getHeight();
+                }else{
+
+                }
+            }
+            if(roof!=-1){
+
+                roof.setWidth(this.getHeight());
+                roof.setDeep(this.getWidth());
+
+                roof.setCenterX(baseCenterX);
+                if(high)roof.setCenterY(baseCenterY+this.getThickness()+2*high+roof.getHeight());
+                else roof.setCenterY(baseCenterY+this.getThickness()+2*defaulthigh+roof.getHeight());
+                roof.setCenterZ(baseCenterZ);
+
+                roof.adjustChildren();
             }
         }
     });
@@ -157,7 +200,7 @@
 		if(params.center) { center = params.center; }
 		else { center = {x: 0, y: 0, z: 0}; }
 
-        var coreId = "Wall/NoWindow" + x + "_" + y + "_" + z + (params.wire ? "wire" : "_solid");
+        var coreId = "base/basic" + x + "_" + y + "_" + z + (params.wire ? "wire" : "_solid");
 
         // If a node core already exists for a prim with the given properties,
         // then for efficiency we'll share that core rather than create another geometry
@@ -195,7 +238,7 @@
                 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, // v7-v4-v3-v2 bottom
                 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1     // v4-v7-v6-v5 back
             ]),
-			uv: new Float32Array([
+            uv: new Float32Array([
                 1, 1, 0, 1, 0, 0, 1, 0, // v0-v1-v2-v3 front
                 0, 1, 0, 0, 1, 0, 1, 1, // v0-v3-v4-v5 right
                 1, 0, 1, 1, 0, 1, 0, 0, // v0-v5-v6-v1 top
@@ -215,7 +258,7 @@
 		
 		return newone;
     }
-    function generaterPositionSet(params){
+        function generaterPositionSet(params){
         var x,y,z;
         x=params.x;
         y=params.y;
