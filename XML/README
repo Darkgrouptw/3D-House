@@ -1,0 +1,107 @@
+Change History:
+
+Old version:
+
+<layer>
+    <element>
+        <type>Base/Basic.js</type>
+        <transform>1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1</transform>
+        <texture>Ground.jpg</texture>
+        <pos>base</pos>
+        <property>
+            <height>8</height>
+            <width>18</width>
+            <thickness>0.5</thickness>
+        </property>
+    </element>
+</layer>
+
+
+[SUGGESSTION] For new version:
+
+<layer>
+    <element id="bottom_base">
+        <type>base/basic.js</type>
+        
+        <transform>
+            <scale>1,1,1</scale>
+            <rotate>0,0,0</rotate>
+            <translate>0,0,0</translate>
+        </transform>
+        
+        <texture>
+            <file>Ground.jpg</file>
+            <color>255,255,0</color>
+        </texture>
+        
+        <property>
+            <height>8</height>
+            <width>18</width>
+            <thickness>0.5</thickness>
+        </property>
+    </element>
+</layer>
+
+That is suggesstion for new version XML structure, maybe some unnecessary xml structure that replace by
+simply one is better.
+
+[MAYBE] For suitable version:
+
+<layer>
+    <element id="bottom_base">
+        <type>base/basic.js</type>
+        
+        <transform>
+            <scale>1,1,1</scale>
+            <rotate>0,0,0</rotate>
+            <translate>0,0,0</translate>
+        </transform>
+        
+        <texture>Ground.jpg</texture>
+        
+        <property>
+            <height>8</height>
+            <width>18</width>
+            <thickness>0.5</thickness>
+        </property>
+    </element>
+</layer>
+
+In my optinion, the pos tag is used for identify the object by the name, so why do not put it to attirbute of tag?
+Some case may exist following suitation:
+
+File: XML/wall/wall-multi_window.xml
+
+<layer>
+    <element id="mwindow">
+        <type>wall/multi_window</type>
+        <transform>
+            <scale>1,1,1</scale>
+            <rotate>0,0,0</rotate>
+            <translate>0,0,0</translate>
+        </transform>
+        <property>
+            <width>10</width>
+            <height>10</height>
+            <thickness>1</thickness>
+            <center>0,0,0</center> <!-- I know center tag that is no longer used, so it could be remove. -->
+  
+            <!--When wsize="same" or "auto", ignore below part -->
+            <!--When wsize change to same, it will choose the list minimum value in-->
+            <wsize mode="diff">1,1,2,2,3,3,4,4</wsize>
+            <wsize mode="same">2,2</wsize>
+            <wsize mode="auto"></wsize>
+            
+            <!-- For window center -->
+            <wcntr mode="manual">0.3,0.3,0.5,0.5,0.7,0.7,0.9,0.9</wcntr>
+            <wcntr mode="auto"></wcntr>
+            
+            <!--When wcntr="manual", ignore below part-->
+            <!--value is column, size is row-->
+            <arrange major="row">3, 2</arrange>
+			
+        </property>
+    </element>
+</layer>
+
+

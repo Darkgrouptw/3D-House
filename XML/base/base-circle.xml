@@ -1,0 +1,15 @@
+<layer>
+    <element>
+        <type>base/circle</type>
+        <transform>
+            <scale>1,1,1</scale>
+            <rotate>0,0,0</rotate>
+            <translate>0,0,0</translate>
+        </transform>
+        <property>
+            <center>0,0,0</center>
+            <radius>10</radius>
+            <thick>1</thick>
+        </property>
+    </element>
+</layer>  

@@ -1,0 +1,35 @@
+<layer>
+    <element id="mwindow">
+        <type>wall/multi_window</type>
+        <transform>
+            <scale>1,1,1</scale>
+            <rotate>0,0,0</rotate>
+            <translate>0,0,0</translate>
+        </transform>
+        <property>
+            <width>10</width>
+            <height>10</height>
+            <thickness>1</thickness>
+            <center>0,0,0</center>
+            
+            <!-- [START] NOT YET IMPLEMENT -->
+  
+            <!--When wsize="same" or "auto", ignore below part -->
+            <!--When wsize change to same, it will choose the list minimum value in-->
+            <wsize mode="diff">1,1,2,2,3,3,4,4</wsize>
+            <wsize mode="same">2,2</wsize>
+            <wsize mode="auto"></wsize>
+            
+            <!-- For window center -->
+            <wcntr mode="manual">0.3,0.3,0.5,0.5,0.7,0.7,0.9,0.9</wcntr>
+            <wcntr mode="auto"></wcntr>
+            
+            <!--When wcntr="manual", ignore below part-->
+            <!--value is column, size is row-->
+            <arrange major="row">3, 2</arrange>
+            
+			<!-- NOT YET IMPLEMENT [END] -->
+			
+        </property>
+    </element>
+</layer>

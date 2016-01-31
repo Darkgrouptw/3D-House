@@ -1,5 +1,5 @@
 var triangle_w,triangle_h,triangle_rx,triangle_ry,triangle_th;
-    SceneJS.Types.addType("Wall/Triangle", 
+    SceneJS.Types.addType("wall/triangle", 
 	{
         construct:function (params) { this.addNode(build.call(this, params)); },
         setCenter:function(point){
@@ -114,7 +114,7 @@ var triangle_w,triangle_h,triangle_rx,triangle_ry,triangle_th;
 		
 		if(params.ratio) { ratio = params.ratio; }
 		else { ratio = { x: 0.5, y: 0.5, z: 1.0 }; }
-        var coreId = "Wall/Triangle" + width + "_" + height + "_" + thickness + (params.wire ? "wire" : "_solid");
+        var coreId = "wall/triangle" + width + "_" + height + "_" + thickness + (params.wire ? "wire" : "_solid");
 
         // If a node core already exists for a prim with the given properties,
         // then for efficiency we'll share that core rather than create another geometry

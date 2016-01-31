@@ -1,0 +1,16 @@
+<layer>
+    <element id="wall">
+        <type>wall/triangle</type>
+        <transform>
+            <scale>1,1,1</scale>
+            <rotate>0,0,0</rotate>
+            <translate>0,0,0</translate>
+        </transform>
+        <property>
+            <center>0,0,0</center>
+            <size>10,10</size>
+            <ratio>0.5,0.5</ratio>
+            <thick>1</thick>
+        </property>
+    </element>
+</layer> 

@@ -1,0 +1,16 @@
+<layer>
+    <element id="base">
+        <type>base/basic</type>
+        <transform>
+            <scale>1,1,1</scale>
+            <rotate>0,0,0</rotate>
+            <translate>0,0,0</translate>
+        </transform>
+        <property>
+            <center>0,0,0</center>
+	    <width>20</width>
+	    <height>20</height>
+            <thickness>1</thickness>
+        </property>
+    </element>
+</layer> 
