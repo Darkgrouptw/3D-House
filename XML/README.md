@@ -2,7 +2,7 @@
 
 ### 之前的版本：
 
-```
+``` xml 
 <layer>
     <element>
         <type>Base/Basic.js</type>
@@ -20,13 +20,13 @@
 
 ### 「建議」版本：
 
-* ```<pos>``` 標籤似乎只是用來當作識別用，所以我把它加在 ```<element>``` 標籤中的屬性
-* ```<texture>``` 標籤擴展成有可以純顏色的 ```<color>``` 與指定檔案的 ```<file>```
-* ```<transform>``` 標籤細分成為： 旋轉 ```<rotate>```，平移 ```<translate>``` ，縮放 ```<scale>```
-* ```<type>``` 標籤中的類型都改成小寫的版本
-* ```<decorate>``` 標籤可以用來修飾該 ```<element>```，裡面放的也是 ```<element>```
+* ``` xml <pos>``` 標籤似乎只是用來當作識別用，所以我把它加在 ``` xml <element>``` 標籤中的屬性
+* ``` xml <texture>``` 標籤擴展成有可以純顏色的 ``` xml <color>``` 與指定檔案的 ``` xml <file>```
+* ``` xml <transform>``` 標籤細分成為： 旋轉 ``` xml <rotate>```，平移 ``` xml <translate>``` ，縮放 ``` xml <scale>```
+* ``` xml <type>``` 標籤中的類型都改成小寫的版本
+* ``` xml <decorate>``` 標籤可以用來修飾該 ``` xml <element>```，裡面放的也是 ``` xml <element>```
 
-```
+``` xml 
 <layer>
     <element id="bottom_base">
         <type>base/basic.js</type>
@@ -60,11 +60,11 @@
 
 多個窗戶定義例子，請參閱 XML/wall/wall-multi_window.xml
 
-* ```<wsize>``` 標籤中的 ```mode``` 的屬性是給予可以選擇不同大小 ```diff``` 、相同大小 ```same``` 、自動產生 ```auto```
-* ```<wcntr>``` 標籤中的 ```mode``` 的屬性為 ```auto``` 的話代表參考 ```<arrange>``` 來產生相對應的排列， 手動 ```manual``` 的話就必須逐一給定
-* ```<arrange>``` 是當 ```<wcntr>``` 為 ```auto``` 時，才具有效果
+* ``` xml <wsize>``` 標籤中的 ```mode``` 的屬性是給予可以選擇不同大小 ```diff``` 、相同大小 ```same``` 、自動產生 ```auto```
+* ``` xml <wcntr>``` 標籤中的 ```mode``` 的屬性為 ```auto``` 的話代表參考 ``` xml <arrange>``` 來產生相對應的排列， 手動 ```manual``` 的話就必須逐一給定
+* ``` xml <arrange>``` 是當 ``` xml <wcntr>``` 為 ```auto``` 時，才具有效果
 
-```
+``` xml
 <layer>
     <element id="mwindow">
         <type>wall/multi_window</type>
