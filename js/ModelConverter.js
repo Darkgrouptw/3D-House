@@ -1,10 +1,41 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//Global variables
+var outNodeIndex = 0;
+var infoStr = "";	//Storing the string in info.txt
+var posArray;	//Storing values of pos in each elements 
+var typeArray;	//Storing values of type in each elements 
+
+//mesh manipulating
+//faceArray[x][3]: vertex[3]
+var connector;	//:faceArray      Storing array of mesh with faceArray in each elements
+var nonConnector;	//:faceArray      Storing array of mesh with faceArray in each elements
+var connector_No;	//Storing the corresponding model index
+var nonConnector_No;	//Storing the corresponding model index
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Function used for exporting the model in multiple .obj
 function convertToMultiObj(inputNode){
+	infoStr = "";
+	//Init the arrays
+	connector = new Array;
+	nonConnector = new Array;
+	connector_No = new Array;
+	nonConnector_No = new Array;
+
 	var nodesArr = inputNode.nodes;
-	var outNodeIndex = 0;
+	outNodeIndex = 0;
 	var matList = new Array();	//Stores the transformation matrices
 
+	//Init posArray
+	posArray = new Array;
+	typeArray = new Array;
+	for(var i = 0;i<nodesArr.length;i++){
+		posArray.push(nodesArr[i]._core.name);
+		typeArray.push(nodesArr[i].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].type);
+	}
 	//Looping all matrices of nodes
 	for(nodeI = 0;nodeI<nodesArr.length;nodeI++){
 
@@ -92,7 +123,10 @@ function convertToMultiObj(inputNode){
 			}
 			vnStr += "\n";
 			vn2Str += "\n";
+			// latchFaces(nodeI);
+			parseObj_withStoring(vStr + vnStr + f1Str, false);
 			download(vStr + vnStr + f1Str, "model_part" + (outNodeIndex++) + ".obj", 'text/plain');
+			parseObj_withStoring(v2Str + vn2Str + f2Str, false);
 			download(v2Str + vn2Str + f2Str, "model_part" + (outNodeIndex++) + ".obj", 'text/plain');
 		}else{
 
@@ -100,11 +134,130 @@ function convertToMultiObj(inputNode){
 				fStr += "f " + (tmpFaces[i]+1) + "//" + (tmpFaces[i]+1) + " " + (tmpFaces[i+1]+1) + "//" + (tmpFaces[i+1]+1) + " " + (tmpFaces[i+2]+1) + "//" + (tmpFaces[i+2]+1) + "\n";
 			}
 			fStr += "\n";
+
+			// latchFaces(nodeI);
+			parseObj_withStoring(vStr + vnStr + fStr, isConnector(nodeI));
 			download(vStr + vnStr + fStr, "model_part" + (outNodeIndex++) + ".obj", 'text/plain');
 		}
 
 	}
-	
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//-------------------------------------------Dealing with latch faces------------------------------------------
+	//Printing total model number
+	infoStr = outNodeIndex + "\n\n";
+
+	//Put two array, stores convex and concave string
+	var vexStr = new Array, caveStr = new Array;
+
+	for(var conIter = 0;conIter < connector.length;conIter++){
+		for(var faceIter = 0;faceIter<connector[conIter].length;faceIter++){
+			//Comparing with nonConnector
+			for(var model = 0;model<nonConnector.length;model++){
+				if(isInside(nonConnector[model], connector[conIter][faceIter])){
+					// console.log("nonConnector");
+					// console.log("model: " + model);
+					// console.log("conIter: " + conIter); 
+					// console.log("faceIter: " + faceIter + "\n");
+
+					//Adding string to vexStr & caveStr
+					var tmpVexStr = "", tmpCaveStr = "", pointStr = "";
+					for(var i = 0;i<3;i++){
+						for(var j = 0;j<3;j++){
+							pointStr += connector[conIter][faceIter][i][j] + " ";
+						}
+						pointStr += "\n";
+					}
+					tmpCaveStr += "model_part" + nonConnector_No[model] + "\n" + pointStr;
+					tmpVexStr += "model_part" + connector_No[conIter] + "\n" + pointStr;
+					vexStr.push(tmpVexStr);
+					caveStr.push(tmpCaveStr);
+				}
+			}
+			//Comparing with connector
+			for(var model = 0;model<connector.length;model++){
+				if(model != conIter && isInside(connector[model], connector[conIter][faceIter])){
+					// console.log("connector");
+					// console.log("model: " + model);
+					// console.log("conIter: " + conIter);
+					// console.log("faceIter: " + faceIter + "\n");
+
+					//Adding string to vexStr & caveStr
+					var tmpVexStr = "", tmpCaveStr = "", pointStr = "";
+					for(var i = 0;i<3;i++){
+						for(var j = 0;j<3;j++){
+							pointStr += connector[conIter][faceIter][i][j] + " ";
+						}
+						pointStr += "\n";
+					}
+					tmpCaveStr += "model_part" + connector_No[model] + "\n" + pointStr;
+					tmpVexStr += "model_part" + connector_No[conIter] + "\n" + pointStr;
+					//Is it duplicated??
+					if(caveStr.indexOf(tmpVexStr) == -1 && vexStr.indexOf(tmpCaveStr) == -1){
+						vexStr.push(tmpVexStr);
+						caveStr.push(tmpCaveStr);
+					}
+				}
+			}
+		}
+	}
+	for(var i = 0;i<caveStr.length;i+=2){
+		infoStr += vexStr[i] + vexStr[i+1] + caveStr[i] + caveStr[i+1] + "\n";
+	}
+	download(infoStr, "info" + ".txt", 'text/plain');
+}
+
+function isConnector(nodeNum){
+	if(typeArray[nodeNum].substring(0, 4) == "Wall"){
+		return true;
+	}
+	return false;
+}
+
+function isInside(meshFaces, testPoints){
+	for(var testI = 0;testI<testPoints.length;testI++){
+		//Comparing Area
+		var inside = false;
+		for(var meshFaceIter = 0;meshFaceIter < meshFaces.length && !inside;meshFaceIter++){
+			var sumArea = 0.0;
+			var originalArea = 0.0;
+			for(var i = 0;i<3;i++){
+				sumArea += areaOfTriangle([meshFaces[meshFaceIter][i], testPoints[testI], meshFaces[meshFaceIter][(i+1)%3]]);
+			}
+			originalArea += areaOfTriangle(meshFaces[meshFaceIter]);
+			if(Math.abs(sumArea - originalArea) < 0.0000001){
+				inside = true;
+			}
+		}
+		if(!inside){
+			return false;
+		}
+	}
+
+	return true;
+}
+
+function areaOfTriangle(points){
+	var ab = new Array, bc = new Array;
+	for(var i = 0;i<3;i++){
+		ab.push(points[0][i] - points[1][i]);
+		bc.push(points[1][i] - points[2][i]);
+	}
+
+	if((Math.abs(ab[0]) + Math.abs(ab[1]) + Math.abs(ab[2])) < 0.0000001 || (Math.abs(bc[0]) + Math.abs(bc[1]) + Math.abs(bc[2])) < 0.0000001)	return 0;
+	// console.log((ab[0] + ab[1] + ab[2]));
+	// console.log((bc[0] + bc[1] + bc[2]));
+	var angle = Math.acos(dot([ab, bc])/(magnitude([points[0], points[1]])*magnitude([points[1], points[2]])));
+	return(0.5*(magnitude([points[0], points[1]])*magnitude([points[1], points[2]]))*Math.sin(angle));
+}
+
+function dot(vecs){
+	return(vecs[0][0]*vecs[1][0] + vecs[0][1]*vecs[1][1] + vecs[0][2]*vecs[1][2]);
+}
+
+//Length of 2 vectors
+function magnitude(points){
+	if(points[0][0] == points[1][0] && points[0][1] == points[1][1] && points[0][2] == points[1][2])	return 0;
+	return(Math.sqrt(Math.pow(points[0][0] - points[1][0], 2) + Math.pow(points[0][1] - points[1][1], 2) + Math.pow(points[0][2] - points[1][2], 2)));
 }
 
 function decrFace1(param){
@@ -446,6 +599,64 @@ function normalize(vec){
 	vec[2] /= mag;
 }
 
+function parseObj_withStoring(text, isConnector){
+	var objText = text.split("\n");
+	var obj = {};	//The elements inside are string
+	var vertexMatches = new Array, faceMatches = new Array;
+	for(var i = 0;i<objText.length;i++){
+		if(objText[i][0] == "v" && objText[i][1] == " "){
+			vertexMatches.push(objText[i]);
+		}
+		else if(objText[i][0] == "f" && objText[i][1] == " "){
+			faceMatches.push(objText[i]);
+		}
+	}
+
+	if (vertexMatches)
+	{
+	    obj.vertices = vertexMatches.map(function(vertex)
+	    {
+	        var vertices = vertex.split(" ");
+	        vertices.shift();
+	        return vertices;
+	    });
+	}
+	if (faceMatches)
+	{
+	    obj.faces = faceMatches.map(function(face)
+	    {
+	        var faces = face.split(" ");
+	        faces.shift();
+	        return faces;
+	    });
+	    var outFaces = new Array;
+	    for(var i = 0;i<obj.faces.length;i++){
+	    	outFaces.push(obj.faces[i].map(function(face){
+	    		var outputFace  = face.split("//");
+	    		return outputFace[0];
+	    	}));
+	    }
+	    obj.faces = outFaces;
+	}
+	// console.log(obj.vertices);
+	var faceArray = new Array;
+	for(var i = 0;i<obj.faces.length;i++){
+		var vertices = new Array;
+		for(var j = 0;j<3;j++){
+			var tmpV = [parseFloat(obj.vertices[parseInt(obj.faces[i][j]) - 1][0]), parseFloat(obj.vertices[parseInt(obj.faces[i][j]) - 1][1]), parseFloat(obj.vertices[parseInt(obj.faces[i][j]) - 1][2])];
+			vertices.push(tmpV);
+		}
+		faceArray.push(vertices);
+	}
+	if(isConnector){
+		connector.push(faceArray);
+		connector_No.push(outNodeIndex);
+	}else{
+		nonConnector.push(faceArray);
+		nonConnector_No.push(outNodeIndex);
+	}
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //.obj export as local download files
 function download(strData, strFileName, strMimeType) {
@@ -492,3 +703,79 @@ function download(strData, strFileName, strMimeType) {
     }, 333);
     return true;
 }
+
+function latchFaces(nodeNum){
+	switch(posArray[nodeNum]){
+		case 'base':
+			infoStr += "model" + outNodeIndex + " 9, 10, 11" + "\n";
+			infoStr += "model" + outNodeIndex + " 9, 11, 12" + "\n";
+			break;
+		case 'rightWall':
+			infoStr += "model" + outNodeIndex + " 1, 2, 3" + "\n";
+			infoStr += "model" + outNodeIndex + " 1, 3, 4" + "\n";
+			infoStr += "model" + outNodeIndex + " 13, 14, 15" + "\n";
+			infoStr += "model" + outNodeIndex + " 13, 15, 16" + "\n";
+			infoStr += "model" + outNodeIndex + " 21, 22, 23" + "\n";
+			infoStr += "model" + outNodeIndex + " 21, 23, 24" + "\n";
+			break;
+		case 'leftWall':
+			infoStr += "model" + outNodeIndex + " 1, 2, 3" + "\n";
+			infoStr += "model" + outNodeIndex + " 1, 3, 4" + "\n";
+			infoStr += "model" + outNodeIndex + " 13, 14, 15" + "\n";
+			infoStr += "model" + outNodeIndex + " 13, 15, 16" + "\n";
+			infoStr += "model" + outNodeIndex + " 21, 22, 23" + "\n";
+			infoStr += "model" + outNodeIndex + " 21, 23, 24" + "\n";
+			break;
+		case 'backWall':
+			infoStr += "model" + outNodeIndex + " 17, 18, 19" + "\n";
+			infoStr += "model" + outNodeIndex + " 17, 19, 20" + "\n";
+			infoStr += "model" + outNodeIndex + " 21, 22, 23" + "\n";
+			infoStr += "model" + outNodeIndex + " 21, 23, 24" + "\n";
+			break;
+		case 'rightTriangle':
+			infoStr += "model" + outNodeIndex + " 4, 5, 6" + "\n";
+			infoStr += "model" + outNodeIndex + " 4, 6, 7" + "\n";
+			infoStr += "model" + outNodeIndex + " 8, 9, 10" + "\n";
+			infoStr += "model" + outNodeIndex + " 8, 10, 11" + "\n";
+			infoStr += "model" + outNodeIndex + " 12, 13, 14" + "\n";
+			infoStr += "model" + outNodeIndex + " 12, 14, 15" + "\n";
+			break;
+		case 'leftTriangle':
+			infoStr += "model" + outNodeIndex + " 4, 5, 6" + "\n";
+			infoStr += "model" + outNodeIndex + " 4, 6, 7" + "\n";
+			infoStr += "model" + outNodeIndex + " 8, 9, 10" + "\n";
+			infoStr += "model" + outNodeIndex + " 8, 10, 11" + "\n";
+			infoStr += "model" + outNodeIndex + " 12, 13, 14" + "\n";
+			infoStr += "model" + outNodeIndex + " 12, 14, 15" + "\n";
+			break;
+		case 'roof':
+			infoStr += "model" + outNodeIndex + " 17, 18, 19" + "\n";
+			infoStr += "model" + outNodeIndex + " 17, 19, 20" + "\n";
+			infoStr += "model" + (outNodeIndex + 1) + " 17, 18, 19" + "\n";
+			infoStr += "model" + (outNodeIndex + 1) + " 17, 19, 20" + "\n";
+			break;
+	}
+}
+
+// function loadXML(xmlText){
+// 	var domParser = new DOMParser();
+// 	xmlDoc = domParser.parseFromString(xmlText, 'text/xml');
+// 	posArray = new Array();
+// 	typeArray = new Array();
+// 	var layers = xmlDoc.getElementsByTagName('layer');
+// 	for(var layerLen = 0; layerLen < layers.length; layerLen++)
+// 	{
+// 		// For each element in the layer
+// 		var elements = layers[layerLen].getElementsByTagName('element');
+// 		for(var elementLen = 0; elementLen < elements.length; elementLen++)
+// 		{
+// 			var posNode = elements[elementLen].getElementsByTagName('pos');
+// 			var typeNode = elements[elementLen].getElementsByTagName('type');
+// 			posArray.push(posNode[0].textContent);
+// 			typeArray.push(typeNode[0].textContent);
+// 		}
+// 	}
+// 	// for(var i = 0;i<posArray.length;i++){
+// 	// 	console.log(posArray[i]);
+// 	// }
+// }
