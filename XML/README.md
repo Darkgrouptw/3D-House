@@ -20,11 +20,11 @@
 
 ### 「建議」版本：
 
-* ``` xml <pos>``` 標籤似乎只是用來當作識別用，所以我把它加在 ``` xml <element>``` 標籤中的屬性
-* ``` xml <texture>``` 標籤擴展成有可以純顏色的 ``` xml <color>``` 與指定檔案的 ``` xml <file>```
-* ``` xml <transform>``` 標籤細分成為： 旋轉 ``` xml <rotate>```，平移 ``` xml <translate>``` ，縮放 ``` xml <scale>```
-* ``` xml <type>``` 標籤中的類型都改成小寫的版本
-* ``` xml <decorate>``` 標籤可以用來修飾該 ``` xml <element>```，裡面放的也是 ``` xml <element>```
+* ```<pos>``` 標籤似乎只是用來當作識別用，所以我把它加在 ```<element>``` 標籤中的屬性
+* ```<texture>``` 標籤擴展成有可以純顏色的 ```<color>``` 與指定檔案的 ```<file>```
+* ```<transform>``` 標籤細分成為： 旋轉 ```<rotate>```，平移 ```<translate>``` ，縮放 ```<scale>```
+* ```<type>``` 標籤中的類型都改成小寫的版本
+* ```<decorate>``` 標籤可以用來修飾該 ```<element>```，裡面放的也是 ```<element>```
 
 ``` xml 
 <layer>
@@ -60,9 +60,9 @@
 
 多個窗戶定義例子，請參閱 XML/wall/wall-multi_window.xml
 
-* ``` xml <wsize>``` 標籤中的 ```mode``` 的屬性是給予可以選擇不同大小 ```diff``` 、相同大小 ```same``` 、自動產生 ```auto```
-* ``` xml <wcntr>``` 標籤中的 ```mode``` 的屬性為 ```auto``` 的話代表參考 ``` xml <arrange>``` 來產生相對應的排列， 手動 ```manual``` 的話就必須逐一給定
-* ``` xml <arrange>``` 是當 ``` xml <wcntr>``` 為 ```auto``` 時，才具有效果
+* ```<wsize>``` 標籤中的 ```mode``` 的屬性是給予可以選擇不同大小 ```diff``` 、相同大小 ```same``` 、自動產生 ```auto```
+* ```<wcntr>``` 標籤中的 ```mode``` 的屬性為 ```auto``` 的話代表參考 ```<arrange>``` 來產生相對應的排列， 手動 ```manual``` 的話就必須逐一給定
+* ```<arrange>``` 是當 ```<wcntr>``` 為 ```auto``` 時，才具有效果
 
 ``` xml
 <layer>
@@ -77,17 +77,17 @@
             <width>10</width>
             <height>10</height>
             <thickness>1</thickness>
-            <center>0,0,0</center> <!-- I know center tag that is no longer used, so it could be remove. -->
+            <center>0,0,0</center>
   
             <!--When wsize="same" or "auto", ignore below part -->
             <!--When wsize change to same, it will choose the list minimum value in-->
-            <wsize mode="diff">1,1,2,2,3,3,4,4</wsize>
-            <!-- wsize mode="same">2,2</wsize -->
+            <!-- wsize mode="diff">1,1,2,2,3,3,4,4</wsize -->
+            <wsize mode="same">2,2</wsize>
             <!-- wsize mode="auto"></wsize -->
             
             <!-- For window center -->
-            <wcntr mode="manual">0.3,0.3,0.5,0.5,0.7,0.7,0.9,0.9</wcntr>
-            <!-- wcntr mode="auto"></wcntr -->
+            <!-- wcntr mode="manual">0.3,0.3,0.5,0.5,0.7,0.7,0.9,0.9</wcntr -->
+            <wcntr mode="auto"></wcntr>
             
             <!--When wcntr="manual", ignore below part-->
             <!--value is column, size is row-->
