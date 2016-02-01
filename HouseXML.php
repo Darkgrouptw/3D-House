@@ -41,6 +41,8 @@ class HouseXML
 				$textureNode = $elements->item($j)->getElementsByTagName('texture');
 				$propertyNode = $elements->item($j)->getElementsByTagName('property');
 				$transformNode = $elements->item($j)->getElementsByTagName('transform');
+				$decorateNode = $elements->item($j)->getElementsByTagName('decorate');
+				
 				//kaism
 				$posInformation = $elements->item($j)->getElementsByTagName('pos');
 				
@@ -85,7 +87,6 @@ class HouseXML
 						"		showCursor: false,\n\n".
 						$this->RenderList.
 						"\n	}]";
-		
 		if($this->DebugMode)
 			echo $this->RenderList;
 		echo "<script>\n";
@@ -104,13 +105,64 @@ class HouseXML
 	}
 	
 	
-	
 	///////////////////////////////////////////////////////////////////////////////
 	// 把 Matrix 的東西，傳到string裡
 	///////////////////////////////////////////////////////////////////////////////
 	private function MatrixBind(&$str, $transform)
 	{
-		$str = "						type: \"matrix\",\n						elements:[".$transform->textContent."],\n\n";
+		$scale_xml = $transform->getElementsByTagName('scale')->item(0)->textContent;
+		$rotate_xml = $transform->getElementsByTagName('rotate')->item(0)->textContent;
+		$translate_xml = $transform->getElementsByTagName('translate')->item(0)->textContent;
+		
+		$scaleParam = explode(',', $scale_xml);
+		$rotateParam = explode(',', $rotate_xml);
+		$translateParam = explode(',', $translate_xml);
+		
+		$translate_m = array
+		(
+			1,0,0,0,
+			0,1,0,0,
+			0,0,1,0,
+			$translateParam[0],$translateParam[1],$translateParam[2],1
+		);
+		
+		$deg_X = deg2rad($rotateParam[0]);
+		$deg_Y = deg2rad($rotateParam[1]);
+		$deg_Z = deg2rad($rotateParam[2]);
+		$rotate_m_X = array
+		(
+			1,0,0,0,
+			0,round(cos($deg_X) * 1000000) / 1000000, round(sin($deg_X) * 1000000) / 1000000,0,
+			0,round(-sin($deg_X) * 1000000) / 1000000, round(cos($deg_X) * 1000000) / 1000000,0,
+			0,0,0,1
+		);
+		$rotate_m_Y = array
+		(
+			round(cos($deg_Y) * 1000000) / 1000000,0,round(-sin($deg_Y) * 1000000) / 1000000,0,
+			0,1,0,0,
+			round(sin($deg_Y) * 1000000) / 1000000,0,round(cos($deg_Y) * 1000000) / 1000000,0,
+			0,0,0,1
+		);
+		$rotate_m_z = array
+		(
+			round(cos($deg_Z) * 1000000) / 1000000,round(sin($deg_Z) * 1000000) / 1000000,0,0,
+			round(-sin($deg_Z) * 1000000) / 1000000,round(cos($deg_Z) * 1000000) / 1000000,0,0,
+			0,0,1,0,
+			0,0,0,1
+		);
+		
+		$scale_m = array
+		(
+			$scaleParam[0],0,0,0,
+			0,$scaleParam[1],0,0,
+			0,0,$scaleParam[2],0,
+			0,0,0,1
+		);
+		$ans = $this->MatrixOperation($this->MatrixOperation($this->MatrixOperation($this->MatrixOperation($rotate_m_z,$rotate_m_Y),$rotate_m_X),$translate_m),$scale_m);
+		$str = "						type: \"matrix\",\n						elements:[". $ans[0];
+		for($i = 1; $i < 16; $i++)
+			$str = $str.",".$ans[$i];
+		$str = $str."],\n\n";
 	}
 	///////////////////////////////////////////////////////////////////////////////
 	// 把 Texture 的東西，傳到string裡
@@ -148,12 +200,40 @@ class HouseXML
 				$strlist = explode(",",$item->textContent);
 				if(count($strlist) == 1)
 					$str = $str."								".$item->nodeName.": ".$item->textContent.",\n";
+				else if(count($strlist) == 2)
+					$str = $str."								".$item->nodeName.": {a: ".$strlist[0].", b: ".$strlist[1]."},\n";
 				else if(count($strlist) == 3)
 					$str = $str."								".$item->nodeName.": {x: ".$strlist[0].", y: ".$strlist[1].", z: ".$strlist[2]."},\n";
 					
 			}
 		}
 		$str = substr($str, 0, strlen($str) - 2);
+	}
+	
+	///////////////////////////////////////////////////////////////////////////////
+	// Matrix 的座標，從二維變到一維
+	///////////////////////////////////////////////////////////////////////////////
+	private function ChangeCoord($i, $j)
+	{
+		return $i * 4 + $j;
+	}
+	///////////////////////////////////////////////////////////////////////////////
+	// Matrix 的矩陣運算
+	///////////////////////////////////////////////////////////////////////////////
+	private function MatrixOperation($array1,$array2)
+	{
+		$ans = array
+		(
+			0,0,0,0, 
+			0,0,0,0, 
+			0,0,0,0,
+			0,0,0,0
+		);
+		for($i = 0; $i < 4; $i++)
+			for($j = 0; $j < 4; $j++)
+				for($gap = 0; $gap < 4; $gap++)
+					$ans[$this->ChangeCoord($i,$j)] += $array1[$i * 4 + $gap] * $array2[$j + $gap * 4];
+		return $ans;
 	}
 }
 ?>

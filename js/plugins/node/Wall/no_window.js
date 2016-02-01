@@ -1,7 +1,6 @@
-(function () 
-{
+(function () {
 
-    SceneJS.Types.addType("base/basic", { construct: function (params) { this.addNode(build.call(this, params)); } });
+    SceneJS.Types.addType("wall/no_window", { construct: function (params) { this.addNode(build.call(this, params)); } });
 
     function build(params) 
 	{
@@ -10,20 +9,20 @@
 		// This size is pair value
         if(params.size && params.thick) 
 		{
-            x = params.size.a / 2;
-			z = params.size.b / 2;
-            y = params.thick / 2;
+            y = params.size.a / 2;
+            z = params.size.b / 2;
+			x = params.thick / 2;
         } 
 		else { x = 0; y = 0; z = 0; }
 		
 		if(params.center) { center = params.center; }
 		else { center = {x: 0, y: 0, z: 0}; }
 
-        var coreId = "base/basic" + "_" + SceneJS_add_randomString(15) + "_" + (params.wire ? "wire" : "solid");
+        var coreId = "wall/no_window" + "_" + SceneJS_add_randomString(20) + "_" + (params.wire ? "wire" : "solid");
 
         // If a node core already exists for a prim with the given properties,
         // then for efficiency we'll share that core rather than create another geometry
-        if (this.getScene().hasCore("geometry", coreId)) { return { type:"geometry", coreId:coreId }; }
+        if (this.getScene().hasCore("geometry", coreId)) { return { type:"geometry", coreId: coreId }; }
 
 		var positionSet = new Float32Array(
 		[
@@ -31,7 +30,7 @@
 			x, y, z, x, -y, z, x, -y, -z, x, y, -z,
 			x, y, z, x, y, -z, -x, y, -z, -x, y, z,
 			-x, y, z, -x, y, -z, -x, -y, -z, -x, -y, z,
-			-x, -y, -z, x, -y, -z, x, -y, z, -x, -y, z, 
+			-x, -y, -z, x, -y, -z, x, -y, z, -x, -y, z,
 			x, -y, -z, -x, -y, -z, -x, y, -z, x, y, -z
 		]);
 		
@@ -55,15 +54,7 @@
                 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0,
                 -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0,
                 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0,
-                0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1
-            ]),
-            uv: new Float32Array([
-                x, y, 0, y, 0, 0, x, 0,
-                0, y, 0, 0, x, 0, x, y,
-                x, 0, x, y, 0, y, 0, 0,
-                x, y, 0, y, 0, 0, x, 0,
-                0, 0, x, 0, x, y, 0, y,
-                0, 0, x, 0, x, y, 0, y
+                0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1 
             ]),
             indices: [
                 0, 1, 2, 0, 2, 3,

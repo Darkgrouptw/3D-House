@@ -1,0 +1,19 @@
+<layer>
+    <element>
+        <type>roof/mansard</type>
+        
+		<transform>
+			<scale>1,1,1</scale>
+			<rotate>0,0,0</rotate>
+			<translate>0,0,0</translate>
+		</transform>
+		
+		<property>
+			<size>18,18,5</size>
+			<thick>1</thick>
+			<ratio>0.1,0.1</ratio><!-- Limitation is 0.5, 0.5 -->
+			<center>0,0,0</center>
+		</property>
+	
+    </element> 
+</layer> 
