@@ -1,5 +1,5 @@
 <layer>
-    <element>
+    <element id="base">
         <type>base/basic</type>
         <transform>
             <scale>1,1,1</scale>
@@ -8,8 +8,9 @@
         </transform>
         <property>
             <center>0,0,0</center>
-            <size>20,20</size>
-            <thick>1</thick>
+	    <width>20</width>
+	    <height>20</height>
+            <thickness>1</thickness>
         </property>
     </element>
 </layer> 

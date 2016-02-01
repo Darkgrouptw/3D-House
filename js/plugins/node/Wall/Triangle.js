@@ -1,83 +1,79 @@
 (function () {
 
-    SceneJS.Types.addType("wall/triangle", { construct:function (params) { this.addNode(build.call(this, params)); } });
+    var p = {};
+
+    SceneJS.Types.addType("wall/triangle", 
+    { 
+        construct:function (params) { this.addNode(build.call(this, params)); },
+        
+        // Getter function, for property
+		getWidth: function() { return p.get('width'); },
+		getHeight: function() { return p.get('height'); },
+		getThickness: function() { return p.get('thickness'); },
+		getRatio: function() { return p.get('ratio'); },
+		
+		// For transform
+		getScale: function() { return p.get('scale'); },
+		getRotate: function() { return p.get('rotate'); },
+		getTranslate: function() { return p.get('translate'); },
+		
+		// Setter function, for property
+		setWidth: function(w) { p.set('width', w); p.updateGeometryNode.bind(this)(); },
+		setHeight: function(h) { p.set('height', h); p.updateGeometryNode.bind(this)(); },
+		setThickness: function(t) { p.set('thickness', t); p.updateGeometryNode.bind(this)(); },
+		setRatio: function(r) { p.set('ratio', r); p.updateGeometryNode.bind(this)(); },
+		
+		// For transform
+		setScale: function(svec) { p.set('scale', svec); p.updateMatirxNode.bind(this)(); },
+		setRotate: function(rvec) { p.set('rotate', rvec); p.updateMatirxNode.bind(this)(); },
+		setTranslate: function(tvec) { p.set('translate', tvec); p.updateMatirxNode.bind(this)(); }
+    });
 
     function build(params) 
 	{
-        var width, height, thick, center, ratio;
-        if(params.size && params.thick) 
+		p = new ParameterManager(params, function(property)
 		{
-            width = (params.size.a || params.size.y) / 2;
-            height = (params.size.b || params.size.z) / 2;
-            thick = params.thick / 2;
-        } 
-		else { width = 0; height = 0; thick = 0; }
+            var w = property.width / 2, h = property.height / 2, t = property.thickness / 2, r = property.ratio;
+            var topw = (w * r.a + -w * r.b) / 2;
+	        var pset = new Float32Array(
+	        [
+		        -w, -h, -t, w, -h, -t, topw, h, -t,
+		        -w, -h, t, w, -h, t, topw, h, t,
+		        w, -h, -t, topw, h, -t, topw, h, t, w, -h, t,
+		        -w, -h, -t, topw, h, -t, topw, h, t, -w, -h, t,
+		        -w, -h, -t, w, -h, -t, w, -h, t, -w, -h, t
+	        ]);
+	        
+	        return pset;
+		});
 		
-		if(params.center) { center = params.center; }
-		else { center = { x: 0, y: 0, z: 0}; }
+		var indicesSet = p.makeIndices(0, 5, 3).concat(p.makeIndices(6, 17));
 		
-		if(params.ratio) { ratio = params.ratio; }
-		else { ratio = { a: 0, b: 0}; }
-
-        var coreId = "wall/triangle" + "_" + SceneJS_add_randomString(20) + "_" + (params.wire ? "wire" : "solid");
-
-        // If a node core already exists for a prim with the given properties,
-        // then for efficiency we'll share that core rather than create another geometry
-        if (this.getScene().hasCore("geometry", coreId)) { return { type:"geometry", coreId:coreId }; }
-
-		var positionSet = new Float32Array(
-		[
-			-width, -height, -thick,									// A
-			width, -height, -thick,										// B
-			(width * ratio.a + -width * ratio.b) / 2, height, -thick,	// C
-			
-			-width, -height, thick,										// A'
-			width, -height, thick,										// B'
-			(width * ratio.a + -width * ratio.b) / 2, height, thick		// C'
-			
-			/*
-			-width, -height, thick,
-			-width, -height, -thick,
-			width, -height, -thick,
-			width, -height, thick,	
-			
-			-width, -height, thick,
-			-width, -height, -thick,
-			(width * ratio.a + -width * ratio.b) / 2, height, -thick,
-			(width * ratio.a + -width * ratio.b) / 2, height, thick,
-			
-			(width * ratio.a + -width * ratio.b) / 2, height, thick,
-			(width * ratio.a + -width * ratio.b) / 2, height, -thick,
-			width, -height, -thick,
-			width, -height, thick,
-			*/
-		]);
-		
-		for(var pidx = 0; pidx < positionSet.length; pidx = pidx + 3)
-		{
-			positionSet[pidx] = positionSet[pidx] + center.x;
-			positionSet[pidx + 1] = positionSet[pidx + 1] + center.y;
-			positionSet[pidx + 2] = positionSet[pidx + 2] + center.z;
-		}
-		
-        // Otherwise, create a new geometry
-        var newone = 
+        var geometry = 
 		{
             type: "geometry",
-            primitive: params.wire ? "lines" : "triangles",
-            coreId: coreId,
-            positions: positionSet,
-            normals: "auto",
-            indices: 
+            primitive: "triangles",
+            coreId: p.makeRandomID(20),
+            positions: p.makePositions(),
+            normals: new Float32Array(
+            [
+				0, 0, -1, 0, 0, -1, 0, 0, -1,
+				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+				0, 0, 1, 0, 0, 1, 0, 0, 1
+			]),
+			uv:  new Float32Array(
 			[
-				2, 1, 0, 			// Front
-				3, 4, 5,			// Back
-				3, 5, 2, 3, 0, 2,	// Side A
-				3, 0, 1, 3, 4, 1,	// Side B
-				2, 5, 4, 2, 1, 4	// Side C
-            ]
+				0, 0, 1, 0, p.get('ratio').a, 1,
+				1, 0, 1, 1, 0, 1, 0, 0,
+				1, 1, 0, 1, 0, 0, 1, 0,
+				0, 1, 0, 0, 1, 0, 1, 1,
+				0, 0, 1, 0, p.get('ratio').b, 1
+			]),
+            indices: indicesSet
         };
 		
-		return newone;
+		return geometry;
     }
 })();

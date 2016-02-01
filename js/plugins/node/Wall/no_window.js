@@ -1,53 +1,65 @@
-(function () {
+(function () 
+{
+    var p = {};
 
-    SceneJS.Types.addType("wall/no_window", { construct: function (params) { this.addNode(build.call(this, params)); } });
+    SceneJS.Types.addType("wall/no_window", 
+	{ 
+		construct: function(params) { this.addNode(build.call(this, params)); },
+		
+		// Getter function, for property
+		getWidth: function() { return p.get('width'); },
+		getHeight: function() { return p.get('height'); },
+		getThickness: function() { return p.get('thickness'); },
+		
+		// For transform
+		getScale: function() { return p.get('scale'); },
+		getRotate: function() { return p.get('rotate'); },
+		getTranslate: function() { return p.get('translate'); },
+		
+		// Setter function, for property
+		setWidth: function(w) { p.set('width', w); p.updateGeometryNode.bind(this)(); },
+		setHeight: function(h) { p.set('height', h); p.updateGeometryNode.bind(this)(); },
+		setThickness: function(t) { p.set('thickness', t); p.updateGeometryNode.bind(this)(); },
+		
+		// For transform
+		setScale: function(svec) { p.set('scale', svec); p.updateMatirxNode.bind(this)(); },
+		setRotate: function(rvec) { p.set('rotate', rvec); p.updateMatirxNode.bind(this)(); },
+		setTranslate: function(tvec) { p.set('translate', tvec); p.updateMatirxNode.bind(this)(); }
+	});
 
     function build(params) 
 	{
-        var x, y, z, thick, center;
+        p = new ParameterManager(params, function(property)
+        {
+            var w = property.width / 2, h = property.height / 2, t = property.thickness / 2; 
+            var pset = new Float32Array(
+		    [
+			    w, h, t, -w, h, t, -w, -h, t, w, -h, t,
+			    w, h, t, w, -h, t, w, -h, -t, w, h, -t,
+			    w, h, t, w, h, -t, -w, h, -t, -w, h, t,
+			    -w, h, t, -w, h, -t, -w, -h, -t, -w, -h, t,
+			    -w, -h, -t, w, -h, -t, w, -h, t, -w, -h, t,
+			    w, -h, -t, -w, -h, -t, -w, h, -t, w, h, -t
+		    ]);
+            return pset;
+        });
 		
-		// This size is pair value
-        if(params.size && params.thick) 
-		{
-            y = params.size.a / 2;
-            z = params.size.b / 2;
-			x = params.thick / 2;
-        } 
-		else { x = 0; y = 0; z = 0; }
-		
-		if(params.center) { center = params.center; }
-		else { center = {x: 0, y: 0, z: 0}; }
-
-        var coreId = "wall/no_window" + "_" + SceneJS_add_randomString(20) + "_" + (params.wire ? "wire" : "solid");
-
-        // If a node core already exists for a prim with the given properties,
-        // then for efficiency we'll share that core rather than create another geometry
-        if (this.getScene().hasCore("geometry", coreId)) { return { type:"geometry", coreId: coreId }; }
-
-		var positionSet = new Float32Array(
+		var uvs = new Float32Array(
 		[
-			x, y, z, -x, y, z, -x, -y, z, x, -y, z,
-			x, y, z, x, -y, z, x, -y, -z, x, y, -z,
-			x, y, z, x, y, -z, -x, y, -z, -x, y, z,
-			-x, y, z, -x, y, -z, -x, -y, -z, -x, -y, z,
-			-x, -y, -z, x, -y, -z, x, -y, z, -x, -y, z,
-			x, -y, -z, -x, -y, -z, -x, y, -z, x, y, -z
+			1, 1, 0, 1, 0, 0, 1, 0,
+			0, 1, 0, 0, 1, 0, 1, 1,
+			1, 0, 1, 1, 0, 1, 0, 0,
+			1, 1, 0, 1, 0, 0, 1, 0,
+			0, 0, 1, 0, 1, 1, 0, 1,
+			0, 0, 1, 0, 1, 1, 0, 1
 		]);
 		
-		for(var pidx = 0; pidx < positionSet.length; pidx = pidx + 3)
+        var geometry = 
 		{
-			positionSet[pidx] = positionSet[pidx] + center.x;
-			positionSet[pidx + 1] = positionSet[pidx + 1] + center.y;
-			positionSet[pidx + 2] = positionSet[pidx + 2] + center.z;
-		}
-		
-        // Otherwise, create a new geometry
-        var newone = 
-		{
-            type: "geometry",
-            primitive: params.wire ? "lines" : "triangles",
-            coreId: coreId,
-            positions: positionSet,
+            type: 'geometry',
+            primitive: 'triangles',
+            coreId: p.makeRandomID(20),
+            positions: p.makePositions(),
             normals: new Float32Array([
                 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1,
                 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0,
@@ -56,16 +68,11 @@
                 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0,
                 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1 
             ]),
-            indices: [
-                0, 1, 2, 0, 2, 3,
-                4, 5, 6, 4, 6, 7,
-                8, 9, 10, 8, 10, 11,
-                12, 13, 14, 12, 14, 15,
-                16, 17, 18, 16, 18, 19,
-                20, 21, 22, 20, 22, 23
-            ]
+			uv: uvs,
+            indices: p.makeIndices(0, 23)
         };
 		
-		return newone;
+		return geometry;
     }
+    
 })();

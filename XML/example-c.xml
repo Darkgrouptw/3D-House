@@ -1,18 +1,39 @@
 <layer>
 
     <element>
-        <type>roof/mansard</type>
+        <type>roof/gable</type>
         <transform>
-	    <scale>1,1,1</scale>
-	    <rotate>0,0,0</rotate> 
-	    <translate>0,13,0</translate>
-	</transform>
+            <scale>1,1,1</scale>
+            <rotate>0,90,0</rotate>
+            <translate>0,13,0</translate>
+        </transform>
         <property>
-	    <size>18,10,5</size>
-	    <thick>1</thick>
-	    <ratio>0.2,0.2</ratio>
-	    <center>0,0,0</center>
+            <width>8</width>
+            <height>5</height>
+            <depth>18</depth>
+            <thickness>1</thickness>
+            <ratio>0.5,0.5</ratio>
+            <center>0,0,0</center>
         </property>
+        <decorate>	
+            <element>
+                <type>wall/triangle</type>
+                <transform>
+                    <scale>1,1,1</scale>
+                    <rotate>0,0,0</rotate>
+                    <translate>0,0,8.5</translate>
+                </transform>
+            </element>
+			
+            <element>
+                <type>wall/triangle</type>
+                <transform>
+                    <scale>1,1,1</scale>
+                    <rotate>0,0,0</rotate>
+                    <translate>0,0,-8.5</translate>
+                </transform>
+            </element>
+        </decorate>	
     </element> 
 
     <element>
@@ -25,7 +46,7 @@
         <property>
             <width>30</width>
             <height>30</height>
-            <thick>1</thick>
+            <thickness>1</thickness>
         </property>
     </element>
 
@@ -37,23 +58,24 @@
             <translate>8.5,5.5,0</translate>
         </transform>
         <property>
-            <width>10</width>
-            <height>10</height>
+            <size>10, 10</size>
             <thick>1</thick>
         </property>
     </element>
     
     <element>
-        <type>wall/no_window</type>
+        <type>wall/single_window</type>
         <transform>
             <scale>1,1,1</scale>
-            <rotate>0,0,0</rotate>
+            <rotate>0,90,0</rotate>
             <translate>-8.5,5.5,0</translate>
         </transform>
         <property>
             <width>10</width>
             <height>10</height>
             <thick>1</thick>
+            <ratio>0.5,0.5</ratio>
+            <wsize>4,4</wsize>
         </property> 
     </element>
 

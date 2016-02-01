@@ -1,22 +1,24 @@
 <layer>
 
-    <element>
+    <element id="top_roof">
         <type>roof/hip</type>
         <transform>
-			<scale>1,1,1</scale>
-			<rotate>0,0,0</rotate> 
-			<translate>0,13,0</translate>
-		</transform>
+            <scale>1,1,1</scale>
+            <rotate>0,0,0</rotate> 
+            <translate>0,13,0</translate>
+	    </transform>
         <property>
-			<size>18,10,5</size>
-			<thick>1</thick>
-			<ratio>0.5,0.5</ratio>
-			<toplen>6</toplen>
-			<center>0,0,0</center>
+	        <width>18</width>
+	        <height>5</height>
+	        <depth>10</depth>
+	        <thickness>1</thickness>
+	        <ratio>0.5,0.5</ratio>
+	        <toplen>6</toplen>
+	        <center>0,0,0</center>
         </property>
     </element> 
 
-    <element>
+    <element id="bottom_base">
         <type>base/basic</type>
         <transform>
             <scale>1,1,1</scale>
@@ -24,47 +26,51 @@
             <translate>0,0.5,0</translate>
         </transform>
         <property>
-            <size>30, 30</size>
-            <thick>1</thick>
+            <width>30</width>
+            <height>30</height>
+            <thickness>1</thickness>
         </property>
     </element>
 
-    <element>
-        <type>wall/no_window</type>
-        <transform>
-            <scale>1,1,1</scale>
-            <rotate>0,0,0</rotate>
-            <translate>8.5,5.5,0</translate>
-        </transform>
-        <property>
-            <size>10, 10</size>
-            <thick>1</thick>
-        </property>
-    </element>
-    
-    <element>
-        <type>wall/no_window</type>
-        <transform>
-            <scale>1,1,1</scale>
-            <rotate>0,0,0</rotate>
-            <translate>-8.5,5.5,0</translate>
-        </transform>
-        <property>
-            <size>10, 10</size>
-            <thick>1</thick>
-        </property> 
-    </element>
-
-    <element>
+    <element id="left_wall">
         <type>wall/no_window</type>
         <transform>
             <scale>1,1,1</scale>
             <rotate>0,90,0</rotate>
+            <translate>8.5,5.5,0</translate>
+        </transform>
+        <property>
+            <width>10</width>
+            <height>10</height>
+            <thickness>1</thickness>
+        </property>
+    </element>
+    
+    <element id="right_wall">
+        <type>wall/no_window</type>
+        <transform>
+            <scale>1,1,1</scale>
+            <rotate>0,90,0</rotate>
+            <translate>-8.5,5.5,0</translate>
+        </transform>
+        <property>
+            <width>10</width>
+            <height>10</height>
+            <thickness>1</thickness>
+        </property> 
+    </element>
+
+    <element id="front_wall">
+        <type>wall/no_window</type>
+        <transform>
+            <scale>1,1,1</scale>
+            <rotate>0,0,90</rotate>
             <translate>0,5.5,4.5</translate>
         </transform>
         <property>
-            <size>10, 16</size>
-            <thick>1</thick>
+            <width>10</width>
+            <height>16</height>
+            <thickness>1</thickness>
         </property> 
     </element>
  
