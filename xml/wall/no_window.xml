@@ -8,10 +8,7 @@
             <translate>0,0,0</translate>
         </transform>
         
-        <material>
-			<texture>wall.jpg</texture>
-			<color></color>
-        </material>
+		<texture>wall.jpg</texture>
         
         <property>
             <width>10</width>

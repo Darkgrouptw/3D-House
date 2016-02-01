@@ -313,15 +313,31 @@ if(typeof(SceneJS) != 'undefined')
 		ParameterManager.prototype.makeIndices = function(start, end, group)
 		{
 			group = group !== undefined ? group : 4;
-			var indices = [], num = end + 1;
-			if((num % 4) == 0)
+			if(group == 4)
 			{
-				for(var idx = start; idx < num; idx = idx + group)
+				var indices = [], num = end + 1;
+				if(((num - start) % group) == 0)
 				{
-					indices = indices.concat([idx, idx + 1, idx + 2, idx, idx + 2, idx + 3]);
+					for(var idx = start; idx < num; idx = idx + group)
+					{
+						indices = indices.concat([idx, idx + 1, idx + 2, idx, idx + 2, idx + 3]);
+					}
 				}
+				return indices;
 			}
-			return indices;
+			
+			if(group == 3)
+			{
+				var indices = [], num = end + 1;
+				if((num % group) == 0)
+				{
+					for(var idx = start; idx < num; idx = idx + group)
+					{
+						indices = indices.concat([idx, idx + 1, idx + 2]);
+					}
+				}
+				return indices;
+			}
 		}
 		
 		// Not yet implement

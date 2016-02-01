@@ -49,7 +49,7 @@ class HouseXML
 				$endStr = "";
 				
 				if($textureNode->length != 0)
-					$this->MaterialBind($nodeStr, $textureNode->item(0), $endStr);
+					$this->TextureBind($nodeStr, $textureNode->item(0), $endStr);
 					
 				if($transformNode->length != 0)
 					$this->MatrixBind($nodeStr, $transformNode->item(0));
@@ -127,7 +127,7 @@ class HouseXML
 	///////////////////////////////////////////////////////////////////////////////
 	// 把 Texture 的東西，傳到string裡
 	///////////////////////////////////////////////////////////////////////////////
-	private function MaterialBind(&$str, $texture, &$endStr)
+	private function TextureBind(&$str, $texture, &$endStr)
 	{
 		$str = $str." type: \"texture\",\n";
 		$str = $str." src: \"images/texture/".$texture->textContent."\",\n";

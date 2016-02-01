@@ -4,7 +4,7 @@
 
 ### 02.01
 * 改用新的XML結構語法
-* 新增一個修改完成的例子: XML=wall/no_window
+* 新增例子: XML=wall/no_window, wall/triangle
 * 資料夾命名更動
 * Node 取得方式： 
 
