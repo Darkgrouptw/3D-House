@@ -1,16 +1,23 @@
 <layer>
     <element id="wall">
         <type>wall/no_window</type>
+        
         <transform>
             <scale>1,1,1</scale> 
             <rotate>0,0,0</rotate>
             <translate>0,0,0</translate>
         </transform>
+        
+        <material>
+			<texture>wall.jpg</texture>
+			<color></color>
+        </material>
+        
         <property>
-            <center>0,0,0</center>
             <width>10</width>
             <height>10</height>
             <thickness>1</thickness>
         </property>
+        
     </element>     
 </layer>  

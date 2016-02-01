@@ -21,7 +21,7 @@
 ### 「建議」版本：
 
 * ```<pos>``` 標籤似乎只是用來當作識別用，所以我把它加在 ```<element>``` 標籤中的 ```id``` 屬性
-* ```<texture>``` 標籤擴展成有可以純顏色的 ```<color>``` 與指定檔案的 ```<file>```
+* ```<material>``` 標籤擴展成有可以純顏色的 ```<color>``` 與指定貼圖檔案的 ```<texture>```
 * ```<transform>``` 標籤細分成為： 旋轉 ```<rotate>```，平移 ```<translate>``` ，縮放 ```<scale>```
 * ```<type>``` 標籤中的類型都改成小寫的版本
 * ```<decorate>``` 標籤可以用來修飾該 ```<element>```，裡面放的也是 ```<element>```
@@ -37,10 +37,10 @@
             <translate>0,0,0</translate>
         </transform>
         
-        <texture>
-            <file>Ground.jpg</file>
+        <material>
+            <texture>Ground.jpg</texture>
             <color>255,255,0</color>
-        </texture>
+        </material>
         
         <property>
             <height>8</height>

@@ -13,7 +13,8 @@
     <link href = "css/default.css" rel = "stylesheet">
     <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">
 	<script src = "js/scenejs.js"></script>
-	<script src="js/ui.js"></script>
+	<script src = "js/paramanager.js"></script>
+	<script src = "js/ui.js"></script>
     <script src = "js/utility.js"></script>
     <script src = "js/layout.js"></script>
     <script src = "js/interact.js"></script>
@@ -27,7 +28,7 @@
 		
 		if(isset($_GET["XML"]))
 		{
-			$FileLocation = "./XML/".$_GET["XML"].".xml";
+			$FileLocation = "./xml/".$_GET["XML"].".xml";
 			if(file_exists($FileLocation))
 			{
 				$XML = new HouseXML();
@@ -98,11 +99,11 @@
         </div>
         
         <div id = "Subdecoratebtn" class = "bottom btn sub" onclick = "SubdecoratebtnClick()">
-            <img src = "./Images/decorate.png">
+            <img src = "./images/decorate.png">
         </div>
         
         <div id = "Mainbtn" class = "bottom btn main" onclick = "MainbtnClick()">
-            <img id = "mainbtnimg" src = "./Images/add.png">
+            <img id = "mainbtnimg" src = "./images/add.png">
         </div>
         
         <div id = "SubToolbar" class = "bottom bar">
@@ -114,9 +115,9 @@
         
         <div id = "Toolbar" class = "bottom bar">
             <ul>
-                <li><img src = "./Images/icon-window.png"></li>
-                <li><img src = "./Images/icon-door.png"></li>
-                <li><img src = "./Images/icon-roof.png" onclick = "RoofClick()"></li>
+                <li><img src = "./images/icon-window.png"></li>
+                <li><img src = "./images/icon-door.png"></li>
+                <li><img src = "./images/icon-roof.png" onclick = "RoofClick()"></li>
                 <li style = "float: right;"><img src = "./images/cross2.png" onclick = "CloseToolbarClick()"></li>
             </ul>
         </div>
