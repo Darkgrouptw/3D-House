@@ -143,7 +143,7 @@ class HouseXML
 			round(sin($deg_Y) * 1000000) / 1000000,0,round(cos($deg_Y) * 1000000) / 1000000,0,
 			0,0,0,1
 		);
-		$rotate_m_z = array
+		$rotate_m_Z = array
 		(
 			round(cos($deg_Z) * 1000000) / 1000000,round(sin($deg_Z) * 1000000) / 1000000,0,0,
 			round(-sin($deg_Z) * 1000000) / 1000000,round(cos($deg_Z) * 1000000) / 1000000,0,0,
@@ -158,7 +158,7 @@ class HouseXML
 			0,0,$scaleParam[2],0,
 			0,0,0,1
 		);
-		$ans = $this->MatrixOperation($this->MatrixOperation($this->MatrixOperation($this->MatrixOperation($rotate_m_z,$rotate_m_Y),$rotate_m_X),$translate_m),$scale_m);
+		$ans = $this->MatrixOperation($this->MatrixOperation($this->MatrixOperation($this->MatrixOperation($translate_m,$rotate_m_X),$rotate_m_Y),$rotate_m_Z),$scale_m);
 		$str = "						type: \"matrix\",\n						elements:[". $ans[0];
 		for($i = 1; $i < 16; $i++)
 			$str = $str.",".$ans[$i];
