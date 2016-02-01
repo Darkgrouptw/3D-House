@@ -1,18 +1,23 @@
 <layer>
-    <element id="front_door">
+    <element>
+		
         <type>wall/single_window</type>
+        
         <transform>
             <scale>1,1,1</scale>
             <rotate>0,0,0</rotate>
             <translate>0,0,5</translate>
         </transform>
+        
+        <texture>wall.jpg</texture>
+        
         <property>
-            <center>0,0, 0</center>
             <width>10</width>
             <height>10</height>
             <ratio>0.2,0.8</ratio>
-            <dsize>3,5</dsize>
-            <thick>1</thick>
+            <doorsize>3,5</doorsize>
+            <thickness>1</thickness>
         </property>
+        
     </element>
 </layer>           

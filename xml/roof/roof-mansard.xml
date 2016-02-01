@@ -1,5 +1,6 @@
 <layer>
     <element>
+		
         <type>roof/mansard</type>
 
         <transform>
@@ -8,13 +9,14 @@
             <translate>0,0,0</translate>
         </transform>
 		
+		<texture>roof.jpg</texture>
+		
         <property>
             <width>18</width>
             <height>5</height>
             <depth>18</depth>
             <thickness>1</thickness>
             <ratio>0.1,0.1</ratio><!-- Limitation is 0.5, 0.5 -->
-            <center>0,0,0</center>
         </property>
 	
     </element> 

@@ -1,0 +1,39 @@
+<layer>
+    <element>
+        <type>wall/no_window</type>
+        
+        <transform>
+            <scale>1,1,1</scale> 
+            <rotate>0,0,0</rotate>
+            <translate>0,0,0</translate>
+        </transform>
+        
+		<texture>wall.jpg</texture>
+        
+        <property>
+            <width>10</width>
+            <height>10</height>
+            <thickness>1</thickness>
+        </property>
+        
+    </element>     
+    
+    <element>
+        <type>wall/no_window</type>
+        
+        <transform>
+            <scale>1,1,1</scale> 
+            <rotate>0, 90,0</rotate>
+            <translate>10,0,0</translate>
+        </transform>
+        
+		<texture>wall.jpg</texture>
+        
+        <property>
+            <width>5</width>
+            <height>5</height>
+            <thickness>1</thickness>
+        </property>
+        
+    </element> 
+</layer>  

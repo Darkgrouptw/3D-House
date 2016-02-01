@@ -2,7 +2,7 @@
 
     <element id="top_roof">
         <type>roof/hip</type>
-		<texture>Ground.jpg</texture>
+		<texture>ground.jpg</texture>
 		<pos>base</pos>
         <transform>
             <scale>1,1,1</scale>
@@ -22,7 +22,7 @@
 
     <element id="bottom_base">
         <type>base/basic</type>
-		<texture>Ground.jpg</texture>
+		<texture>ground.jpg</texture>
 		<pos>base</pos>
         <transform>
             <scale>1,1,1</scale>
@@ -38,7 +38,7 @@
 
     <element id="left_wall">
         <type>wall/no_window</type>
-		<texture>Ground.jpg</texture>
+		<texture>ground.jpg</texture>
 		<pos>base</pos>
         <transform>
             <scale>1,1,1</scale>
@@ -54,7 +54,7 @@
     
     <element id="right_wall">
         <type>wall/no_window</type>
-		<texture>Ground.jpg</texture>
+		<texture>ground.jpg</texture>
 		<pos>base</pos>
         <transform>
             <scale>1,1,1</scale>
@@ -70,7 +70,7 @@
 
     <element id="front_wall">
         <type>wall/no_window</type>
-		<texture>Ground.jpg</texture>
+		<texture>ground.jpg</texture>
 		<pos>base</pos>
         <transform>
             <scale>1,1,1</scale>

@@ -1,20 +1,21 @@
 <layer>
-    <element id="wall">
-        <type>wall/no_window</type>
+    <element>
+		
+        <type>base/circle</type>
         
         <transform>
-            <scale>1,1,1</scale> 
+			
+            <scale>1,1,1</scale>
             <rotate>0,0,0</rotate>
             <translate>0,0,0</translate>
         </transform>
         
-		<texture>wall.jpg</texture>
+        <texture>ground.jpg</texture>
         
         <property>
-            <width>10</width>
-            <height>10</height>
+            <radius>10</radius>
             <thickness>1</thickness>
         </property>
         
-    </element>     
+    </element>
 </layer>  

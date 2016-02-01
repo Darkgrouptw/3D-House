@@ -115,7 +115,7 @@ function textureToggle(){
                 box[i]._initTexture();
             }else{
                 var src=box[i].getParent().getParent().getName();
-                box[i].setSrc("Images/GeometryTexture/"+src+"");
+                box[i].setSrc("images/GeometryTexture/"+src+"");
             }
         }
     }
