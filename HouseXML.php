@@ -58,7 +58,10 @@ class HouseXML
 				{
 					$this->TypeBind($nodeStr, $typeNode->item(0), $endStr);
 					if($propertyNode->length != 0)
+					{
 						$this->PropertyBind($nodeStr, $propertyNode);
+						$this->PropertyBind($nodeStr, $transformNode);
+					}
 				}
 				//多套一層name，這樣scene.js 才可以pick
 				$nameWrapStr="					type: \"name\",\n 					name: \"".$textureNode->item(0)->textContent."\",\n\n					nodes:\n					[{\n".$nodeStr."\n".$endStr."				}]\n";
