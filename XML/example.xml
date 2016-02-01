@@ -1,7 +1,11 @@
 <layer>
     <element>
         <type>Base/Basic</type>
-        <transform>1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1</transform>
+        <transform>
+			<scale>1,1,1</scale>
+			<rotate>0,0,0</rotate>
+			<translate>0,0,0</translate>
+		</transform>
 		<texture>Ground.jpg</texture>
         <pos>base</pos>
         <property>
@@ -10,9 +14,13 @@
             <thickness>0.5</thickness>
         </property>
     </element> 
-    <element>
+   <element>
         <type>Wall/NoWindow</type>
-        <transform>0,0,1,0,1,0,0,0,0,1,0,0,17.5,8.5,0.5,1</transform>
+        <transform>
+			<scale>1,1,1</scale>
+			<rotate>90,0,-90</rotate>
+			<translate>17.5,8.5,0.5</translate>
+		</transform>
 		<texture>Wall.jpg</texture>
         <pos>rightWall</pos>
         <property>
@@ -20,10 +28,14 @@
             <width>7.5</width>
             <thickness>0.5</thickness>
         </property> 
-    </element>   
-    <element>
+    </element>
+	<element>
         <type>Wall/NoWindow</type>
-        <transform>0,0,1,0,-1,0,0,0,0,-1,0,0,-17.5,8.5,0.5,1</transform>
+        <transform>
+			<scale>1,1,1</scale>
+			<rotate>90,0,90</rotate>
+			<translate>-17.5,8.5,0.5</translate>
+		</transform>
 		<texture>Wall.jpg</texture>
         <pos>leftWall</pos>
         <property>
@@ -34,7 +46,11 @@
     </element>
     <element>
         <type>Wall/NoWindow</type>
-        <transform>1,0,0,0,0,0,-1,0,0,1,0,0,0,8.5,-7.5,1</transform>
+        <transform>
+			<scale>1,1,1</scale>
+			<rotate>90,0,0</rotate>
+			<translate>0,8.5,-7.5</translate>
+		</transform>
 		<texture>Wall.jpg</texture>
         <pos>backWall</pos>
         <property>
@@ -43,9 +59,13 @@
             <thickness>0.5</thickness>
         </property>
     </element>
-    <element>
+	<element>
         <type>Wall/Triangle</type>
-        <transform>0,0,1,0,0,1,0,0,-1,0,0,0,17.5,21.5,0,1</transform>
+        <transform>
+			<scale>1,1,1</scale>
+			<rotate>0,0,0</rotate>
+			<translate>17.5,21.5,0</translate>
+		</transform>
 		<texture>Wall.jpg</texture>
         <pos>rightTriangle</pos>
         <property>
@@ -57,7 +77,11 @@
     </element> 
     <element>
         <type>Wall/Triangle</type>
-        <transform>0,0,-1,0,0,1,0,0,1,0,0,0,-17.5,21.5,0,1</transform>
+        <transform>
+			<scale>1,1,1</scale>
+			<rotate>0,0,0</rotate>
+			<translate>-17.5,21.5,0</translate>
+		</transform>
 		<texture>Wall.jpg</texture>
         <pos>leftTriangle</pos>
         <property>
@@ -67,17 +91,4 @@
             <ratio>0.5,0.5,1</ratio>
         </property>
     </element>
-    <element>
-        <type>Roof/Gable</type>
-        <transform>0,0,1,0,0,1,0,0,-1,0,0,0,0,21.5,0,1</transform>
-		<texture>Roof.jpg</texture>
-        <pos>roof</pos>
-        <property>
-            <height>5</height>
-            <width>8</width>
-            <thickness>1</thickness>
-            <deep>18</deep>
-            <ratio>0.5,0.5,1</ratio>
-        </property>
-    </element> 
 </layer> 

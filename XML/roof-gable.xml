@@ -1,0 +1,48 @@
+<layer>
+    <element>
+	
+        <type>roof/gable</type>
+        
+		<transform>
+			<scale>1,1,1</scale>
+			<rotate>0,0,0</rotate>
+			<translate>0,0,0</translate>
+		</transform>
+		
+        <property>
+			<size>18,8,5</size>
+			<thick>1</thick>
+			<ratio>0.5,0.5</ratio>
+            <center>0,0,0</center>
+        </property>
+		
+		<!--<texture>
+			<file></file>
+			<color></color>
+		</texture>-->
+		
+		<decorate>	
+		
+			<element>
+				<type>wall/triangle</type>
+				
+				<transform>
+					<scale>1,1,1</scale>
+					<rotate>0,0,0</rotate>
+					<translate>0,0,8.5</translate>
+				</transform>
+			</element>
+			
+			<element>
+				<type>wall/triangle</type>
+				
+				<transform>
+					<scale>1,1,1</scale>
+					<rotate>0,0,0</rotate>
+					<translate>0,0,-8.5</translate>
+				</transform>
+			</element>
+		</decorate>
+		
+    </element> 
+</layer>
