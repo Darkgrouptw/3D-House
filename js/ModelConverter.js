@@ -203,7 +203,30 @@ function convertToMultiObj(inputNode){
 	for(var i = 0;i<caveStr.length;i+=2){
 		infoStr += vexStr[i] + vexStr[i+1] + caveStr[i] + caveStr[i+1] + "\n";
 	}
-	download(infoStr, "info" + ".txt", 'text/plain');
+	download(addSubMark(infoStr), "info" + ".txt", 'text/plain');
+}
+
+//Adding convex or concave marks(0 or 1)
+function addSubMark(str){
+	var lines = str.split("\n");
+	var outStr = "";
+	if(lines.length <2){
+		return "";
+	}
+	var count = 0, outNum = 0;
+	for(var i = 0;i<lines.length;i++){
+
+		if(i>2 && lines[i] != "" && lines[i].substring(0, 5) != "model"){
+			outStr += lines[i] + String(outNum % 2) + "\n";
+			if(++count == 6){
+				count = 0;
+				outNum++;
+			}
+		}else{
+			outStr += lines[i] + "\n";
+		}
+	}
+	return outStr;
 }
 
 function isConnector(nodeNum){
