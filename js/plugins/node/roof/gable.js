@@ -181,8 +181,8 @@ function build(params)
         type: "geometry",
         primitive: "triangles",
         positions: this.paramana.createPositions(),
-		normals: normalSet,
 		uv: uvSet,
+		normals: "auto",
         indices: indiceSet
     };
 	

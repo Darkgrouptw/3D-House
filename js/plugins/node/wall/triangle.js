@@ -80,14 +80,6 @@ SceneJS.Types.addType("wall/triangle",
 function build(params) 
 {
 	var indiceSet = utility.makeIndices(0, 5, 3).concat(utility.makeIndices(6, 17));
-	var normalSet = new Float32Array(
-	[
-		0, 0, -1, 0, 0, -1, 0, 0, -1,
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 1, 0, 0, 1, 0, 0, 1
-	]);
 	var uvSet =  new Float32Array(
 	[
 		0, 0, 1, 0, this.paramana.get('ratio').a, 1,
@@ -102,8 +94,8 @@ function build(params)
 		type: "geometry",
 		primitive: "triangles",
 		positions: this.paramana.createPositions(),
-		normals: normalSet,
 		uv: uvSet,
+		normals: "auto",
 		indices: indiceSet
 	};
 	

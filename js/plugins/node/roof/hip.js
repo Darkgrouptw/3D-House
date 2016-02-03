@@ -134,20 +134,6 @@
 			28, 29, 30, 28, 30, 31
 		]);
 		
-		normalSet = normalSet.concat(
-		[
-			-1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0,
-			-1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0,
-			
-			0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1,    
-            0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0,
-			
-            -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0,
-            0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0,
-            0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1,
-			1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0
-		]);
-		
 		for(var pidx = 0; pidx < positionSet.length; pidx = pidx + 3)
 		{
 			positionSet[pidx] = positionSet[pidx] + center.x;
@@ -162,7 +148,7 @@
             primitive: params.wire ? "lines" : "triangles",
             coreId: coreId,
             positions: new Float32Array(positionSet),
-            normals: normalSet,
+            normals: "auto",
             indices:  indiceSet
         };
 		

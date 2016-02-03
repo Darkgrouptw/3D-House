@@ -95,15 +95,6 @@ SceneJS.Types.addType("wall/no_window",
 function build(params) 
 {
     var indiceSet = utility.makeIndices(0, 23);
-    var normalSet = new Float32Array(
-    [
-		0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1,
-		1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0,
-		0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0,
-		-1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0,
-		0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0,
-		0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1 
-	]);
 	var uvSet = new Float32Array(
 	[
 		1, 1, 0, 1, 0, 0, 1, 0,
@@ -119,8 +110,8 @@ function build(params)
 		type: 'geometry',
 		primitive: 'triangles',
 		positions: this.paramana.createPositions(),
-		normals: normalSet,
 		uv: uvSet,
+		normals: "auto",
 		indices: indiceSet
 	};
 	
