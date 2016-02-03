@@ -1,7 +1,7 @@
 
 SceneJS.Types.addType("wall/triangle", 
 { 
-	construct:function (params) 
+	construct: function (params) 
 	{ 
 		this.paramana = new ParameterManager(params, function(property)
 		{
@@ -40,35 +40,71 @@ SceneJS.Types.addType("wall/triangle",
 	setRotate: function(rvec) { this.paramana.set('rotate', rvec); this.paramana.updateMatirxNode(this); },
 	
 	getTranslate: function() { return this.paramana.get('translate'); },
-	setTranslate: function(tvec) { this.paramana.set('translate', tvec); this.paramana.updateMatirxNode(this); }
+	setTranslate: function(tvec) { this.paramana.set('translate', tvec); this.paramana.updateMatirxNode(this); },
+	
+    callBaseCalibration: function()
+    {
+        return;
+        var leftTriangle = -1, rightTriangle = -1, roof = -1;
+        var nodes = scene.findNodes();
+        
+        // material name matrix texture element
+        var mnmte = function(n) { return n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0]; }
+        
+        for(var i=0;i<nodes.length;i++)
+        {
+            var n = nodes[i];
+            if(n.getType()=="name")
+            {
+                if(n.getName()=="roof") { roof = mnmte(n); }
+                else if(n.getName()=="leftTriangle") { leftTriangle = mnmte(n); }
+                else if(n.getName()=="rightTriangle") { rightTriangle = mnmte(n); }
+            }
+        }
+        if(roof == -1) { console.log("ERROR"); return; }
+        if(leftTriangle.getID() == this.getID())
+        {
+	        roof.setWidth(this.getWidth());
+	        roof.setHeight(this.getHeight());
+	        roof.adjustChildren();
+        }
+        else if(rightTriangle.getID() == this.getID())
+        {
+	        roof.setWidth(this.getWidth());
+	        roof.setHeight(this.getHeight());
+	        roof.adjustChildren();
+        }
+    }
 });
 
 function build(params) 
 {
-	var indicesSet = this.paramana.makeIndices(0, 5, 3).concat(this.paramana.makeIndices(6, 17));
+	var indiceSet = utility.makeIndices(0, 5, 3).concat(utility.makeIndices(6, 17));
+	var normalSet = new Float32Array(
+	[
+		0, 0, -1, 0, 0, -1, 0, 0, -1,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 1, 0, 0, 1, 0, 0, 1
+	]);
+	var uvSet =  new Float32Array(
+	[
+		0, 0, 1, 0, this.paramana.get('ratio').a, 1,
+		1, 0, 1, 1, 0, 1, 0, 0,
+		1, 1, 0, 1, 0, 0, 1, 0,
+		0, 1, 0, 0, 1, 0, 1, 1,
+		0, 0, 1, 0, this.paramana.get('ratio').b, 1
+	]);
 	
 	var geometry = 
 	{
 		type: "geometry",
 		primitive: "triangles",
-		positions: this.paramana.makePositions(),
-		normals: new Float32Array(
-		[
-			0, 0, -1, 0, 0, -1, 0, 0, -1,
-			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-			0, 0, 1, 0, 0, 1, 0, 0, 1
-		]),
-		uv:  new Float32Array(
-		[
-			0, 0, 1, 0, this.paramana.get('ratio').a, 1,
-			1, 0, 1, 1, 0, 1, 0, 0,
-			1, 1, 0, 1, 0, 0, 1, 0,
-			0, 1, 0, 0, 1, 0, 1, 1,
-			0, 0, 1, 0, this.paramana.get('ratio').b, 1
-		]),
-		indices: indicesSet
+		positions: this.paramana.createPositions(),
+		normals: normalSet,
+		uv: uvSet,
+		indices: indiceSet
 	};
 	
 	return geometry;

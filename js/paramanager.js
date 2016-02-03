@@ -1,6 +1,96 @@
+// Namespace
+var utility = {};
 
+// Convert to the vector form
+utility.vectorForm = function(vector) { return [ vector.x , vector.y, vector.z ]; };
 
-function delaunay2D(vlist, key)
+// Get the half value
+utility.makeHalf = function(value) { return value / 2; };
+
+// True if value is numeric, else get the false
+utility.isNumeric = function(value) { return !isNaN(parseFloat(value)) && isFinite(value); };
+
+// True if value undefined, else get the false, notices: null is not undefined
+utility.checkUndefined = function(value) { return (value !== undefined ? false : true); };
+
+// Generate random string
+utility.makeRandomID = function(size)
+{
+	var text = "";
+	var possible = "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz0123456789";
+	for(var index = 0; index < size; index++)
+	{
+		text += possible.charAt(Math.floor(Math.random() * possible.length));
+	}
+	return text;
+};
+
+// Try generate something like a indices given start and end.
+// For example: start = 0, end = 3, group = 4, result = [0, 1, 2, 0, 2, 3]
+utility.makeIndices = function(start, end, group)
+{
+	group = group !== undefined ? group : 4;
+	if(group == 4)
+	{
+		var indices = [], num = end + 1;
+		if(((num - start) % group) == 0)
+		{
+			for(var idx = start; idx < num; idx = idx + group)
+			{
+				indices = indices.concat([idx, idx + 1, idx + 2, idx, idx + 2, idx + 3]);
+			}
+		}
+		return indices;
+	}
+	
+	if(group == 3)
+	{
+		var indices = [], num = end + 1;
+		if((num % group) == 0)
+		{
+			for(var idx = start; idx < num; idx = idx + group)
+			{
+				indices = indices.concat([idx, idx + 1, idx + 2]);
+			}
+		}
+		return indices;
+	}
+};
+
+// Not yet implement
+utility.makeNormals = function (indices, positions) 
+{ 
+	console.log('makeNormals: Not yet'); 
+};
+
+// Needed SceneJS support
+utility.transformMatrix = function(transform) 
+{
+	var smat = SceneJS_math_scalingMat4v(transform.scale);
+	var tmat = SceneJS_math_translationMat4v(transform.translate);
+
+	var rarc = [0, 0, 0];
+	SceneJS_math_mulVec3Scalar(transform.rotate, Math.PI / 180, rarc);
+
+	var rotx = SceneJS_math_rotationMat4v(rarc[0], [1, 0, 0]);
+	var roty = SceneJS_math_rotationMat4v(rarc[1], [0, 1, 0]);
+	var rotz = SceneJS_math_rotationMat4v(rarc[2], [0, 0, 1]);
+
+	// Rz * Ry * Rx
+	var rmat = SceneJS_math_diagonalMat4v([0, 0, 0, 0]);
+	SceneJS_math_mulMat4(roty, rotx, rmat);
+	SceneJS_math_mulMat4(rotz, rmat, rmat);
+
+	// Mt * Mr * Ms
+	var amat = SceneJS_math_diagonalMat4v([0, 0, 0, 0]);
+	SceneJS_math_mulMat4(rmat, smat, amat);
+	SceneJS_math_mulMat4(tmat, amat, amat);
+	
+	return amat;
+};
+
+// Triangulation only for 2-D
+utility.delaunay2D = function(positions, key)
 {
 	var EPSILON = 1.0 / 1048576.0;
 	var superTriangle = function(v)
@@ -37,7 +127,7 @@ function delaunay2D(vlist, key)
 			fabsy2y3 = Math.abs(y2 - y3),
 			xc, yc, m1, m2, mx1, mx2, my1, my2, dx, dy;
 
-		/* Check for coincident points */
+		// Check for coincident points
 		if(fabsy1y2 < EPSILON && fabsy2y3 < EPSILON)
 		  throw new Error("Eek! Coincident points!");
 
@@ -102,8 +192,7 @@ function delaunay2D(vlist, key)
 		}
 	};
 	
-	var n = vlist.length,
-	  i, j, indices, st, open, closed, edges, dx, dy, a, b, c;
+	var n = positions.length, i, j, indices, st, open, closed, edges, dx, dy, a, b, c;
 
 	// Fail if there aren't enough vertices to form any triangles.
 	if(n < 3) { return []; }
@@ -111,29 +200,26 @@ function delaunay2D(vlist, key)
 	// Slice out the actual vertices from the passed objects. (Duplicate the
 	// array even if we don't, though, since we need to make a supertriangle
 	// later on!)
-	vlist = vlist.slice(0);
-
-	if(key) for(i = n; i--; ) vlist[i] = vlist[i][key];
+	positions = positions.slice(0);
+	if(key) for(i = n; i--; ) positions[i] = positions[i][key];
 
 	// Make an array of indices into the vertex array, sorted by the
 	// vertices' x-position.
 	indices = new Array(n);
-
-	for(i = n; i--; ) indices[i] = i;
-	indices.sort(function(i, j) { return vlist[j][0] - vlist[i][0]; });
+	for(i = n; i--; ) { indices[i] = i; }
+	indices.sort(function(i, j) { return positions[j][0] - positions[i][0]; });
 
 	// Next, find the vertices of the supertriangle (which contains all other
 	// triangles), and append them onto the end of a (copy of) the vertex
 	// array.
-	st = superTriangle(vlist);
-	vlist.push(st[0], st[1], st[2]);
+	st = superTriangle(positions);
+	positions.push(st[0], st[1], st[2]);
 
 	// Initialize the open list (containing the supertriangle and nothing
 	// else) and the closed list (which is empty since we havn't processed
 	// any triangles yet).
-	open   = [circumcircle(vlist, n + 0, n + 1, n + 2)];
-	closed = [];
-	edges  = [];
+	open   = [circumcircle(positions, n + 0, n + 1, n + 2)];
+	closed = []; edges  = [];
 
 	// Incrementally add each vertex to the mesh.
 	for(i = indices.length; i--; edges.length = 0) 
@@ -148,7 +234,7 @@ function delaunay2D(vlist, key)
 			// If this point is to the right of this triangle's circumcircle,
 			// then this triangle should never get checked again. Remove it
 			// from the open list, add it to the closed list, and skip.
-			dx = vlist[c][0] - open[j].x;
+			dx = positions[c][0] - open[j].x;
 			if(dx > 0.0 && dx * dx > open[j].r) 
 			{
 				closed.push(open[j]);
@@ -157,7 +243,7 @@ function delaunay2D(vlist, key)
 			}
 
 			// If we're outside the circumcircle, skip this triangle.
-			dy = vlist[c][1] - open[j].y;
+			dy = positions[c][1] - open[j].y;
 			if(dx * dx + dy * dy - open[j].r > EPSILON) continue;
 
 			// Remove the triangle and add it's edges to the edge list.
@@ -172,37 +258,29 @@ function delaunay2D(vlist, key)
 		for(j = edges.length; j; ) 
 		{
 			b = edges[--j]; a = edges[--j];
-			open.push(circumcircle(vlist, a, b, c));
+			open.push(circumcircle(positions, a, b, c));
 		}
 	}
 
 	// Copy any remaining open triangles to the closed list, and then
 	// remove any triangles that share a vertex with the supertriangle,
 	// building a list of triplets that represent triangles.
-	for(i = open.length; i--; ) closed.push(open[i]);
+	for(i = open.length; i--; ) { closed.push(open[i]); }
 	open.length = 0;
 
 	for(i = closed.length; i--; )
 	{
 		if(closed[i].i < n && closed[i].j < n && closed[i].k < n)
-		{
-			open.push(closed[i].i, closed[i].j, closed[i].k);
-		}
+		{ open.push(closed[i].i, closed[i].j, closed[i].k); }
 	}
-
 	return open;
-	
 }; // End of delaunay2D
 
 
+// For easy to management the parameter
 function ParameterManager(p, functor)
 {
-	this.property = {}, this.transform = {}, this.util = {};
-	
-	this.util.vectorForm = function(vector) { return [ vector.x , vector.y, vector.z ]; };
-	this.util.makeHalf = function(value) { return value / 2; };
-	this.util.isNumeric = function(value) { return !isNaN(parseFloat(value)) && isFinite(value); }
-	this.util.createPositions = {};
+	this.property = {}, this.transform = {}, this.generatePositions = {};
 	
 	this.property.width = p.width !== undefined ? p.width: 0;
 	this.property.depth = p.depth !== undefined ? p.depth : 0;
@@ -212,137 +290,49 @@ function ParameterManager(p, functor)
 	
 	this.property.ratio = p.ratio !== undefined ? p.ratio: {a: 0, b: 0};
 
-	this.transform.scale = p.scale !== undefined ? this.util.vectorForm(p.scale): [1, 1, 1];
-	this.transform.rotate = p.rotate !== undefined ? this.util.vectorForm(p.rotate): [0, 0, 0];
-	this.transform.translate = p.translate !== undefined ? this.util.vectorForm(p.translate): [0, 0, 0];
-	
-	this.util.transformMatrix = function(transform) 
-	{
-		var smat = SceneJS_math_scalingMat4v(transform.scale);
-		var tmat = SceneJS_math_translationMat4v(transform.translate);
+	this.transform.scale = p.scale !== undefined ? utility.vectorForm(p.scale): [1, 1, 1];
+	this.transform.rotate = p.rotate !== undefined ? utility.vectorForm(p.rotate): [0, 0, 0];
+	this.transform.translate = p.translate !== undefined ? utility.vectorForm(p.translate): [0, 0, 0];
 
-		var rarc = [0, 0, 0];
-		SceneJS_math_mulVec3Scalar(transform.rotate, Math.PI / 180, rarc);
-
-		var rotx = SceneJS_math_rotationMat4v(rarc[0], [1, 0, 0]);
-		var roty = SceneJS_math_rotationMat4v(rarc[1], [0, 1, 0]);
-		var rotz = SceneJS_math_rotationMat4v(rarc[2], [0, 0, 1]);
-
-		// Rz * Ry * Rx
-		var rmat = SceneJS_math_diagonalMat4v([0, 0, 0, 0]);
-		SceneJS_math_mulMat4(roty, rotx, rmat);
-		SceneJS_math_mulMat4(rotz, rmat, rmat);
-
-		// Mt * Mr * Ms
-		var amat = SceneJS_math_diagonalMat4v([0, 0, 0, 0]);
-		SceneJS_math_mulMat4(rmat, smat, amat);
-		SceneJS_math_mulMat4(tmat, amat, amat);
-		
-		return amat;
-	};
-	
-	this.util.createPositions = functor != undefined ? functor: function() 
+	this.generatePositions = functor != undefined ? functor: function() 
 	{ 
 		console.log('Error: Positions undefined.'); return []; 
 	};
 };	
 
+// When needed add the other attribute
+ParameterManager.prototype.addAttribute = function(name, attribute)
+{
+    if(utility.checkUndefined(property[name])) { property[name] = attribute; }
+    else { console.log('Warning: You are try to override the ' + name + ' with ' + attribute + '.'); }
+};
+
 // Getter by specific attribute, for example: get('width')
 ParameterManager.prototype.get = function(attribute)
 {
 	// If attribute in the property
-	if(this.property[attribute] !== undefined)
-	{
-		return this.property[attribute];
-	}
+	if(!utility.checkUndefined(this.property[attribute])) { return this.property[attribute]; }
 	else 
 	{
 		// Consider transform
-		if(this.transform[attribute] !== undefined)
-		{
-			return this.transform[attribute];
-		}
-		else
-		{
-			console.log('Error: No' + attribute + 'attribute in parameter manager.'); 
-			return {};
-		}
+		if(!utility.checkUndefined(this.transform[attribute])) { return this.transform[attribute]; }
+		else { console.log('Error: No ' + attribute + ' attribute in parameter manager.'); }
 	}
 }
 
 // Setter by specific attribute
 ParameterManager.prototype.set = function(attribute, value)
 {
-	if(this.property[attribute] !== undefined)
-	{
-		this.property[attribute] = value;
-	}
+	if(!utility.checkUndefined(this.property[attribute])) { this.property[attribute] = value; }
 	else 
 	{
-		if(this.transform[attribute] !== undefined)
-		{
-			this.transform[attribute] = value;
-		}
-		else
-		{
-			console.log('Error: No' + attribute + 'attribute in parameter manager.'); 
-			console.log('Nothing to do.')
-		}
+		if(!utility.checkUndefined(this.transform[attribute])) { this.transform[attribute] = value; }
+		else { console.log('Error: No ' + attribute + ' attribute in parameter manager.'); }
 	}
-}
-
-// Generate random string
-ParameterManager.prototype.makeRandomID = function(size)
-{
-	var text = "";
-	var possible = "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz0123456789";
-	for(var index = 0; index < size; index++)
-	{
-		text += possible.charAt(Math.floor(Math.random() * possible.length));
-	}
-	return text;
-}
-
-// Try generate something like a indices given start and end.
-// For example: start = 0, end = 3, group = 4, result = [0, 1, 2, 0, 2, 3]
-ParameterManager.prototype.makeIndices = function(start, end, group)
-{
-	group = group !== undefined ? group : 4;
-	if(group == 4)
-	{
-		var indices = [], num = end + 1;
-		if(((num - start) % group) == 0)
-		{
-			for(var idx = start; idx < num; idx = idx + group)
-			{
-				indices = indices.concat([idx, idx + 1, idx + 2, idx, idx + 2, idx + 3]);
-			}
-		}
-		return indices;
-	}
-	
-	if(group == 3)
-	{
-		var indices = [], num = end + 1;
-		if((num % group) == 0)
-		{
-			for(var idx = start; idx < num; idx = idx + group)
-			{
-				indices = indices.concat([idx, idx + 1, idx + 2]);
-			}
-		}
-		return indices;
-	}
-}
-
-// Not yet implement
-ParameterManager.prototype.makeNormals = function (indicesList) 
-{ 
-	console.log('makeNormals: Not yet'); 
-},
+};
 
 // Need redefine in each element
-ParameterManager.prototype.makePositions = function() { return this.util.createPositions(this.property); },
+ParameterManager.prototype.createPositions = function() { return this.generatePositions(this.property); };
 
 // Provide update matrix to the matrix node, usage: updateMatirxNode.bind(this)()
 ParameterManager.prototype.updateMatirxNode = function(that)
@@ -352,25 +342,28 @@ ParameterManager.prototype.updateMatirxNode = function(that)
 	while(true)
 	{
 		// This is mean the node doesn't wrapped by matrix node. 
-		if(matrix['parent'] == undefined) 
-		{ 
-			console.log('Warning: No transform node exist.')
-			return; 
-		}
+		if(utility.checkUndefined(matrix['parent'])) { console.log('Warning: No transform node exist.'); return; }
 		
-		if(matrix.type !== 'matrix')
-		{
-			matrix = matrix.parent;
-		}
+		// Move to the parent
+		if(matrix.type !== 'matrix') { matrix = matrix.parent; }
 		else { break; }
 	}
-	matrix.setMatrix(this.util.transformMatrix(this.transform));
-}
+	matrix.setMatrix(utility.transformMatrix(this.transform));
+};
 
 // The correct usage is: updateGeometryNode.bind(this)()
 ParameterManager.prototype.updateGeometryNode = function(that)
 {
 	var geometry = that.findNodesByType('geometry')[0];
-	geometry.setPositions({ positions: new Float32Array(this.util.createPositions(this.property)) });
-}
+	geometry.setPositions({ positions: new Float32Array(this.generatePositions(this.property)) });
+};
+
+// Experimental, Under Construction
+//---------------------------------------------------------------------------------
+// If needed?
+function GeometryManager(positions)
+{ this.shape = {}; }
+
+GeometryManager.prototype.get = function(attribute)
+{ return this.shape[attribute]; }
 

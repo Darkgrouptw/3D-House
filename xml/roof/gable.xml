@@ -8,6 +8,8 @@
             <translate>0,0,0</translate>
         </transform>
 		
+		<pos></pos>
+		
         <property>
             <width>8</width>
             <height>5</height>
@@ -18,11 +20,9 @@
 		
         <texture>roof.jpg</texture>
 		
-        <decorate>	
-		
+		<!--decorate>	
             <element>
                 <type>wall/triangle</type>	
-	
                 <transform>
                     <scale>1,1,1</scale>
                     <rotate>0,0,0</rotate>
@@ -32,16 +32,14 @@
 			
             <element>
                 <type>wall/triangle</type>
-
                 <transform>
                     <scale>1,1,1</scale>
                     <rotate>0,0,0</rotate>
                     <translate>0,0,-8.5</translate>
                 </transform>
             </element>
-
-        </decorate>
+        </decorate-->
         
     </element> 
-
 </layer>
+

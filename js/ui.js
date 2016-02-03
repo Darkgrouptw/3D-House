@@ -228,7 +228,7 @@ function attachInput(pickId){
     inputarea.appendChild(div);
     //text
     var deeppropertyName=document.createElement("lable");
-        deeppropertyName.textContent="deep";
+        deeppropertyName.textContent="depth";
         div.appendChild(deeppropertyName);
     //input
     var deepinput=document.createElement("input");
@@ -236,7 +236,7 @@ function attachInput(pickId){
         deepinput.min="1";
         deepinput.max="30";
         deepinput.step="0.1";
-        deepinput.value=n.getDeep();
+        deepinput.value=n.getDepth();
         div.appendChild(deepinput);
 
     var deeppropertyValue=document.createElement("lable");
@@ -248,7 +248,7 @@ function attachInput(pickId){
     });
     deepinput.addEventListener('mousemove',function(event){
         if (deepismove) {
-            n.setDeep(deepinput.value);
+            n.setDepth(deepinput.value);
             deeppropertyValue.textContent=deepinput.value;
             n.callBaseCalibration();
         }
