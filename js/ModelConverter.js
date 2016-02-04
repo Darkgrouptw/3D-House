@@ -70,8 +70,7 @@ function convertToMultiObj(inputNode){
 		}
 		vnStr += "\n";
 		
-
-		if(nodesArr[nodeI].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].type == "Roof/Gable"){
+		if(nodesArr[nodeI].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].type == "roof/gable"){
 			//Divides the roof into two .obj
 			var vArr = new Array(), vnArr = new Array();
 			var iter = 0, lastIter = 0;
@@ -99,9 +98,9 @@ function convertToMultiObj(inputNode){
 			}
 			//Dealing with inter face
 			f1Str += "f " + (4) + "//" + (4) + " " + (18) + "//" + (18) + " " + (1) + "//" + (1) + "\n";
-			f1Str += "f " + (1) + "//" + (1) + " " + (17) + "//" + (17) + " " + (18) + "//" + (18) + "\n";
+			f1Str += "f " + (1) + "//" + (1) + " " + (18) + "//" + (18) + " " + (17) + "//" + (17) + "\n";
 			f2Str += "f " + (4) + "//" + (4) + " " + (18) + "//" + (18) + " " + (1) + "//" + (1) + "\n";
-			f2Str += "f " + (1) + "//" + (1) + " " + (17) + "//" + (17) + " " + (18) + "//" + (18) + "\n";
+			f2Str += "f " + (1) + "//" + (1) + " " + (18) + "//" + (18) + " " + (17) + "//" + (17) + "\n";
 			vStr = "";
 			vnStr = "";
 			var v2Str = "", vn2Str = "";
@@ -394,7 +393,7 @@ function convertToMultiStl(inputNode){
 		var tmpFaces = curNode.getIndices();		
 
 
-		if(nodesArr[nodeI].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].type == "Roof/Gable"){
+		if(nodesArr[nodeI].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].type == "roof/gable"){
 			//vArr storing string, including \n; vnArr storing vectors	
 
 			var vArr = new Array(), vnArr = new Array();
@@ -461,14 +460,14 @@ function convertToMultiStl(inputNode){
 
 			outStr1 += "facet normal ";
 			for(k = 0;k<3;k++){
-				outStr1 += (vnArr[0][k] + vnArr[32][k] + vnArr[33][k]);
+				outStr1 += (vnArr[0][k] + vnArr[33][k] + vnArr[32][k]);
 				outStr1 += " ";
 			}
 			outStr1 += "\n    outer loop\n";
 			
 			outStr1 += "        " + vArr[0];
-			outStr1 += "        " + vArr[32];
 			outStr1 += "        " + vArr[33];
+			outStr1 += "        " + vArr[32];
 			
 			outStr1 += "    endloop\nendfacet\n";
 
@@ -487,14 +486,14 @@ function convertToMultiStl(inputNode){
 
 			outStr2 += "facet normal ";
 			for(k = 0;k<3;k++){
-				outStr2 += (vnArr[0][k] + vnArr[32][k] + vnArr[33][k]);
+				outStr2 += (vnArr[0][k] + vnArr[33][k] + vnArr[32][k]);
 				outStr2 += " ";
 			}
 			outStr2 += "\n    outer loop\n";
 			
 			outStr2 += "        " + vArr[0];
-			outStr2 += "        " + vArr[32];
 			outStr2 += "        " + vArr[33];
+			outStr2 += "        " + vArr[32];
 			
 			outStr2 += "    endloop\nendfacet\n";
 

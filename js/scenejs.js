@@ -24,6 +24,22 @@
  *
  */
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Model Export Button Functions
+function multiStlButtonFunc(){
+    convertToMultiStl(scene.nodes[0].nodes[0]);
+}
+function oneStlButtonFunc(){
+    convertToOneStl(scene.nodes[0].nodes[0]);
+}
+function multiObjButtonFunc(){
+    convertToMultiObj(scene.nodes[0].nodes[0]);
+}
+function oneObjButtonFunc(){
+    convertToOneObj(scene.nodes[0].nodes[0]);
+}
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 ;// Only define RequireJS if not already present
 if (undefined === require) {;/*
  RequireJS 2.1.6 Copyright (c) 2010-2012, The Dojo Foundation All Rights Reserved.
