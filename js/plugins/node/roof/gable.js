@@ -5,10 +5,10 @@ SceneJS.Types.addType("roof/gable",
     {
         this.paramana = new ParameterManager(params, function(property)
 	    {
-            var w = property.width / 2;
-	        var	d = property.depth / 2;
-            var h = property.height / 2;
-            var t = property.thickness / 2;
+            var w = property.width;
+	        var	d = property.depth;
+            var h = property.height;
+            var t = property.thickness;
 	        var r = property.ratio;
 	
 	        var be = (t * 2) / Math.sqrt(3) ;
@@ -83,7 +83,7 @@ SceneJS.Types.addType("roof/gable",
         if(base == -1){ console.log("ERROR"); return; }
         if(roof.getID() == this.getID())
         {
-        	base.setWidth(this.getDeep());
+        	base.setWidth(this.getDepth());
         	base.setHeight(this.getWidth());
         	base.callBaseCalibration();
         }

@@ -5,7 +5,7 @@ SceneJS.Types.addType("base/basic",
 	{ 
 		this.paramana = new ParameterManager(params, function(property)
 		{
-			var w = property.width / 2, h = property.height / 2, t = property.thickness / 2; 
+			var w = property.width, h = property.height, t = property.thickness; 
 			var pset = new Float32Array(
 			[
 				w, t, h, -w, t, h, -w, -t, h, w, -t, h,

@@ -5,7 +5,7 @@ SceneJS.Types.addType("wall/triangle",
 	{ 
 		this.paramana = new ParameterManager(params, function(property)
 		{
-			var w = property.width / 2, h = property.height / 2, t = property.thickness / 2, r = property.ratio;
+			var w = property.width, h = property.height, t = property.thickness, r = property.ratio;
 			var topw = (w * r.a + -w * r.b) / 2;
 			var pset = new Float32Array(
 			[

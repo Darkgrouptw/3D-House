@@ -5,7 +5,8 @@ SceneJS.Types.addType("wall/no_window",
 	{ 
 		this.paramana = new ParameterManager(params, function(property)
 		{
-			var w = property.width / 2, h = property.height / 2, t = property.thickness / 2; 
+            // Temporarlly do not make the half value.
+			var w = property.width, h = property.height, t = property.thickness; 
 			var pset = new Float32Array(
 			[
 				w, h, t, -w, h, t, -w, -h, t, w, -h, t,
@@ -41,7 +42,7 @@ SceneJS.Types.addType("wall/no_window",
 	callBaseCalibration: function()
 	{
         var backWall = -1, rightWall = -1, leftWall = -1, frontWall = -1, roof = -1, base = -1;
-        var nodes=scene.findNodes();
+        var nodes = scene.findNodes();
         
         // material name matrix texture element
         var mnmte = function(n) { return n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0]; }
@@ -67,7 +68,7 @@ SceneJS.Types.addType("wall/no_window",
             base.setWidth(this.getWidth());
             base.callBaseCalibration(this.getHeight());
         }
-        else if(leftWall!= -1 && leftWall.getID() == this.getID())
+        else if(leftWall != -1 && leftWall.getID() == this.getID())
         {
             if(backWall != -1 && frontWall != -1) {}
             else if(frontWall != -1) {}
