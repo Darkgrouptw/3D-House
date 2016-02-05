@@ -54,14 +54,7 @@
 ?>
 </head>
 <body onresize = "setlayout()" onload = "setlayout()">
-	<div id="codewrapper" style="display: none" >
-        <div id="srcbutton">
-            <div id="dragsquare" data-draggable="true"></div>
-            <p> source </p>
-        </div>
-        <div id="uiarea">
-        </div>            
-    </div>
+	
     <div id = "Top" class = "top bar">
         <ul>
             <li><i class = "fa fa-caret-square-o-down" onclick = "ExportClick()">  Export</i></li>
@@ -76,7 +69,18 @@
         </ul>
     </div>
 	
+	<div id="codewrapper" style="display: none" >
+        <div id="srcbutton">
+            <div id="dragsquare" data-draggable="true"></div>
+            <p> source </p>
+        </div>
+        <div id="uiarea">
+        </div>            
+    </div>
 	<input type="button" class="RightUpButton" value="關閉貼圖" onclick="textureToggle()">
+	<input type="button" class="RightUpButton" style="top: 100;right: 20; " value="新增牆壁" onclick="addInterWall()">
+	<input type="button" class="RightUpButton" style="top: 150;right: 20; " value="新增樓層" onclick="addBase()">
+	<input type="button" class="RightUpButton" style="top: 200;right: 20; " value="刪除樓層" onclick="deleteBase()">
 	<!--<input type="button" class="MultiObjButtonStyle" value="Export as multiple .obj" onclick="multiObjButtonFunc()">
 	<input type="button" class="OneObjButtonStyle" value="Export as one .obj" onclick="oneObjButtonFunc()">
 	<input type="button" class="MultiStlButtonStyle" value="Export as multiple .stl" onclick="multiStlButtonFunc()">

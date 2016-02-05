@@ -3,6 +3,11 @@ SceneJS.Types.addType("wall/no_window",
 { 
 	construct: function(params) 
 	{ 
+		this._percentX,
+		this._percentY,
+		this._priority,
+		this._layer,
+		this.direction,
 		this.paramana = new ParameterManager(params, function(property)
 		{
 			var w = property.width / 2, h = property.height / 2, t = property.thickness / 2; 
@@ -18,8 +23,38 @@ SceneJS.Types.addType("wall/no_window",
 			return pset;
 		});
 		this.addNode(build.call(this, params)); 
+		this.direction=params.direction,
+		this._percentY=params.percentY;
+		this._percentX=params.percentX;
+		this._priority=params.priority;
+		this._layer=params.layer;
 	},
 	
+	getLayer:function(){return this._layer;},
+	setLayer:function(l){this._layer=l;},
+
+	getPriority:function(){return this._priority;},
+	setPriority:function(p){this._priority=p;},
+
+	getDirection:function(){return this.direction;},
+	setDirection:function(d){
+		if(d=="horizontal" || d=="vertical"){
+			this.direction=d;
+			var matrix= this.parent;
+			if(d=="horizontal"){
+				this.setRotate([0,0,0]);
+			}else{
+				this.setRotate([0,90,0]);
+			}
+		}
+	},
+
+	setPercentX:function(x){this._percentX=x;},
+	getPercentX:function(){return this._percentX;},
+
+	setPercentY:function(y){this._percentY=y;},
+	getPercentY:function(){return this._percentY;},
+
 	getWidth: function() { return this.paramana.get('width'); },
 	setWidth: function(w) { this.paramana.set('width', w); this.paramana.updateGeometryNode(this); },
 	
@@ -37,64 +72,134 @@ SceneJS.Types.addType("wall/no_window",
 	
 	getTranslate: function() { return this.paramana.get('translate'); },
 	setTranslate: function(tvec) { this.paramana.set('translate', tvec); this.paramana.updateMatirxNode(this); },
-	
+	setTranslateX: function(x){
+        var t=this.getTranslate();
+        this.setTranslate([x,t[1],t[2]]);
+    },
+    setTranslateY: function(y){
+        var t=this.getTranslate()
+        this.setTranslate([t[0],y,t[2]]);
+    },
+    setTranslateZ: function(z){
+        var t=this.getTranslate()
+        this.setTranslate([t[0],t[1],z]);
+    },
+	isInside:function(params){
+        var center=this.getTranslate();
+        var range=Math.sqrt(Math.pow(center[0] - params[0],2)+
+                            Math.pow(center[1] - params[1],2)+
+                            Math.pow(center[2] - params[2],2));
+        //if(range < this.getThickness()/2){
+        //    return true;
+        //}
+        if(this.direction=="vertical"){
+            //if(this.getPriority()==2){
+            //    console.log("meow");
+            //    console.log(params);
+            //    console.log(center);
+            //        console.log(params[0] <= center[0] + this.getThickness()/2);
+            //        console.log(params[0] >= center[0] - this.getThickness()/2);
+            //        console.log(params[1] <= center[1] + this.getHeight()/2);
+            //        console.log(params[1] >= center[1] - this.getHeight()/2);
+            //        console.log(params[2] <= center[2] + this.getWidth()/2);
+            //        console.log(params[2] >= center[2] - this.getWidth()/2);
+            //    }
+            if(params[0] <= center[0] + this.getThickness()/2 &&
+                params[0] >= center[0] - this.getThickness()/2 &&
+                params[1] <= center[1] + this.getHeight()/2 &&
+                params[1] >= center[1] - this.getHeight()/2 &&
+                params[2] <= center[2] + this.getWidth()/2 &&
+                params[2] >= center[2] - this.getWidth()/2){
+                return true
+            }
+            else{
+                return false
+            }
+        }
+        else{
+            if(params[0] <= center[0] + this.getWidth()/2 &&
+                params[0] >= center[0] - this.getWidth()/2 &&
+                params[1] <= center[1] + this.getHeight()/2 &&
+                params[1] >= center[1] - this.getHeight()/2 &&
+                params[2] <= center[2] + this.getThickness()/2 &&
+                params[2] >= center[2] - this.getThickness()/2){
+                return true
+            }
+            else{
+                return false
+            }
+        }
+    },
 	callBaseCalibration: function()
 	{
-        var backWall = -1, rightWall = -1, leftWall = -1, frontWall = -1, roof = -1, base = -1;
+		var mnmte = function(n) { return n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0]; }
+
+		var backWall=-1;
+        var rightWall=-1;
+        var leftWall=-1;
+        var frontWall=-1;
+        var downBase=-1;
+        var downWall=-1;
+        var roof=-1;
+        var base=-1;
         var nodes=scene.findNodes();
-        
-        // material name matrix texture element
-        var mnmte = function(n) { return n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0]; }
-        
-        for(var i = 0; i < nodes.length; i++)
-        {
+        for(var i=0;i<nodes.length;i++){
             var n = nodes[i];
-            if(n.getType() == "name")
-            {
-                if(n.getName() == "backWall") { backWall = mnmte(n); }
-                else if(n.getName() == "frontWall") { frontWall = mnmte(n); }
-                else if(n.getName() == "leftWall") { leftWall = mnmte(n); }
-                else if(n.getName() == "rightWall") { rightWall = mnmte(n); }
-                else if(n.getName() == "roof") { roof = mnmte(n); }
-                else if(n.getName() == "base") { base = mnmte(n); }
-            }
+            if(n.getType()=="name"){
+                if(n.getName()=="backWall" && mnmte(n).getLayer()==this.getLayer()){
+                    //         material  name     matrix  texture  element
+                    backWall=mnmte(n);
+                }
+                else if(n.getName()=="frontWall" && mnmte(n).getLayer()==this.getLayer())frontWall=mnmte(n);
+                else if(n.getName()=="leftWall"  && mnmte(n).getLayer()==this.getLayer())leftWall=mnmte(n);
+                else if(n.getName()=="rightWall" && mnmte(n).getLayer()==this.getLayer())rightWall=mnmte(n);
+                else if(n.getName()=="roof"      && mnmte(n).getLayer()==this.getLayer())roof=mnmte(n);
+                else if(n.getName()=="base" && mnmte(n).getLayer()==this.getLayer())base=mnmte(n);
+                else if(n.getName()=="base"      && mnmte(n).getLayer()==this.getLayer() - 1)downBase=mnmte(n);
+                else if(n.getName()=="backWall"  && mnmte(n).getLayer()==this.getLayer() - 1)downWall=mnmte(n);
+            }   
         }
-        
-        if(base == -1) { console.log("ERROR"); return; }
-        if(frontWall != -1 && frontWall.getID() == this.getID()) {}
-        else if(backWall != -1 && backWall.getID() == this.getID())
-        {
-            base.setWidth(this.getWidth());
-            base.callBaseCalibration(this.getHeight());
-        }
-        else if(leftWall!= -1 && leftWall.getID() == this.getID())
-        {
-            if(backWall != -1 && frontWall != -1) {}
-            else if(frontWall != -1) {}
-            else if(backWall != -1)
-            {
-                base.setHeight(this.getWidth() + backWall.getThickness());
-                base.callBaseCalibration(this.getHeight());
-            }
-            else {}
-        }
-        else if(rightWall != -1 && rightWall.getID() == this.getID())
-        {
-            if(backWall != -1 && frontWall != -1) {}
-            else if(frontWall != -1) {}
-            else if(backWall != -1)
-            {
-                base.setHeight(this.getWidth() + backWall.getThickness());
-                base.callBaseCalibration(this.getHeight());
-            }
-            else {}
-        }
-    }
+		
+		if(base == -1) { console.log("ERROR"); return; }
+		if(frontWall != -1 && frontWall.getID() == this.getID()) {}
+		else if(backWall != -1 && backWall.getID() == this.getID())
+		{
+			base.setWidth(this.getWidth());
+			base.callBaseCalibration(this.getHeight());
+		}
+		else if(leftWall!= -1 && leftWall.getID() == this.getID())
+		{
+			if(backWall != -1 && frontWall != -1) {}
+			else if(frontWall != -1) {}
+			else if(backWall != -1)
+			{
+				base.setHeight(this.getWidth() + backWall.getThickness());
+				base.callBaseCalibration(this.getHeight());
+			}
+			else {}
+		}
+		else if(rightWall != -1 && rightWall.getID() == this.getID())
+		{
+			if(backWall != -1 && frontWall != -1) {}
+			else if(frontWall != -1) {}
+			else if(backWall != -1)
+			{
+				base.setHeight(this.getWidth() + backWall.getThickness());
+				base.callBaseCalibration(this.getHeight()/2);
+			}
+			else {
+				
+			}
+		}
+		else{
+			base.callBaseCalibration();
+		}
+	}
 });
 
 function build(params) 
 {
-    var indiceSet = utility.makeIndices(0, 23);
+	var indiceSet = utility.makeIndices(0, 23);
 	var uvSet = new Float32Array(
 	[
 		1, 1, 0, 1, 0, 0, 1, 0,
