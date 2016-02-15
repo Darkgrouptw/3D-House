@@ -5,8 +5,7 @@
 			<scale>1,1,1</scale>
 			<rotate>0,0,0</rotate>
 			<translate>0,0,0</translate>
-		</transform>
-		
+		</transform>		
 		<texture>ground.jpg</texture>
         <pos>base</pos>
         <property>
@@ -15,7 +14,8 @@
             <width>18</width>
             <thickness>1</thickness>
         </property>
-    </element> 
+    </element>
+
     <element>
         <type>wall/no_window</type>
 		<transform>
@@ -23,7 +23,6 @@
 			<rotate>0,90,0</rotate>
 			<translate>-17,9,1</translate>
 		</transform>
-		
 		<texture>wall.jpg</texture>
         <pos>rightWall</pos>
         <property>
@@ -33,7 +32,8 @@
             <thickness>1</thickness>
             <direction>"vertical"</direction>
         </property> 
-    </element>   
+    </element>  
+
     <element>
         <type>wall/no_window</type>
 		<transform>
@@ -41,7 +41,6 @@
 			<rotate>0,90,0</rotate>
 			<translate>17,9,1</translate>
 		</transform>
-		
 		<texture>wall.jpg</texture>
         <pos>leftWall</pos>
         <property>
@@ -52,6 +51,7 @@
             <direction>"vertical"</direction>
         </property> 
     </element>
+
     <element>
         <type>wall/no_window</type>
 		<transform>
@@ -59,7 +59,6 @@
 			<rotate>0,0,0</rotate>
 			<translate>0,9,-7</translate>
 		</transform>
-		
 		<texture>wall.jpg</texture>
         <pos>backWall</pos>
         <property>
