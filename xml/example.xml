@@ -13,7 +13,7 @@
             <layer>1</layer>
             <height>8</height>
             <width>18</width>
-            <thickness>0.5</thickness>
+            <thickness>1</thickness>
         </property>
     </element> 
     <element>
@@ -21,7 +21,7 @@
 		<transform>
 			<scale>1,1,1</scale>
 			<rotate>0,90,0</rotate>
-			<translate>17.5,8.5,0.5</translate>
+			<translate>-17,9,1</translate>
 		</transform>
 		
 		<texture>wall.jpg</texture>
@@ -29,8 +29,8 @@
         <property>
             <layer>1</layer>
             <height>8</height>
-            <width>7.5</width>
-            <thickness>0.5</thickness>
+            <width>7</width>
+            <thickness>1</thickness>
             <direction>"vertical"</direction>
         </property> 
     </element>   
@@ -39,7 +39,7 @@
 		<transform>
 			<scale>1,1,1</scale>
 			<rotate>0,90,0</rotate>
-			<translate>-17.5,8.5,0.5</translate>
+			<translate>17,9,1</translate>
 		</transform>
 		
 		<texture>wall.jpg</texture>
@@ -47,8 +47,8 @@
         <property>
             <layer>1</layer>
             <height>8</height>
-            <width>7.5</width>
-            <thickness>0.5</thickness>
+            <width>7</width>
+            <thickness>1</thickness>
             <direction>"vertical"</direction>
         </property> 
     </element>
@@ -57,7 +57,7 @@
 		<transform>
 			<scale>1,1,1</scale>
 			<rotate>0,0,0</rotate>
-			<translate>0,8.5,-7.5</translate>
+			<translate>0,9,-7</translate>
 		</transform>
 		
 		<texture>wall.jpg</texture>
@@ -66,7 +66,7 @@
             <layer>1</layer>
             <height>8</height>
             <width>18</width>
-            <thickness>0.5</thickness>
+            <thickness>1</thickness>
             <direction>"horizontal"</direction>
         </property>
     </element>

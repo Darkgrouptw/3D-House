@@ -491,7 +491,7 @@ function attachInput(pickId){
         });
         heightinput.addEventListener('mousemove',function(event){
             if (heightismove) {
-                n.setHeight(heightinput.value*1.0);
+                n.setHeight(Number(heightinput.value*1.0));
                 heightpropertyValue.textContent=heightinput.value;
                 n.callBaseCalibration();
             }
@@ -529,7 +529,7 @@ function attachInput(pickId){
         });
         widthinput.addEventListener('mousemove',function(event){
             if (widthismove) {
-                n.setWidth(widthinput.value*1.0);
+                n.setWidth(Number(widthinput.value*1.0));
                 widthpropertyValue.textContent=widthinput.value;
                 n.callBaseCalibration();
             }
@@ -567,7 +567,7 @@ function attachInput(pickId){
         });
         percentXinput.addEventListener('mousemove',function(event){
             if (deepismove) {
-                n.setPercentX(percentXinput.value);
+                n.setPercentX(Number(percentXinput.value));
                 percentXpropertyValue.textContent=percentXinput.value;
                 n.callBaseCalibration();
             }

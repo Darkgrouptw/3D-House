@@ -10,7 +10,8 @@ SceneJS.Types.addType("wall/no_window",
 		this.direction,
 		this.paramana = new ParameterManager(params, function(property)
 		{
-			var w = property.width / 2, h = property.height / 2, t = property.thickness / 2; 
+			// Temporarlly do not make the half value.
+			var w = property.width, h = property.height, t = property.thickness; 
 			var pset = new Float32Array(
 			[
 				w, h, t, -w, h, t, -w, -h, t, w, -h, t,
@@ -104,12 +105,12 @@ SceneJS.Types.addType("wall/no_window",
             //        console.log(params[2] <= center[2] + this.getWidth()/2);
             //        console.log(params[2] >= center[2] - this.getWidth()/2);
             //    }
-            if(params[0] <= center[0] + this.getThickness()/2 &&
-                params[0] >= center[0] - this.getThickness()/2 &&
-                params[1] <= center[1] + this.getHeight()/2 &&
-                params[1] >= center[1] - this.getHeight()/2 &&
-                params[2] <= center[2] + this.getWidth()/2 &&
-                params[2] >= center[2] - this.getWidth()/2){
+            if(params[0] <= center[0] + this.getThickness() &&
+                params[0] >= center[0] - this.getThickness() &&
+                params[1] <= center[1] + this.getHeight() &&
+                params[1] >= center[1] - this.getHeight() &&
+                params[2] <= center[2] + this.getWidth() &&
+                params[2] >= center[2] - this.getWidth()){
                 return true
             }
             else{
@@ -117,12 +118,12 @@ SceneJS.Types.addType("wall/no_window",
             }
         }
         else{
-            if(params[0] <= center[0] + this.getWidth()/2 &&
-                params[0] >= center[0] - this.getWidth()/2 &&
-                params[1] <= center[1] + this.getHeight()/2 &&
-                params[1] >= center[1] - this.getHeight()/2 &&
-                params[2] <= center[2] + this.getThickness()/2 &&
-                params[2] >= center[2] - this.getThickness()/2){
+            if(params[0] <= center[0] + this.getWidth() &&
+                params[0] >= center[0] - this.getWidth() &&
+                params[1] <= center[1] + this.getHeight() &&
+                params[1] >= center[1] - this.getHeight() &&
+                params[2] <= center[2] + this.getThickness() &&
+                params[2] >= center[2] - this.getThickness()){
                 return true
             }
             else{
@@ -142,7 +143,7 @@ SceneJS.Types.addType("wall/no_window",
         var downWall=-1;
         var roof=-1;
         var base=-1;
-        var nodes=scene.findNodes();
+        var nodes = scene.findNodes();
         for(var i=0;i<nodes.length;i++){
             var n = nodes[i];
             if(n.getType()=="name"){
@@ -185,7 +186,7 @@ SceneJS.Types.addType("wall/no_window",
 			else if(backWall != -1)
 			{
 				base.setHeight(this.getWidth() + backWall.getThickness());
-				base.callBaseCalibration(this.getHeight()/2);
+				base.callBaseCalibration(this.getHeight());
 			}
 			else {
 				

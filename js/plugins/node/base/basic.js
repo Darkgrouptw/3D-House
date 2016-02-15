@@ -6,7 +6,7 @@ SceneJS.Types.addType("base/basic",
         this._layer;
 		this.paramana = new ParameterManager(params, function(property)
 		{
-			var w = property.width / 2, h = property.height / 2, t = property.thickness / 2; 
+			var w = property.width, h = property.height, t = property.thickness; 
 			var pset = new Float32Array(
 			[
 				w, t, h, -w, t, h, -w, -t, h, w, -t, h,
@@ -85,7 +85,7 @@ SceneJS.Types.addType("base/basic",
             }   
         }
         if(downWall!=-1 && downBase !=-1){
-            this.setTranslateY(downBase.getTranslate()[1] + downBase.getThickness()/2 +downWall.getHeight() +this.getThickness()/2);
+            this.setTranslateY(downBase.getTranslate()[1] + downBase.getThickness() +downWall.getHeight()*2 +this.getThickness());
             if(this.getWidth() <= downBase.getWidth()){
                 this.setWidth(downBase.getWidth());
             }
@@ -108,8 +108,8 @@ SceneJS.Types.addType("base/basic",
             frontWall.setWidth(this.getWidth());
             if(high)frontWall.setHeight(high*1);
             frontWall.setTranslateX(baseCenterX);
-            frontWall.setTranslateY(baseCenterY+this.getThickness()/2+frontWall.getHeight()/2);
-            frontWall.setTranslateZ(baseCenterZ+this.getHeight()/2-frontWall.getThickness()/2);
+            frontWall.setTranslateY(baseCenterY+this.getThickness()+frontWall.getHeight());
+            frontWall.setTranslateZ(baseCenterZ+this.getHeight()-frontWall.getThickness());
             if(frontWall.getHeight() > defaulthigh)defaulthigh=frontWall.getHeight();
         }
         if(backWall!=-1){
@@ -117,8 +117,8 @@ SceneJS.Types.addType("base/basic",
             backWall.setWidth(this.getWidth());
             if(high)backWall.setHeight(high*1);
             backWall.setTranslateX(baseCenterX);
-            backWall.setTranslateY(baseCenterY+this.getThickness()/2+backWall.getHeight()/2);
-            backWall.setTranslateZ(baseCenterZ-this.getHeight()/2+backWall.getThickness()/2);
+            backWall.setTranslateY(baseCenterY+this.getThickness()+backWall.getHeight());
+            backWall.setTranslateZ(baseCenterZ-this.getHeight()+backWall.getThickness());
             if(backWall.getHeight() > defaulthigh)defaulthigh=backWall.getHeight();
         }
         if(leftWall!=-1){
@@ -128,9 +128,9 @@ SceneJS.Types.addType("base/basic",
             }else if(havebackWall){
                 leftWall.setWidth(this.getHeight()-backWall.getThickness());
                 if(high)leftWall.setHeight(high*1);
-                leftWall.setTranslateX(baseCenterX-this.getWidth()/2+leftWall.getThickness()/2);
-                leftWall.setTranslateY(baseCenterY+this.getThickness()/2+leftWall.getHeight()/2);
-                leftWall.setTranslateZ(baseCenterZ+backWall.getThickness()/2);
+                leftWall.setTranslateX(baseCenterX-this.getWidth()+leftWall.getThickness());
+                leftWall.setTranslateY(baseCenterY+this.getThickness()+leftWall.getHeight());
+                leftWall.setTranslateZ(baseCenterZ+backWall.getThickness());
                 if(leftWall.getHeight() > defaulthigh)defaulthigh=leftWall.getHeight();
             }else{
             }
@@ -142,9 +142,9 @@ SceneJS.Types.addType("base/basic",
             }else if(havebackWall){
                 rightWall.setWidth(this.getHeight()-backWall.getThickness());
                 if(high)rightWall.setHeight(high*1);
-                rightWall.setTranslateX(baseCenterX+this.getWidth()/2-rightWall.getThickness()/2);
-                rightWall.setTranslateY(baseCenterY+this.getThickness()/2+rightWall.getHeight()/2);
-                rightWall.setTranslateZ(baseCenterZ+backWall.getThickness()/2);
+                rightWall.setTranslateX(baseCenterX+this.getWidth()-rightWall.getThickness());
+                rightWall.setTranslateY(baseCenterY+this.getThickness()+rightWall.getHeight());
+                rightWall.setTranslateZ(baseCenterZ+backWall.getThickness());
                 if(rightWall.getHeight() > defaulthigh)defaulthigh=rightWall.getHeight();
             }else{
             }
@@ -153,8 +153,8 @@ SceneJS.Types.addType("base/basic",
             roof.setWidth(this.getHeight());
             roof.setDeep(this.getWidth());
             roof.setTranslateX(baseCenterX);
-            if(high)roof.setTranslateY(baseCenterY+this.getThickness()/2+high+roof.getHeight()/2);
-            else roof.setTranslateY(baseCenterY+this.getThickness()/2+defaulthigh+roof.getHeight()/2);
+            if(high)roof.setTranslateY(baseCenterY+this.getThickness()+high+roof.getHeight());
+            else roof.setTranslateY(baseCenterY+this.getThickness()+defaulthigh+roof.getHeight());
             roof.setTranslateZ(baseCenterZ);
             roof.adjustChildren();
         }
@@ -162,8 +162,9 @@ SceneJS.Types.addType("base/basic",
             interWall.sort(function(a,b){return a.getPriority() - b.getPriority()});
             for(var i=0;i<interWall.length;i++){
                 var zmin,zmax,xmin,xmax;
-                interWall[i].setTranslateX(baseCenterX-this.getWidth()/2+(this.getWidth())*interWall[i].getPercentX()/100);
-                interWall[i].setTranslateZ(baseCenterZ-this.getHeight()/2+(this.getHeight())*interWall[i].getPercentY()/100);
+                console.log(interWall[i].getPercentX());
+                interWall[i].setTranslateX(baseCenterX-this.getWidth()+(this.getWidth()*2)*interWall[i].getPercentX()/100);
+                interWall[i].setTranslateZ(baseCenterZ-this.getHeight()+(this.getHeight()*2)*interWall[i].getPercentY()/100);
                 var center=interWall[i].getTranslate();
                 var zminrange=9999;
                 var zmaxrange=9999;
@@ -177,21 +178,21 @@ SceneJS.Types.addType("base/basic",
                         var range=Math.sqrt(Math.pow(center[0] - interWall[j].getTranslate()[0],2)+
                             Math.pow(center[1] - interWall[j].getTranslate()[1],2)+
                             Math.pow(center[2] - interWall[j].getTranslate()[2],2));
-                        if(range < interWall[i].getThickness()/2 + interWall[j].getThickness()/2 ||
+                        if(range < interWall[i].getThickness() + interWall[j].getThickness() ||
                             interWall[j].isInside(center)){
                             check=true;
                             if(interWall[j].getDirection()=="horizontal"){
                                 if(interWall[j].getTranslate()[2] < center[2]){
-                                    interWall[i].setTranslateZ(interWall[j].getTranslate()[2]+interWall[j].getThickness()/2+interWall[i].getThickness()/2);
+                                    interWall[i].setTranslateZ(interWall[j].getTranslate()[2]+interWall[j].getThickness()+interWall[i].getThickness());
                                 }else{
-                                    interWall[i].setTranslateZ(interWall[j].getTranslate()[2]-interWall[j].getThickness()/2-interWall[i].getThickness()/2);
+                                    interWall[i].setTranslateZ(interWall[j].getTranslate()[2]-interWall[j].getThickness()-interWall[i].getThickness());
                                 }
                                 
                             }else{
                                 if(interWall[j].getTranslate()[0] < center[0]){
-                                    interWall[i].setTranslateX(interWall[j].getTranslate()[0]+interWall[j].getThickness()/2+interWall[i].getThickness()/2);
+                                    interWall[i].setTranslateX(interWall[j].getTranslate()[0]+interWall[j].getThickness()+interWall[i].getThickness());
                                 }else{
-                                    interWall[i].setTranslateX(interWall[j].getTranslate()[0]-interWall[j].getThickness()/2-interWall[i].getThickness()/2);
+                                    interWall[i].setTranslateX(interWall[j].getTranslate()[0]-interWall[j].getThickness()-interWall[i].getThickness());
                                 }
                                 
                             }
@@ -201,7 +202,7 @@ SceneJS.Types.addType("base/basic",
                         }
                     }
                     time++;
-                    if(time>500){
+                    if(time>2){
                         break;
                     }
                 }
@@ -225,19 +226,19 @@ SceneJS.Types.addType("base/basic",
                         if(interWall[j].isInside(point) ){
                             if(center[2]-interWall[j].getTranslate()[2]<zminrange && center[2]-interWall[j].getTranslate()[2] >0){
                                 zminrange=center[2]-interWall[j].getTranslate()[2]; 
-                                zmin=interWall[j].getTranslate()[2] + interWall[j].getThickness()/2;
+                                zmin=interWall[j].getTranslate()[2] + interWall[j].getThickness();
                             }
                             if(interWall[j].getTranslate()[2] - center[2] < zmaxrange && interWall[j].getTranslate()[2] - center[2] >0){
                                 zmaxrange=interWall[j].getTranslate()[2] - center[2];
-                                zmax=interWall[j].getTranslate()[2] - interWall[j].getThickness()/2;
+                                zmax=interWall[j].getTranslate()[2] - interWall[j].getThickness();
                             }
                             if(center[0] - interWall[j].getTranslate()[0] < xminrange && center[0] - interWall[j].getTranslate()[0] >0){
                                 xminrange=center[0] - interWall[j].getTranslate()[0];
-                                xmin = interWall[j].getTranslate()[0] + interWall[j].getThickness()/2;
+                                xmin = interWall[j].getTranslate()[0] + interWall[j].getThickness();
                             }
                             if(interWall[j].getTranslate()[0] - center[0] < xmaxrange && interWall[j].getTranslate()[0] - center[0] >0){
                                 xmaxrange = interWall[j].getTranslate()[0] - center[0];
-                                xmax = interWall[j].getTranslate()[0] - interWall[j].getThickness()/2;
+                                xmax = interWall[j].getTranslate()[0] - interWall[j].getThickness();
                             }
                         }
                         
@@ -246,52 +247,52 @@ SceneJS.Types.addType("base/basic",
                 }
                 if(zminrange>=8888){
                     if(backWall!=-1){
-                        zmin=backWall.getTranslate()[2] + backWall.getThickness()/2;
+                        zmin=backWall.getTranslate()[2] + backWall.getThickness();
                     }else{
-                        zmin = baseCenterZ - this.getHeight()/2;
+                        zmin = baseCenterZ - this.getHeight();
                     }
                 }
                 if(zmaxrange>=8888){
                     if(frontWall!=-1){
-                        zmax=frontWall.getTranslate()[2] - frontWall.getThickness()/2; 
+                        zmax=frontWall.getTranslate()[2] - frontWall.getThickness(); 
                     }else{
-                        zmax = baseCenterZ + this.getHeight()/2;
+                        zmax = baseCenterZ + this.getHeight();
                     }
                 }
                 if(xminrange>=8888){
                     if(leftWall!=-1){
-                        xmin=leftWall.getTranslate()[0] + leftWall.getThickness()/2;
+                        xmin=leftWall.getTranslate()[0] + leftWall.getThickness();
                     }else{
-                        xmin = baseCenterX -this.getWidth()/2;
+                        xmin = baseCenterX -this.getWidth();
                     }
                 }
                 if(xmaxrange>=8888){
                     if(rightWall!=-1){
-                        xmax = rightWall.getTranslate()[0] -rightWall.getThickness()/2;
+                        xmax = rightWall.getTranslate()[0] -rightWall.getThickness();
                     }else{
-                        xmax = baseCenterX + this.getWidth()/2;
+                        xmax = baseCenterX + this.getWidth();
                     }
                 }
                 if(interWall[i].direction=="vertical"){
-                    if(xmax-xmin<interWall[i].getThickness()/2){
+                    if(xmax-xmin<interWall[i].getThickness()){
                         console.log("bad Things happen with too close wall");
                     }
                     interWall[i].setTranslateZ((zmax + zmin)/2);
-                    interWall[i].setWidth((zmax - zmin));
+                    interWall[i].setWidth((zmax - zmin)/2);
                     //if(high)rightWall.setHeight(high*1);
                 }
                 else{
-                    if(zmax - zmin < interWall[i].getThickness()/2){
+                    if(zmax - zmin < interWall[i].getThickness()){
                         console.log("bad Things happen with too close wall");
                     }
                     interWall[i].setTranslateX((xmax + xmin)/2);
-                    interWall[i].setWidth((xmax - xmin));
+                    interWall[i].setWidth((xmax - xmin)/2);
                 }
                 interWall[i].setHeight(rightWall.getHeight());
                 interWall[i].setTranslateY(rightWall.getTranslate()[1]);
                 if(high)interWall[i].setHeight(high*1);
-                interWall[i].setPercentX((100*(interWall[i].getTranslate()[0] - baseCenterX + this.getWidth()/2))/(this.getWidth()));
-                interWall[i].setPercentY((100*(interWall[i].getTranslate()[2] - baseCenterZ + this.getHeight()/2))/(this.getHeight()));
+                interWall[i].setPercentX((100*(interWall[i].getTranslate()[0] - baseCenterX + this.getWidth()))/(this.getWidth()*2));
+                interWall[i].setPercentY((100*(interWall[i].getTranslate()[2] - baseCenterZ + this.getHeight()))/(this.getHeight()*2));
             }
         }
         for(var i=0;i<nodes.length;i++){
