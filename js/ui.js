@@ -128,7 +128,6 @@ function textureToggle(){
 }
 
 function addInterWall(){
-
     if(lastFloor<=0){
         return;
     }
@@ -212,8 +211,7 @@ function addInterWall(){
     });
 }
 
-function addBase(){
-
+function getTopLayer(){
     var layerNumber=0;
     var nodes=scene.findNodes();
     for(var i=0;i<nodes.length;i++){
@@ -222,7 +220,12 @@ function addBase(){
             if(n.getName()=="base"){if(n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].getLayer()>layerNumber){layerNumber=n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].getLayer();}}
         }
     }
-    layerNumber=layerNumber+1;
+    return layerNumber;
+}
+
+function addBase(){
+    var nodes=scene.findNodes();
+    var layerNumber=getTopLayer()+1;
     console.log(layerNumber);
     var root = scene.findNode(3);
     //base
@@ -400,16 +403,6 @@ function addBase(){
                 }]
             }]
     });
-
-    //change roof
-    for(var i=0;i<nodes.length;i++){
-        var n = nodes[i];
-        if(n.getType()=="name"){
-            if(n.getName()=="roof"){n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].setLayer(layerNumber);}
-            else if(n.getName()=="rightTriangle"){n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].setLayer(layerNumber);}
-            else if(n.getName()=="leftTriangle"){n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].setLayer(layerNumber);}
-        }
-    }
 }
 
 function deleteBase(){
@@ -492,10 +485,16 @@ function attachInput(pickId){
         heightinput.addEventListener('mousemove',function(event){
             if (heightismove) {
                 n.setHeight(Number(heightinput.value*1.0));
+                if(n.setRealHeight){n.setRealHeight(Number(heightinput.value*1.0));}
                 heightpropertyValue.textContent=heightinput.value;
                 n.callBaseCalibration();
             }
         });
+        //heightinput.addEventListener('change',function(event){
+        //    n.setHeight(Number(heightinput.value*1.0));
+        //    heightpropertyValue.textContent=heightinput.value;
+        //    n.callBaseCalibration();
+        //});
         heightinput.addEventListener('mouseup',function(event){
             heightismove=false;
         });
@@ -530,6 +529,7 @@ function attachInput(pickId){
         widthinput.addEventListener('mousemove',function(event){
             if (widthismove) {
                 n.setWidth(Number(widthinput.value*1.0));
+                if(n.setRealWidth){n.setRealWidth(Number(widthinput.value*1.0));}
                 widthpropertyValue.textContent=widthinput.value;
                 n.callBaseCalibration();
             }
@@ -766,6 +766,6 @@ function timeFuction(){
             }
             
         }
-    }, 33);
+    }, 16);
 }
 

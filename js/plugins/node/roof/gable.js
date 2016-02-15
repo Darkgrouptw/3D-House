@@ -3,6 +3,7 @@ SceneJS.Types.addType("roof/gable",
 { 
     construct:function (params) 
     {
+        this._layer;
         this.paramana = new ParameterManager(params, function(property)
 	    {
             var w = property.width;
@@ -35,6 +36,9 @@ SceneJS.Types.addType("roof/gable",
         this.addNode(build.call(this, params)); 
     },
     
+    getLayer:function(){ return this._layer; },
+    setLayer:function(l){ this._layer=l; },
+
     getWidth: function() { return this.paramana.get('width'); },
 	setWidth: function(w) { this.paramana.set('width', w); this.paramana.updateGeometryNode(this); },
 	
@@ -58,9 +62,21 @@ SceneJS.Types.addType("roof/gable",
 	
 	getTranslate: function() { return this.paramana.get('translate'); },
 	setTranslate: function(tvec) { this.paramana.set('translate', tvec); this.paramana.updateMatirxNode(this); },
-	
+	setTranslateX: function(x){
+        var t=this.getTranslate()
+        this.setTranslate([x,t[1],t[2]]);
+    },
+    setTranslateY: function(y){
+        var t=this.getTranslate()
+        this.setTranslate([t[0],y,t[2]]);
+    },
+    setTranslateZ: function(z){
+        var t=this.getTranslate()
+        this.setTranslate([t[0],t[1],z]);
+    },
 	callBaseCalibration: function()
 	{
+        return;
     	var backWall=-1, rightWall=-1, leftWall=-1,frontWall=-1, roof=-1, base=-1;
         var nodes=scene.findNodes();
         
@@ -91,7 +107,6 @@ SceneJS.Types.addType("roof/gable",
     
     adjustChildren: function()
     {
-
     	var baseCenter = this.getTranslate();
         var baseCenterX = baseCenter[0];
         var baseCenterY = baseCenter[1];

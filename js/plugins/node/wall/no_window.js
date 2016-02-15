@@ -154,7 +154,7 @@ SceneJS.Types.addType("wall/no_window",
                 else if(n.getName()=="frontWall" && mnmte(n).getLayer()==this.getLayer())frontWall=mnmte(n);
                 else if(n.getName()=="leftWall"  && mnmte(n).getLayer()==this.getLayer())leftWall=mnmte(n);
                 else if(n.getName()=="rightWall" && mnmte(n).getLayer()==this.getLayer())rightWall=mnmte(n);
-                else if(n.getName()=="roof"      && mnmte(n).getLayer()==this.getLayer())roof=mnmte(n);
+                else if(n.getName()=="roof"      										)roof=mnmte(n);
                 else if(n.getName()=="base" && mnmte(n).getLayer()==this.getLayer())base=mnmte(n);
                 else if(n.getName()=="base"      && mnmte(n).getLayer()==this.getLayer() - 1)downBase=mnmte(n);
                 else if(n.getName()=="backWall"  && mnmte(n).getLayer()==this.getLayer() - 1)downWall=mnmte(n);
@@ -165,7 +165,7 @@ SceneJS.Types.addType("wall/no_window",
 		if(frontWall != -1 && frontWall.getID() == this.getID()) {}
 		else if(backWall != -1 && backWall.getID() == this.getID())
 		{
-			base.setWidth(this.getWidth());
+			base.setRealWidth(this.getWidth());
 			base.callBaseCalibration(this.getHeight());
 		}
 		else if(leftWall!= -1 && leftWall.getID() == this.getID())
@@ -174,7 +174,7 @@ SceneJS.Types.addType("wall/no_window",
 			else if(frontWall != -1) {}
 			else if(backWall != -1)
 			{
-				base.setHeight(this.getWidth() + backWall.getThickness());
+				base.setRealHeight(this.getWidth() + backWall.getThickness());
 				base.callBaseCalibration(this.getHeight());
 			}
 			else {}
@@ -185,7 +185,7 @@ SceneJS.Types.addType("wall/no_window",
 			else if(frontWall != -1) {}
 			else if(backWall != -1)
 			{
-				base.setHeight(this.getWidth() + backWall.getThickness());
+				base.setRealHeight(this.getWidth() + backWall.getThickness());
 				base.callBaseCalibration(this.getHeight());
 			}
 			else {

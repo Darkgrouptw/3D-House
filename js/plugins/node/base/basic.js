@@ -3,6 +3,8 @@ SceneJS.Types.addType("base/basic",
 { 
     construct: function(params) 
 	{ 
+        this.realW;
+        this.readH;
         this._layer;
 		this.paramana = new ParameterManager(params, function(property)
 		{
@@ -20,8 +22,16 @@ SceneJS.Types.addType("base/basic",
 		});
 		this.addNode(build.call(this, params)); 
         this._layer=params.layer;
+        this.realW = params.width;
+        this.readH = params.height;
 	},
 	
+    getRealWidth:function(){return this.realW;},
+    setRealWidth:function(w){this.realW = w;},
+
+    getRealHeight:function(){return this.readH;},
+    setRealHeight:function(h){this.readH = h;},
+
     getLayer:function(){ return this._layer; },
     setLayer:function(l){ this._layer=l; },
 
@@ -56,6 +66,11 @@ SceneJS.Types.addType("base/basic",
     },
 	callBaseCalibration: function(high)
 	{
+        //get the orign w and h
+        this.setWidth(this.getRealWidth());
+        this.setHeight(this.getRealHeight());
+
+        //get all the element
         var mnmte = function(n) { return n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0]; }
 
         var backWall=-1;
@@ -78,24 +93,26 @@ SceneJS.Types.addType("base/basic",
                 else if(n.getName()=="frontWall" && mnmte(n).getLayer()==this.getLayer())frontWall=mnmte(n);
                 else if(n.getName()=="leftWall"  && mnmte(n).getLayer()==this.getLayer())leftWall=mnmte(n);
                 else if(n.getName()=="rightWall" && mnmte(n).getLayer()==this.getLayer())rightWall=mnmte(n);
-                else if(n.getName()=="roof"      && mnmte(n).getLayer()==this.getLayer())roof=mnmte(n);
+                else if(n.getName()=="roof"                                             )roof=mnmte(n);
                 else if(n.getName()=="interWall" && mnmte(n).getLayer()==this.getLayer())interWall.push(mnmte(n));
                 else if(n.getName()=="base"      && mnmte(n).getLayer()==this.getLayer() - 1)downBase=mnmte(n);
                 else if(n.getName()=="backWall"  && mnmte(n).getLayer()==this.getLayer() - 1)downWall=mnmte(n);
             }   
         }
+
+        //set base height by layer
         if(downWall!=-1 && downBase !=-1){
             this.setTranslateY(downBase.getTranslate()[1] + downBase.getThickness() +downWall.getHeight()*2 +this.getThickness());
-            if(this.getWidth() <= downBase.getWidth()){
+            if(this.getWidth() >= downBase.getWidth()){
                 this.setWidth(downBase.getWidth());
             }
-            if(this.getHeight() <= downBase.getHeight()){
+            if(this.getHeight() >= downBase.getHeight()){
                 this.setHeight(downBase.getHeight());
             }
             
             
         }
-
+        //set four walls position
         var havefrontWall = false;
         var havebackWall = false;
         var defaulthigh=0;
@@ -149,20 +166,23 @@ SceneJS.Types.addType("base/basic",
             }else{
             }
         }
-        if(roof!=-1){
-            roof.setWidth(this.getHeight());
-            roof.setDeep(this.getWidth());
-            roof.setTranslateX(baseCenterX);
-            if(high)roof.setTranslateY(baseCenterY+this.getThickness()+high+roof.getHeight());
-            else roof.setTranslateY(baseCenterY+this.getThickness()+defaulthigh+roof.getHeight());
-            roof.setTranslateZ(baseCenterZ);
-            roof.adjustChildren();
+        //set roof
+        if(roof!=-1 && this.getLayer() == getTopLayer()){
+            if(roof.setWidth)roof.setWidth(this.getHeight());
+            if(roof.setDepth)roof.setDepth(this.getWidth());
+            if(roof.setTranslateX)roof.setTranslateX(baseCenterX);
+            if(high && roof.setTranslateY)roof.setTranslateY(baseCenterY+this.getThickness()+high*2+roof.getHeight());
+            else if(roof.setTranslateY)roof.setTranslateY(baseCenterY+this.getThickness()+defaulthigh*2+roof.getHeight());
+            if(roof.setTranslateZ)roof.setTranslateZ(baseCenterZ);
+            if(roof.adjustChildren)roof.adjustChildren();
+            if(roof.setLayer)roof.setLayer(this.getLayer());
         }
+        //set interwall
         if(interWall.length!=0){
             interWall.sort(function(a,b){return a.getPriority() - b.getPriority()});
             for(var i=0;i<interWall.length;i++){
                 var zmin,zmax,xmin,xmax;
-                console.log(interWall[i].getPercentX());
+                //console.log(interWall[i].getPercentX());
                 interWall[i].setTranslateX(baseCenterX-this.getWidth()+(this.getWidth()*2)*interWall[i].getPercentX()/100);
                 interWall[i].setTranslateZ(baseCenterZ-this.getHeight()+(this.getHeight()*2)*interWall[i].getPercentY()/100);
                 var center=interWall[i].getTranslate();
@@ -295,10 +315,27 @@ SceneJS.Types.addType("base/basic",
                 interWall[i].setPercentY((100*(interWall[i].getTranslate()[2] - baseCenterZ + this.getHeight()))/(this.getHeight()*2));
             }
         }
+
+        //save the w and h to realw and realh
+        this.setRealWidth(this.getWidth());
+        this.setRealHeight(this.getHeight());
+        
+        //call 
         for(var i=0;i<nodes.length;i++){
             var n = nodes[i];
             if(n.getType()=="name"){
                 if(n.getName()=="base" && mnmte(n).getLayer() == this.getLayer()+1)mnmte(n).callBaseCalibration();
+            }
+        }
+        
+        
+        //change self to fit down base
+        if(downBase !=-1){
+            if(this.getWidth() < downBase.getWidth()){
+                this.setWidth(downBase.getWidth());
+            }
+            if(this.getHeight() < downBase.getHeight()){
+                this.setHeight(downBase.getHeight());
             }
         }
     }
