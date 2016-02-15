@@ -178,7 +178,7 @@ function attachInput(pickId){
     });
     heightinput.addEventListener('mousemove',function(event){
         if (heightismove) {
-            n.setHeight(heightinput.value);
+            n.setHeight(Number(heightinput.value));
             heightpropertyValue.textContent=heightinput.value;
             n.callBaseCalibration();
         }
@@ -213,7 +213,7 @@ function attachInput(pickId){
     });
     widthinput.addEventListener('mousemove',function(event){
         if (widthismove) {
-            n.setWidth(widthinput.value);
+            n.setWidth(Number(widthinput.value));
             widthpropertyValue.textContent=widthinput.value;
             n.callBaseCalibration();
         }
@@ -248,7 +248,7 @@ function attachInput(pickId){
     });
     deepinput.addEventListener('mousemove',function(event){
         if (deepismove) {
-            n.setDepth(deepinput.value);
+            n.setDepth(Number(deepinput.value));
             deeppropertyValue.textContent=deepinput.value;
             n.callBaseCalibration();
         }
