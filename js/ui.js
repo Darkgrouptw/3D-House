@@ -84,6 +84,11 @@ function ScenePick(){
                 material.setColor({r:0.7,g:0.7,b:0.3});
                 id=material.id;
                 lastid=id;
+                if(!element.getLayer){
+                    //something uneditale clicked
+                    uiPanel.style.display='none';
+                    return;
+                }
                 lastFloor=element.getLayer();
                 uiPanel.style.display='inline-block';
                 //讓UI跟隨點擊位置，因為很煩人所以先影藏起來
@@ -92,19 +97,28 @@ function ScenePick(){
                 attachInput(hit.nodeId);
             });
     scene.on("nopick",
-            function (hit) {
+            function () {
                 uiPanel.style.display='none';
                 if(lastid>0){
                     material=scene.findNode(lastid);
                     material.setColor({ r:0.8, g:0.8, b:0.8});
                 }
+                lastid = -1;
+                lastFloor = -1;
                 console.log('Nothing picked!');
+
+                //for some ridiculurs reason i got to pick again!!
+                //scene.pick()
             });
     var canvas = scene.getCanvas();
     canvas.addEventListener('mousedown',
             function (event) {
                 
                 scene.pick(event.clientX, event.clientY, { regionPick: true });
+                if(lastid == -1 && lastFloor == -1){
+                    setAllTheElementPickable();
+                    scene.pick(event.clientX, event.clientY, { regionPick: true });
+                }
             });
 }
 function UIlog(log){
@@ -165,49 +179,54 @@ function addInterWall(){
 
     var root = scene.findNode(3);
     root.addNode({
-        type: "name",
-            name: "interWall",
-
+        type: "flags",
+            flags:{transparent:false},
             nodes:
             [{
-                type: "material",
-                color:{ r:0.8, g:0.8, b:0.8 },
-
+                type: "name",
+                name: "interWall",
+    
                 nodes:
                 [{
-                    type: "name",
-                    name: "Wall.jpg",
-
+                    type: "material",
+                    color:{ r:0.8, g:0.8, b:0.8 },
+                    alpha:0.4,
                     nodes:
                     [{
-                        type: "matrix",
-                        elements:[0,0,1,0,1,0,0,0,0,1,0,0,9,8.5,0,1],
-
+                        type: "name",
+                        name: "Wall.jpg",
+    
                         nodes:
                         [{
-                            type: "texture",
-                            src: "images/GeometryTexture/Wall.jpg",
-                            applyTo: "color",
-
+                            type: "matrix",
+                            elements:[0,0,1,0,1,0,0,0,0,1,0,0,9,8.5,0,1],
+    
                             nodes:
                             [{
-                                type: "wall/no_window",
-                                layer: lastFloor,
-                                height: 4,
-                                width: 10,
-                                thickness: 0.5,
-                                direction: "vertical",
-                                priority: bigestID,
-                                percentX: 50,
-                                percentY: 50,
-                                scale: {x: 1, y: 1, z: 1},
-                                rotate: {x: 0, y: 90, z: 0},
-                                translate: {x: 0, y: 0, z: 0}
+                                type: "texture",
+                                src: "images/GeometryTexture/Wall.jpg",
+                                applyTo: "color",
+    
+                                nodes:
+                                [{
+                                    type: "wall/no_window",
+                                    layer: lastFloor,
+                                    height: 4,
+                                    width: 10,
+                                    thickness: 0.5,
+                                    direction: "vertical",
+                                    priority: bigestID,
+                                    percentX: 50,
+                                    percentY: 50,
+                                    scale: {x: 1, y: 1, z: 1},
+                                    rotate: {x: 0, y: 90, z: 0},
+                                    translate: {x: 0, y: 0, z: 0}
+                                }]
                             }]
                         }]
+                    }]
                 }]
             }]
-        }]
     });
 }
 
@@ -230,178 +249,201 @@ function addBase(){
     var root = scene.findNode(3);
     //base
     root.addNode({
-        type: "name",
-            name: "base",
-
+        type: "flags",
+            flags:{transparent:false},
             nodes:
             [{
-                type: "material",
-                color:{ r:0.8, g:0.8, b:0.8 },
-
+                type: "name",
+                name: "base",
+    
                 nodes:
                 [{
-                    type: "name",
-                    name: "Ground.jpg",
-
+                    type: "material",
+                    color:{ r:0.8, g:0.8, b:0.8 },
+                    alpha:0.4,
                     nodes:
                     [{
-                        type: "matrix",
-                        elements:[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],
-
+                        type: "name",
+                        name: "Ground.jpg",
+    
                         nodes:
                         [{
-                            type: "texture",
-                            src: "images/GeometryTexture/Ground.jpg",
-                            applyTo: "color",
-
+                            type: "matrix",
+                            elements:[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],
+    
                             nodes:
                             [{
-                                type: "base/basic",
-                                layer: layerNumber,
-                                height: 8,
-                                width: 18,
-                                thickness: 0.5,
-                                scale: {x: 1, y: 1, z: 1},
-                                rotate: {x: 0, y: 0, z: 0},
-                                translate: {x: 0, y: 0, z: 0}
+                                type: "texture",
+                                src: "images/GeometryTexture/Ground.jpg",
+                                applyTo: "color",
+    
+                                nodes:
+                                [{
+                                    type: "base/basic",
+                                    layer: layerNumber,
+                                    height: 8,
+                                    width: 18,
+                                    thickness: 0.5,
+                                    scale: {x: 1, y: 1, z: 1},
+                                    rotate: {x: 0, y: 0, z: 0},
+                                    translate: {x: 0, y: 0, z: 0}
+                                }]
                             }]
                         }]
                     }]
                 }]
             }]
+        
     });
     //BackWall
     root.addNode({
-        type: "name",
-            name: "backWall",
-
+        type: "flags",
+            flags:{transparent:false},
             nodes:
             [{
-                type: "material",
-                color:{ r:0.8, g:0.8, b:0.8 },
-
+                type: "name",
+                name: "backWall",
+    
                 nodes:
                 [{
-                    type: "name",
-                    name: "Wall.jpg",
-
+                    type: "material",
+                    color:{ r:0.8, g:0.8, b:0.8 },
+                    alpha:0.4,
                     nodes:
                     [{
-                        type: "matrix",
-                        elements:[1,0,0,0,0,0,-1,0,0,1,0,0,0,8.5,-7.5,1],
-
+                        type: "name",
+                        name: "Wall.jpg",
+    
                         nodes:
                         [{
-                            type: "texture",
-                            src: "images/GeometryTexture/Wall.jpg",
-                            applyTo: "color",
-
+                            type: "matrix",
+                            elements:[1,0,0,0,0,0,-1,0,0,1,0,0,0,8.5,-7.5,1],
+    
                             nodes:
                             [{
-                                type: "wall/no_window",
-                                layer: layerNumber,
-                                height: 8,
-                                width: 18,
-                                thickness: 0.5,
-                                scale: {x: 1, y: 1, z: 1},
-                                rotate: {x: 0, y: 0, z: 0},
-                                translate: {x: 0, y: 0, z: 0},
-                                direction: "horizontal"
+                                type: "texture",
+                                src: "images/GeometryTexture/Wall.jpg",
+                                applyTo: "color",
+    
+                                nodes:
+                                [{
+                                    type: "wall/no_window",
+                                    layer: layerNumber,
+                                    height: 8,
+                                    width: 18,
+                                    thickness: 0.5,
+                                    scale: {x: 1, y: 1, z: 1},
+                                    rotate: {x: 0, y: 0, z: 0},
+                                    translate: {x: 0, y: 0, z: 0},
+                                    direction: "horizontal"
+                                }]
                             }]
                         }]
                     }]
                 }]
             }]
+        
     });
     //frontWall
-    root.addNode({
-
-    });
+    //root.addNode({
+    //});
     //leftWall
     root.addNode({
-        type: "name",
-            name: "leftWall",
-
+        type:"flags",
+            flags:{transparent:false},
             nodes:
             [{
-                type: "material",
-                color:{ r:0.8, g:0.8, b:0.8 },
-
+                type: "name",
+                name: "leftWall",
+    
                 nodes:
                 [{
-                    type: "name",
-                    name: "Wall.jpg",
-
+                    type: "material",
+                    color:{ r:0.8, g:0.8, b:0.8 },
+                    alpha:0.4,
                     nodes:
                     [{
-                        type: "matrix",
-                        elements:[0,0,1,0,-1,0,0,0,0,-1,0,0,-17.5,8.5,0.5,1],
-
+                        type: "name",
+                        name: "Wall.jpg",
+    
                         nodes:
                         [{
-                            type: "texture",
-                            src: "images/GeometryTexture/Wall.jpg",
-                            applyTo: "color",
-
+                            type: "matrix",
+                            elements:[0,0,1,0,-1,0,0,0,0,-1,0,0,-17.5,8.5,0.5,1],
+    
                             nodes:
                             [{
-                                type: "wall/no_window",
-                                layer: layerNumber,
-                                height: 8,
-                                width: 7.5,
-                                thickness: 0.5,
-                                scale: {x: 1, y: 1, z: 1},
-                                rotate: {x: 0, y: 90, z: 0},
-                                translate: {x: 0, y: 0, z: 0},
-                                direction: "vertical"
+                                type: "texture",
+                                src: "images/GeometryTexture/Wall.jpg",
+                                applyTo: "color",
+    
+                                nodes:
+                                [{
+                                    type: "wall/no_window",
+                                    layer: layerNumber,
+                                    height: 8,
+                                    width: 7.5,
+                                    thickness: 0.5,
+                                    scale: {x: 1, y: 1, z: 1},
+                                    rotate: {x: 0, y: 90, z: 0},
+                                    translate: {x: 0, y: 0, z: 0},
+                                    direction: "vertical"
+                                }]
                             }]
                         }]
                     }]
                 }]
             }]
+        
     });
     //rightWall
     root.addNode({
-        type: "name",
-            name: "rightWall",
-
+        type:"flags",
+        flags:{transparent:false},
             nodes:
             [{
-                type: "material",
-                color:{ r:0.8, g:0.8, b:0.8 },
-
+                type: "name",
+                name: "rightWall",
+    
                 nodes:
                 [{
-                    type: "name",
-                    name: "Wall.jpg",
-
+                    type: "material",
+                    color:{ r:0.8, g:0.8, b:0.8 },
+                    alpha:0.4,
                     nodes:
                     [{
-                        type: "matrix",
-                        elements:[0,0,1,0,1,0,0,0,0,1,0,0,17.5,8.5,0.5,1],
-
+                        type: "name",
+                        name: "Wall.jpg",
+    
                         nodes:
                         [{
-                            type: "texture",
-                            src: "images/GeometryTexture/Wall.jpg",
-                            applyTo: "color",
-
+                            type: "matrix",
+                            elements:[0,0,1,0,1,0,0,0,0,1,0,0,17.5,8.5,0.5,1],
+    
                             nodes:
                             [{
-                                type: "wall/no_window",
-                                layer: layerNumber,
-                                height: 8,
-                                width: 7.5,
-                                thickness: 0.5,
-                                scale: {x: 1, y: 1, z: 1},
-                                rotate: {x: 0, y: 90, z: 0},
-                                translate: {x: 0, y: 0, z: 0},
-                                direction: "vertical"
+                                type: "texture",
+                                src: "images/GeometryTexture/Wall.jpg",
+                                applyTo: "color",
+    
+                                nodes:
+                                [{
+                                    type: "wall/no_window",
+                                    layer: layerNumber,
+                                    height: 8,
+                                    width: 7.5,
+                                    thickness: 0.5,
+                                    scale: {x: 1, y: 1, z: 1},
+                                    rotate: {x: 0, y: 90, z: 0},
+                                    translate: {x: 0, y: 0, z: 0},
+                                    direction: "vertical"
+                                }]
                             }]
                         }]
                     }]
                 }]
             }]
+        
     });
 }
 
@@ -760,6 +802,17 @@ function timeFuction(){
                     else if(node.getName()=="interWall")interWall.push(node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0]);
                     else if(node.getName()=="base" && node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].getLayer() == 1)base=node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
                 }
+                if(node.getType()=="flags"){
+                    if(lastFloor == -1 ||
+                        (node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].getLayer && node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].getLayer() == lastFloor)){
+                        node.setTransparent(false);
+                        node.setPicking(true);
+                    }
+                    else{
+                        node.setTransparent(true);
+                        node.setPicking(false);
+                    }
+                }
             }
             if(base != -1){
                 base.callBaseCalibration();
@@ -769,3 +822,17 @@ function timeFuction(){
     }, 16);
 }
 
+function setAllTheElementPickable(){
+    var nodes=scene.findNodes();
+            for(var i=0;i<nodes.length;i++){
+                var node = nodes[i];
+                if(node.getType()=="flags"){
+                        node.setPicking(true);
+                }
+            }
+}
+
+function isPowerEditMode(){
+    var powerEditMode=document.getElementById('powerEditMode');
+    return powerEditMode.checked;
+}

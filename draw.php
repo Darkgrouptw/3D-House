@@ -75,6 +75,7 @@
             <p> source </p>
         </div>
         <div id="uiarea">
+        	<input type="checkbox" id = "powerEditMode">要不要啟動強力編輯模式<br>
         </div>            
     </div>
 	<input type="button" class="RightUpButton" value="關閉貼圖" onclick="textureToggle()">

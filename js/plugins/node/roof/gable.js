@@ -142,6 +142,8 @@ SceneJS.Types.addType("roof/gable",
         	translateV.push(baseCenterZ);
         	
         	leftTriangle.setTranslate(translateV);
+
+            leftTriangle.setLayer(this.getLayer());
         }
         if(rightTriangle != -1)
         {
@@ -154,6 +156,8 @@ SceneJS.Types.addType("roof/gable",
         	translateV.push(baseCenterZ);
         	
         	rightTriangle.setTranslate(translateV);
+
+            rightTriangle.setLayer(this.getLayer());
         }
 
     }

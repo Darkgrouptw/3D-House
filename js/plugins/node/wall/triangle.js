@@ -3,6 +3,7 @@ SceneJS.Types.addType("wall/triangle",
 { 
 	construct: function (params) 
 	{ 
+		this._layer;
 		this.paramana = new ParameterManager(params, function(property)
 		{
 			var w = property.width, h = property.height, t = property.thickness, r = property.ratio;
@@ -21,6 +22,9 @@ SceneJS.Types.addType("wall/triangle",
 		this.addNode(build.call(this, params)); 
 	},
 	
+	getLayer:function(){return this._layer;},
+	setLayer:function(l){this._layer=l;},
+
 	getWidth: function() { return this.paramana.get('width'); },
 	setWidth: function(w) { this.paramana.set('width', w); this.paramana.updateGeometryNode(this); },
 	

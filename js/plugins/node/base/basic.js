@@ -103,14 +103,14 @@ SceneJS.Types.addType("base/basic",
         //set base height by layer
         if(downWall!=-1 && downBase !=-1){
             this.setTranslateY(downBase.getTranslate()[1] + downBase.getThickness() +downWall.getHeight()*2 +this.getThickness());
-            if(this.getWidth() >= downBase.getWidth()){
-                this.setWidth(downBase.getWidth());
+            if(!isPowerEditMode()){
+                if(this.getWidth() >= downBase.getWidth()){
+                    this.setWidth(downBase.getWidth());
+                }
+                if(this.getHeight() >= downBase.getHeight()){
+                    this.setHeight(downBase.getHeight());
+                }
             }
-            if(this.getHeight() >= downBase.getHeight()){
-                this.setHeight(downBase.getHeight());
-            }
-            
-            
         }
         //set four walls position
         var havefrontWall = false;
@@ -175,7 +175,7 @@ SceneJS.Types.addType("base/basic",
             else if(roof.setTranslateY)roof.setTranslateY(baseCenterY+this.getThickness()+defaulthigh*2+roof.getHeight());
             if(roof.setTranslateZ)roof.setTranslateZ(baseCenterZ);
             if(roof.adjustChildren)roof.adjustChildren();
-            if(roof.setLayer)roof.setLayer(this.getLayer());
+            if(roof.setLayer)roof.setLayer(this.getLayer()+1);
         }
         //set interwall
         if(interWall.length!=0){
