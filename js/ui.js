@@ -228,6 +228,8 @@ function addInterWall(){
                 }]
             }]
     });
+    
+    Calibration();
 }
 
 function getTopLayer(){
@@ -445,6 +447,8 @@ function addBase(){
             }]
         
     });
+
+    Calibration();
 }
 
 function deleteBase(){
@@ -461,12 +465,14 @@ function deleteBase(){
         var n = nodes[i];
         if(n.getLayer){
             if(n.getLayer() == layerNumber){
-                n.getParent().getParent().getParent().getParent().getParent().destroy();
+                n.getParent().getParent().getParent().getParent().getParent().getParent().destroy();
             }
         }
     }
     lastFloor =-1;
     lastid=-1;
+
+    Calibration();
 }
 
 function attachInput(pickId){
@@ -820,6 +826,23 @@ function timeFuction(){
             
         }
     }, 16);
+}
+
+function Calibration(){
+    var base=-1;
+    var nodes=scene.findNodes();
+    for(var i=0;i<nodes.length;i++){
+        var node = nodes[i];
+        if(node.getType()=="name"){
+            if(node.getName()=="base" && node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].getLayer() == 1){
+                base=node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
+                break;
+            }
+        }
+    }
+    if(base != -1){
+        base.callBaseCalibration();
+    }
 }
 
 function setAllTheElementPickable(){
