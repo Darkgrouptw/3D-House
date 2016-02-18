@@ -1,5 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
+//Wouldn't be changed stuff
+var typeDefined = ["roof", "base", "wall"];
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //Global variables
@@ -8,15 +9,42 @@ var infoStr = "";	//Storing the string in info.txt
 var posArray;	//Storing values of pos in each elements 
 var typeArray;	//Storing values of type in each elements 
 
-//mesh manipulating
+//mesh manipulating (latch faces)
 //faceArray[x][3]: vertex[3]
 var connector;	//:faceArray      Storing array of mesh with faceArray in each elements
 var nonConnector;	//:faceArray      Storing array of mesh with faceArray in each elements
 var connector_No;	//Storing the corresponding model index
 var nonConnector_No;	//Storing the corresponding model index
 
+function traverse(curNode, target){
+	var newArr = new Array;
+	newArr = target;
+	if(newArr.length == 1){
+		for(;newArr.indexOf(curNode.type) == -1;curNode = curNode.nodes[0]);
+	}else{
+		for(;newArr.indexOf(String(curNode.type).substring(0, 4)) == -1;curNode = curNode.nodes[0]);
+	}
+	return curNode;
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//Function used for exporting the model in multiple .obj
+//Here are the exporting functions
+function exportMultiObj(inputNode){
+	
+}
+function exportOneObj(inputNode){
+
+}
+
+function exportMultiStl(inputNode){
+
+}
+function exportOneStl(inputNode){
+
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Function used for converting the model in multiple .obj (NO DOWNLOADING)
 function convertToMultiObj(inputNode){
 	infoStr = "";
 	//Init the arrays
@@ -34,15 +62,16 @@ function convertToMultiObj(inputNode){
 	typeArray = new Array;
 	for(var i = 0;i<nodesArr.length;i++){
 		posArray.push(nodesArr[i]._core.name);
-		typeArray.push(nodesArr[i].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].type);
+		typeArray.push(traverse(nodesArr[i], typeDefined).type);
+		console.log(typeArray[i]);
 	}
 	//Looping all matrices of nodes
 	for(nodeI = 0;nodeI<nodesArr.length;nodeI++){
-		console.log(nodesArr[nodeI].nodes[0].nodes[0].nodes[0]);
-		var tmpMat = nodesArr[nodeI].nodes[0].nodes[0].nodes[0].nodes[0].getModelMatrix();
+
+		var tmpMat = traverse(nodesArr[nodeI], "matrix").getModelMatrix();
 		matList.push(tmpMat);
 
-		var curNode = nodesArr[nodeI].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
+		var curNode = traverse(nodesArr[nodeI], "geometry");
 		var tmpPos = curNode.getPositions();
 		var tmpNorm = curNode.getNormals();
 		var tmpFaces = curNode.getIndices();
@@ -70,7 +99,7 @@ function convertToMultiObj(inputNode){
 		}
 		vnStr += "\n";
 		
-		if(nodesArr[nodeI].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].type == "roof/gable"){
+		if(traverse(nodesArr[nodeI], typeDefined).type == "roof/gable"){
 			//Divides the roof into two .obj
 			var vArr = new Array(), vnArr = new Array();
 			var iter = 0, lastIter = 0;
@@ -229,7 +258,8 @@ function addSubMark(str){
 }
 
 function isConnector(nodeNum){
-	if(typeArray[nodeNum].substring(0, 4) == "Wall"){
+	console.log(typeArray[nodeNum].substring(0, 4));
+	if(typeArray[nodeNum].substring(0, 4) == "wall"){
 		return true;
 	}
 	return false;
@@ -290,7 +320,7 @@ function decrFace2(param){
 	return (param<16?0:16);
 }
 
-//Function used for exporting the model in one .obj
+//Function used for converting the model in one .obj (NO DOWNLOADING)
 function convertToOneObj(inputNode){
 	var nodesArr = inputNode.nodes;
 	var v = 0, vn = 0, f = 1;
@@ -298,7 +328,7 @@ function convertToOneObj(inputNode){
 	//console.log(nodesArr[i].nodes[0].elements.length);
 	//Look for each array size
 	for(i = 0;i<nodesArr.length;i++){
-		var curNode = nodesArr[i].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
+		var curNode = traverse(nodesArr[i], "geometry");
 		vCount.push(curNode.getPositions().length);
 		v += curNode.getPositions().length;
 		//vt += curNode.getUV().length;
@@ -315,10 +345,10 @@ function convertToOneObj(inputNode){
 	v = 0;	vn = 0;	//Reset v and vn, and use them for propagating the index
 
 	for(nodeI = 0;nodeI<nodesArr.length;nodeI++){
-		var tmpMat = nodesArr[nodeI].nodes[0].nodes[0].nodes[0].nodes[0].getModelMatrix();
+		var tmpMat = traverse(nodesArr[nodeI], "matrix").getModelMatrix();
 		matList.push(tmpMat);
 
-		var curNode = nodesArr[nodeI].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
+		var curNode = traverse(nodesArr[nodeI], "geometry");
 		var tmpPos = curNode.getPositions();
 		var tmpNorm = curNode.getNormals();
 		var tmpFaces = curNode.getIndices();
@@ -375,7 +405,7 @@ function lookAtNode(vCount, i){
 	return vCount.length - 1;
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
+//     :o(
 function convertToMultiStl(inputNode){
 	var nodesArr = inputNode.nodes;
 	var outNodeIndex = 0;
@@ -384,10 +414,10 @@ function convertToMultiStl(inputNode){
 	//Looping all matrices of nodes
 	for(nodeI = 0;nodeI<nodesArr.length;nodeI++){
 
-		var tmpMat = nodesArr[nodeI].nodes[0].nodes[0].nodes[0].nodes[0].getModelMatrix();
+		var tmpMat = nodesArr[nodeI].nodes[0].nodes[0].nodes[0].getModelMatrix();
 		matList.push(tmpMat);
 
-		var curNode = nodesArr[nodeI].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
+		var curNode = nodesArr[nodeI].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
 		var tmpPos = curNode.getPositions();
 		var tmpNorm = curNode.getNormals();
 		var tmpFaces = curNode.getIndices();		
@@ -561,10 +591,10 @@ function convertToOneStl(inputNode){
 	//Looping all matrices of nodes
 	for(nodeI = 0;nodeI<nodesArr.length;nodeI++){
 
-		var tmpMat = nodesArr[nodeI].nodes[0].nodes[0].nodes[0].nodes[0].getModelMatrix();
+		var tmpMat = nodesArr[nodeI].nodes[0].nodes[0].nodes[0].getModelMatrix();
 		matList.push(tmpMat);
 
-		var curNode = nodesArr[nodeI].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
+		var curNode = nodesArr[nodeI].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
 		var tmpPos = curNode.getPositions();
 		var tmpNorm = curNode.getNormals();
 		var tmpFaces = curNode.getIndices();		
@@ -621,19 +651,22 @@ function normalize(vec){
 	vec[2] /= mag;
 }
 
-function parseObj_withStoring(text, isConnector){
+//Just parsing the text storing .obj and return {<vertices>, <normals>, <faces>}
+function parseObj(text){
 	var objText = text.split("\n");
 	var obj = {};	//The elements inside are string
-	var vertexMatches = new Array, faceMatches = new Array;
+	var vertexMatches = new Array, normalMatches = new Array, faceMatches = new Array;
 	for(var i = 0;i<objText.length;i++){
 		if(objText[i][0] == "v" && objText[i][1] == " "){
 			vertexMatches.push(objText[i]);
+		}
+		else if(objText[i][0] == "v" && objText[i][1] == "n"){
+			normalMatches.push(objText[i]);
 		}
 		else if(objText[i][0] == "f" && objText[i][1] == " "){
 			faceMatches.push(objText[i]);
 		}
 	}
-
 	if (vertexMatches)
 	{
 	    obj.vertices = vertexMatches.map(function(vertex)
@@ -641,6 +674,15 @@ function parseObj_withStoring(text, isConnector){
 	        var vertices = vertex.split(" ");
 	        vertices.shift();
 	        return vertices;
+	    });
+	}
+	if (normalMatches)
+	{
+		obj.normals = normalMatches.map(function(normal)
+	    {
+	        var normals = normal.split(" ");
+	        normals.shift();
+	        return normals;
 	    });
 	}
 	if (faceMatches)
@@ -660,7 +702,13 @@ function parseObj_withStoring(text, isConnector){
 	    }
 	    obj.faces = outFaces;
 	}
-	// console.log(obj.vertices);
+	return obj;
+}
+
+//Used for dealing with latch faces and vertices' data storing in connector[]
+function parseObj_withStoring(text, isConnector){
+	var objText = text.split("\n");
+	var obj = parseObj(text);	//The elements inside are string
 	var faceArray = new Array;
 	for(var i = 0;i<obj.faces.length;i++){
 		var vertices = new Array;
@@ -726,6 +774,7 @@ function download(strData, strFileName, strMimeType) {
     return true;
 }
 
+//Garbage
 function latchFaces(nodeNum){
 	switch(posArray[nodeNum]){
 		case 'base':
