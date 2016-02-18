@@ -177,7 +177,7 @@ SceneJS.Types.addType("base/basic",
             if(roof.adjustChildren)roof.adjustChildren();
             if(roof.setLayer)roof.setLayer(this.getLayer()+1);
         }
-        //set interwall
+        //set interWall
         if(interWall.length!=0){
             interWall.sort(function(a,b){return a.getPriority() - b.getPriority()});
             for(var i=0;i<interWall.length;i++){
@@ -192,8 +192,53 @@ SceneJS.Types.addType("base/basic",
                 var xmaxrange=9999;
                 var check =true
                 var time=0;
+                var check =true
                 while(check){
                     check=false;
+                    if(backWall!=-1){
+                        var range=Math.sqrt(Math.pow(center[0] - backWall.getTranslate()[0],2)+
+                            Math.pow(center[1] - backWall.getTranslate()[1],2)+
+                            Math.pow(center[2] - backWall.getTranslate()[2],2));
+                        if(range < interWall[i].getThickness() + backWall.getThickness() ||
+                            backWall.isInside(center)){
+                            interWall[i].setTranslateZ(backWall.getTranslate()[2]+backWall.getThickness()+interWall[i].getThickness());
+                            center=interWall[i].getTranslate();
+                            check=true;
+                        }
+                    }
+                    if(frontWall!=-1){
+                        var range=Math.sqrt(Math.pow(center[0] - frontWall.getTranslate()[0],2)+
+                            Math.pow(center[1] - frontWall.getTranslate()[1],2)+
+                            Math.pow(center[2] - frontWall.getTranslate()[2],2));
+                        if(range < interWall[i].getThickness() + frontWall.getThickness() ||
+                            frontWall.isInside(center)){
+                            interWall[i].setTranslateZ(frontWall.getTranslate()[2]-frontWall.getThickness()-interWall[i].getThickness());
+                            center=interWall[i].getTranslate();
+                            check=true;
+                        }
+                    }
+                    if(leftWall!=-1){
+                        var range=Math.sqrt(Math.pow(center[0] - leftWall.getTranslate()[0],2)+
+                            Math.pow(center[1] - leftWall.getTranslate()[1],2)+
+                            Math.pow(center[2] - leftWall.getTranslate()[2],2));
+                        if(range < interWall[i].getThickness() + leftWall.getThickness() ||
+                            leftWall.isInside(center)){
+                            interWall[i].setTranslateX(leftWall.getTranslate()[0]+leftWall.getThickness()+interWall[i].getThickness());
+                            center=interWall[i].getTranslate();
+                            check=true;
+                        }
+                    }
+                    if(rightWall!=-1){
+                        var range=Math.sqrt(Math.pow(center[0] - rightWall.getTranslate()[0],2)+
+                            Math.pow(center[1] - rightWall.getTranslate()[1],2)+
+                            Math.pow(center[2] - rightWall.getTranslate()[2],2));
+                        if(range < interWall[i].getThickness() + rightWall.getThickness() ||
+                            rightWall.isInside(center)){
+                            interWall[i].setTranslateX(rightWall.getTranslate()[0]-rightWall.getThickness()-interWall[i].getThickness());
+                            center=interWall[i].getTranslate();
+                            check=true;
+                        }
+                    }
                     for (var j = 0; j < i; j++){
                         var range=Math.sqrt(Math.pow(center[0] - interWall[j].getTranslate()[0],2)+
                             Math.pow(center[1] - interWall[j].getTranslate()[1],2)+
@@ -221,13 +266,36 @@ SceneJS.Types.addType("base/basic",
                             break;
                         }
                     }
+                    if(center[0]+interWall[i].getThickness() > this.getTranslate()[0] + this.getWidth()){
+                        interWall[i].setTranslateX(this.getTranslate()[0]+this.getWidth() - interWall[i].getThickness());
+                        center=interWall[i].getTranslate();
+                        check=true;
+                    }
+                    if(center[0]-interWall[i].getThickness() < this.getTranslate()[0] - this.getWidth()){
+                        interWall[i].setTranslateX(this.getTranslate()[0]-this.getWidth() + interWall[i].getThickness());
+                        center=interWall[i].getTranslate();
+                        check=true;
+                    }
+                    if(center[2]+interWall[i].getThickness() > this.getTranslate()[2] + this.getHeight()){
+                        interWall[i].setTranslateZ(this.getTranslate()[2]+this.getHeight() - interWall[i].getThickness());
+                        center=interWall[i].getTranslate();
+                        check=true;
+                    }
+                    if(center[2]-interWall[i].getThickness() < this.getTranslate()[2] - this.getHeight()){
+                        interWall[i].setTranslateZ(this.getTranslate()[2]+this.getHeight() + interWall[i].getThickness());
+                        center=interWall[i].getTranslate();
+                        check=true;
+                    }
                     time++;
-                    if(time>2){
+                    if(time>20){
                         break;
                     }
                 }
 
-
+                if(time>20){
+                    //no wall can be fit in
+                    interWall[i].getParent().getParent().getParent().getParent().getParent().getParent().destroy();
+                }
                 //find z x min,max
                 for(var j=0;j<i;j++){
                     

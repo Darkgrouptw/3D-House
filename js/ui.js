@@ -73,8 +73,10 @@ function ScenePick(){
             function (hit) {
                 var material;
                 if(lastid>0){
-                    material=scene.findNode(lastid);
-                    material.setColor({ r:1, g:1, b:1});
+                    if(scene.findNode(lastid)){
+                        material=scene.findNode(lastid);
+                        material.setColor({ r:1, g:1, b:1});
+                    } 
                 }
                 var id=hit.nodeId;
                 var element=scene.findNode(id).nodes[0].nodes[0].nodes[0];
@@ -101,7 +103,7 @@ function ScenePick(){
                 uiPanel.style.display='none';
                 if(lastid>0){
                     material=scene.findNode(lastid);
-                    material.setColor({ r:0.8, g:0.8, b:0.8});
+                    material.setColor({ r:1, g:1, b:1});
                 }
                 lastid = -1;
                 lastFloor = -1;
@@ -164,7 +166,7 @@ function addInterWall(){
             else if(n.getName()=="leftWall")leftWall=n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
             else if(n.getName()=="rightWall")rightWall=n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
             else if(n.getName()=="roof")roof=n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
-            else if(n.getName()=="interWall")interWall.push(n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0]);
+            else if(n.getName()=="interWall" && n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].getLayer() == lastFloor )interWall.push(n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0]);
             else if(n.getName()=="base")base=n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
         }
     }
@@ -176,6 +178,28 @@ function addInterWall(){
             }
         }
     }
+    var px=50,py=50;
+    var numberOfDirectionVerticle=0;
+    var numberOfDirectionHorizontal=0;
+    for(var i=0;i<interWall.length;i++){
+        if(interWall[i].getDirection() == "vertical"){
+            numberOfDirectionVerticle++;
+        }else{
+            numberOfDirectionHorizontal++;
+        }
+    }
+    if(numberOfDirectionHorizontal==0){
+        py=50;
+    }else{
+        py=100-50/(numberOfDirectionHorizontal+1);
+    }
+    if(numberOfDirectionVerticle==0){
+        px=50;
+    }else{
+        px=100-50/(numberOfDirectionVerticle+1);
+    }
+    
+    
 
     var root = scene.findNode(3);
     root.addNode({
@@ -213,7 +237,7 @@ function addInterWall(){
                                     layer: lastFloor,
                                     height: 4,
                                     width: 10,
-                                    thickness: 0.5,
+                                    thickness: 1,
                                     direction: "vertical",
                                     priority: bigestID,
                                     percentX: 50,
@@ -285,7 +309,7 @@ function addBase(){
                                     layer: layerNumber,
                                     height: 8,
                                     width: 18,
-                                    thickness: 0.5,
+                                    thickness: 1,
                                     scale: {x: 1, y: 1, z: 1},
                                     rotate: {x: 0, y: 0, z: 0},
                                     translate: {x: 0, y: 0, z: 0}
@@ -333,7 +357,7 @@ function addBase(){
                                     layer: layerNumber,
                                     height: 8,
                                     width: 18,
-                                    thickness: 0.5,
+                                    thickness: 1,
                                     scale: {x: 1, y: 1, z: 1},
                                     rotate: {x: 0, y: 0, z: 0},
                                     translate: {x: 0, y: 0, z: 0},
@@ -385,7 +409,7 @@ function addBase(){
                                     layer: layerNumber,
                                     height: 8,
                                     width: 7.5,
-                                    thickness: 0.5,
+                                    thickness: 1,
                                     scale: {x: 1, y: 1, z: 1},
                                     rotate: {x: 0, y: 90, z: 0},
                                     translate: {x: 0, y: 0, z: 0},
@@ -434,7 +458,7 @@ function addBase(){
                                     layer: layerNumber,
                                     height: 8,
                                     width: 7.5,
-                                    thickness: 0.5,
+                                    thickness: 1,
                                     scale: {x: 1, y: 1, z: 1},
                                     rotate: {x: 0, y: 90, z: 0},
                                     translate: {x: 0, y: 0, z: 0},
@@ -452,15 +476,13 @@ function addBase(){
 }
 
 function deleteBase(){
-    var layerNumber=0;
+    var layerNumber=getTopLayer();
     var nodes=scene.findNodes();
-    for(var i=0;i<nodes.length;i++){
-        var n = nodes[i];
-        if(n.getType()=="name"){
-            if(n.getName()=="base"){if(n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].getLayer()>layerNumber){layerNumber=n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].getLayer();}}
-        }
+    if(layerNumber <=1){
+        lastid =-1;
+        lastFloor=-1;
+        return;
     }
-
     for(var i=0;i<nodes.length;i++){
         var n = nodes[i];
         if(n.getLayer){
@@ -728,8 +750,8 @@ function attachInput(pickId){
             }
 
             if(base != -1){
-                //  texture     //matrix    name        material    name
-                n.getParent().getParent().getParent().getParent().getParent().destroy();
+                //flags  texture     //matrix    name        material    name
+                n.getParent().getParent().getParent().getParent().getParent().getParent().destroy();
                 
                 //remove input
                 if(document.getElementById('inputarea')){
@@ -817,6 +839,13 @@ function timeFuction(){
                     else{
                         node.setTransparent(true);
                         node.setPicking(false);
+                    }
+                }
+                if(node.getType() == "material"){
+                    if(node.getID() == lastid){
+                        node.setColor({r:0.7,g:0.7,b:0.3});
+                    }else{
+                        node.setColor({r:1,g:1,b:1});
                     }
                 }
             }
