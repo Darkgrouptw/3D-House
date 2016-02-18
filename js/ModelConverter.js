@@ -38,11 +38,11 @@ function convertToMultiObj(inputNode){
 	}
 	//Looping all matrices of nodes
 	for(nodeI = 0;nodeI<nodesArr.length;nodeI++){
-
-		var tmpMat = nodesArr[nodeI].nodes[0].nodes[0].nodes[0].getModelMatrix();
+		console.log(nodesArr[nodeI].nodes[0].nodes[0].nodes[0]);
+		var tmpMat = nodesArr[nodeI].nodes[0].nodes[0].nodes[0].nodes[0].getModelMatrix();
 		matList.push(tmpMat);
 
-		var curNode = nodesArr[nodeI].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
+		var curNode = nodesArr[nodeI].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
 		var tmpPos = curNode.getPositions();
 		var tmpNorm = curNode.getNormals();
 		var tmpFaces = curNode.getIndices();
@@ -298,7 +298,7 @@ function convertToOneObj(inputNode){
 	//console.log(nodesArr[i].nodes[0].elements.length);
 	//Look for each array size
 	for(i = 0;i<nodesArr.length;i++){
-		var curNode = nodesArr[i].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
+		var curNode = nodesArr[i].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
 		vCount.push(curNode.getPositions().length);
 		v += curNode.getPositions().length;
 		//vt += curNode.getUV().length;
@@ -315,10 +315,10 @@ function convertToOneObj(inputNode){
 	v = 0;	vn = 0;	//Reset v and vn, and use them for propagating the index
 
 	for(nodeI = 0;nodeI<nodesArr.length;nodeI++){
-		var tmpMat = nodesArr[nodeI].nodes[0].nodes[0].nodes[0].getModelMatrix();
+		var tmpMat = nodesArr[nodeI].nodes[0].nodes[0].nodes[0].nodes[0].getModelMatrix();
 		matList.push(tmpMat);
 
-		var curNode = nodesArr[nodeI].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
+		var curNode = nodesArr[nodeI].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
 		var tmpPos = curNode.getPositions();
 		var tmpNorm = curNode.getNormals();
 		var tmpFaces = curNode.getIndices();
@@ -384,10 +384,10 @@ function convertToMultiStl(inputNode){
 	//Looping all matrices of nodes
 	for(nodeI = 0;nodeI<nodesArr.length;nodeI++){
 
-		var tmpMat = nodesArr[nodeI].nodes[0].nodes[0].nodes[0].getModelMatrix();
+		var tmpMat = nodesArr[nodeI].nodes[0].nodes[0].nodes[0].nodes[0].getModelMatrix();
 		matList.push(tmpMat);
 
-		var curNode = nodesArr[nodeI].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
+		var curNode = nodesArr[nodeI].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
 		var tmpPos = curNode.getPositions();
 		var tmpNorm = curNode.getNormals();
 		var tmpFaces = curNode.getIndices();		
@@ -561,10 +561,10 @@ function convertToOneStl(inputNode){
 	//Looping all matrices of nodes
 	for(nodeI = 0;nodeI<nodesArr.length;nodeI++){
 
-		var tmpMat = nodesArr[nodeI].nodes[0].nodes[0].nodes[0].getModelMatrix();
+		var tmpMat = nodesArr[nodeI].nodes[0].nodes[0].nodes[0].nodes[0].getModelMatrix();
 		matList.push(tmpMat);
 
-		var curNode = nodesArr[nodeI].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
+		var curNode = nodesArr[nodeI].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
 		var tmpPos = curNode.getPositions();
 		var tmpNorm = curNode.getNormals();
 		var tmpFaces = curNode.getIndices();		
