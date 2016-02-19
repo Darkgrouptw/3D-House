@@ -214,7 +214,7 @@ function addInterWall(){
                 [{
                     type: "material",
                     color:{ r:0.8, g:0.8, b:0.8 },
-                    alpha:0.4,
+                    alpha:0.2,
                     nodes:
                     [{
                         type: "name",
@@ -286,7 +286,7 @@ function addBase(){
                 [{
                     type: "material",
                     color:{ r:0.8, g:0.8, b:0.8 },
-                    alpha:0.4,
+                    alpha:0.2,
                     nodes:
                     [{
                         type: "name",
@@ -334,7 +334,7 @@ function addBase(){
                 [{
                     type: "material",
                     color:{ r:0.8, g:0.8, b:0.8 },
-                    alpha:0.4,
+                    alpha:0.2,
                     nodes:
                     [{
                         type: "name",
@@ -386,7 +386,7 @@ function addBase(){
                 [{
                     type: "material",
                     color:{ r:0.8, g:0.8, b:0.8 },
-                    alpha:0.4,
+                    alpha:0.2,
                     nodes:
                     [{
                         type: "name",
@@ -435,7 +435,7 @@ function addBase(){
                 [{
                     type: "material",
                     color:{ r:0.8, g:0.8, b:0.8 },
-                    alpha:0.4,
+                    alpha:0.2,
                     nodes:
                     [{
                         type: "name",
@@ -887,4 +887,64 @@ function setAllTheElementPickable(){
 function isPowerEditMode(){
     var powerEditMode=document.getElementById('powerEditMode');
     return powerEditMode.checked;
+}
+
+function saveXML(){
+    var xml='';
+    xml+='<layer>'+'\n';
+    var nodes=scene.findNodes();
+    for(var i=0;i<nodes.length;i++){
+        var node = nodes[i];
+        if(node.getType()=="flags"){
+            var n= node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
+            xml+='\t'+'<element>'+'\n';
+                if(n.getType)xml+='\t\t'+'<type>'+n.getType()+'</type>'+'\n';
+                xml+='\t\t'+'<transform>'+'\n';
+                    if(n.getScale){
+                        var scale = n.getScale();
+                        xml+='\t\t\t'+'<scale>'+scale[0]+','+scale[1]+','+scale[2]+'</scale>'+'\n';
+                    }
+                    if(n.getRotate){
+                        var rotate = n.getRotate();
+                        xml+='\t\t\t'+'<rotate>'+rotate[0]+','+rotate[1]+','+rotate[2]+'</rotate>'+'\n';
+                    }
+                    if(n.getTranslate){
+                        var translate = n.getTranslate();
+                        xml+='\t\t\t'+'<translate>'+translate[0]+','+translate[1]+','+translate[2]+'</translate>'+'\n';
+                    }
+                xml+='\t\t'+'</transform>'+'\n';
+                xml+='\t\t'+'<texture>';
+                if(n.getParent().getParent().getParent().getName){
+                    xml+=n.getParent().getParent().getParent().getName();
+                }
+                xml+='</texture>'+'\n';
+                xml+='\t\t'+'<pos>';
+                if(n.getParent().getParent().getParent().getParent().getParent().getName){
+                    xml+=n.getParent().getParent().getParent().getParent().getParent().getName();
+                }
+                xml+='</pos>'+'\n';
+                xml+='\t\t'+'<property>'+'\n';
+                    if(n.getLayer)xml+='\t\t\t'+'<layer>'+n.getLayer()+'</layer>'+'\n';
+                    if(n.getRealHeight)xml+='\t\t\t'+'<height>'+n.getRealHeight()+'</height>'+'\n';
+                    else if(n.getHeight)xml+='\t\t\t'+'<height>'+n.getHeight()+'</height>'+'\n';
+                    if(n.getRealWidth)xml+='\t\t\t'+'<width>'+n.getRealWidth()+'</width>'+'\n';
+                    else if(n.getWidth)xml+='\t\t\t'+'<width>'+n.getWidth()+'</width>'+'\n';
+                    if(n.getThickness)xml+='\t\t\t'+'<thickness>'+n.getThickness()+'</thickness>'+'\n';
+                    if(n.getDepth)xml+='\t\t\t'+'<depth>'+n.getDepth()+'</depth>'+'\n';
+                    if(n.getRatio){
+                        var ratio = n.getRatio();
+                        xml+='\t\t\t'+'<ratio>'+ratio.a+','+ratio.b+'</ratio>'+'\n';
+                    }
+                    if(n.getPercentX && n.getPercentX())xml+='\t\t\t'+'<percentX>'+n.getPercentX()+'</percentX>'+'\n';
+                    if(n.getPercentY && n.getPercentY())xml+='\t\t\t'+'<percentY>'+n.getPercentY()+'</percentY>'+'\n';
+                    if(n.getPriority && n.getPriority())xml+='\t\t\t'+'<priority>'+n.getPriority()+'</priority>'+'\n';
+                    if(n.getDirection)xml+='\t\t\t'+'<direction>'+'\"'+n.getDirection()+'\"'+'</direction>'+'\n';
+
+                xml+='\t\t'+'</property>'+'\n';
+            xml+='\t'+'</element>'+'\n';
+        }
+    }
+    xml+='</layer>'+'\n';
+    console.log(xml);
+    download(xml, "3Dhouse.3Dhouse", 'text/plain');
 }

@@ -68,7 +68,7 @@ class HouseXML
 				$nameWrapStr="					type: \"name\",\n 					name: \"".$textureNode->item(0)->textContent."\",\n\n					nodes:\n					[{\n".$nodeStr."\n".$endStr."				}]\n";
 				//多套一層material，這樣才可以個別改顏色
 				
-				$materialWrapStr="				type: \"material\",\n 				color:{ r:0.8, g:0.8, b:0.8 },alpha:0.4,\n\n 										nodes:\n					[{\n".$nameWrapStr."				}]\n";
+				$materialWrapStr="				type: \"material\",\n 				color:{ r:0.8, g:0.8, b:0.8 },alpha:0.2,\n\n 										nodes:\n					[{\n".$nameWrapStr."				}]\n";
 				//再套一層name，儲存方屋資訊
 				$nameDoubleWrapStr="			type: \"name\",\n 					name: \"".$posInformation->item(0)->textContent."\",\n\n				nodes:\n 					[{\n".$materialWrapStr."		}]\n";
 				//雖然套了夠多曾了 ，我還是要再套一層 falgs 來取得透明度
