@@ -1,157 +1,100 @@
-(function () {
 
-    SceneJS.Types.addType("roof/hip", { construct:function (params) { this.addNode(build.call(this, params)); }});
+SceneJS.Types.addType("roof/hip", 
+{ 
+    construct:function (params) 
+    {
+        this._layer;
+        this._paramana = new ParameterManager(params, function(property)
+	    {
+            var w = property.width;
+            var d = property.depth;
+            var h = property.height;
+            var t = property.thickness;
+	        var r = property.ratio;
+	        var tl = property.toplen;
+	
+	        var pA, pB, pset = [], pctD = -d + (2 * d * r.b);
+	        
+		    if (tl == 0) 
+		    { 
+			    var pctW = -w + (2 * w * r.a);
+			    pA = [pctW, h, pctD]; pB = [pctW, h, pctD];
+		    }
+		    else 
+		    {
+			    var rl = (d * 2) - tl;
+			    pA = [-w + (rl * r.a), h, pctD]; pB = [w - (rl * (1 - r.a)), h, pctD];
+		    }	
+			    // Extra faces and indices
+			pset = pset.concat(
+			[
+				pB[0], pB[1], pB[2], -w, -h, d, pA[0], pA[1], pA[2], w, -h, -d,
+				pA[0], pA[1] - t, pA[2], -w + t, -h, d - t, pB[0], pB[1] - t, pB[2], w - t, -h, -d + t,
+			    pA[0], pA[1], pA[2], -w, -h, d, -w, -h, -d, w, -h, -d, pB[0], pB[1], pB[2], w, -h, -d, w, -h, d, -w, -h, d,
+			    pA[0], pA[1] - t, pA[2], w - t, -h, -d + t, -w + t, -h, -d + t, -w + t, -h, d - t,
+			    pB[0], pB[1] - t, pB[2], -w + t, -h, d - t, w - t, -h, d - t, w - t, -h, -d + t,
+			    -w + t, -h, d - t, -w + t, -h, -d + t, -w, -h, -d, -w, -h, d,
+			    -w + t, -h, -d + t, w - t, -h, -d + t, w, -h, -d, -w, -h, -d,
+			    w - t, -h, d - t, w, -h, d, w, -h, -d, w - t, -h, -d + t,
+			    -w + t, -h, d - t, -w, -h, d, w, -h, d, w - t, -h, d - t
+		    ]); 
+	            
+	        return pset;
+	    });
+	    
+	    // toplen will affect the position, so it need to add it.
+	    this._paramana.addAttribute('toplen', params.toplen);
+        
+        this.addNode(build.call(this, params)); 
+    },  
+    
+    getWidth: function() { return this._paramana.get('width'); },
+	setWidth: function(w) { this._paramana.set('width', w); this._paramana.updateGeometryNode(this); },
+	
+	getHeight: function() { return this._paramana.get('height'); },
+	setHeight: function(h) { this._paramana.set('height', h); this._paramana.updateGeometryNode(this); },
+	
+	getDepth: function() { return this._paramana.get('depth'); },
+	setDepth: function(d) { this._paramana.set('depth', d); this._paramana.updateGeometryNode(this); },
+	
+	getRatio: function() { return this._paramana.get('ratio'); },
+	setRatio: function(r) { return this._paramana.set('ratio', r); this._paramana.updateGeometryNode(this); },
+	
+	getToplen: function() { return this._paramana.get('toplen'); },
+	setToplen: function(tl) { this._paramana.set('toplen', tl); this._paramana.updateGeometryNode(this); },
+	
+	getThickness: function() { return this._paramana.get('thickness'); },
+	setThickness: function(t) { this._paramana.set('thickness', t); this._paramana.updateGeometryNode(this); },
 
-    function build(params) 
+	getScale: function() { return this._paramana.get('scale'); },
+	setScale: function(svec) { this._paramana.set('scale', svec); this._paramana.updateMatirxNode(this); },
+	
+	getRotate: function() { return this._paramana.get('rotate'); },
+	setRotate: function(rvec) { this._paramana.set('rotate', rvec); this._paramana.updateMatirxNode(this); },
+	
+	getTranslate: function() { return this._paramana.get('translate'); },
+	setTranslate: function(tvec) { this._paramana.set('translate', tvec); this._paramana.updateMatirxNode(this); },
+	
+	setTranslateX: function(x) { var t = this.getTranslate(); this.setTranslate([x, t[1], t[2]]); },
+    setTranslateY: function(y) { var t = this.getTranslate(); this.setTranslate([t[0], y, t[2]]); },
+    setTranslateZ: function(z) { var t = this.getTranslate(); this.setTranslate([t[0], t[1], z]); },
+});
+
+
+function build(params) 
+{
+    var positionSet = this._paramana.createPositions();
+    var indiceSet = utility.makeIndices(0, (positionSet.length / 3) - 1);
+
+    var geometry = 
 	{
-        var size = {x: 0, y: 0, z: 0}, thick, toplen, ratio, center;
-        if(params.size && params.thick && params.toplen != undefined) 
-		{
-            size.x = params.size.x / 2;
-			size.y = params.size.z / 2;
-			size.z = params.size.y / 2;
-            thick = params.thick;
-			toplen = params.toplen;
-        } 
-		else { thick = 0; toplen = 0; }
-		
-		if(params.center) { center = params.center; }
-		else { center = { x: 0, y: 0, z: 0}; }
-		
-		if(params.ratio) { ratio = params.ratio; }
-		else { ratio = { a: 0, b: 0 }; }
+        type: "geometry",
+        primitive: "triangles",
+        positions: positionSet,
+        normals: "auto",
+        indices:  indiceSet
+    };
+	
+	return geometry;
+}
 
-        var coreId = "roof/hip" + "_" + SceneJS_add_randomString(20) + "_" + (params.wire ? "wire" : "solid");
-
-        // If a node core already exists for a prim with the given properties,
-        // then for efficiency we'll share that core rather than create another geometry
-        if (this.getScene().hasCore("geometry", coreId)) { return { type: "geometry", coreId: coreId }; }
-
-		var topPointA, topPointB;
-		var positionSet = [], indiceSet = [], normalSet = [];
-		
-		var percentageZ = -size.z + (2 * size.z * ratio.b);
-		if (toplen == 0) 
-		{ 
-			var percetageX = -size.x + (2 * size.x * ratio.a);
-			topPointA = [percetageX, size.y, percentageZ]; 
-			topPointB = [percetageX, size.y, percentageZ];
-		}
-		else 
-		{
-			var remainlen = (size.x * 2) - toplen;
-			topPointA = [-size.x + (remainlen * ratio.a), size.y, percentageZ];
-			topPointB = [size.x - (remainlen * (1 - ratio.a)), size.y, percentageZ];
-			
-			// Extra faces and indices
-			positionSet = positionSet.concat(
-			[
-				// Front
-				topPointB[0], topPointB[1], topPointB[2],
-				-size.x, -size.y, size.z, 
-				topPointA[0], topPointA[1], topPointA[2],
-				size.x, -size.y, -size.z, 
-				
-				// Back
-				topPointA[0], topPointA[1] - thick, topPointA[2],
-				-size.x + thick, -size.y, size.z - thick, 
-				topPointB[0], topPointB[1] - thick, topPointB[2],
-				size.x - thick, -size.y, -size.z + thick,
-			]);
-			
-			indiceSet = indiceSet.concat(
-			[
-				32, 33, 34, 32, 34, 35, 
-				36, 37, 38, 36, 38, 39
-			]);
-			
-			normalSet = normalSet.concat(
-			[
-				-1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0,
-				0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0,
-			]);
-		}
-		
-		
-		positionSet = positionSet.concat(
-		[
-			// Front 
-			topPointA[0], topPointA[1], topPointA[2],
-			-size.x, -size.y, size.z,
-			-size.x, -size.y, -size.z,
-			size.x, -size.y, -size.z,
-			
-			topPointB[0], topPointB[1], topPointB[2],
-			size.x, -size.y, -size.z,
-			size.x, -size.y, size.z,
-			-size.x, -size.y, size.z,
-			
-			// Back
-			topPointA[0], topPointA[1] - thick, topPointA[2],
-			size.x - thick, -size.y, -size.z + thick, 
-			-size.x + thick, -size.y, -size.z + thick,
-			-size.x + thick, -size.y, size.z - thick,
-			
-			topPointB[0], topPointB[1] - thick, topPointB[2],
-			-size.x + thick, -size.y, size.z - thick,
-			size.x - thick, -size.y, size.z - thick,
-			size.x - thick, -size.y, -size.z + thick,
-			
-			// Side West
-			-size.x + thick, -size.y, size.z - thick,
-			-size.x + thick, -size.y, -size.z + thick,
-			-size.x, -size.y, -size.z,
-			-size.x, -size.y, size.z,
-			
-			// Side Sourth
-			-size.x + thick, -size.y, -size.z + thick,
-			size.x - thick, -size.y, -size.z + thick,
-			size.x, -size.y, -size.z,
-			-size.x, -size.y, -size.z,
-			
-			// Side East
-			size.x - thick, -size.y, size.z - thick,
-			size.x, -size.y, size.z,
-			size.x, -size.y, -size.z,
-			size.x - thick, -size.y, -size.z + thick,
-			
-			// Side North
-			-size.x + thick, -size.y, size.z - thick,
-			-size.x, -size.y, size.z,
-			size.x, -size.y, size.z,
-			size.x - thick, -size.y, size.z - thick
-		]);
-		
-		indiceSet = indiceSet.concat(
-		[
-			0, 1, 2, 0, 2, 3,
-			4, 5, 6, 4, 6, 7,
-			8, 9, 10, 8, 10, 11,
-			12, 13, 14, 12, 14, 15,
-			16, 17, 18, 16, 18, 19,
-			20, 21, 22, 20, 22, 23,	
-			24, 25, 26, 24, 26, 27,
-			28, 29, 30, 28, 30, 31
-		]);
-		
-		for(var pidx = 0; pidx < positionSet.length; pidx = pidx + 3)
-		{
-			positionSet[pidx] = positionSet[pidx] + center.x;
-			positionSet[pidx + 1] = positionSet[pidx + 1] + center.y;
-			positionSet[pidx + 2] = positionSet[pidx + 2] + center.z;
-		}
-		
-        // Otherwise, create a new geometry
-        var newone = 
-		{
-            type: "geometry",
-            primitive: params.wire ? "lines" : "triangles",
-            coreId: coreId,
-            positions: new Float32Array(positionSet),
-            normals: "auto",
-            indices:  indiceSet
-        };
-		
-		return newone;
-    }
-})();

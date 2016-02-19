@@ -303,7 +303,7 @@ function ParameterManager(p, functor)
 // When needed add the other attribute
 ParameterManager.prototype.addAttribute = function(name, attribute)
 {
-    if(utility.checkUndefined(property[name])) { property[name] = attribute; }
+    if(utility.checkUndefined(this.property[name])) { this.property[name] = attribute; }
     else { console.log('Warning: You are try to override the ' + name + ' with ' + attribute + '.'); }
 };
 

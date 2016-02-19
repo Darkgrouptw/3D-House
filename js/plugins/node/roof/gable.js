@@ -4,7 +4,7 @@ SceneJS.Types.addType("roof/gable",
     construct:function (params) 
     {
         this._layer;
-        this.paramana = new ParameterManager(params, function(property)
+        this._paramana = new ParameterManager(params, function(property)
 	    {
             var w = property.width;
             var d = property.depth;
@@ -39,41 +39,34 @@ SceneJS.Types.addType("roof/gable",
     getLayer:function(){ return this._layer; },
     setLayer:function(l){ this._layer=l; },
 
-    getWidth: function() { return this.paramana.get('width'); },
-	setWidth: function(w) { this.paramana.set('width', w); this.paramana.updateGeometryNode(this); },
+    getWidth: function() { return this._paramana.get('width'); },
+	setWidth: function(w) { this._paramana.set('width', w); this._paramana.updateGeometryNode(this); },
 	
-	getHeight: function() { return this.paramana.get('height'); },
-	setHeight: function(h) { this.paramana.set('height', h); this.paramana.updateGeometryNode(this); },
+	getHeight: function() { return this._paramana.get('height'); },
+	setHeight: function(h) { this._paramana.set('height', h); this._paramana.updateGeometryNode(this); },
 	
-	getDepth: function() { return this.paramana.get('depth'); },
-	setDepth: function(d) { this.paramana.set('depth', d); this.paramana.updateGeometryNode(this); },
+	getDepth: function() { return this._paramana.get('depth'); },
+	setDepth: function(d) { this._paramana.set('depth', d); this._paramana.updateGeometryNode(this); },
 	
-	getRatio: function() { return this.paramana.get('ratio'); },
-	setRatio: function(r) { return this.paramana.set('ratio', r); this.paramana.updateGeometryNode(this); },
+	getRatio: function() { return this._paramana.get('ratio'); },
+	setRatio: function(r) { return this._paramana.set('ratio', r); this._paramana.updateGeometryNode(this); },
 	
-	getThickness: function() { return this.paramana.get('thickness'); },
-	setThickness: function(t) { this.paramana.set('thickness', t); this.paramana.updateGeometryNode(this); },
+	getThickness: function() { return this._paramana.get('thickness'); },
+	setThickness: function(t) { this._paramana.set('thickness', t); this._paramana.updateGeometryNode(this); },
 
-	getScale: function() { return this.paramana.get('scale'); },
-	setScale: function(svec) { this.paramana.set('scale', svec); this.paramana.updateMatirxNode(this); },
+	getScale: function() { return this._paramana.get('scale'); },
+	setScale: function(svec) { this._paramana.set('scale', svec); this._paramana.updateMatirxNode(this); },
 	
-	getRotate: function() { return this.paramana.get('rotate'); },
-	setRotate: function(rvec) { this.paramana.set('rotate', rvec); this.paramana.updateMatirxNode(this); },
+	getRotate: function() { return this._paramana.get('rotate'); },
+	setRotate: function(rvec) { this._paramana.set('rotate', rvec); this._paramana.updateMatirxNode(this); },
 	
-	getTranslate: function() { return this.paramana.get('translate'); },
-	setTranslate: function(tvec) { this.paramana.set('translate', tvec); this.paramana.updateMatirxNode(this); },
-	setTranslateX: function(x){
-        var t=this.getTranslate()
-        this.setTranslate([x,t[1],t[2]]);
-    },
-    setTranslateY: function(y){
-        var t=this.getTranslate()
-        this.setTranslate([t[0],y,t[2]]);
-    },
-    setTranslateZ: function(z){
-        var t=this.getTranslate()
-        this.setTranslate([t[0],t[1],z]);
-    },
+	getTranslate: function() { return this._paramana.get('translate'); },
+	setTranslate: function(tvec) { this._paramana.set('translate', tvec); this._paramana.updateMatirxNode(this); },
+	
+	setTranslateX: function(x) { var t = this.getTranslate(); this.setTranslate([x, t[1], t[2]]); },
+    setTranslateY: function(y) { var t = this.getTranslate(); this.setTranslate([t[0], y, t[2]]); },
+    setTranslateZ: function(z) { var t = this.getTranslate(); this.setTranslate([t[0], t[1], z]); },
+    
 	callBaseCalibration: function()
 	{
         return;
@@ -166,19 +159,6 @@ SceneJS.Types.addType("roof/gable",
 function build(params) 
 {
     var indiceSet = utility.makeIndices(0, 39);
-    var normalSet = new Float32Array(
-    [
-        0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1,
-        1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0,
-        0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0,
-        -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0,
-        0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0,
-        0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1,
-        0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1,
-        1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0,
-        0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0,
-        -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0
-    ]);
     var uvSet = new Float32Array(
     [
 	    0, 1, 0, 0, 1, 0, 1, 1,			// Back 
@@ -199,7 +179,7 @@ function build(params)
 	{
         type: "geometry",
         primitive: "triangles",
-        positions: this.paramana.createPositions(),
+        positions: this._paramana.createPositions(),
 		uv: uvSet,
 		normals: "auto",
         indices: indiceSet
