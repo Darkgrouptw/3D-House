@@ -10,13 +10,13 @@
         </transform>
 		
 		<texture>roof.jpg</texture>
-		
+        <pos></pos>		
         <property>
             <width>18</width>
             <height>5</height>
             <depth>18</depth>
             <thickness>1</thickness>
-            <ratio>0.1,0.1</ratio><!-- Limitation is 0.5, 0.5 -->
+            <ratio>0.1,0.1</ratio>
         </property>
 	
     </element> 

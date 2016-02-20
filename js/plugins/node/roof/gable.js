@@ -37,7 +37,7 @@ SceneJS.Types.addType("roof/gable",
     },
     
     getLayer:function(){ return this._layer; },
-    setLayer:function(l){ this._layer=l; },
+    setLayer:function(l){ this._layer = l; },
 
     getWidth: function() { return this._paramana.get('width'); },
 	setWidth: function(w) { this._paramana.set('width', w); this._paramana.updateGeometryNode(this); },

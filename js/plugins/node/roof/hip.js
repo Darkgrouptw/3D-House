@@ -24,8 +24,14 @@ SceneJS.Types.addType("roof/hip",
 		    {
 			    var rl = (d * 2) - tl;
 			    pA = [-w + (rl * r.a), h, pctD]; pB = [w - (rl * (1 - r.a)), h, pctD];
-		    }	
-			    // Extra faces and indices
+            }
+
+            // Maybe we have very small height
+            if(pA[0] > pB[0])
+            {
+                 pA[0] = 0; pB[0] = 0;
+            }	
+
 			pset = pset.concat(
 			[
 				pB[0], pB[1], pB[2], -w, -h, d, pA[0], pA[1], pA[2], w, -h, -d,
@@ -47,7 +53,10 @@ SceneJS.Types.addType("roof/hip",
         
         this.addNode(build.call(this, params)); 
     },  
-    
+
+    getLayer: function() { return this._layer; },
+    setLayer: function(l) { return this._layer = l },
+
     getWidth: function() { return this._paramana.get('width'); },
 	setWidth: function(w) { this._paramana.set('width', w); this._paramana.updateGeometryNode(this); },
 	
@@ -85,12 +94,31 @@ function build(params)
 {
     var positionSet = this._paramana.createPositions();
     var indiceSet = utility.makeIndices(0, (positionSet.length / 3) - 1);
+   
+    // Copy from roof/gable
+    var uvSet = new Float32Array(
+    [
+	    0, 1, 0, 0, 1, 0, 1, 1, 
+	    1, 1, 1, 0, 0, 0, 0, 1,
+	    0, 1, 1, 1, 1, 0, 0, 0,
+
+	    0, 1, 0, 0, 1, 0, 1, 1,	
+	    1, 1, 1, 0, 0, 0, 0, 1,
+	    0, 1, 0, 0, 1, 0, 1, 1,
+
+	    1, 1, 0, 1, 0, 0, 1, 1,
+	    1, 0, 0, 0, 0, 1, 1, 1,
+	
+	    1, 1, 0, 1, 0, 0, 1, 0,
+	    0, 1, 1, 1, 1, 0, 0, 0
+    ]);
 
     var geometry = 
 	{
         type: "geometry",
         primitive: "triangles",
         positions: positionSet,
+        uv: uvSet,
         normals: "auto",
         indices:  indiceSet
     };
