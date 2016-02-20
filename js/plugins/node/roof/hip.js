@@ -87,6 +87,38 @@ SceneJS.Types.addType("roof/hip",
 	setTranslateX: function(x) { var t = this.getTranslate(); this.setTranslate([x, t[1], t[2]]); },
     setTranslateY: function(y) { var t = this.getTranslate(); this.setTranslate([t[0], y, t[2]]); },
     setTranslateZ: function(z) { var t = this.getTranslate(); this.setTranslate([t[0], t[1], z]); },
+    callBaseCalibration: function()
+	{
+
+    	var backWall=-1, rightWall=-1, leftWall=-1,frontWall=-1, roof=-1, base=-1;
+        var nodes=scene.findNodes();
+        
+        //                                 material     name   matrix  texture  element
+        var mnmte = function(n) { return n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0]; }
+        
+        for(var i = 0; i < nodes.length; i++)
+        {
+            var n = nodes[i];
+            if(n.getType() == "name")
+            {
+                if(n.getName() == "backWall") { backWall = mnmte(n); }
+                else if(n.getName() == "frontWall") { frontWall = mnmte(n); }
+                else if(n.getName() == "leftWall") { leftWall = mnmte(n); }
+                else if(n.getName() == "rightWall") { rightWall = mnmte(n); }
+                else if(n.getName() == "roof") { roof = mnmte(n); }
+                else if(n.getName() == "base" && mnmte(n).getLayer && mnmte(n).getLayer() == this.getLayer() - 1) { base = mnmte(n); }
+            }
+        }
+        if(base == -1){ console.log("ERROR"); return; }
+        if(roof.getID() == this.getID())
+        {
+        	if(base.setRealWidth)base.setRealWidth(this.getDepth());
+            if(base.setRealHeight)base.setRealHeight(this.getWidth());
+        	base.setWidth(this.getDepth());
+        	base.setHeight(this.getWidth());
+        	base.callBaseCalibration();
+        }
+    }
 });
 
 

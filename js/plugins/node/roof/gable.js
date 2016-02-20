@@ -69,7 +69,6 @@ SceneJS.Types.addType("roof/gable",
     
 	callBaseCalibration: function()
 	{
-        return;
     	var backWall=-1, rightWall=-1, leftWall=-1,frontWall=-1, roof=-1, base=-1;
         var nodes=scene.findNodes();
         
@@ -86,12 +85,14 @@ SceneJS.Types.addType("roof/gable",
                 else if(n.getName() == "leftWall") { leftWall = mnmte(n); }
                 else if(n.getName() == "rightWall") { rightWall = mnmte(n); }
                 else if(n.getName() == "roof") { roof = mnmte(n); }
-                else if(n.getName() == "base") { base = mnmte(n); }
+                else if(n.getName() == "base" && mnmte(n).getLayer && mnmte(n).getLayer() == this.getLayer() - 1) { base = mnmte(n); }
             }
         }
         if(base == -1){ console.log("ERROR"); return; }
         if(roof.getID() == this.getID())
         {
+            if(base.setRealWidth)base.setRealWidth(this.getDepth());
+            if(base.setRealHeight)base.setRealHeight(this.getWidth());
         	base.setWidth(this.getDepth());
         	base.setHeight(this.getWidth());
         	base.callBaseCalibration();
@@ -152,7 +153,42 @@ SceneJS.Types.addType("roof/gable",
 
             rightTriangle.setLayer(this.getLayer());
         }
+    },
+    KillChildren: function(){
 
+
+        var baseCenter = this.getTranslate();
+        var baseCenterX = baseCenter[0];
+        var baseCenterY = baseCenter[1];
+        var baseCenterZ = baseCenter[2];
+
+        var leftTriangle = -1, rightTriangle = -1, roof = -1, base = -1;
+        var nodes = scene.findNodes();
+        
+        //                                 material     name   matrix  texture  element
+        var mnmte = function(n) { return n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0]; }
+        
+        for(var i = 0; i < nodes.length; i++)
+        {
+            var n = nodes[i];
+            if(n.getType() == "name")
+            {
+                if(n.getName() =="roof") { roof = mnmte(n); }
+                else if(n.getName() == "leftTriangle") { leftTriangle = mnmte(n); }
+                else if(n.getName() == "rightTriangle") { rightTriangle = mnmte(n); }
+                else if(n.getName() == "base") { base = mnmte(n); }
+            }
+        }
+        
+        if(roof == -1) { console.log("ERROR"); return; }
+        if(leftTriangle != -1)
+        {
+            leftTriangle.getParent().getParent().getParent().getParent().getParent().getParent().destroy();
+        }
+        if(rightTriangle != -1)
+        {
+            rightTriangle.getParent().getParent().getParent().getParent().getParent().getParent().destroy();
+        }
     }
  });
 

@@ -19,6 +19,7 @@ SceneJS.Types.addType("wall/triangle",
 			
 			return pset;
 		});
+		this._layer = params.layer;
 		this.addNode(build.call(this, params)); 
 	},
 	

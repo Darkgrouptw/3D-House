@@ -1,4 +1,4 @@
-
+var go = true;
 function UIinit(boolFlag)
 {
     console.log('what did you done');
@@ -633,17 +633,17 @@ function attachInput(pickId){
             div.appendChild(percentXpropertyValue);
     
         percentXinput.addEventListener('mousedown',function(event){
-            deepismove=true;
+            percentXismove=true;
         });
         percentXinput.addEventListener('mousemove',function(event){
-            if (deepismove) {
+            if (percentXismove) {
                 n.setPercentX(Number(percentXinput.value));
                 percentXpropertyValue.textContent=percentXinput.value;
                 n.callBaseCalibration();
             }
         });
         percentXinput.addEventListener('mouseup',function(event){
-            deepismove=false;
+            percentXismove=false;
         });
     }
     
@@ -671,17 +671,17 @@ function attachInput(pickId){
             div.appendChild(percentYpropertyValue);
     
         percentYinput.addEventListener('mousedown',function(event){
-            deepismove=true;
+            percentYismove=true;
         });
         percentYinput.addEventListener('mousemove',function(event){
-            if (deepismove) {
+            if (percentYismove) {
                 n.setPercentY(percentYinput.value);
                 percentYpropertyValue.textContent=percentYinput.value;
                 n.callBaseCalibration();
             }
         });
         percentYinput.addEventListener('mouseup',function(event){
-            deepismove=false;
+            percentYismove=false;
         });
     }
     
@@ -764,50 +764,85 @@ function attachInput(pickId){
         });
     }
 
-    //deep
-    if(n.getDeep){
-        var deepismove=false;
+    //depth
+    if(n.getDepth){
+        var depthismove=false;
         var div=document.createElement("div");
         inputarea.appendChild(div);
         //text
-        var deeppropertyName=document.createElement("lable");
-            deeppropertyName.textContent="deep";
-            div.appendChild(deeppropertyName);
+        var depthpropertyName=document.createElement("lable");
+            depthpropertyName.textContent="depth";
+            div.appendChild(depthpropertyName);
         //input
-        var deepinput=document.createElement("input");
-            deepinput.type="range";
-            deepinput.min="1";
-            deepinput.max="50";
-            deepinput.step="0.1";
-            deepinput.value=n.getDeep();
-            div.appendChild(deepinput);
+        var depthinput=document.createElement("input");
+            depthinput.type="range";
+            depthinput.min="1";
+            depthinput.max="50";
+            depthinput.step="0.1";
+            depthinput.value=n.getDepth();
+            div.appendChild(depthinput);
     
-        var deeppropertyValue=document.createElement("lable");
-            deeppropertyValue.textContent=deepinput.value;
-            div.appendChild(deeppropertyValue);
+        var depthpropertyValue=document.createElement("lable");
+            depthpropertyValue.textContent=depthinput.value;
+            div.appendChild(depthpropertyValue);
     
-        deepinput.addEventListener('mousedown',function(event){
-            deepismove=true;
+        depthinput.addEventListener('mousedown',function(event){
+            depthismove=true;
         });
-        deepinput.addEventListener('mousemove',function(event){
-            if (deepismove) {
-                n.setDeep(deepinput.value);
-                deeppropertyValue.textContent=deepinput.value;
+        depthinput.addEventListener('mousemove',function(event){
+            if (depthismove) {
+                n.setDepth(depthinput.value);
+                depthpropertyValue.textContent=depthinput.value;
                 n.callBaseCalibration();
             }
         });
-        deepinput.addEventListener('mouseup',function(event){
-            deepismove=false;
+        depthinput.addEventListener('mouseup',function(event){
+            depthismove=false;
         });
     }
+    //toplen
+    if(n.getToplen ){
+        var toplenismove=false;
+        var div=document.createElement("div");
+        inputarea.appendChild(div);
+        //text
+        var toplenpropertyName=document.createElement("lable");
+            toplenpropertyName.textContent="toplen";
+            div.appendChild(toplenpropertyName);
+        //input
+        var topleninput=document.createElement("input");
+            topleninput.type="range";
+            topleninput.min="1";
+            topleninput.max="50";
+            topleninput.step="0.1";
+            topleninput.value=n.getToplen();
+            div.appendChild(topleninput);
     
+        var toplenpropertyValue=document.createElement("lable");
+            toplenpropertyValue.textContent=topleninput.value;
+            div.appendChild(toplenpropertyValue);
+    
+        topleninput.addEventListener('mousedown',function(event){
+            toplenismove=true;
+        });
+        topleninput.addEventListener('mousemove',function(event){
+            if (toplenismove) {
+                n.setToplen(Number(topleninput.value*1.0));
+                toplenpropertyValue.textContent=topleninput.value;
+                n.callBaseCalibration();
+            }
+        });
+        topleninput.addEventListener('mouseup',function(event){
+            toplenismove=false;
+        });
+    }
 
 }
 
 
 function timeFuction(){
     setInterval(function(){
-        if(true){
+        if(go){
             var backWall=-1;
             var rightWall=-1;
             var leftWall=-1;
@@ -826,7 +861,6 @@ function timeFuction(){
                     else if(node.getName()=="frontWall")frontWall=node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
                     else if(node.getName()=="leftWall")leftWall=node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
                     else if(node.getName()=="rightWall")rightWall=node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
-                    else if(node.getName()=="roof")roof=node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
                     else if(node.getName()=="interWall")interWall.push(node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0]);
                     else if(node.getName()=="base" && node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].getLayer() == 1)base=node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
                 }
@@ -889,6 +923,227 @@ function isPowerEditMode(){
     return powerEditMode.checked;
 }
 
+function changeRoof(){
+    go = false;
+    var roof=-1;
+    var nodes=scene.findNodes();
+    var root = scene.findNode(3);
+    var layerNumber=getTopLayer()
+    for(var i=0;i<nodes.length;i++){
+        var node = nodes[i];
+        if(node.getType()=="name"){
+            if(node.getName()=="roof" ){
+                roof=node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
+            }
+        }
+    }
+    if(roof != -1){
+        if(roof.KillChildren)roof.KillChildren();
+        if(roof.getType() == "roof/hip"){
+            console.log("changed to gable");
+            root.addNode({
+                type: "flags",
+                flags:{transparent:false},
+                nodes:
+                [{
+                    type: "name",
+                    name: "rightTriangle",
+        
+                    nodes:
+                    [{
+                        type: "material",
+                        color:{ r:0.8, g:0.8, b:0.8 },
+                        alpha:0.2,
+                        nodes:
+                        [{
+                            type: "name",
+                            name: "wall.jpg",
+        
+                            nodes:
+                            [{
+                                type: "matrix",
+                                elements:[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],
+        
+                                nodes:
+                                [{
+                                    type: "texture",
+                                    src: "images/GeometryTexture/wall.jpg",
+                                    applyTo: "color",
+        
+                                    nodes:
+                                    [{
+                                        type: "wall/triangle",
+                                        layer: layerNumber,
+                                        height: roof.getHeight(),
+                                        width: roof.getWidth(),
+                                        thickness: 1,
+                                        ratio: {a: roof.getRatio().a , b: roof.getRatio().b},
+                                        scale: {x: 1, y: 1, z: 1},
+                                        rotate: {x: 0, y: 90, z: 0},
+                                        translate: {x: 0, y: 0, z: 0}
+                                    }]
+                                }]
+                            }]
+                        }]
+                    }]
+                }] 
+            });
+            root.addNode({
+                type: "flags",
+                flags:{transparent:false},
+                nodes:
+                [{
+                    type: "name",
+                    name: "leftTriangle",
+        
+                    nodes:
+                    [{
+                        type: "material",
+                        color:{ r:0.8, g:0.8, b:0.8 },
+                        alpha:0.2,
+                        nodes:
+                        [{
+                            type: "name",
+                            name: "wall.jpg",
+        
+                            nodes:
+                            [{
+                                type: "matrix",
+                                elements:[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],
+        
+                                nodes:
+                                [{
+                                    type: "texture",
+                                    src: "images/GeometryTexture/wall.jpg",
+                                    applyTo: "color",
+        
+                                    nodes:
+                                    [{
+                                        type: "wall/triangle",
+                                        layer: layerNumber,
+                                        height: roof.getHeight(),
+                                        width: roof.getWidth(),
+                                        thickness: 1,
+                                        ratio: {a: roof.getRatio().a , b: roof.getRatio().b},
+                                        scale: {x: 1, y: 1, z: 1},
+                                        rotate: {x: 0, y: 90, z: 0},
+                                        translate: {x: 0, y: 0, z: 0}
+                                    }]
+                                }]
+                            }]
+                        }]
+                    }]
+                }] 
+            });
+            root.addNode({
+                type: "flags",
+                flags:{transparent:false},
+                nodes:
+                [{
+                    type: "name",
+                    name: "roof",
+        
+                    nodes:
+                    [{
+                        type: "material",
+                        color:{ r:0.8, g:0.8, b:0.8 },
+                        alpha:0.2,
+                        nodes:
+                        [{
+                            type: "name",
+                            name: "roof.jpg",
+        
+                            nodes:
+                            [{
+                                type: "matrix",
+                                elements:[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],
+        
+                                nodes:
+                                [{
+                                    type: "texture",
+                                    src: "images/GeometryTexture/roof.jpg",
+                                    applyTo: "color",
+        
+                                    nodes:
+                                    [{
+                                        type: "roof/gable",
+                                        layer: layerNumber,
+                                        height: roof.getHeight(),
+                                        width: roof.getWidth(),
+                                        thickness: 1,
+                                        depth: roof.getDepth(),
+                                        ratio: {a: roof.getRatio().a , b: roof.getRatio().b},
+                                        scale: {x: 1, y: 1, z: 1},
+                                        rotate: {x: 0, y: 90, z: 0},
+                                        translate: {x: 0, y: 0, z: 0}
+                                    }]
+                                }]
+                            }]
+                        }]
+                    }]
+                }] 
+            });
+        }else if(roof.getType() == "roof/gable"){
+            console.log("changed to hip");
+            root.addNode({
+                type: "flags",
+                flags:{transparent:false},
+                nodes:
+                [{
+                    type: "name",
+                    name: "roof",
+        
+                    nodes:
+                    [{
+                        type: "material",
+                        color:{ r:0.8, g:0.8, b:0.8 },
+                        alpha:0.2,
+                        nodes:
+                        [{
+                            type: "name",
+                            name: "roof.jpg",
+        
+                            nodes:
+                            [{
+                                type: "matrix",
+                                elements:[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],
+        
+                                nodes:
+                                [{
+                                    type: "texture",
+                                    src: "images/GeometryTexture/roof.jpg",
+                                    applyTo: "color",
+        
+                                    nodes:
+                                    [{
+                                        type: "roof/hip",
+                                        layer: layerNumber,
+                                        height: roof.getHeight(),
+                                        width: roof.getWidth(),
+                                        thickness: 2,
+                                        depth: roof.getDepth(),
+                                        ratio: {a: roof.getRatio().a , b: roof.getRatio().b},
+                                        toplen: 0,
+                                        scale: {x: 1, y: 1, z: 1},
+                                        rotate: {x: 0, y: 90, z: 0},
+                                        translate: {x: 0, y: 0, z: 0}
+                                    }]
+                                }]
+                            }]
+                        }]
+                    }]
+                }] 
+            });
+        }
+        roof.getParent().getParent().getParent().getParent().getParent().getParent().destroy();
+    }
+    lastFloor =-1;
+    lastid=-1;
+    go = true;
+    Calibration();
+    
+}
+
 function saveXML(){
     var xml='';
     xml+='<layer>'+'\n';
@@ -938,6 +1193,7 @@ function saveXML(){
                     if(n.getPercentX && n.getPercentX())xml+='\t\t\t'+'<percentX>'+n.getPercentX()+'</percentX>'+'\n';
                     if(n.getPercentY && n.getPercentY())xml+='\t\t\t'+'<percentY>'+n.getPercentY()+'</percentY>'+'\n';
                     if(n.getPriority && n.getPriority())xml+='\t\t\t'+'<priority>'+n.getPriority()+'</priority>'+'\n';
+                    if(n.getToplen && n.getToplen())xml+='\t\t\t'+'<toplen>'+n.getToplen()+'</toplen>'+'\n';
                     if(n.getDirection)xml+='\t\t\t'+'<direction>'+'\"'+n.getDirection()+'\"'+'</direction>'+'\n';
 
                 xml+='\t\t'+'</property>'+'\n';
