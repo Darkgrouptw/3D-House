@@ -929,6 +929,7 @@ function changeRoof(){
     var nodes=scene.findNodes();
     var root = scene.findNode(3);
     var layerNumber=getTopLayer()
+    var elements = [];
     for(var i=0;i<nodes.length;i++){
         var node = nodes[i];
         if(node.getType()=="name"){
@@ -936,12 +937,18 @@ function changeRoof(){
                 roof=node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
             }
         }
+        if(node.getType() == "flags" && 
+            node.nodes[0].getName() != "roof" &&
+            node.nodes[0].getName() != "rightTriangle" &&
+            node.nodes[0].getName() != "leftTriangle"){
+            elements.push(node);
+        }
     }
     if(roof != -1){
         if(roof.KillChildren)roof.KillChildren();
         if(roof.getType() == "roof/hip"){
             console.log("changed to gable");
-            root.addNode({
+            var rightTriangle = {
                 type: "flags",
                 flags:{transparent:false},
                 nodes:
@@ -987,8 +994,8 @@ function changeRoof(){
                         }]
                     }]
                 }] 
-            });
-            root.addNode({
+            };
+            var leftTriangle = {
                 type: "flags",
                 flags:{transparent:false},
                 nodes:
@@ -1034,8 +1041,8 @@ function changeRoof(){
                         }]
                     }]
                 }] 
-            });
-            root.addNode({
+            };
+            var gable = {
                 type: "flags",
                 flags:{transparent:false},
                 nodes:
@@ -1082,10 +1089,23 @@ function changeRoof(){
                         }]
                     }]
                 }] 
-            });
+            };
+
+            for(var i = 0 ; i < root.nodes.length ; i++){
+                root.nodes[i].destroy();
+            }
+            root.disconnectNodes();
+            root.addNode(gable);
+            root.addNode(rightTriangle);
+            root.addNode(leftTriangle);
+            for(var i = 0 ; i < elements.length ; i++){
+                elements[i].disconnect();
+                root.addNode(elements[i]);
+            }
+            
         }else if(roof.getType() == "roof/gable"){
             console.log("changed to hip");
-            root.addNode({
+            var hip = {
                 type: "flags",
                 flags:{transparent:false},
                 nodes:
@@ -1133,9 +1153,19 @@ function changeRoof(){
                         }]
                     }]
                 }] 
-            });
+            };
+
+            for(var i = 0 ; i < root.nodes.length ; i++){
+                root.nodes[i].destroy();
+            }
+            root.disconnectNodes();
+            root.addNode(hip);
+            for(var i = 0 ; i < elements.length ; i++){
+                elements[i].disconnect();
+                root.addNode(elements[i]);
+            }
         }
-        roof.getParent().getParent().getParent().getParent().getParent().getParent().destroy();
+        
     }
     lastFloor =-1;
     lastid=-1;
@@ -1143,8 +1173,123 @@ function changeRoof(){
     Calibration();
     
 }
+function testChangeRoof(){
+    var roof=-1;
+    var nodes=scene.findNodes();
+    var root = scene.findNode(3);
+    var layerNumber=getTopLayer()
+    for(var i=0;i<nodes.length;i++){
+        var node = nodes[i];
+        if(node.getType()=="name"){
+            if(node.getName()=="roof" ){
+                roof=node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
+            }
+        }
+    }
+    if(roof != -1){
+        var xml='';
+        xml+='<layer>'+'\n';
+        var nodes=scene.findNodes();
+        if(roof.getType() == "roof/hip"){
+            xml+=getgableInfo();
+        }else if(roof.getType() == "roof/gable"){
+            xml+=getHipInfo();
+        }
+        for(var i=0;i<nodes.length;i++){
+            var node = nodes[i];
+            if(node.getType()=="flags"){
+                var n= node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
+                if(n.getType() != "roof/gable" &&
+                    n.getType() != "roof/hip" &&
+                    n.getType() != "wall/triangle"){
+                    xml += getElementXML(n);
+                }
+            }
+        }
+        xml+='</layer>'+'\n';
+    }
+    var parseXml;
 
-function saveXML(){
+    if (window.DOMParser) {
+        parseXml = function(xmlStr) {
+            return ( new window.DOMParser() ).parseFromString(xmlStr, "text/xml");
+        };
+    } else if (typeof window.ActiveXObject != "undefined" && new window.ActiveXObject("Microsoft.XMLDOM")) {
+        parseXml = function(xmlStr) {
+            var xmlDoc = new window.ActiveXObject("Microsoft.XMLDOM");
+            xmlDoc.async = "false";
+            xmlDoc.loadXML(xmlStr);
+            return xmlDoc;
+        };
+    } else {
+        parseXml = function() { return null; }
+    }
+    
+    var xmlDoc = parseXml(xml);
+    if (xmlDoc) {
+        window.alert(xmlDoc.documentElement.nodeName);
+    }
+    console.log(xmlDoc);
+
+
+    return xml;
+}
+function getHipInfo(){
+    return "<element><type>roof/hip</type><transform><scale>1,1,1</scale><rotate>0,90,0</rotate><translate>0,0,0</translate></transform><texture>roof.jpg</texture><pos>roof</pos><property><width>18</width><height>8</height><depth>18</depth><thickness>2</thickness><ratio>0.5,0.5</ratio><toplen>6</toplen><layer>2</layer></property></element>";
+}
+function getgableInfo(){
+    return '<element><type>roof/gable</type><transform><scale>1,1,1</scale><rotate>0,90,0</rotate><translate>0,21.5,0</translate></transform><texture>roof.jpg</texture><pos>roof</pos><property><height>5</height><width>8</width><thickness>1</thickness><depth>18</depth><ratio>0.5,0.5</ratio></property></element><element><type>wall/triangle</type><transform><scale>1,1,1</scale><rotate>0,90,0</rotate><translate>17,22,0</translate></transform>    <texture>wall.jpg</texture><pos>rightTriangle</pos><property><height>5</height><width>8</width><thickness>1</thickness><ratio>0.5,0.5</ratio></property></element><element><type>wall/triangle</type><transform><scale>1,1,1</scale><rotate>0,-90,0</rotate><translate>-17,22,0</translate></transform>        <texture>wall.jpg</texture><pos>leftTriangle</pos><property><height>5</height><width>8</width><thickness>1</thickness><ratio>0.5,0.5</ratio></property></element>';
+}
+function getElementXML(n){
+    var xml='';
+    xml+='\t'+'<element>'+'\n';
+        if(n.getType)xml+='\t\t'+'<type>'+n.getType()+'</type>'+'\n';
+        xml+='\t\t'+'<transform>'+'\n';
+            if(n.getScale){
+                var scale = n.getScale();
+                xml+='\t\t\t'+'<scale>'+scale[0]+','+scale[1]+','+scale[2]+'</scale>'+'\n';
+            }
+            if(n.getRotate){
+                var rotate = n.getRotate();
+                xml+='\t\t\t'+'<rotate>'+rotate[0]+','+rotate[1]+','+rotate[2]+'</rotate>'+'\n';
+            }
+            if(n.getTranslate){
+                var translate = n.getTranslate();
+                xml+='\t\t\t'+'<translate>'+translate[0]+','+translate[1]+','+translate[2]+'</translate>'+'\n';
+            }
+        xml+='\t\t'+'</transform>'+'\n';
+        xml+='\t\t'+'<texture>';
+        if(n.getParent().getParent().getParent().getName){
+            xml+=n.getParent().getParent().getParent().getName();
+        }
+        xml+='</texture>'+'\n';
+        xml+='\t\t'+'<pos>';
+        if(n.getParent().getParent().getParent().getParent().getParent().getName){
+            xml+=n.getParent().getParent().getParent().getParent().getParent().getName();
+        }
+        xml+='</pos>'+'\n';
+        xml+='\t\t'+'<property>'+'\n';
+            if(n.getLayer)xml+='\t\t\t'+'<layer>'+n.getLayer()+'</layer>'+'\n';
+            if(n.getRealHeight)xml+='\t\t\t'+'<height>'+n.getRealHeight()+'</height>'+'\n';
+            else if(n.getHeight)xml+='\t\t\t'+'<height>'+n.getHeight()+'</height>'+'\n';
+            if(n.getRealWidth)xml+='\t\t\t'+'<width>'+n.getRealWidth()+'</width>'+'\n';
+            else if(n.getWidth)xml+='\t\t\t'+'<width>'+n.getWidth()+'</width>'+'\n';
+            if(n.getThickness)xml+='\t\t\t'+'<thickness>'+n.getThickness()+'</thickness>'+'\n';
+            if(n.getDepth)xml+='\t\t\t'+'<depth>'+n.getDepth()+'</depth>'+'\n';
+            if(n.getRatio){
+                var ratio = n.getRatio();
+                xml+='\t\t\t'+'<ratio>'+ratio.a+','+ratio.b+'</ratio>'+'\n';
+            }
+            if(n.getPercentX && n.getPercentX())xml+='\t\t\t'+'<percentX>'+n.getPercentX()+'</percentX>'+'\n';
+            if(n.getPercentY && n.getPercentY())xml+='\t\t\t'+'<percentY>'+n.getPercentY()+'</percentY>'+'\n';
+            if(n.getPriority && n.getPriority())xml+='\t\t\t'+'<priority>'+n.getPriority()+'</priority>'+'\n';
+            if(n.getToplen && n.getToplen())xml+='\t\t\t'+'<toplen>'+n.getToplen()+'</toplen>'+'\n';
+            if(n.getDirection)xml+='\t\t\t'+'<direction>'+'\"'+n.getDirection()+'\"'+'</direction>'+'\n';
+        xml+='\t\t'+'</property>'+'\n';
+    xml+='\t'+'</element>'+'\n';
+    return xml;
+}
+function generateXML(){
     var xml='';
     xml+='<layer>'+'\n';
     var nodes=scene.findNodes();
@@ -1152,55 +1297,17 @@ function saveXML(){
         var node = nodes[i];
         if(node.getType()=="flags"){
             var n= node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
-            xml+='\t'+'<element>'+'\n';
-                if(n.getType)xml+='\t\t'+'<type>'+n.getType()+'</type>'+'\n';
-                xml+='\t\t'+'<transform>'+'\n';
-                    if(n.getScale){
-                        var scale = n.getScale();
-                        xml+='\t\t\t'+'<scale>'+scale[0]+','+scale[1]+','+scale[2]+'</scale>'+'\n';
-                    }
-                    if(n.getRotate){
-                        var rotate = n.getRotate();
-                        xml+='\t\t\t'+'<rotate>'+rotate[0]+','+rotate[1]+','+rotate[2]+'</rotate>'+'\n';
-                    }
-                    if(n.getTranslate){
-                        var translate = n.getTranslate();
-                        xml+='\t\t\t'+'<translate>'+translate[0]+','+translate[1]+','+translate[2]+'</translate>'+'\n';
-                    }
-                xml+='\t\t'+'</transform>'+'\n';
-                xml+='\t\t'+'<texture>';
-                if(n.getParent().getParent().getParent().getName){
-                    xml+=n.getParent().getParent().getParent().getName();
-                }
-                xml+='</texture>'+'\n';
-                xml+='\t\t'+'<pos>';
-                if(n.getParent().getParent().getParent().getParent().getParent().getName){
-                    xml+=n.getParent().getParent().getParent().getParent().getParent().getName();
-                }
-                xml+='</pos>'+'\n';
-                xml+='\t\t'+'<property>'+'\n';
-                    if(n.getLayer)xml+='\t\t\t'+'<layer>'+n.getLayer()+'</layer>'+'\n';
-                    if(n.getRealHeight)xml+='\t\t\t'+'<height>'+n.getRealHeight()+'</height>'+'\n';
-                    else if(n.getHeight)xml+='\t\t\t'+'<height>'+n.getHeight()+'</height>'+'\n';
-                    if(n.getRealWidth)xml+='\t\t\t'+'<width>'+n.getRealWidth()+'</width>'+'\n';
-                    else if(n.getWidth)xml+='\t\t\t'+'<width>'+n.getWidth()+'</width>'+'\n';
-                    if(n.getThickness)xml+='\t\t\t'+'<thickness>'+n.getThickness()+'</thickness>'+'\n';
-                    if(n.getDepth)xml+='\t\t\t'+'<depth>'+n.getDepth()+'</depth>'+'\n';
-                    if(n.getRatio){
-                        var ratio = n.getRatio();
-                        xml+='\t\t\t'+'<ratio>'+ratio.a+','+ratio.b+'</ratio>'+'\n';
-                    }
-                    if(n.getPercentX && n.getPercentX())xml+='\t\t\t'+'<percentX>'+n.getPercentX()+'</percentX>'+'\n';
-                    if(n.getPercentY && n.getPercentY())xml+='\t\t\t'+'<percentY>'+n.getPercentY()+'</percentY>'+'\n';
-                    if(n.getPriority && n.getPriority())xml+='\t\t\t'+'<priority>'+n.getPriority()+'</priority>'+'\n';
-                    if(n.getToplen && n.getToplen())xml+='\t\t\t'+'<toplen>'+n.getToplen()+'</toplen>'+'\n';
-                    if(n.getDirection)xml+='\t\t\t'+'<direction>'+'\"'+n.getDirection()+'\"'+'</direction>'+'\n';
-
-                xml+='\t\t'+'</property>'+'\n';
-            xml+='\t'+'</element>'+'\n';
+            xml += getElementXML(n);
         }
     }
     xml+='</layer>'+'\n';
     console.log(xml);
-    download(xml, "3Dhouse.3Dhouse", 'text/plain');
+    return xml;
 }
+
+function saveXML(){
+    download(generateXML(), "3Dhouse.3Dhouse", 'text/plain');
+}
+
+
+
