@@ -27,13 +27,13 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Model Export Button Functions
 function multiStlButtonFunc(){
-    convertToMultiStl(scene.nodes[0].nodes[0]);
+    exportMultiStl(scene.nodes[0].nodes[0]);
 }
 function oneStlButtonFunc(){
     convertToOneStl(scene.nodes[0].nodes[0]);
 }
 function multiObjButtonFunc(){
-    convertToMultiObj(scene.nodes[0].nodes[0]);
+    exportMultiObj(scene.nodes[0].nodes[0]);
 }
 function oneObjButtonFunc(){
     convertToOneObj(scene.nodes[0].nodes[0]);
