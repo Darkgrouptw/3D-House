@@ -1,6 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Wouldn't be changed stuff
 var typeDefined = ["roof", "base", "wall"];
+var modelExactLatchArea = ["base"];	//Storing the models which latch faces output with exact area
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //Global variables
@@ -263,7 +264,8 @@ function convertToMultiObj(inputNode, isDownload){
 						//Adding string to vexStr & caveStr
 						var isCave = 0;		//The nonConnector model convex or concave??
 						var pointStr = "", point2Str = "";
-						switch(String(posArray[nonConnector_No[model]])){
+						var curPos = String(posArray[nonConnector_No[model]]);
+						switch(curPos){
 							case "roof":
 								break;
 							case "base":
@@ -275,7 +277,11 @@ function convertToMultiObj(inputNode, isDownload){
 						for(var i = 0;i<3;i++){
 							for(var j = 0;j<3;j++){
 								pointStr += connector[conIter][faceIter][i][j] + " ";
-								point2Str += nonConnector[model][result[0]][i][j] + " ";
+								if(modelExactLatchArea.indexOf(curPos) != -1)
+									//output the exact area of latch faces
+									point2Str += connector[conIter][faceIter][i][j] + " ";
+								else
+									point2Str += nonConnector[model][result[0]][i][j] + " ";
 							}
 							pointStr += String((isCave + 1)%2) + "\n";
 							point2Str += String(isCave) + "\n";
@@ -284,17 +290,18 @@ function convertToMultiObj(inputNode, isDownload){
 						if(latchStrArr[nonConnector_No[model]].indexOf(point2Str) == -1){
 							latchStrArr[nonConnector_No[model]].push(point2Str);
 						}
-						point2Str = "";
+						if(modelExactLatchArea.indexOf(curPos) == -1){
+							point2Str = "";
+							for(var i = 0;i<3;i++){
+								for(var j = 0;j<3;j++){
 
-						for(var i = 0;i<3;i++){
-							for(var j = 0;j<3;j++){
-								point2Str += nonConnector[model][result[1]][i][j] + " ";
+									point2Str += nonConnector[model][result[1]][i][j] + " ";
+								}
+								point2Str += String(isCave) + "\n";
 							}
-							point2Str += String(isCave) + "\n";
-						}
-						
-						if(latchStrArr[nonConnector_No[model]].indexOf(point2Str) == -1){
-							latchStrArr[nonConnector_No[model]].push(point2Str);
+							if(latchStrArr[nonConnector_No[model]].indexOf(point2Str) == -1){
+								latchStrArr[nonConnector_No[model]].push(point2Str);
+							}
 						}
 						if(latchStrArr[connector_No[conIter]].indexOf(pointStr) == -1){
 							latchStrArr[connector_No[conIter]].push(pointStr);
