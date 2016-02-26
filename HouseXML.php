@@ -90,7 +90,9 @@ class HouseXML
 						"		pitch: -30,\n".
 						"		zoom: 100,\n".
 						"		zoomSensitivity: 5.0,\n".
-						"		showCursor: false,\n\n".
+						"		showCursor: false,\n".
+						"		maxPitch: -10,\n".
+						"		minPitch: -80,\n\n".
 						$this->RenderList.
 						"\n	}]";
 		if($this->DebugMode)
