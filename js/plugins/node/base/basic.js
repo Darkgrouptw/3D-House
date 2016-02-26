@@ -176,9 +176,17 @@ SceneJS.Types.addType("base/basic",
             else if(roof.setTranslateY)roof.setTranslateY(baseCenterY+this.getThickness()+defaulthigh*2+roof.getHeight());
             if(roof.setTranslateZ)roof.setTranslateZ(baseCenterZ);
             if(roof.adjustChildren)roof.adjustChildren();
-            if(roof.getToplen){
+            if(roof.getType() == "roof/hip"){
                 if(roof.getToplen() > roof.getDepth() * 2){
                     roof.setToplen(roof.getDepth() * 2);
+                }
+            }
+            if(roof.getType() == "roof/mansard"){
+                if(roof.getWidth() < roof.getDepth() * 0.4){
+                    //roof.setWidth(roof.getDepth()*0.4);
+                }
+                if(roof.getDepth() < roof.getWidth() * 0.4){
+                    //roof.setDepth(roof.getWidth() * 0.4);
                 }
             }
             if(roof.setLayer)roof.setLayer(this.getLayer()+1);
