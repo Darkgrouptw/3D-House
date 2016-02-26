@@ -109,7 +109,7 @@ function exportMultiStl(inputNode){
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Function used for converting the model in multiple .obj (NO DOWNLOADING)
 function convertToMultiObj(inputNode, isDownload){
-	//Return object of .objs
+	//Return object of .objs (strings)
 	var objs = new Array;
 
 	infoStr = "";
@@ -219,16 +219,19 @@ function convertToMultiObj(inputNode, isDownload){
 			vnStr += "\n";
 			vn2Str += "\n";
 			// latchFaces(nodeI);
-			parseObj_withStoring(vStr + vnStr + f1Str, false);
-			if(isDownload)	download(vStr + vnStr + f1Str, "model_part" + outNodeIndex + ".obj", 'text/plain');
+			var rotatedStr1 = obj2Text(rotateOneAxis(parseObj(vStr + vnStr + f1Str), 50, 0));
+			var rotatedStr2 = obj2Text(rotateOneAxis(parseObj(v2Str + vn2Str + f2Str), -50, 0));
+
+			parseObj_withStoring(rotatedStr1, false);
+			if(isDownload)	download(rotatedStr1, "model_part" + outNodeIndex + ".obj", 'text/plain');
 			outNodeIndex++;
-			parseObj_withStoring(v2Str + vn2Str + f2Str, false);
-			if(isDownload)	download(v2Str + vn2Str + f2Str, "model_part" + outNodeIndex + ".obj", 'text/plain');
+			parseObj_withStoring(rotatedStr2, false);
+			if(isDownload)	download(rotatedStr2, "model_part" + outNodeIndex + ".obj", 'text/plain');
 			outNodeIndex++;
 
 			//Append string of .objs
-			objs.push(vStr + vnStr + f1Str);
-			objs.push(v2Str + vn2Str + f2Str);
+			objs.push(rotatedStr1);
+			objs.push(rotatedStr2);
 		}else{
 
 			for(i = 0;i<tmpFaces.length;i += 3){
@@ -237,10 +240,31 @@ function convertToMultiObj(inputNode, isDownload){
 			fStr += "\n";
 
 			// latchFaces(nodeI);
-			parseObj_withStoring(vStr + vnStr + fStr, isConnector(nodeI));
-			if(isDownload)	download(vStr + vnStr + fStr, "model_part" + outNodeIndex + ".obj", 'text/plain');
+			var rotatedStr = vStr + vnStr + fStr;	//Storing the rotated obj string
+			switch(posArray[outNodeIndex]){
+				case "leftTriangle":
+					rotatedStr = obj2Text(rotateOneAxis(parseObj(vStr + vnStr + fStr), 90, 2));
+					break;
+				case "rightTriangle":
+					rotatedStr = obj2Text(rotateOneAxis(parseObj(vStr + vnStr + fStr), 90, 2));
+					break;
+				case "interWall":
+					rotatedStr = obj2Text(rotateOneAxis(parseObj(vStr + vnStr + fStr), 90, 2));
+					break;
+				case "backWall":
+					rotatedStr = obj2Text(rotateOneAxis(parseObj(vStr + vnStr + fStr), 90, 0));
+					break;
+				case "leftWall":
+					rotatedStr = obj2Text(rotateOneAxis(parseObj(vStr + vnStr + fStr), 90, 2));
+					break;
+				case "rightWall":
+					rotatedStr = obj2Text(rotateOneAxis(parseObj(vStr + vnStr + fStr), 90, 2));
+					break;
+			}
+			parseObj_withStoring(rotatedStr, isConnector(nodeI));
+			if(isDownload)	download(rotatedStr, "model_part" + outNodeIndex + ".obj", 'text/plain');
 			outNodeIndex++;
-			objs.push(vStr + vnStr + fStr);
+			objs.push(rotatedStr);
 		}
 	}
 	if(isDownload){
@@ -360,6 +384,34 @@ function convertToMultiObj(inputNode, isDownload){
 		download(infoStr, "info" + ".txt", 'text/plain');
 	}
 	return objs;
+}
+
+function deg2Rad(degree){
+	return parseFloat(degree * Math.PI) / 180.0;
+}
+
+function rotateOneAxis(obj, angle, vec){
+	var radAngle = deg2Rad(angle);
+	var matrices = new Array;
+	matrices.push([[1.0, 0.0, 0.0], [0.0, Math.cos(radAngle), -Math.sin(radAngle)], [0.0, Math.sin(radAngle), Math.cos(radAngle)]]);
+	matrices.push([[Math.cos(radAngle), 0.0, Math.sin(radAngle)], [0.0, 1.0, 0.0], [-Math.sin(radAngle), 0.0, Math.cos(radAngle)]]);
+	matrices.push([[Math.cos(radAngle), -Math.sin(radAngle), 0.0], [Math.sin(radAngle), Math.cos(radAngle), 0.0], [0, 0, 1]]);
+	function mulMat(mat, point){
+		var vecOut = [0.0, 0.0, 0.0];
+		for(var i = 0;i<3;i++){
+			var cur = 0.0;
+			for(var j = 0;j<3;j++){
+				cur += mat[i][j] * point[j];
+			}
+			vecOut[i] = cur;
+		}
+		return vecOut;
+	}
+	for(var i = 0;i<obj.vertices.length;i++){
+		obj.vertices[i] = mulMat(matrices[vec], obj.vertices[i]);
+		obj.normals[i] = mulMat(matrices[vec], obj.normals[i]);
+	}
+	return obj;
 }
 
 //Adding convex or concave marks(0 or 1) , //
@@ -975,6 +1027,41 @@ function parseObj_withStoring(text, isConnector){
 		nonConnector.push(f);
 		nonConnector_No.push(outNodeIndex);
 	}
+}
+
+//The function converting obj to text(.obj)
+function obj2Text(obj){
+	var str = "", vnStr = "", fStr = "";
+	obj.vertices.forEach(function(element){
+		str += "v ";
+		for(var i = 0;i<3;i++){
+			str += String(element[i]) + " ";
+		}
+		str += "\n";
+	});
+	str += "\n";
+	obj.normals.forEach(function(element){
+		str += "vn ";
+		for(var i = 0;i<3;i++){
+			str += String(element[i]) + " ";
+		}
+		str += "\n";
+	});
+	str += "\n";
+	var noZero = 0;
+	obj.faces.forEach(function(element){
+		if(element == 0)	noZero = 1;
+	});
+	obj.faces.forEach(function(element){
+		str += "f ";
+		for(var i = 0;i<3;i++){
+			str += String(parseInt(element[i]) + noZero) + "//" + String(parseInt(element[i]) + noZero) + " ";
+		}
+		str += "\n";
+	});
+	str += "\n";
+
+	return str;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
