@@ -64,7 +64,7 @@ function AddEventListenerList(list, event, functor)
     for(var i = 0; i < list.length; i++) { list[i].addEventListener(event, functor, false); }
 }
 
-var lastid=-1;
+/*var lastid=-1;
 var lastFloor = -1;
 var uiPanel;
 function ScenePick(){
@@ -122,7 +122,271 @@ function ScenePick(){
                     scene.pick(event.clientX, event.clientY, { regionPick: true });
                 }
             });
+}*/
+
+var lastid=-1;
+var lastFloor = -1;
+var uiPanel;
+var tmpNormal = null;
+function ScenePick(){
+    var lastX;
+    var lastY;
+    
+    var stampDown;
+    var stampUp;
+    var count = 0;
+    
+    var canvas = scene.getCanvas();
+
+    canvas.addEventListener('mousedown',
+            function (event) {
+                tmpNormal = null;
+                if(count == 0)
+                {
+                    stampDown = event.timeStamp;
+                    console.log(stampDown);
+                }
+
+                lastX = event.clientX;
+                lastY = event.clientY;
+            }, true);
+
+    canvas.addEventListener('mouseup',
+            function (event) {
+
+                if(Math.abs(event.clientX - lastX) < 3 && Math.abs(event.clientY - lastY) < 3)
+                {
+                    count++;
+                    console.log(count);
+
+                    if(count == 2)
+                    {
+                        stampUp = event.timeStamp - stampDown;
+                        console.log(stampUp);
+                    }
+
+                    scene.pick(event.clientX, event.clientY, {rayPick: true});
+                    if(lastid == -1 && lastFloor == -1){
+                        setAllTheElementPickable();
+                        scene.pick(event.clientX, event.clientY, {rayPick: true});
+                    }
+                }
+
+            }, true);
+
+    canvas.addEventListener('touchstart',
+            function (event) {
+                tmpNormal = null;
+
+                if(count == 0)
+                {
+                    stampDown = event.timeStamp;
+                    //console.log(stampDown);
+                }
+                
+                lastX = event.targetTouches[0].clientX;
+                lastY = event.targetTouches[0].clientY;
+            }, true);
+
+    canvas.addEventListener('touchend',
+            function (event) {
+                
+                if(Math.abs(event.targetTouches[0].clientX - lastX) < 3 && Math.abs(event.targetTouches[0].clientY - lastY) < 3)
+                {
+                    count++;
+                    //console.log(count);
+
+                    if(count == 2)
+                    {
+                        stampUp = event.timeStamp - stampDown;
+                        //console.log(stampUp);
+                    }
+
+                    scene.pick(event.targetTouches[0].clientX, event.targetTouches[0].clientY, {rayPick: true});
+                    if(lastid == -1 && lastFloor == -1){
+                        setAllTheElementPickable();
+                        scene.pick(event.targetTouches[0].clientX, event.targetTouches[0].clientY, {rayPick: true});
+                    }
+                }
+                
+            }, true);
+			
+	canvas.addEventListener('touchmove', 
+			function(event){
+				if(count != 2)
+				{
+					count = 0;
+				}
+			},true);
+
+            
+    uiPanel=document.getElementById('codewrapper');
+    scene.on("pick",
+            function (hit) {
+                
+                var material;
+                if(lastid>0){
+                    material=scene.findNode(lastid);
+                    material.setColor({ r:1, g:1, b:1});
+                }
+                var id=hit.nodeId;
+                var element=scene.findNode(id).nodes[0].nodes[0].nodes[0];
+                console.log(element.getID());
+                //這是我知道name被material包住，正常藥用id來找但現在id都還沒定
+                material=scene.findNode(id).parent;
+                material.setColor({r:0.7,g:0.7,b:0.3});
+                id=material.id;
+                lastid=id;
+                if(!element.getLayer){
+                    //something uneditale clicked
+                    uiPanel.style.display='none';
+                    return;
+                }
+                lastFloor=element.getLayer();
+                uiPanel.style.display='inline-block';
+                //讓UI跟隨點擊位置，因為很煩人所以先影藏起來
+                //uiPanel.style.left = (hit.canvasPos[0]+50) + "px";
+                //uiPanel.style.top = (hit.canvasPos[1]+50) + "px";
+                
+                console.log(hit.worldPos);
+                calculateAxis(hit.nodeId);
+                if(count != 2)
+                {
+                    attachInput(hit.nodeId);
+                }
+                else
+                {
+                    if(stampUp < 500)
+                    {
+                        changeViewpoint(hit.nodeId);
+                    }
+                    count = 0;
+                }
+            });
+
+    scene.on("nopick",
+            function (hit) {
+                uiPanel.style.display='none';
+                if(lastid>0){
+                    material=scene.findNode(lastid);
+                    material.setColor({ r:0.8, g:0.8, b:0.8});
+                }
+                lastid = -1;
+                lastFloor = -1;
+                console.log('Nothing picked!');
+                count = 0;
+                //for some ridiculurs reason i got to pick again!!
+                //scene.pick()
+            });
 }
+
+function calculateAxis(id)
+{
+    var tmpId = scene.findNode(id);
+
+    var tmpT = {};
+    tmpT.rotate = tmpId.nodes[0].nodes[0].nodes[0].getRotate();
+    tmpT.scale = tmpId.nodes[0].nodes[0].nodes[0].getScale();
+    tmpT.translate = tmpId.nodes[0].nodes[0].nodes[0].getTranslate();
+    var transMatrix = utility.transformMatrix(tmpT);
+
+    var modelMat = tmpId.nodes[0].getModelMatrix();
+    var viewMat = scene.getNode(3).getMatrix();
+    var projMat = SceneJS.Camera.getDefaultMatrix();
+
+    var tmpTRS = SceneJS_math_mat4();
+    var tmpVM = SceneJS_math_mat4();
+    var tmpPV = SceneJS_math_mat4();
+
+    var modelTRS = SceneJS_math_mulMat4(modelMat , transMatrix, tmpTRS);
+    var vmMat = SceneJS_math_mulMat4(viewMat, modelTRS, tmpVM);
+    var pvMat = SceneJS_math_mulMat4(projMat, vmMat, tmpPV);
+
+    var tmpX = [1.0, 0.0, 0.0, 1.0];
+    var tmpY = [0.0, 1.0, 0.0, 1.0];
+    var tmpZ = [0.0, 0.0, 1.0, 1.0];
+    var tmpO = [0.0, 0.0, 0.0, 1.0];
+
+    var xaxis = SceneJS_math_mulMat4v4(pvMat, tmpX);
+    var yaxis = SceneJS_math_mulMat4v4(pvMat, tmpY);
+    var zaxis = SceneJS_math_mulMat4v4(pvMat, tmpZ);
+    var oaxis = SceneJS_math_mulMat4v4(pvMat, tmpO);
+    xaxis = SceneJS_math_projectVec4(xaxis);
+    yaxis = SceneJS_math_projectVec4(yaxis);
+    zaxis = SceneJS_math_projectVec4(zaxis);
+    oaxis = SceneJS_math_projectVec4(oaxis);
+
+    var lengthX = Math.sqrt((xaxis[0]-oaxis[0]) * (xaxis[0]-oaxis[0]) + 
+                            (xaxis[1]-oaxis[1]) * (xaxis[1]-oaxis[1]) + 
+                            (xaxis[2]-oaxis[2]) * (xaxis[2]-oaxis[2]) +
+                            (xaxis[3]-oaxis[3]) * (xaxis[3]-oaxis[3]));
+
+    var lengthY = Math.sqrt((yaxis[0]-oaxis[0]) * (yaxis[0]-oaxis[0]) + 
+                            (yaxis[1]-oaxis[1]) * (yaxis[1]-oaxis[1]) + 
+                            (yaxis[2]-oaxis[2]) * (yaxis[2]-oaxis[2]) +
+                            (yaxis[3]-oaxis[3]) * (yaxis[3]-oaxis[3]));
+
+    var lengthZ = Math.sqrt((zaxis[0]-oaxis[0]) * (zaxis[0]-oaxis[0]) + 
+                            (zaxis[1]-oaxis[1]) * (zaxis[1]-oaxis[1]) + 
+                            (zaxis[2]-oaxis[2]) * (zaxis[2]-oaxis[2]) +
+                            (zaxis[3]-oaxis[3]) * (zaxis[3]-oaxis[3]));
+
+    var tmpArr = [];
+    tmpArr.push(lengthX);
+    tmpArr.push(lengthY);
+    tmpArr.push(lengthZ);
+    tmpArr.sort(function(a, b){return a-b});
+    
+    if(tmpArr[0] == lengthX)
+    {
+        console.log("yz");
+    }
+    else if(tmpArr[0] == lengthY)
+    {
+        console.log("xz");
+    }
+    else if(tmpArr[0] == lengthZ)
+    {
+        console.log("xy");
+    }
+}
+
+function changeViewpoint(id)
+{
+    var tmpId = scene.findNode(id);
+    var nameNode= tmpId.parent.parent.getName();
+    if(nameNode == "base")
+    {
+        tmpNormal = [0,1,0];
+    }
+    else if(nameNode == "rightWall")
+    {
+        tmpNormal = [1,0,0];
+    }
+    else if(nameNode == "leftWall")
+    {
+        tmpNormal = [-1,0,0];
+    }
+    else if(nameNode == "backWall")
+    {
+        tmpNormal = [0,0,-1];
+    }
+    else if(nameNode == "roof" || nameNode == "rightTriangle" || nameNode == "leftTriangle")
+    {
+        tmpNormal = [0,0,1];
+    }
+    else
+    {
+        tmpNormal = null;
+    }
+}
+
+function getNormal()
+{
+    return tmpNormal;
+}
+
+
 function UIlog(log){
     console.log(log);
 }

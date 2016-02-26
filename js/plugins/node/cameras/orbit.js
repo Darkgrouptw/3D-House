@@ -42,6 +42,9 @@ SceneJS.Types.addType("cameras/orbit", {
         var lastY;
         var last1X;
         var last1Y;
+		
+		var tmpNormal = null;
+		
         var dragging = false;
         var lookatDirty = false;
 
@@ -99,10 +102,20 @@ SceneJS.Types.addType("cameras/orbit", {
         }
 
         function mouseUp() {
+            tmpNormal = getNormal();
+			if(tmpNormal != null)
+            {
+                rotateCamera();
+            }
             dragging = false;
         }
 
         function touchEnd() {
+            tmpNormal = getNormal();
+			if(tmpNormal != null)
+            {
+                rotateCamera();
+            }
             dragging = false;
         }
 
@@ -150,25 +163,14 @@ SceneJS.Types.addType("cameras/orbit", {
 			var len_movey = posY - pos1Y;
 			var len_move = Math.sqrt(len_movex*len_movex + len_movey*len_movey);
 			
-			
-            if (!event) event = window.event;
-            if (dragging) {
-                delta = (len_move - len_ori) / 120;
-                if (window.opera) delta = -delta;
-            } else if (event.detail) {
-                delta = -event.detail / 3;
-            }
-            if (delta) {
+            delta = (len_move - len_ori) / 120;
+            //if (delta) {
                 if (delta > 0) {
                     zoom -= zoomSensitivity;
                 } else {
                     zoom += zoomSensitivity;
                 }
-            }
-            if (event.preventDefault) {
-                event.preventDefault();
-            }
-            event.returnValue = false;
+            //}
             update();
 
 			lastX = posX;
@@ -201,6 +203,45 @@ SceneJS.Types.addType("cameras/orbit", {
 
         }
 
+		function rotateCamera()
+        {
+            if(tmpNormal[0] == 0 && tmpNormal[1] == 0 && tmpNormal[2] == 1)
+            {
+                yaw = 0;
+                pitch = 0;
+                zoom = 150;
+                update();
+            }
+            else if(tmpNormal[0] == 0 && tmpNormal[1] == 0 && tmpNormal[2] == -1)
+            {
+                yaw = 0;
+                pitch = 0;
+                zoom = -150;
+                update();
+            }
+            else if(tmpNormal[0] == 0 && tmpNormal[1] == 1 && tmpNormal[2] == 0)
+            {
+                yaw = 0;
+                pitch = -90;
+                zoom = 150;
+                update();
+            }
+            else if(tmpNormal[0] == 1 && tmpNormal[1] == 0 && tmpNormal[2] == 0)
+            {
+                yaw = 90;
+                pitch = 0;
+                zoom = 150;
+                update();
+            }
+            else if(tmpNormal[0] == -1 && tmpNormal[1] == 0 && tmpNormal[2] == 0)
+            {
+                yaw = -90;
+                pitch = 0;
+                zoom = 150;
+                update();
+            }
+        }
+		
         canvas.addEventListener('mousedown', mouseDown, true);
         canvas.addEventListener('mousemove', mouseMove, true);
         canvas.addEventListener('mouseup', mouseUp, true);
