@@ -408,7 +408,7 @@ function textureToggle(){
 }
 
 function addInterWall(){
-    if(lastFloor<=0){
+    if(lastFloor<=0 || lastFloor == getTopLayer()+1){
         return;
     }
     var backWall=-1;
