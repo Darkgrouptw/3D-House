@@ -219,8 +219,8 @@ function convertToMultiObj(inputNode, isDownload){
 			vnStr += "\n";
 			vn2Str += "\n";
 			// latchFaces(nodeI);
-			var rotatedStr1 = obj2Text(rotateOneAxis(parseObj(vStr + vnStr + f1Str), 50, 0));
-			var rotatedStr2 = obj2Text(rotateOneAxis(parseObj(v2Str + vn2Str + f2Str), -50, 0));
+			var rotatedStr1 = obj2Text(rotateOneAxis(parseObj(vStr + vnStr + f1Str), -39.5, 0));
+			var rotatedStr2 = obj2Text(rotateOneAxis(parseObj(v2Str + vn2Str + f2Str), 219.5, 0));
 
 			parseObj_withStoring(rotatedStr1, false);
 			if(isDownload)	download(rotatedStr1, "model_part" + outNodeIndex + ".obj", 'text/plain');
@@ -243,22 +243,25 @@ function convertToMultiObj(inputNode, isDownload){
 			var rotatedStr = vStr + vnStr + fStr;	//Storing the rotated obj string
 			switch(posArray[outNodeIndex]){
 				case "leftTriangle":
-					rotatedStr = obj2Text(rotateOneAxis(parseObj(vStr + vnStr + fStr), 90, 2));
+					rotatedStr = obj2Text(rotateOneAxis(parseObj(vStr + vnStr + fStr), 90, 1));
 					break;
 				case "rightTriangle":
-					rotatedStr = obj2Text(rotateOneAxis(parseObj(vStr + vnStr + fStr), 90, 2));
+					rotatedStr = obj2Text(rotateOneAxis(parseObj(vStr + vnStr + fStr), 90, 1));
+					break;
+				case "base":
+					rotatedStr = obj2Text(rotateOneAxis(parseObj(vStr + vnStr + fStr), -90, 0));
 					break;
 				case "interWall":
-					rotatedStr = obj2Text(rotateOneAxis(parseObj(vStr + vnStr + fStr), 90, 2));
+					rotatedStr = obj2Text(rotateOneAxis(parseObj(vStr + vnStr + fStr), 90, 1));
 					break;
 				case "backWall":
-					rotatedStr = obj2Text(rotateOneAxis(parseObj(vStr + vnStr + fStr), 90, 0));
+					rotatedStr = obj2Text(rotateOneAxis(parseObj(vStr + vnStr + fStr), 0, 0));
 					break;
 				case "leftWall":
-					rotatedStr = obj2Text(rotateOneAxis(parseObj(vStr + vnStr + fStr), 90, 2));
+					rotatedStr = obj2Text(rotateOneAxis(parseObj(vStr + vnStr + fStr), 90, 1));
 					break;
 				case "rightWall":
-					rotatedStr = obj2Text(rotateOneAxis(parseObj(vStr + vnStr + fStr), 90, 2));
+					rotatedStr = obj2Text(rotateOneAxis(parseObj(vStr + vnStr + fStr), 90, 1));
 					break;
 			}
 			parseObj_withStoring(rotatedStr, isConnector(nodeI));
