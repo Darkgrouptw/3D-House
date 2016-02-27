@@ -99,8 +99,6 @@ SceneJS.Types.addType("roof/mansard",
         {
         	if(base.setRealWidth)base.setRealWidth(this.getDepth());
             if(base.setRealHeight)base.setRealHeight(this.getWidth());
-        	base.setWidth(this.getDepth());
-        	base.setHeight(this.getWidth());
         	base.callBaseCalibration();
         }
     }

@@ -149,6 +149,11 @@ function ScenePick(){
 
                 lastX = event.clientX;
                 lastY = event.clientY;
+
+                if(lastid == -1 && lastFloor == -1){
+                    setAllTheElementPickable();
+                    scene.pick(event.clientX, event.clientY, { regionPick: true });
+                }
             }, true);
 
     canvas.addEventListener('mouseup',
@@ -247,12 +252,12 @@ function ScenePick(){
                 //讓UI跟隨點擊位置，因為很煩人所以先影藏起來
                 //uiPanel.style.left = (hit.canvasPos[0]+50) + "px";
                 //uiPanel.style.top = (hit.canvasPos[1]+50) + "px";
-                
+                attachInput(hit.nodeId);
                 console.log(hit.worldPos);
                 calculateAxis(hit.nodeId);
                 if(count != 2)
                 {
-                    attachInput(hit.nodeId);
+                    
                 }
                 else
                 {
@@ -939,7 +944,7 @@ function attachInput(pickId){
         });
         percentYinput.addEventListener('mousemove',function(event){
             if (percentYismove) {
-                n.setPercentY(percentYinput.value);
+                n.setPercentY(Number(percentYinput.value));
                 percentYpropertyValue.textContent=percentYinput.value;
                 n.callBaseCalibration();
             }
@@ -1055,7 +1060,7 @@ function attachInput(pickId){
         });
         depthinput.addEventListener('mousemove',function(event){
             if (depthismove) {
-                n.setDepth(depthinput.value);
+                n.setDepth(Number(depthinput.value));
                 depthpropertyValue.textContent=depthinput.value;
                 n.callBaseCalibration();
             }
@@ -1098,6 +1103,78 @@ function attachInput(pickId){
         });
         topleninput.addEventListener('mouseup',function(event){
             toplenismove=false;
+        });
+    }
+    //OffsetX
+    if(n.getOffsetX){
+        var OffsetXismove=false;
+        var div=document.createElement("div");
+        inputarea.appendChild(div);
+        //text
+        var OffsetXpropertyName=document.createElement("lable");
+            OffsetXpropertyName.textContent="OffsetX";
+            div.appendChild(OffsetXpropertyName);
+        //input
+        var OffsetXinput=document.createElement("input");
+            OffsetXinput.type="range";
+            OffsetXinput.min="-50";
+            OffsetXinput.max="50";
+            OffsetXinput.step="0.1";
+            OffsetXinput.value=n.getOffsetX();
+            div.appendChild(OffsetXinput);
+    
+        var OffsetXropertyValue=document.createElement("lable");
+            OffsetXropertyValue.textContent=OffsetXinput.value;
+            div.appendChild(OffsetXropertyValue);
+    
+        OffsetXinput.addEventListener('mousedown',function(event){
+            OffsetXismove=true;
+        });
+        OffsetXinput.addEventListener('mousemove',function(event){
+            if (OffsetXismove) {
+                n.setOffsetX(Number(OffsetXinput.value*1.0));
+                OffsetXropertyValue.textContent=OffsetXinput.value;
+                n.callBaseCalibration();
+            }
+        });
+        OffsetXinput.addEventListener('mouseup',function(event){
+            OffsetXismove=false;
+        });
+    }
+    //OffsetY
+    if(n.getOffsetY){
+        var OffsetYismove=false;
+        var div=document.createElement("div");
+        inputarea.appendChild(div);
+        //text
+        var OffsetYpropertyName=document.createElement("lable");
+            OffsetYpropertyName.textContent="OffsetY";
+            div.appendChild(OffsetYpropertyName);
+        //input
+        var OffsetYinput=document.createElement("input");
+            OffsetYinput.type="range";
+            OffsetYinput.min="-50";
+            OffsetYinput.max="50";
+            OffsetYinput.step="0.1";
+            OffsetYinput.value=n.getOffsetY();
+            div.appendChild(OffsetYinput);
+    
+        var OffsetYropertyValue=document.createElement("lable");
+            OffsetYropertyValue.textContent=OffsetYinput.value;
+            div.appendChild(OffsetYropertyValue);
+    
+        OffsetYinput.addEventListener('mousedown',function(event){
+            OffsetYismove=true;
+        });
+        OffsetYinput.addEventListener('mousemove',function(event){
+            if (OffsetYismove) {
+                n.setOffsetY(Number(OffsetYinput.value*1.0));
+                OffsetYropertyValue.textContent=OffsetYinput.value;
+                n.callBaseCalibration();
+            }
+        });
+        OffsetYinput.addEventListener('mouseup',function(event){
+            OffsetYismove=false;
         });
     }
 
@@ -1549,6 +1626,8 @@ function getElementXML(n){
             if(n.getPriority && n.getPriority())xml+='\t\t\t'+'<priority>'+n.getPriority()+'</priority>'+'\n';
             if(n.getToplen && n.getToplen())xml+='\t\t\t'+'<toplen>'+n.getToplen()+'</toplen>'+'\n';
             if(n.getDirection)xml+='\t\t\t'+'<direction>'+'\"'+n.getDirection()+'\"'+'</direction>'+'\n';
+            if(n.getOffsetX && n.getOffsetX())xml += '\t\t\t'+'<OffsetX>'+n.getOffsetX()+'</OffsetX>'+'\n';
+            if(n.getOffsetY && n.getOffsetY())xml += '\t\t\t'+'<OffsetY>'+n.getOffsetY()+'</OffsetY>'+'\n';
         xml+='\t\t'+'</property>'+'\n';
     xml+='\t'+'</element>'+'\n';
     return xml;

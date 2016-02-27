@@ -131,7 +131,7 @@ SceneJS.Types.addType("roof/gable",
         	leftTriangle.setWidth(this.getWidth());
             
             var translateV = [];
-        	translateV.push(baseCenterZ - this.getDepth() + leftTriangle.getThickness());
+        	translateV.push(baseCenterX - this.getDepth() + leftTriangle.getThickness());
         	translateV.push(baseCenterY);
         	translateV.push(baseCenterZ);
         	
@@ -145,7 +145,7 @@ SceneJS.Types.addType("roof/gable",
         	rightTriangle.setWidth(this.getWidth());
             
             var translateV = [];
-        	translateV.push(baseCenterZ + this.getDepth() - rightTriangle.getThickness());
+        	translateV.push(baseCenterX + this.getDepth() - rightTriangle.getThickness());
         	translateV.push(baseCenterY);
         	translateV.push(baseCenterZ);
         	
