@@ -15,7 +15,8 @@
             <width>20</width>
             <height>20</height> 
             <ratio>0.2,0.8</ratio> 
-            <wsize>3,3</wsize>
+            <windowW>3</windowW>
+            <windowH>3</windowH>
             <thickness>1</thickness> 
         </property> 
          
