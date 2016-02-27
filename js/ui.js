@@ -128,9 +128,14 @@ var lastid=-1;
 var lastFloor = -1;
 var uiPanel;
 var tmpNormal = null;
+var camDist = null;
+var isLock = false;
+var objName = null;
 function ScenePick(){
-    var lastX;
-    var lastY;
+    var firstX;
+    var firstY;
+    var secondX;
+    var secondY;
     
     var stampDown;
     var stampUp;
@@ -141,25 +146,21 @@ function ScenePick(){
     canvas.addEventListener('mousedown',
             function (event) {
                 tmpNormal = null;
+                camDist = null;
+
                 if(count == 0)
                 {
                     stampDown = event.timeStamp;
                     console.log(stampDown);
                 }
-
-                lastX = event.clientX;
-                lastY = event.clientY;
-
-                if(lastid == -1 && lastFloor == -1){
-                    setAllTheElementPickable();
-                    scene.pick(event.clientX, event.clientY, { regionPick: true });
-                }
+                firstX = event.clientX;
+                firstY = event.clientY;
             }, true);
 
     canvas.addEventListener('mouseup',
             function (event) {
 
-                if(Math.abs(event.clientX - lastX) < 3 && Math.abs(event.clientY - lastY) < 3)
+                if(Math.abs(event.clientX - firstX) < 3 && Math.abs(event.clientY - firstY) < 3)
                 {
                     count++;
                     console.log(count);
@@ -182,6 +183,7 @@ function ScenePick(){
     canvas.addEventListener('touchstart',
             function (event) {
                 tmpNormal = null;
+                camDist = null;
 
                 if(count == 0)
                 {
@@ -189,14 +191,14 @@ function ScenePick(){
                     //console.log(stampDown);
                 }
                 
-                lastX = event.targetTouches[0].clientX;
-                lastY = event.targetTouches[0].clientY;
+                firstX = event.targetTouches[0].clientX;
+                firstY = event.targetTouches[0].clientY;
             }, true);
 
     canvas.addEventListener('touchend',
             function (event) {
                 
-                if(Math.abs(event.targetTouches[0].clientX - lastX) < 3 && Math.abs(event.targetTouches[0].clientY - lastY) < 3)
+                if(Math.abs(event.targetTouches[0].clientX - firstX) < 3 && Math.abs(event.targetTouches[0].clientY - firstY) < 3)
                 {
                     count++;
                     //console.log(count);
@@ -216,18 +218,67 @@ function ScenePick(){
                 
             }, true);
 			
-	canvas.addEventListener('touchmove', 
-			function(event){
-				if(count != 2)
-				{
-					count = 0;
-				}
-			},true);
+	canvas.addEventListener('touchmove',
+            function (event) {
+                count = 0;
 
+                if(event.targetTouches.length != 1)
+                {
+                    var posX = event.targetTouches[0].clientX;
+                    var posY = event.targetTouches[0].clientY;
+                    var pos1X = event.targetTouches[1].clientX;
+                    var pos1Y = event.targetTouches[1].clientY;
+
+                    var firstLength = Math.sqrt((firstX - secondX) * (firstX - secondX) + (firstY - secondY) * (firstY - secondY));
+                    var secondLength = Math.sqrt((posX - pos1X) * (posX - pos1X) + (posY - pos1Y) * (posY - pos1Y));
+                    var compareLength = (secondLength - firstLength);
+
+                    if(objName != null)
+                    {
+                        TouchScale(compareLength, objName);
+                    }
+                    
+
+                    var a = [];
+                    var b = [];
+                    if(pos1Y > posY)
+                    {
+                        a.push(pos1X - posX);
+                        a.push(pos1Y - posY);
+                        b.push(pos1X - posX);
+                        b.push(0);
+                    }
+                    else
+                    {
+                        a.push(posX - pos1X);
+                        a.push(posY - pos1Y);
+                        b.push(posX - pos1X);
+                        b.push(0);
+                    }
+                    var tmpCos = (a[0]*b[0] + a[1]*b[1]) / ( Math.sqrt(a[0]*a[0] + a[1]*a[1]) * Math.sqrt(b[0]*b[0] + b[1]*b[1] ) );
+                    
+                    if(tmpCos < (1 / Math.sqrt(2)) && tmpCos >= 0 )
+                    {
+                        //Vertical
+                        console.log("theta is larger than 45 degree");
+                    }
+                    else if(tmpCos > (1 / Math.sqrt(2)) && tmpCos <= 1)
+                    {
+                        //Horizontal
+                        console.log("theta is smaller than 45 degree");
+                    }
+
+                    firstX = posX;
+                    firstY = posY;
+                    secondX = pos1X;
+                    secondY = pos1Y;
+                }
+            }, true);
             
     uiPanel=document.getElementById('codewrapper');
     scene.on("pick",
             function (hit) {
+				isLock = true;
                 
                 var material;
                 if(lastid>0){
@@ -252,8 +303,7 @@ function ScenePick(){
                 //讓UI跟隨點擊位置，因為很煩人所以先影藏起來
                 //uiPanel.style.left = (hit.canvasPos[0]+50) + "px";
                 //uiPanel.style.top = (hit.canvasPos[1]+50) + "px";
-                attachInput(hit.nodeId);
-                console.log(hit.worldPos);
+                objName = hit.nodeId;
                 calculateAxis(hit.nodeId);
                 if(count != 2)
                 {
@@ -280,9 +330,35 @@ function ScenePick(){
                 lastFloor = -1;
                 console.log('Nothing picked!');
                 count = 0;
+                isLock = false;
+                objName = null;
                 //for some ridiculurs reason i got to pick again!!
                 //scene.pick()
             });
+}
+
+function Sign(x) 
+{
+    return typeof x === 'number' ? x ? x < 0 ? -1 : 1 : x === x ? 0 : NaN : NaN;
+}
+
+function ComparsionWithOne(scaleVector)
+{
+    if(scaleVector[0] < 1) { scaleVector[0] = 1; }
+    if(scaleVector[1] < 1) { scaleVector[1] = 1; }
+    if(scaleVector[2] < 1) { scaleVector[2] = 1; }
+}
+
+function TouchScale(compareLength , id)
+{
+    var n = scene.getNode(id).nodes[0].nodes[0].nodes[0];
+
+    var tmpScale = n.getScale();
+    tmpScale[0] = tmpScale[0] + Sign(compareLength)/5;
+    tmpScale[1] = tmpScale[1] + Sign(compareLength)/5;
+    tmpScale[2] = tmpScale[2] + Sign(compareLength)/5;
+    ComparsionWithOne(tmpScale);
+    n.setScale(tmpScale);
 }
 
 function calculateAxis(id)
@@ -358,31 +434,38 @@ function calculateAxis(id)
 
 function changeViewpoint(id)
 {
+    var camPos = scene.getNode(3).getEye();
+    var dist = Math.sqrt( (camPos.x-0) * (camPos.x-0) + (camPos.y-0) * (camPos.y-0) + (camPos.z-0) * (camPos.z-0) );
+    //console.log(dist);
+
     var tmpId = scene.findNode(id);
     var nameNode= tmpId.parent.parent.getName();
-    if(nameNode == "base")
-    {
-        tmpNormal = [0,1,0];
-    }
-    else if(nameNode == "rightWall")
-    {
-        tmpNormal = [1,0,0];
-    }
-    else if(nameNode == "leftWall")
-    {
-        tmpNormal = [-1,0,0];
-    }
-    else if(nameNode == "backWall")
-    {
-        tmpNormal = [0,0,-1];
-    }
-    else if(nameNode == "roof" || nameNode == "rightTriangle" || nameNode == "leftTriangle")
-    {
-        tmpNormal = [0,0,1];
-    }
-    else
-    {
-        tmpNormal = null;
+    switch(nameNode){
+        case "base":
+            tmpNormal = [0,1,0];
+            camDist = dist;
+            break;
+        case "rightWall":
+            tmpNormal = [1,0,0];
+            camDist = dist;
+            break;
+        case "leftWall":
+            tmpNormal = [-1,0,0];
+            camDist = dist;
+            break;
+        case "backWall":
+            tmpNormal = [0,0,-1];
+            camDist = dist;
+            break;
+        case "roof":
+        case "rightTriangle":
+        case "leftTriangle":
+            tmpNormal = [0,0,1];
+            camDist = dist;
+            break;
+        default:
+            tmpNormal = null;
+            camDist = null;
     }
 }
 
@@ -391,6 +474,15 @@ function getNormal()
     return tmpNormal;
 }
 
+function getCameraDistance()
+{
+    return camDist;
+}
+
+function getIsLock()
+{
+    return isLock;
+}
 
 function UIlog(log){
     console.log(log);

@@ -11,7 +11,7 @@ utility.makeHalf = function(value) { return value / 2; };
 utility.isNumeric = function(value) { return !isNaN(parseFloat(value)) && isFinite(value); };
 
 // True if value undefined, else get the false, notices: null is not undefined
-utility.checkUndefined = function(value) { return (value !== undefined ? false : true); };
+utility.checkIsUndefined = function(value) { return (value !== undefined ? false : true); };
 
 // Generate random string
 utility.makeRandomID = function(size)
@@ -278,9 +278,11 @@ utility.delaunay2D = function(positions, key)
 
 
 // For easy to management the parameter
-function ParameterManager(p, functor)
-{
-	this.property = {}, this.transform = {}, this.generatePositions = {};
+function ParameterManager(p, posfunc)
+{	
+	this.property = {}, this.transform = {}, this.functor = {};
+	
+	this.functor.unfunc = function(name) { console.log('Error: ' + name + ' undefined.'); return []; };
 	
 	this.property.width = p.width !== undefined ? p.width: 0;
 	this.property.depth = p.depth !== undefined ? p.depth : 0;
@@ -294,28 +296,38 @@ function ParameterManager(p, functor)
 	this.transform.rotate = p.rotate !== undefined ? utility.vectorForm(p.rotate): [0, 0, 0];
 	this.transform.translate = p.translate !== undefined ? utility.vectorForm(p.translate): [0, 0, 0];
 
-	this.generatePositions = functor != undefined ? functor: function() 
-	{ 
-		console.log('Error: Positions undefined.'); return []; 
-	};
+	this.functor.position = posfunc != undefined ? posfunc: this.functor.unfunc.bind(null, 'position');
 };	
 
 // When needed add the other attribute
 ParameterManager.prototype.addAttribute = function(name, attribute)
 {
-    if(utility.checkUndefined(this.property[name])) { this.property[name] = attribute; }
-    else { console.log('Warning: You are try to override the ' + name + ' with ' + attribute + '.'); }
+    if(!utility.checkIsUndefined(this.property[name])) 
+    { console.log('Warning: You are trying to override the property: ' + name); }
+    
+    this.property[name] = attribute;
+};
+
+// Set function when needed
+ParameterManager.prototype.addFunction = function(name, func)
+{
+	if(!utility.checkIsUndefined(this.functor[name])) 
+	{ console.log('Warning: You are trying to override the function: ' + name); }
+	
+	if(func === undefined || func === null) { func = this.functor.unfunc.bind(null, name); }
+	
+	this.functor[name] = func;
 };
 
 // Getter by specific attribute, for example: get('width')
 ParameterManager.prototype.get = function(attribute)
 {
 	// If attribute in the property
-	if(!utility.checkUndefined(this.property[attribute])) { return this.property[attribute]; }
+	if(!utility.checkIsUndefined(this.property[attribute])) { return this.property[attribute]; }
 	else 
 	{
 		// Consider transform
-		if(!utility.checkUndefined(this.transform[attribute])) { return this.transform[attribute]; }
+		if(!utility.checkIsUndefined(this.transform[attribute])) { return this.transform[attribute]; }
 		else { console.log('Error: No ' + attribute + ' attribute in parameter manager.'); }
 	}
 }
@@ -323,18 +335,27 @@ ParameterManager.prototype.get = function(attribute)
 // Setter by specific attribute
 ParameterManager.prototype.set = function(attribute, value)
 {
-	if(!utility.checkUndefined(this.property[attribute])) { this.property[attribute] = value; }
+	if(!utility.checkIsUndefined(this.property[attribute])) { this.property[attribute] = value; }
 	else 
 	{
-		if(!utility.checkUndefined(this.transform[attribute])) { this.transform[attribute] = value; }
+		if(!utility.checkIsUndefined(this.transform[attribute])) { this.transform[attribute] = value; }
 		else { console.log('Error: No ' + attribute + ' attribute in parameter manager.'); }
 	}
 };
 
 // Need redefine in each element
-ParameterManager.prototype.createPositions = function() { return this.generatePositions(this.property); };
+ParameterManager.prototype.createPositions = function() { return this.functor.position(this.property); };
 
-// Provide update matrix to the matrix node, usage: updateMatirxNode.bind(this)()
+// Optional for texture coordinate
+ParameterManager.prototype.createTextures = function() 
+{ 
+	if (!utility.checkIsUndefined(this.functor.texture))
+	{
+		return this.functor.texture(this.property);
+	}
+	return [];
+}
+
 ParameterManager.prototype.updateMatirxNode = function(that)
 {
 	// Up to get the matrix node
@@ -342,7 +363,7 @@ ParameterManager.prototype.updateMatirxNode = function(that)
 	while(true)
 	{
 		// This is mean the node doesn't wrapped by matrix node. 
-		if(utility.checkUndefined(matrix['parent'])) { console.log('Warning: No transform node exist.'); return; }
+		if(utility.checkIsUndefined(matrix['parent'])) { console.log('Warning: No transform node exist.'); return; }
 		
 		// Move to the parent
 		if(matrix.type !== 'matrix') { matrix = matrix.parent; }
@@ -351,19 +372,20 @@ ParameterManager.prototype.updateMatirxNode = function(that)
 	matrix.setMatrix(utility.transformMatrix(this.transform));
 };
 
-// The correct usage is: updateGeometryNode.bind(this)()
 ParameterManager.prototype.updateGeometryNode = function(that)
 {
 	var geometry = that.findNodesByType('geometry')[0];
-	geometry.setPositions({ positions: new Float32Array(this.generatePositions(this.property)) });
+	geometry.setPositions({ positions: new Float32Array(this.functor.position(this.property)) });
 };
 
-// Experimental, Under Construction
-//---------------------------------------------------------------------------------
-// If needed?
-function GeometryManager(positions)
-{ this.shape = {}; }
-
-GeometryManager.prototype.get = function(attribute)
-{ return this.shape[attribute]; }
+// Only needed already have texture modification function
+ParameterManager.prototype.updateTextureCoord = function(that)
+{
+	// If functor does exist texture function
+	if(!utility.checkIsUndefined(this.functor.texture))
+	{
+		var geometry = that.findNodesByType('geometry')[0];
+		geometry.setUV({ uv: new Float32Array(this.functor.texture(this.property)) });
+	}
+}
 
