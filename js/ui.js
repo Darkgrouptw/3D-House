@@ -305,6 +305,7 @@ function ScenePick(){
                 //uiPanel.style.top = (hit.canvasPos[1]+50) + "px";
                 objName = hit.nodeId;
                 calculateAxis(hit.nodeId);
+                attachInput(hit.nodeId);
                 if(count != 2)
                 {
                     
@@ -904,6 +905,7 @@ function attachInput(pickId){
             heightinput.max="50";
             heightinput.step="0.1";
             heightinput.value=n.getHeight();
+            if(n.getRealHeight)heightinput.value=n.getRealHeight();
             div.appendChild(heightinput);
     
         var heightpropertyValue=document.createElement("lable");
@@ -948,6 +950,7 @@ function attachInput(pickId){
             widthinput.max="50";
             widthinput.step="0.1";
             widthinput.value=n.getWidth();
+            if(n.getRealWidth)widthinput.value=n.getRealWidth();
             div.appendChild(widthinput);
     
         var widthpropertyValue=document.createElement("lable");
