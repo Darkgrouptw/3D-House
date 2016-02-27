@@ -194,7 +194,8 @@ SceneJS.Types.addType("roof/gable",
 
 function build(params) 
 {
-    var indiceSet = utility.makeIndices(0, 39);
+    var positionSet = this._paramana.createPositions();
+    var indiceSet = utility.makeIndices(0, (positionSet.length / 3) - 1);
     var uvSet = new Float32Array(
     [
 	    0, 1, 0, 0, 1, 0, 1, 1,			// Back 
@@ -215,7 +216,7 @@ function build(params)
 	{
         type: "geometry",
         primitive: "triangles",
-        positions: this._paramana.createPositions(),
+        positions: positionSet,
 		uv: uvSet,
 		normals: "auto",
         indices: indiceSet

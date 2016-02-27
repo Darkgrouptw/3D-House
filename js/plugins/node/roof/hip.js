@@ -22,23 +22,21 @@ SceneJS.Types.addType("roof/hip",
 		    }
 		    else 
 		    {
-			    var rl = (d * 2) - tl;
+			    var rl = (w * 2) - tl;
 			    pA = [-w + (rl * r.a), h, pctD]; pB = [w - (rl * (1 - r.a)), h, pctD];
             }
 
             // Maybe we have very small height
-            if(pA[0] > pB[0])
-            {
-                 pA[0] = 0; pB[0] = 0;
-            }	
+            if(pA[0] > pB[0]) { pA[0] = 0; pB[0] = 0; }	
 
-			pset = pset.concat(
+			var pset = pset.concat(
 			[
-				pB[0], pB[1], pB[2], -w, -h, d, pA[0], pA[1], pA[2], w, -h, -d,
-				pA[0], pA[1] - t, pA[2], -w + t, -h, d - t, pB[0], pB[1] - t, pB[2], w - t, -h, -d + t,
-			    pA[0], pA[1], pA[2], -w, -h, d, -w, -h, -d, w, -h, -d, pB[0], pB[1], pB[2], w, -h, -d, w, -h, d, -w, -h, d,
-			    pA[0], pA[1] - t, pA[2], w - t, -h, -d + t, -w + t, -h, -d + t, -w + t, -h, d - t,
-			    pB[0], pB[1] - t, pB[2], -w + t, -h, d - t, w - t, -h, d - t, w - t, -h, -d + t,
+				pB[0], pB[1], pB[2], w, -h, -d, pA[0], pA[1], pA[2], -w, -h, d,
+				pA[0], pA[1] - t, pA[2], w - t, -h, -d + t, pB[0], pB[1] - t, pB[2], -w + t, -h, d - t,
+			    pA[0], pA[1], pA[2], w, -h, -d, -w, -h, -d, -w, -h, d, 
+                pB[0], pB[1], pB[2], -w, -h, d, w, -h, d, w, -h, -d, 
+			    pA[0], pA[1] - t, pA[2], -w + t, -h, d - t, -w + t, -h, -d + t, w - t, -h, -d + t,
+			    pB[0], pB[1] - t, pB[2], w - t, -h, -d + t, w - t, -h, d - t, -w + t, -h, d - t,
 			    -w + t, -h, d - t, -w + t, -h, -d + t, -w, -h, -d, -w, -h, d,
 			    -w + t, -h, -d + t, w - t, -h, -d + t, w, -h, -d, -w, -h, -d,
 			    w - t, -h, d - t, w, -h, d, w, -h, -d, w - t, -h, -d + t,
@@ -47,33 +45,69 @@ SceneJS.Types.addType("roof/hip",
 	            
 	        return pset;
 	    });
-	    
+	   
 	    // toplen will affect the position, so it need to add it.
 	    this._paramana.addAttribute('toplen', params.toplen);
-        
+        this._paramana.addFunction('texture', function(property)
+        {
+            var w = property.width, d = property.depth, r = property.ratio, tl = property.toplen;
+	        var pA, pB, rD = r.b;
+	        
+		    if (tl == 0) { var rW = r.a; pA = [rW, rD]; pB = [rW, rD]; }
+		    else { var rl = (w * 2) - tl; pA = [(rl * r.a) / (w * 2), rD]; pB = [((w * 2) - rl * (1 - r.a)) / (w * 2), rD]; }
+
+            if(pA[0] > pB[0]) { pA[0] = 0.5; pB[0] = 0.5; }
+
+            var uvset = 
+            [
+                pB[0], pB[1], 1, 1, pA[0], pA[1], 0, 0, 
+	            pA[0], pA[1], 1, 1, pB[0], pB[1], 0, 0,
+	            
+                pA[0], pA[1], 1, 1, 0, 1, 0, 0,
+                pB[0], pB[1], 0, 0, 1, 0, 1, 1,	
+                
+                pA[0], pA[1], 0, 0, 0, 1, 1, 1,
+                pB[0], pB[1], 1, 1, 1, 0, 0, 0,
+
+                1, 1, 0, 1, 0, 0, 1, 0,
+	            1, 0, 0, 0, 0, 1, 1, 1,
+	
+	            1, 1, 0, 1, 0, 0, 1, 0,
+	            0, 1, 1, 1, 1, 0, 0, 0
+            ];
+
+            return new Float32Array(uvset);
+        });
+
         this.addNode(build.call(this, params)); 
     },  
+
+    updateNode: function()
+    {
+        this._paramana.updateGeometryNode(this);
+        this._paramana.updateTextureCoord(this);
+    },
 
     getLayer: function() { return this._layer; },
     setLayer: function(l) { return this._layer = l },
 
     getWidth: function() { return this._paramana.get('width'); },
-	setWidth: function(w) { this._paramana.set('width', w); this._paramana.updateGeometryNode(this); },
+	setWidth: function(w) { this._paramana.set('width', w); this.updateNode(); },
 	
 	getHeight: function() { return this._paramana.get('height'); },
-	setHeight: function(h) { this._paramana.set('height', h); this._paramana.updateGeometryNode(this); },
+	setHeight: function(h) { this._paramana.set('height', h); this.updateNode(); },
 	
 	getDepth: function() { return this._paramana.get('depth'); },
-	setDepth: function(d) { this._paramana.set('depth', d); this._paramana.updateGeometryNode(this); },
+	setDepth: function(d) { this._paramana.set('depth', d); this.updateNode(); },
 	
 	getRatio: function() { return this._paramana.get('ratio'); },
-	setRatio: function(r) { return this._paramana.set('ratio', r); this._paramana.updateGeometryNode(this); },
+	setRatio: function(r) { return this._paramana.set('ratio', r); this.updateNode(); },
 	
 	getToplen: function() { return this._paramana.get('toplen'); },
-	setToplen: function(tl) { this._paramana.set('toplen', tl); this._paramana.updateGeometryNode(this); },
+	setToplen: function(tl) { this._paramana.set('toplen', tl); this.updateNode(); },
 	
 	getThickness: function() { return this._paramana.get('thickness'); },
-	setThickness: function(t) { this._paramana.set('thickness', t); this._paramana.updateGeometryNode(this); },
+	setThickness: function(t) { this._paramana.set('thickness', t); this.updateNode(); },
 
 	getScale: function() { return this._paramana.get('scale'); },
 	setScale: function(svec) { this._paramana.set('scale', svec); this._paramana.updateMatirxNode(this); },
@@ -126,24 +160,7 @@ function build(params)
 {
     var positionSet = this._paramana.createPositions();
     var indiceSet = utility.makeIndices(0, (positionSet.length / 3) - 1);
-   
-    // Copy from roof/gable
-    var uvSet = new Float32Array(
-    [
-	    0, 1, 0, 0, 1, 0, 1, 1, 
-	    1, 1, 1, 0, 0, 0, 0, 1,
-	    0, 1, 1, 1, 1, 0, 0, 0,
-
-	    0, 1, 0, 0, 1, 0, 1, 1,	
-	    1, 1, 1, 0, 0, 0, 0, 1,
-	    0, 1, 0, 0, 1, 0, 1, 1,
-
-	    1, 1, 0, 1, 0, 0, 1, 1,
-	    1, 0, 0, 0, 0, 1, 1, 1,
-	
-	    1, 1, 0, 1, 0, 0, 1, 0,
-	    0, 1, 1, 1, 1, 0, 0, 0
-    ]);
+    var uvSet = this._paramana.createTextures();
 
     var geometry = 
 	{
