@@ -44,6 +44,8 @@ SceneJS.Types.addType("cameras/orbit", {
         var last1Y;
 		
 		var tmpNormal = null;
+        var camDist = null;
+        var isLock = false;
 		
         var dragging = false;
         var lookatDirty = false;
@@ -103,6 +105,9 @@ SceneJS.Types.addType("cameras/orbit", {
 
         function mouseUp() {
             tmpNormal = getNormal();
+            camDist = getCameraDistance();
+            isLock = getIsLock();
+
 			if(tmpNormal != null)
             {
                 rotateCamera();
@@ -112,6 +117,9 @@ SceneJS.Types.addType("cameras/orbit", {
 
         function touchEnd() {
             tmpNormal = getNormal();
+            camDist = getCameraDistance();
+            isLock = getIsLock();
+
 			if(tmpNormal != null)
             {
                 rotateCamera();
@@ -127,11 +135,14 @@ SceneJS.Types.addType("cameras/orbit", {
 
         function touchMove(event) {
 			if(event.targetTouches.length != 1){
-				var posX = event.targetTouches[0].clientX;
-				var posY = event.targetTouches[0].clientY;
-				var pos1X = event.targetTouches[1].clientX;
-				var pos1Y = event.targetTouches[1].clientY;
-				touchScale(posX, posY,pos1X, pos1Y);
+				if(isLock == false)
+                {
+                    var posX = event.targetTouches[0].clientX;
+                    var posY = event.targetTouches[0].clientY;
+                    var pos1X = event.targetTouches[1].clientX;
+                    var pos1Y = event.targetTouches[1].clientY;
+                    touchScale(posX, posY,pos1X, pos1Y);
+                }
 			}
 			else{
 				var posX = event.targetTouches[0].clientX;
@@ -209,35 +220,35 @@ SceneJS.Types.addType("cameras/orbit", {
             {
                 yaw = 0;
                 pitch = 0;
-                zoom = 150;
+                zoom = camDist;
                 update();
             }
             else if(tmpNormal[0] == 0 && tmpNormal[1] == 0 && tmpNormal[2] == -1)
             {
                 yaw = 0;
                 pitch = 0;
-                zoom = -150;
+                zoom = -camDist;
                 update();
             }
             else if(tmpNormal[0] == 0 && tmpNormal[1] == 1 && tmpNormal[2] == 0)
             {
                 yaw = 0;
                 pitch = -90;
-                zoom = 150;
+                zoom = camDist;
                 update();
             }
             else if(tmpNormal[0] == 1 && tmpNormal[1] == 0 && tmpNormal[2] == 0)
             {
                 yaw = 90;
                 pitch = 0;
-                zoom = 150;
+                zoom = camDist;
                 update();
             }
             else if(tmpNormal[0] == -1 && tmpNormal[1] == 0 && tmpNormal[2] == 0)
             {
                 yaw = -90;
                 pitch = 0;
-                zoom = 150;
+                zoom = camDist;
                 update();
             }
         }
