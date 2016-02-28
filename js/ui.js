@@ -1272,7 +1272,148 @@ function attachInput(pickId){
             OffsetYismove=false;
         });
     }
-
+    //ratio
+    if(n.getRatio && n.setRatioA){
+        var RatioAismove=false;
+        var div=document.createElement("div");
+        inputarea.appendChild(div);
+        //text
+        var RatioApropertyName=document.createElement("lable");
+            RatioApropertyName.textContent="RatioA";
+            div.appendChild(RatioApropertyName);
+        //input
+        var RatioAinput=document.createElement("input");
+            RatioAinput.type="range";
+            RatioAinput.min="0";
+            RatioAinput.max="1";
+            RatioAinput.step="0.01";
+            RatioAinput.value=n.getRatio().a;
+            div.appendChild(RatioAinput);
+    
+        var RatioAropertyValue=document.createElement("lable");
+            RatioAropertyValue.textContent=RatioAinput.value;
+            div.appendChild(RatioAropertyValue);
+    
+        RatioAinput.addEventListener('mousedown',function(event){
+            RatioAismove=true;
+        });
+        RatioAinput.addEventListener('mousemove',function(event){
+            if (RatioAismove) {
+                n.setRatioA(Number(RatioAinput.value*1.0));
+                RatioAropertyValue.textContent=RatioAinput.value;
+                n.callBaseCalibration();
+            }
+        });
+        RatioAinput.addEventListener('mouseup',function(event){
+            RatioAismove=false;
+        });
+    }
+    if(n.getRatio && n.setRatioB){
+        var RatioBismove=false;
+        var div=document.createElement("div");
+        inputarea.appendChild(div);
+        //text
+        var RatioBpropertyName=document.createElement("lable");
+            RatioBpropertyName.textContent="RatioB";
+            div.appendChild(RatioBpropertyName);
+        //input
+        var RatioBinput=document.createElement("input");
+            RatioBinput.type="range";
+            RatioBinput.min="0";
+            RatioBinput.max="1";
+            RatioBinput.step="0.01";
+            RatioBinput.value=n.getRatio().b;
+            div.appendChild(RatioBinput);
+    
+        var RatioBropertyValue=document.createElement("lable");
+            RatioBropertyValue.textContent=RatioBinput.value;
+            div.appendChild(RatioBropertyValue);
+    
+        RatioBinput.addEventListener('mousedown',function(event){
+            RatioBismove=true;
+        });
+        RatioBinput.addEventListener('mousemove',function(event){
+            if (RatioBismove) {
+                n.setRatioB(Number(RatioBinput.value*1.0));
+                RatioBropertyValue.textContent=RatioBinput.value;
+                n.callBaseCalibration();
+            }
+        });
+        RatioBinput.addEventListener('mouseup',function(event){
+            RatioBismove=false;
+        });
+    }
+    //windowSize
+    if(n.getWindowSize && n.setWindowW){
+        var WindowWismove=false;
+        var div=document.createElement("div");
+        inputarea.appendChild(div);
+        //text
+        var WindowWpropertyName=document.createElement("lable");
+            WindowWpropertyName.textContent="WindowW";
+            div.appendChild(WindowWpropertyName);
+        //input
+        var WindowWinput=document.createElement("input");
+            WindowWinput.type="range";
+            WindowWinput.min="0";
+            WindowWinput.max="20";
+            WindowWinput.step="0.1";
+            WindowWinput.value=n.getWindowSize().w;
+            div.appendChild(WindowWinput);
+    
+        var WindowWropertyValue=document.createElement("lable");
+            WindowWropertyValue.textContent=WindowWinput.value;
+            div.appendChild(WindowWropertyValue);
+    
+        WindowWinput.addEventListener('mousedown',function(event){
+            WindowWismove=true;
+        });
+        WindowWinput.addEventListener('mousemove',function(event){
+            if (WindowWismove) {
+                n.setWindowW(Number(WindowWinput.value*1.0));
+                WindowWropertyValue.textContent=WindowWinput.value;
+                n.callBaseCalibration();
+            }
+        });
+        WindowWinput.addEventListener('mouseup',function(event){
+            WindowWismove=false;
+        });
+    }
+    if(n.getWindowSize && n.setWindowH){
+        var WindowHismove=false;
+        var div=document.createElement("div");
+        inputarea.appendChild(div);
+        //text
+        var WindowHpropertyName=document.createElement("lable");
+            WindowHpropertyName.textContent="WindowH";
+            div.appendChild(WindowHpropertyName);
+        //input
+        var WindowHinput=document.createElement("input");
+            WindowHinput.type="range";
+            WindowHinput.min="0";
+            WindowHinput.max="20";
+            WindowHinput.step="0.1";
+            WindowHinput.value=n.getWindowSize().h;
+            div.appendChild(WindowHinput);
+    
+        var WindowHropertyValue=document.createElement("lable");
+            WindowHropertyValue.textContent=WindowHinput.value;
+            div.appendChild(WindowHropertyValue);
+    
+        WindowHinput.addEventListener('mousedown',function(event){
+            WindowHismove=true;
+        });
+        WindowHinput.addEventListener('mousemove',function(event){
+            if (WindowHismove) {
+                n.setWindowH(Number(WindowHinput.value*1.0));
+                WindowHropertyValue.textContent=WindowHinput.value;
+                n.callBaseCalibration();
+            }
+        });
+        WindowHinput.addEventListener('mouseup',function(event){
+            WindowHismove=false;
+        });
+    }
 }
 
 
@@ -1723,6 +1864,11 @@ function getElementXML(n){
             if(n.getDirection)xml+='\t\t\t'+'<direction>'+'\"'+n.getDirection()+'\"'+'</direction>'+'\n';
             if(n.getOffsetX && n.getOffsetX())xml += '\t\t\t'+'<OffsetX>'+n.getOffsetX()+'</OffsetX>'+'\n';
             if(n.getOffsetY && n.getOffsetY())xml += '\t\t\t'+'<OffsetY>'+n.getOffsetY()+'</OffsetY>'+'\n';
+            if(n.getWindowSize){
+                var size = n.getWindowSize();
+                xml+='\t\t\t'+'<windowW>'+size.w+'</windowW>'+'\n';
+                xml+='\t\t\t'+'<windowH>'+size.h+'</windowH>'+'\n';
+            }
         xml+='\t\t'+'</property>'+'\n';
     xml+='\t'+'</element>'+'\n';
     return xml;

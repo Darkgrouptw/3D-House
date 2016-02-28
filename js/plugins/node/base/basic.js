@@ -175,6 +175,7 @@ SceneJS.Types.addType("base/basic",
 			frontWall.setTranslateY(baseCenterY+this.getThickness()+frontWall.getHeight());
 			frontWall.setTranslateZ(baseCenterZ+this.getRealHeight()-frontWall.getThickness());
 			if(frontWall.getHeight() > defaulthigh)defaulthigh=frontWall.getHeight();
+			if(frontWall.adjustChildren)frontWall.adjustChildren();
 		}
 		if(backWall!=-1){
 			havebackWall = true;
@@ -184,6 +185,7 @@ SceneJS.Types.addType("base/basic",
 			backWall.setTranslateY(baseCenterY+this.getThickness()+backWall.getHeight());
 			backWall.setTranslateZ(baseCenterZ-this.getRealHeight()+backWall.getThickness());
 			if(backWall.getHeight() > defaulthigh)defaulthigh=backWall.getHeight();
+			if(backWall.adjustChildren)backWall.adjustChildren();
 		}
 		if(leftWall!=-1){
 			if(havebackWall && havefrontWall){
@@ -196,6 +198,7 @@ SceneJS.Types.addType("base/basic",
 				leftWall.setTranslateY(baseCenterY+this.getThickness()+leftWall.getHeight());
 				leftWall.setTranslateZ(baseCenterZ+backWall.getThickness());
 				if(leftWall.getHeight() > defaulthigh)defaulthigh=leftWall.getHeight();
+				if(leftWall.adjustChildren)leftWall.adjustChildren();
 			}else{
 			}
 		}
@@ -210,6 +213,7 @@ SceneJS.Types.addType("base/basic",
 				rightWall.setTranslateY(baseCenterY+this.getThickness()+rightWall.getHeight());
 				rightWall.setTranslateZ(baseCenterZ+backWall.getThickness());
 				if(rightWall.getHeight() > defaulthigh)defaulthigh=rightWall.getHeight();
+				if(rightWall.adjustChildren)rightWall.adjustChildren();
 			}else{
 			}
 			
@@ -443,6 +447,8 @@ SceneJS.Types.addType("base/basic",
 				interWall[i].setPercentX((100*(interWall[i].getTranslate()[0] - baseCenterX + this.getRealWidth()))/(this.getRealWidth()*2));
 				interWall[i].setPercentY((100*(interWall[i].getTranslate()[2] - baseCenterZ + this.getRealHeight()))/(this.getRealHeight()*2));
 			}
+
+			if(interWall[i] && interWall[i].adjustChildren)interWall[i].adjustChildren();
 		}
 
 		//call 
