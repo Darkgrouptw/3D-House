@@ -2043,3 +2043,6 @@ function saveXML(){
 
 
 
+function RedButtonClick(){
+    superXReProduction(generateXML());
+}
