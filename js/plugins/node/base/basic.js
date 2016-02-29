@@ -8,7 +8,7 @@ SceneJS.Types.addType("base/basic",
 		this._layer;
 		this._offsetX;
 		this._offsetY;
-		this.paramana = new ParameterManager(params, function(property)
+		this._paramana = new ParameterManager(params, function(property)
 		{
 			var w = property.width, h = property.height, t = property.thickness; 
 			var pset = new Float32Array(
@@ -47,23 +47,23 @@ SceneJS.Types.addType("base/basic",
 	getLayer:function(){ return this._layer; },
 	setLayer:function(l){ this._layer=l; },
 
-	getWidth: function() { return this.paramana.get('width'); },
-	setWidth: function(w) { this.paramana.set('width', w); this.paramana.updateGeometryNode(this); },
+	getWidth: function() { return this._paramana.get('width'); },
+	setWidth: function(w) { this._paramana.set('width', w); this._paramana.updateGeometryNode(this); },
 	
-	getHeight: function() { return this.paramana.get('height'); },
-	setHeight: function(h) { this.paramana.set('height', h); this.paramana.updateGeometryNode(this); },
+	getHeight: function() { return this._paramana.get('height'); },
+	setHeight: function(h) { this._paramana.set('height', h); this._paramana.updateGeometryNode(this); },
 	
-	getThickness: function() { return this.paramana.get('thickness'); },
-	setThickness: function(t) { this.paramana.set('thickness', t); this.paramana.updateGeometryNode(this); },
+	getThickness: function() { return this._paramana.get('thickness'); },
+	setThickness: function(t) { this._paramana.set('thickness', t); this._paramana.updateGeometryNode(this); },
 	
-	getScale: function() { return this.paramana.get('scale'); },
-	setScale: function(svec) { this.paramana.set('scale', svec); this.paramana.updateMatirxNode(this); },
+	getScale: function() { return this._paramana.get('scale'); },
+	setScale: function(svec) { this._paramana.set('scale', svec); this._paramana.updateMatirxNode(this); },
 	
-	getRotate: function() { return this.paramana.get('rotate'); },
-	setRotate: function(rvec) { this.paramana.set('rotate', rvec); this.paramana.updateMatirxNode(this); },
+	getRotate: function() { return this._paramana.get('rotate'); },
+	setRotate: function(rvec) { this._paramana.set('rotate', rvec); this._paramana.updateMatirxNode(this); },
 	
-	getTranslate: function() { return this.paramana.get('translate'); },
-	setTranslate: function(tvec) { this.paramana.set('translate', tvec); this.paramana.updateMatirxNode(this); },
+	getTranslate: function() { return this._paramana.get('translate'); },
+	setTranslate: function(tvec) { this._paramana.set('translate', tvec); this._paramana.updateMatirxNode(this); },
 	setTranslateX: function(x){
 		var t=this.getTranslate()
 		this.setTranslate([x,t[1],t[2]]);
@@ -462,8 +462,9 @@ SceneJS.Types.addType("base/basic",
 });
 
 function build(params) 
-{	
-	var indiceSet = utility.makeIndices(0, 23);
+{
+    var positionSet = this._paramana.createPositions();
+	var indiceSet = utility.makeIndices(0, (positionSet.length / 3 ) - 1);
 	var uvSet = new Float32Array(
 	[
 		1, 1, 0, 1, 0, 0, 1, 0,
@@ -478,7 +479,7 @@ function build(params)
 	{
 		type: 'geometry',
 		primitive: 'triangles',
-		positions: this.paramana.createPositions(),
+		positions: positionSet,
 		uv: uvSet,
 		normals: "auto",
 		indices: indiceSet

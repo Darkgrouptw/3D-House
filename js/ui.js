@@ -1176,7 +1176,7 @@ function attachInput(pickId){
         //input
         var topleninput=document.createElement("input");
             topleninput.type="range";
-            topleninput.min="1";
+            topleninput.min="0";
             topleninput.max="50";
             topleninput.step="0.1";
             topleninput.value=n.getToplen();

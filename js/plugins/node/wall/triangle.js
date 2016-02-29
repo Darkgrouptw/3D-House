@@ -4,7 +4,7 @@ SceneJS.Types.addType("wall/triangle",
 	construct: function (params) 
 	{ 
 		this._layer;
-		this.paramana = new ParameterManager(params, function(property)
+		this._paramana = new ParameterManager(params, function(property)
 		{
 			var w = property.width, h = property.height, t = property.thickness, r = property.ratio;
 			var topw = (w * r.a + -w * r.b) / 2;
@@ -23,29 +23,29 @@ SceneJS.Types.addType("wall/triangle",
 		this.addNode(build.call(this, params)); 
 	},
 	
-	getLayer:function(){return this._layer;},
-	setLayer:function(l){this._layer=l;},
+	getLayer: function() { return this._layer; },
+	setLayer: function(l) { this._layer = l;} ,
 
-	getWidth: function() { return this.paramana.get('width'); },
-	setWidth: function(w) { this.paramana.set('width', w); this.paramana.updateGeometryNode(this); },
+	getWidth: function() { return this._paramana.get('width'); },
+	setWidth: function(w) { this._paramana.set('width', w); this._paramana.updateGeometryNode(this); },
 	
-	getHeight: function() { return this.paramana.get('height'); },
-	setHeight: function(h) { this.paramana.set('height', h); this.paramana.updateGeometryNode(this); },
+	getHeight: function() { return this._paramana.get('height'); },
+	setHeight: function(h) { this._paramana.set('height', h); this._paramana.updateGeometryNode(this); },
 	
-	getThickness: function() { return this.paramana.get('thickness'); },
-	setThickness: function(t) { this.paramana.set('thickness', t); this.paramana.updateGeometryNode(this); },
+	getThickness: function() { return this._paramana.get('thickness'); },
+	setThickness: function(t) { this._paramana.set('thickness', t); this._paramana.updateGeometryNode(this); },
 	
-	getRatio: function() { return this.paramana.get('ratio'); },
-	setRatio: function(r) { return this.paramana.set('ratio', r); this.paramana.updateGeometryNode(this); },
+	getRatio: function() { return this._paramana.get('ratio'); },
+	setRatio: function(r) { return this._paramana.set('ratio', r); this._paramana.updateGeometryNode(this); },
 	
-	getScale: function() { return this.paramana.get('scale'); },
-	setScale: function(svec) { this.paramana.set('scale', svec); this.paramana.updateMatirxNode(this); },
+	getScale: function() { return this._paramana.get('scale'); },
+	setScale: function(svec) { this._paramana.set('scale', svec); this._paramana.updateMatirxNode(this); },
 	
-	getRotate: function() { return this.paramana.get('rotate'); },
-	setRotate: function(rvec) { this.paramana.set('rotate', rvec); this.paramana.updateMatirxNode(this); },
+	getRotate: function() { return this._paramana.get('rotate'); },
+	setRotate: function(rvec) { this._paramana.set('rotate', rvec); this._paramana.updateMatirxNode(this); },
 	
-	getTranslate: function() { return this.paramana.get('translate'); },
-	setTranslate: function(tvec) { this.paramana.set('translate', tvec); this.paramana.updateMatirxNode(this); },
+	getTranslate: function() { return this._paramana.get('translate'); },
+	setTranslate: function(tvec) { this._paramana.set('translate', tvec); this._paramana.updateMatirxNode(this); },
 	
     callBaseCalibration: function()
     {
@@ -84,21 +84,22 @@ SceneJS.Types.addType("wall/triangle",
 
 function build(params) 
 {
+    var positionSet = this._paramana.createPositions();
 	var indiceSet = utility.makeIndices(0, 5, 3).concat(utility.makeIndices(6, 17));
 	var uvSet =  new Float32Array(
 	[
-		0, 0, 1, 0, this.paramana.get('ratio').a, 1,
+		0, 0, 1, 0, this._paramana.get('ratio').a, 1,
 		1, 0, 1, 1, 0, 1, 0, 0,
 		1, 1, 0, 1, 0, 0, 1, 0,
 		0, 1, 0, 0, 1, 0, 1, 1,
-		0, 0, 1, 0, this.paramana.get('ratio').b, 1
+		0, 0, 1, 0, this._paramana.get('ratio').b, 1
 	]);
 	
 	var geometry = 
 	{
 		type: "geometry",
 		primitive: "triangles",
-		positions: this.paramana.createPositions(),
+		positions: positionSet,
 		uv: uvSet,
 		normals: "auto",
 		indices: indiceSet
