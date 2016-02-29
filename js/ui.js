@@ -130,7 +130,7 @@ var uiPanel;
 var tmpNormal = null;
 var camDist = null;
 var isLock = false;
-var objName = null;
+var currentAxis = null;
 function ScenePick(){
     var firstX;
     var firstY;
@@ -140,6 +140,7 @@ function ScenePick(){
     var stampDown;
     var stampUp;
     var count = 0;
+    var objectId = null;
     
     var canvas = scene.getCanvas();
 
@@ -153,6 +154,15 @@ function ScenePick(){
                     stampDown = event.timeStamp;
                     console.log(stampDown);
                 }
+                else
+                {
+                    stampDelete = event.timeStamp - stampDown;
+                    if(stampDelete > 500)
+                    {
+                        count = 0;
+                    }
+                }
+
                 firstX = event.clientX;
                 firstY = event.clientY;
             }, true);
@@ -160,7 +170,8 @@ function ScenePick(){
     canvas.addEventListener('mouseup',
             function (event) {
 
-                if(Math.abs(event.clientX - firstX) < 3 && Math.abs(event.clientY - firstY) < 3)
+                //if(Math.abs(event.clientX - firstX) < 3 && Math.abs(event.clientY - firstY) < 3)
+                if(event.clientX == firstX && event.clientY == firstY)
                 {
                     count++;
                     console.log(count);
@@ -168,6 +179,10 @@ function ScenePick(){
                     if(count == 2)
                     {
                         stampUp = event.timeStamp - stampDown;
+                        if(stampUp > 500)
+                        { 
+                            count = 0;
+                        }
                         console.log(stampUp);
                     }
 
@@ -188,7 +203,6 @@ function ScenePick(){
                 if(count == 0)
                 {
                     stampDown = event.timeStamp;
-                    //console.log(stampDown);
                 }
                 
                 firstX = event.targetTouches[0].clientX;
@@ -198,15 +212,17 @@ function ScenePick(){
     canvas.addEventListener('touchend',
             function (event) {
                 
-                if(Math.abs(event.targetTouches[0].clientX - firstX) < 3 && Math.abs(event.targetTouches[0].clientY - firstY) < 3)
+                //if(Math.abs(event.targetTouches[0].clientX - firstX) < 3 && Math.abs(event.targetTouches[0].clientY - firstY) < 3)
+                if(event.targetTouches[0].clientX == firstX && event.targetTouches[0].clientY == firstY)
                 {
                     count++;
-                    //console.log(count);
-
                     if(count == 2)
                     {
                         stampUp = event.timeStamp - stampDown;
-                        //console.log(stampUp);
+                        if(stampUp > 500) 
+                        {
+                            count = 0;
+                        }
                     }
 
                     scene.pick(event.targetTouches[0].clientX, event.targetTouches[0].clientY, {rayPick: true});
@@ -221,6 +237,7 @@ function ScenePick(){
 	canvas.addEventListener('touchmove',
             function (event) {
                 count = 0;
+                calculateAxis(objectId);
 
                 if(event.targetTouches.length != 1)
                 {
@@ -232,12 +249,6 @@ function ScenePick(){
                     var firstLength = Math.sqrt((firstX - secondX) * (firstX - secondX) + (firstY - secondY) * (firstY - secondY));
                     var secondLength = Math.sqrt((posX - pos1X) * (posX - pos1X) + (posY - pos1Y) * (posY - pos1Y));
                     var compareLength = (secondLength - firstLength);
-
-                    if(objName != null)
-                    {
-                        TouchScale(compareLength, objName);
-                    }
-                    
 
                     var a = [];
                     var b = [];
@@ -257,15 +268,18 @@ function ScenePick(){
                     }
                     var tmpCos = (a[0]*b[0] + a[1]*b[1]) / ( Math.sqrt(a[0]*a[0] + a[1]*a[1]) * Math.sqrt(b[0]*b[0] + b[1]*b[1] ) );
                     
-                    if(tmpCos < (1 / Math.sqrt(2)) && tmpCos >= 0 )
+                    if(objectId != null)
                     {
-                        //Vertical
-                        console.log("theta is larger than 45 degree");
-                    }
-                    else if(tmpCos > (1 / Math.sqrt(2)) && tmpCos <= 1)
-                    {
-                        //Horizontal
-                        console.log("theta is smaller than 45 degree");
+                        if(tmpCos < (1 / Math.sqrt(2)) && tmpCos >= 0 )
+                        {
+                            //Vertical
+                            verticalAxis(objectId, compareLength);
+                        }
+                        else if(tmpCos > (1 / Math.sqrt(2)) && tmpCos <= 1)
+                        {
+                            //Horizontal
+                            horizontalAxis(objectId, compareLength);
+                        }
                     }
 
                     firstX = posX;
@@ -303,21 +317,18 @@ function ScenePick(){
                 //讓UI跟隨點擊位置，因為很煩人所以先影藏起來
                 //uiPanel.style.left = (hit.canvasPos[0]+50) + "px";
                 //uiPanel.style.top = (hit.canvasPos[1]+50) + "px";
-                objName = hit.nodeId;
-                calculateAxis(hit.nodeId);
-                attachInput(hit.nodeId);
-                if(count != 2)
-                {
-                    
-                }
-                else
+
+                objectId = hit.nodeId;
+                calculateAxis(objectId);
+                if(count == 2)
                 {
                     if(stampUp < 500)
                     {
-                        changeViewpoint(hit.nodeId);
+                        changeViewpoint(objectId);
                     }
                     count = 0;
                 }
+                attachInput(objectId);
             });
 
     scene.on("nopick",
@@ -332,7 +343,8 @@ function ScenePick(){
                 console.log('Nothing picked!');
                 count = 0;
                 isLock = false;
-                objName = null;
+                currentAxis = null;
+                objectId = null;
                 //for some ridiculurs reason i got to pick again!!
                 //scene.pick()
             });
@@ -343,23 +355,156 @@ function Sign(x)
     return typeof x === 'number' ? x ? x < 0 ? -1 : 1 : x === x ? 0 : NaN : NaN;
 }
 
-function ComparsionWithOne(scaleVector)
+function horizontalAxis(id, compareLength)
 {
-    if(scaleVector[0] < 1) { scaleVector[0] = 1; }
-    if(scaleVector[1] < 1) { scaleVector[1] = 1; }
-    if(scaleVector[2] < 1) { scaleVector[2] = 1; }
+    var n;
+    var tmpHeight;
+    var tmpWidth;
+    var tmpDepth;
+
+    var nameNode = scene.getNode(id).parent.parent.getName();
+    if(nameNode == "rightTriangle" || nameNode == "leftTriangle")
+    {
+        n = scene.getNode(7).nodes[0].nodes[0].nodes[0];
+    }
+    else
+    {
+        n = scene.getNode(id).nodes[0].nodes[0].nodes[0];
+    }
+
+    switch(currentAxis)
+    {
+        case 0:
+            if(nameNode == "rightWall" || nameNode == "leftWall" || nameNode == "roof" || nameNode == "rightTriangle" || nameNode == "leftTriangle")
+            {
+                tmpWidth = n.getWidth();
+                tmpWidth = tmpWidth + Sign(compareLength)/3;
+                if(tmpWidth < 7){ tmpWidth = 7;}
+                n.setWidth(tmpWidth);
+                n.callBaseCalibration();
+            }
+            else if(nameNode == "base")
+            {
+                tmpHeight = n.getHeight();
+                tmpHeight = tmpHeight + Sign(compareLength)/3;
+                if(tmpHeight < 7){ tmpHeight = 7;}
+                n.setHeight(tmpHeight);
+                n.callBaseCalibration();
+            }
+            break;
+        case 1:
+            if(nameNode == "roof" || nameNode == "rightTriangle" || nameNode == "leftTriangle")
+            {
+                tmpDepth = n.getDepth()();
+                tmpDepth = tmpDepth + Sign(compareLength)/3;
+                if(tmpDepth < 18){ tmpDepth = 18;}
+                n.setDepth(tmpDepth);
+                n.callBaseCalibration();
+            }
+            else if(nameNode == "base" || nameNode == "backWall")
+            {
+                tmpWidth = n.getWidth();
+                tmpWidth = tmpWidth + Sign(compareLength)/3;
+                if(tmpWidth < 18){ tmpWidth = 18;}
+                n.setWidth(tmpWidth);
+                n.callBaseCalibration();
+            }
+            break;
+        case 2:
+            if(nameNode == "base" || nameNode == "backWall")
+            {
+                tmpWidth = n.getWidth();
+                tmpWidth = tmpWidth + Sign(compareLength)/3;
+                if(tmpWidth < 18){ tmpWidth = 18;}
+                n.setWidth(tmpWidth);
+                n.callBaseCalibration();
+            }
+            else if(nameNode == "roof" || nameNode == "rightTriangle" || nameNode == "leftTriangle")
+            {
+                tmpDepth = n.getDepth();
+                tmpDepth = tmpDepth + Sign(compareLength)/3;
+                if(tmpDepth < 18){ tmpDepth = 18;}
+                n.setDepth(tmpDepth);
+                n.callBaseCalibration();
+            }
+            break;
+    }
 }
 
-function TouchScale(compareLength , id)
+function verticalAxis(id, compareLength)
 {
-    var n = scene.getNode(id).nodes[0].nodes[0].nodes[0];
+    var n;
+    var tmpWidth;
+    var tmpHeight;
+    var tmpDepth;
 
-    var tmpScale = n.getScale();
-    tmpScale[0] = tmpScale[0] + Sign(compareLength)/5;
-    tmpScale[1] = tmpScale[1] + Sign(compareLength)/5;
-    tmpScale[2] = tmpScale[2] + Sign(compareLength)/5;
-    ComparsionWithOne(tmpScale);
-    n.setScale(tmpScale);
+    var nameNode = scene.getNode(id).parent.parent.getName();
+    if(nameNode == "rightTriangle" || nameNode == "leftTriangle")
+    {
+        n = scene.getNode(7).nodes[0].nodes[0].nodes[0];
+    }
+    else
+    {
+        n = scene.getNode(id).nodes[0].nodes[0].nodes[0];
+    }
+
+    switch(currentAxis)
+    {
+        case 0:
+            if(nameNode == "rightWall" || nameNode == "leftWall" || nameNode == "backWall")
+            {
+                tmpHeight = n.getHeight();
+                tmpHeight = tmpHeight + Sign(compareLength)/3;
+                if(tmpHeight < 8){ tmpHeight = 8;}
+                n.setHeight(tmpHeight);
+                n.callBaseCalibration();
+            }
+            else if(nameNode == "roof" || nameNode == "rightTriangle" || nameNode == "leftTriangle")
+            {
+                tmpHeight = n.getHeight();
+                tmpHeight = tmpHeight + Sign(compareLength)/3;
+                if(tmpHeight < 5){ tmpHeight = 5;}
+                n.setHeight(tmpHeight);
+                n.callBaseCalibration();
+            }
+            break;
+        case 1:
+            if(nameNode == "rightWall" || nameNode == "leftWall" || nameNode == "roof" || nameNode == "rightTriangle" || nameNode == "leftTriangle")
+            {
+                tmpWidth = n.getWidth();
+                tmpWidth = tmpWidth + Sign(compareLength)/3;
+                if(tmpWidth < 8){ tmpWidth = 8;}
+                n.setWidth(tmpWidth);
+                n.callBaseCalibration();
+            }
+            else if(nameNode == "base")
+            {
+                tmpHeight = n.getHeight();
+                tmpHeight = tmpHeight + Sign(compareLength)/3;
+                if(tmpHeight < 8){ tmpHeight = 8;}
+                n.setHeight(tmpHeight);
+                n.callBaseCalibration();
+            }
+            break;
+        case 2:
+            if(nameNode == "rightWall" || nameNode == "leftWall" || nameNode == "backWall")
+            {
+                tmpHeight = n.getHeight();
+                tmpHeight = tmpHeight + Sign(compareLength)/3;
+                if(tmpHeight < 8){ tmpHeight = 8;}
+                n.setHeight(tmpHeight);
+                n.callBaseCalibration();
+            }
+            else if(nameNode == "roof" || nameNode == "rightTriangle" || nameNode == "leftTriangle")
+            {
+                tmpHeight = n.getHeight();
+                tmpHeight = tmpHeight + Sign(compareLength)/3;
+                if(tmpHeight < 5){ tmpHeight = 5;}
+                n.setHeight(tmpHeight);
+                n.callBaseCalibration();
+            }
+            break;
+    }
 }
 
 function calculateAxis(id)
@@ -422,14 +567,17 @@ function calculateAxis(id)
     if(tmpArr[0] == lengthX)
     {
         console.log("yz");
+        currentAxis = 0;
     }
     else if(tmpArr[0] == lengthY)
     {
         console.log("xz");
+        currentAxis = 1;
     }
     else if(tmpArr[0] == lengthZ)
     {
         console.log("xy");
+        currentAxis = 2;
     }
 }
 
