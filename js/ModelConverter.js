@@ -37,6 +37,9 @@ function exportMultiObj(inputNode){
 function exportMultiStl(inputNode){
 	var objs = convertToMultiObj(inputNode, false);
 
+	//Parsing roof part number
+	var parseRoof = 0;
+
 	//Using the faceArray in connector and nonConnector to construct the stl models
 	//Only normals in objs are needed
 	for(var modelNo = 0;modelNo<objs.length;modelNo++){
@@ -53,6 +56,51 @@ function exportMultiStl(inputNode){
 		}
 		var sum = [0, 0];
 		var minZ = 99999999;
+
+		//Storing the vec and angle of current rotation
+		var angle = 0, vec = 0;
+		//Rotating
+		switch(posArray[modelNo]){
+			case "roof":
+				if(parseRoof == 0){
+					angle = -39.5;
+					vec = 0;
+				}else{
+					angle = 219.5;
+					vec = 0;
+				}
+				parseRoof++;
+				break;
+			case "leftTriangle":
+				vec = 1;
+				angle = 90;
+				break;
+			case "rightTriangle":
+				vec = 1;
+				angle = 90;
+				break;
+			case "base":
+				angle = -90;
+				vec = 0;
+				break;
+			case "interWall":
+				angle = 90;
+				vec = 1;
+				break;
+			case "backWall":
+				break;
+			case "leftWall":
+				angle = 90;
+				vec = 1;
+				break;
+			case "rightWall":
+				angle = 90;
+				vec = 1;
+				break;
+		}
+
+		curObj = rotateOneAxis(curObj, angle, vec);
+		faceArr = rotateOneAxis_faceArr(faceArr, angle, vec);
 
 		//Finding sum and min to align
 		for(var nv = 0;nv<curObj.vertices.length;nv++){
@@ -219,19 +267,16 @@ function convertToMultiObj(inputNode, isDownload){
 			vnStr += "\n";
 			vn2Str += "\n";
 			// latchFaces(nodeI);
-			var rotatedStr1 = obj2Text(rotateOneAxis(parseObj(vStr + vnStr + f1Str), -39.5, 0));
-			var rotatedStr2 = obj2Text(rotateOneAxis(parseObj(v2Str + vn2Str + f2Str), 219.5, 0));
-
-			parseObj_withStoring(rotatedStr1, false);
-			if(isDownload)	download(rotatedStr1, "model_part" + outNodeIndex + ".obj", 'text/plain');
+			parseObj_withStoring(vStr + vnStr + f1Str, false);
+			if(isDownload)	download(vStr + vnStr + f1Str, "model_part" + outNodeIndex + ".obj", 'text/plain');
 			outNodeIndex++;
-			parseObj_withStoring(rotatedStr2, false);
-			if(isDownload)	download(rotatedStr2, "model_part" + outNodeIndex + ".obj", 'text/plain');
+			parseObj_withStoring(v2Str + vn2Str + f2Str, false);
+			if(isDownload)	download(v2Str + vn2Str + f2Str, "model_part" + outNodeIndex + ".obj", 'text/plain');
 			outNodeIndex++;
 
 			//Append string of .objs
-			objs.push(rotatedStr1);
-			objs.push(rotatedStr2);
+			objs.push(vStr + vnStr + f1Str);
+			objs.push(v2Str + vn2Str + f2Str);
 		}else{
 
 			for(i = 0;i<tmpFaces.length;i += 3){
@@ -240,34 +285,10 @@ function convertToMultiObj(inputNode, isDownload){
 			fStr += "\n";
 
 			// latchFaces(nodeI);
-			var rotatedStr = vStr + vnStr + fStr;	//Storing the rotated obj string
-			switch(posArray[outNodeIndex]){
-				case "leftTriangle":
-					rotatedStr = obj2Text(rotateOneAxis(parseObj(vStr + vnStr + fStr), 90, 1));
-					break;
-				case "rightTriangle":
-					rotatedStr = obj2Text(rotateOneAxis(parseObj(vStr + vnStr + fStr), 90, 1));
-					break;
-				case "base":
-					rotatedStr = obj2Text(rotateOneAxis(parseObj(vStr + vnStr + fStr), -90, 0));
-					break;
-				case "interWall":
-					rotatedStr = obj2Text(rotateOneAxis(parseObj(vStr + vnStr + fStr), 90, 1));
-					break;
-				case "backWall":
-					rotatedStr = obj2Text(rotateOneAxis(parseObj(vStr + vnStr + fStr), 0, 0));
-					break;
-				case "leftWall":
-					rotatedStr = obj2Text(rotateOneAxis(parseObj(vStr + vnStr + fStr), 90, 1));
-					break;
-				case "rightWall":
-					rotatedStr = obj2Text(rotateOneAxis(parseObj(vStr + vnStr + fStr), 90, 1));
-					break;
-			}
-			parseObj_withStoring(rotatedStr, isConnector(nodeI));
-			if(isDownload)	download(rotatedStr, "model_part" + outNodeIndex + ".obj", 'text/plain');
+			parseObj_withStoring(vStr + vnStr + fStr, isConnector(nodeI));
+			if(isDownload)	download(vStr + vnStr + fStr, "model_part" + outNodeIndex + ".obj", 'text/plain');
 			outNodeIndex++;
-			objs.push(rotatedStr);
+			objs.push(vStr + vnStr + fStr);
 		}
 	}
 	if(isDownload){
@@ -415,6 +436,31 @@ function rotateOneAxis(obj, angle, vec){
 		obj.normals[i] = mulMat(matrices[vec], obj.normals[i]);
 	}
 	return obj;
+}
+
+function rotateOneAxis_faceArr(faceArr, angle, vec){
+	var radAngle = deg2Rad(angle);
+	var matrices = new Array;
+	matrices.push([[1.0, 0.0, 0.0], [0.0, Math.cos(radAngle), -Math.sin(radAngle)], [0.0, Math.sin(radAngle), Math.cos(radAngle)]]);
+	matrices.push([[Math.cos(radAngle), 0.0, Math.sin(radAngle)], [0.0, 1.0, 0.0], [-Math.sin(radAngle), 0.0, Math.cos(radAngle)]]);
+	matrices.push([[Math.cos(radAngle), -Math.sin(radAngle), 0.0], [Math.sin(radAngle), Math.cos(radAngle), 0.0], [0, 0, 1]]);
+	function mulMat(mat, point){
+		var vecOut = [0.0, 0.0, 0.0];
+		for(var i = 0;i<3;i++){
+			var cur = 0.0;
+			for(var j = 0;j<3;j++){
+				cur += mat[i][j] * point[j];
+			}
+			vecOut[i] = cur;
+		}
+		return vecOut;
+	}
+	for(var i = 0;i<faceArr.length;i++){
+		for(var j = 0;j<3;j++){
+			faceArr[i][j] = mulMat(matrices[vec], faceArr[i][j]);
+		}
+	}
+	return faceArr;
 }
 
 //Adding convex or concave marks(0 or 1) , //
