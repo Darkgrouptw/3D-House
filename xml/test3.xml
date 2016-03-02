@@ -82,12 +82,13 @@
 			<width>7</width>
 			<thickness>1</thickness>
 			<ratio>0.36,0.5875</ratio>
-			<windowW>3.8</windowW>
-			<windowH>5.6</windowH>
+			<windowW>3</windowW>
+			<windowH>3</windowH>
+			<direction>"vertical"</direction>
 		</property>
 	</element>
 	<element>
-		<type>wall/no_window</type>
+		<type>wall/single_window</type>
 		<transform>
 			<scale>1,1,1</scale>
 			<rotate>0,90,0</rotate>
@@ -100,6 +101,9 @@
 			<height>8</height>
 			<width>7</width>
 			<thickness>1</thickness>
+			<ratio>0.5,0.5</ratio>
+			<windowW>3</windowW>
+			<windowH>3</windowH>
 			<direction>"vertical"</direction>
 		</property>
 	</element>

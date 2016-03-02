@@ -4,6 +4,7 @@ SceneJS.Types.addType("wall/single_window",
 	construct: function (params) 
 	{
 		this._layer,
+		this.direction,
         this._paramana = new ParameterManager(params, function(property)
 		{
 			var moveTo = function(p, t) 
@@ -110,6 +111,7 @@ SceneJS.Types.addType("wall/single_window",
 		});
         
 		this.addNode(build.call(this, params)); 
+		this.direction=params.direction;
 		this._layer=params.layer;
 	},
 
@@ -152,6 +154,18 @@ SceneJS.Types.addType("wall/single_window",
     setTranslateX: function(x) { var t = this.getTranslate(); this.setTranslate([x, t[1], t[2]]); },
     setTranslateY: function(y) { var t = this.getTranslate(); this.setTranslate([t[0], y, t[2]]); },
     setTranslateZ: function(z) { var t = this.getTranslate(); this.setTranslate([t[0], t[1], z]); },
+    getDirection:function(){return this.direction;},
+	setDirection:function(d){
+		if(d=="horizontal" || d=="vertical"){
+			this.direction=d;
+			var matrix= this.parent;
+			if(d=="horizontal"){
+				this.setRotate([0,0,0]);
+			}else{
+				this.setRotate([0,90,0]);
+			}
+		}
+	},
     isInside:function(params){
         var center=this.getTranslate();
         var range=Math.sqrt(Math.pow(center[0] - params[0],2)+

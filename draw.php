@@ -82,7 +82,7 @@
 	<input type="button" class="RightUpButton" style="top: 150;right: 20; " value="新增樓層" onclick="addBase()">
 	<input type="button" class="RightUpButton" style="top: 200;right: 20; " value="刪除樓層" onclick="deleteBase()">
 	<input type="button" class="RightUpButton" style="top: 250;right: 20; " value="儲存XML" onclick="saveXML()">
-	<input type="button" class="RightUpButton" style="top: 300;right: 20; background: #FF5555" value="!!!!!!!" onclick="RedButtonClick()">
+	<!--<input type="button" class="RightUpButton" style="top: 300;right: 20; background: #FF5555" value="!!!!!!!" onclick="RedButtonClick()">-->
 	<!--<input type="button" class="MultiObjButtonStyle" value="Export as multiple .obj" onclick="multiObjButtonFunc()">
 	<input type="button" class="OneObjButtonStyle" value="Export as one .obj" onclick="oneObjButtonFunc()">
 	<input type="button" class="MultiStlButtonStyle" value="Export as multiple .stl" onclick="multiStlButtonFunc()">
