@@ -2,6 +2,11 @@
 //Wouldn't be changed stuff
 var typeDefined = ["roof", "base", "wall"];
 var modelExactLatchArea = ["base"];	//Storing the models which latch faces output with exact area
+
+//Storing the priority of the dependency used for puzzling
+var treePrior = [["base", 0], ["interWall", 1], ["backWall", 2], ["rightWall", 3], ["leftWall", 3], ["rightTriangle", 4], ["leftTriangle", 4], ["roof", 5]];
+var treePriorMap = new Map(treePrior);
+var maxPrior = treePrior[treePrior.length-1][1];
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //Global variables
@@ -9,6 +14,7 @@ var outNodeIndex = 0;
 var infoStr = "";	//Storing the string in info.txt
 var posArray;	//Storing values of pos in each elements 
 var typeArray;	//Storing values of type in each elements 
+var layerArray;	//Storing values of layer number in each nodes
 
 //mesh manipulating (latch faces)
 //faceArray[x][3]: vertex[3]
@@ -62,12 +68,16 @@ function exportMultiStl(inputNode){
 		//Rotating
 		switch(posArray[modelNo]){
 			case "roof":
-				if(parseRoof == 0){
-					angle = -39.5;
-					vec = 0;
-				}else{
-					angle = 219.5;
-					vec = 0;
+				switch(typeArray[modelNo]){
+					case "roof/gable":
+						if(parseRoof == 0){
+							angle = -39.5;
+							vec = 0;
+						}else{
+							angle = 219.5;
+							vec = 0;
+						}
+						break;
 				}
 				parseRoof++;
 				break;
@@ -174,22 +184,35 @@ function convertToMultiObj(inputNode, isDownload){
 	//Init posArray
 	posArray = new Array;
 	typeArray = new Array;
+	layerArray = new Array;
 	for(var i = 0;i<nodesArr.length;i++){
-		posArray.push(traverse(nodesArr[i], "name")._core.name);
-		//duplicate if "roof" in posArray only,  used in infotext indicating pos
-		if(traverse(nodesArr[i], "name")._core.name == "roof") posArray.push(traverse(nodesArr[i], "name")._core.name);
-		typeArray.push(traverse(nodesArr[i], typeDefined).type);
+		//duplicate if "roof" in posArray and typeArray only,  used in infotext indicating pos
+		var curPos = traverse(nodesArr[i], "name")._core.name, curType = traverse(nodesArr[i], typeDefined).type;
+		var curLayer = traverse(nodesArr[i], typeDefined).getLayer();
+		var dup = 1;
+		switch(curType){
+			case "roof/gable":
+				dup = 2;
+				break;
+			case "roof/hip":
+				dup = 4;
+				break;
+		}
+		for(var j = 0;j<dup;j++){
+			posArray.push(curPos);
+			typeArray.push(curType);
+			layerArray.push(curLayer);
+		}
 	}
 	//Looping all matrices of nodes
 	for(nodeI = 0;nodeI<nodesArr.length;nodeI++){
-
 		var tmpMat = traverse(nodesArr[nodeI], "matrix").getModelMatrix();
 		matList.push(tmpMat);
 
 		var curNode = traverse(nodesArr[nodeI], "geometry");
 		var tmpPos = curNode.getPositions();
 		var tmpNorm = curNode.getNormals();
-		var tmpFaces = curNode.getIndices();
+		var tmpFaces = curNode.getIndices();				//Start from zero!!
 
 		//vStr stores the output string of vertices positions
 		//vnStr stores the output string of vertices normals
@@ -214,94 +237,178 @@ function convertToMultiObj(inputNode, isDownload){
 		}
 		vnStr += "\n";
 		
-		if(traverse(nodesArr[nodeI], typeDefined).type == "roof/gable"){
-			//Divides the roof into two .obj
-			var vArr = new Array(), vnArr = new Array();
-			var iter = 0, lastIter = 0;
-			for(iter = 0, lastIter = 0;iter < vStr.length; iter++){
-				if(vStr[iter] == "\n"){
-
-					vArr.push(vStr.substring(lastIter, ++iter));
-					lastIter = iter;
+		switch(traverse(nodesArr[nodeI], typeDefined).type){
+			case "roof/gable":
+				//Functions about modifying the vertices' number of each face
+				function decrFace1(param){
+					return (param<32?16:20);
 				}
-			}
-			
-			for(iter = 0, lastIter = 0;iter < vnStr.length; iter++){
-				if(vnStr[iter] == "\n"){
-					vnArr.push(vnStr.substring(lastIter, ++iter));
-					lastIter = iter;
-				}
-			}
-			var f1Str = "", f2Str = "";
-			var m1VIndex = [16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 36, 37, 38, 39];
-			for(i = 0;i<tmpFaces.length;i += 3){
-				if(m1VIndex.indexOf(tmpFaces[i]) > -1 && m1VIndex.indexOf(tmpFaces[i+1]) > -1 && m1VIndex.indexOf(tmpFaces[i+2]) > -1)
-					f1Str += "f " + (tmpFaces[i]+1 - decrFace1(tmpFaces[i])) + "//" + (tmpFaces[i]+1 - decrFace1(tmpFaces[i])) + " " + (tmpFaces[i+1]+1 - decrFace1(tmpFaces[i+1])) + "//" + (tmpFaces[i+1]+1 - decrFace1(tmpFaces[i+1])) + " " + (tmpFaces[i+2]+1 - decrFace1(tmpFaces[i+2])) + "//" + (tmpFaces[i+2]+1 - decrFace1(tmpFaces[i+2])) + "\n";
-				else
-					f2Str += "f " + (tmpFaces[i]+1 - decrFace2(tmpFaces[i])) + "//" + (tmpFaces[i]+1 - decrFace2(tmpFaces[i])) + " " + (tmpFaces[i+1]+1 - decrFace2(tmpFaces[i+1])) + "//" + (tmpFaces[i+1]+1 - decrFace2(tmpFaces[i+1])) + " " + (tmpFaces[i+2]+1 - decrFace2(tmpFaces[i+2])) + "//" + (tmpFaces[i+2]+1 - decrFace2(tmpFaces[i+2])) + "\n";
-			}
-			//Dealing with inter face
-			f1Str += "f " + (4) + "//" + (4) + " " + (18) + "//" + (18) + " " + (1) + "//" + (1) + "\n";
-			f1Str += "f " + (1) + "//" + (1) + " " + (18) + "//" + (18) + " " + (17) + "//" + (17) + "\n";
-			f2Str += "f " + (4) + "//" + (4) + " " + (18) + "//" + (18) + " " + (1) + "//" + (1) + "\n";
-			f2Str += "f " + (1) + "//" + (1) + " " + (18) + "//" + (18) + " " + (17) + "//" + (17) + "\n";
-			vStr = "";
-			vnStr = "";
-			var v2Str = "", vn2Str = "";
-			for(i = 0;i<vArr.length;i++){
-				if(m1VIndex.indexOf(i) > -1){
-					vStr += vArr[i];
-				}else{
-					v2Str += vArr[i];
-				}
-			}
-			vStr += "\n";
-			v2Str += "\n";
-			for(i = 0;i<vnArr.length;i++){
-				if(m1VIndex.indexOf(i) > -1){
-					vnStr += vnArr[i];
-				}else{
-					vn2Str += vnArr[i];
-				}
-			}
-			vnStr += "\n";
-			vn2Str += "\n";
-			// latchFaces(nodeI);
-			parseObj_withStoring(vStr + vnStr + f1Str, false);
-			if(isDownload)	download(vStr + vnStr + f1Str, "model_part" + outNodeIndex + ".obj", 'text/plain');
-			outNodeIndex++;
-			parseObj_withStoring(v2Str + vn2Str + f2Str, false);
-			if(isDownload)	download(v2Str + vn2Str + f2Str, "model_part" + outNodeIndex + ".obj", 'text/plain');
-			outNodeIndex++;
 
-			//Append string of .objs
-			objs.push(vStr + vnStr + f1Str);
-			objs.push(v2Str + vn2Str + f2Str);
-		}else{
+				function decrFace2(param){
+					return (param<16?0:16);
+				}
 
-			for(i = 0;i<tmpFaces.length;i += 3){
-				fStr += "f " + (tmpFaces[i]+1) + "//" + (tmpFaces[i]+1) + " " + (tmpFaces[i+1]+1) + "//" + (tmpFaces[i+1]+1) + " " + (tmpFaces[i+2]+1) + "//" + (tmpFaces[i+2]+1) + "\n";
-			}
-			fStr += "\n";
+				//Divides the roof into two .obj
+				var vArr = new Array(), vnArr = new Array();
+				var iter = 0, lastIter = 0;
+				for(iter = 0, lastIter = 0;iter < vStr.length; iter++){
+					if(vStr[iter] == "\n"){
 
-			// latchFaces(nodeI);
-			parseObj_withStoring(vStr + vnStr + fStr, isConnector(nodeI));
-			if(isDownload)	download(vStr + vnStr + fStr, "model_part" + outNodeIndex + ".obj", 'text/plain');
-			outNodeIndex++;
-			objs.push(vStr + vnStr + fStr);
+						vArr.push(vStr.substring(lastIter, ++iter));
+						lastIter = iter;
+					}
+				}
+				
+				for(iter = 0, lastIter = 0;iter < vnStr.length; iter++){
+					if(vnStr[iter] == "\n"){
+						vnArr.push(vnStr.substring(lastIter, ++iter));
+						lastIter = iter;
+					}
+				}
+				var f1Str = "", f2Str = "";
+				var m1VIndex = [16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 36, 37, 38, 39];
+				for(i = 0;i<tmpFaces.length;i += 3){
+					if(m1VIndex.indexOf(tmpFaces[i]) > -1 && m1VIndex.indexOf(tmpFaces[i+1]) > -1 && m1VIndex.indexOf(tmpFaces[i+2]) > -1)
+						f1Str += "f " + (tmpFaces[i]+1 - decrFace1(tmpFaces[i])) + "//" + (tmpFaces[i]+1 - decrFace1(tmpFaces[i])) + " " + (tmpFaces[i+1]+1 - decrFace1(tmpFaces[i+1])) + "//" + (tmpFaces[i+1]+1 - decrFace1(tmpFaces[i+1])) + " " + (tmpFaces[i+2]+1 - decrFace1(tmpFaces[i+2])) + "//" + (tmpFaces[i+2]+1 - decrFace1(tmpFaces[i+2])) + "\n";
+					else
+						f2Str += "f " + (tmpFaces[i]+1 - decrFace2(tmpFaces[i])) + "//" + (tmpFaces[i]+1 - decrFace2(tmpFaces[i])) + " " + (tmpFaces[i+1]+1 - decrFace2(tmpFaces[i+1])) + "//" + (tmpFaces[i+1]+1 - decrFace2(tmpFaces[i+1])) + " " + (tmpFaces[i+2]+1 - decrFace2(tmpFaces[i+2])) + "//" + (tmpFaces[i+2]+1 - decrFace2(tmpFaces[i+2])) + "\n";
+				}
+				//Dealing with inter face
+				f1Str += "f " + (4) + "//" + (4) + " " + (18) + "//" + (18) + " " + (1) + "//" + (1) + "\n";
+				f1Str += "f " + (1) + "//" + (1) + " " + (18) + "//" + (18) + " " + (17) + "//" + (17) + "\n";
+				f2Str += "f " + (4) + "//" + (4) + " " + (18) + "//" + (18) + " " + (1) + "//" + (1) + "\n";
+				f2Str += "f " + (1) + "//" + (1) + " " + (18) + "//" + (18) + " " + (17) + "//" + (17) + "\n";
+				vStr = "";
+				vnStr = "";
+				var v2Str = "", vn2Str = "";
+				for(i = 0;i<vArr.length;i++){
+					if(m1VIndex.indexOf(i) > -1){
+						vStr += vArr[i];
+					}else{
+						v2Str += vArr[i];
+					}
+				}
+				vStr += "\n";
+				v2Str += "\n";
+				for(i = 0;i<vnArr.length;i++){
+					if(m1VIndex.indexOf(i) > -1){
+						vnStr += vnArr[i];
+					}else{
+						vn2Str += vnArr[i];
+					}
+				}
+				vnStr += "\n";
+				vn2Str += "\n";
+
+				parseObj_withStoring(vStr + vnStr + f1Str, false);
+				if(isDownload)	download(vStr + vnStr + f1Str, "model_part" + outNodeIndex + ".obj", 'text/plain');
+				outNodeIndex++;
+				parseObj_withStoring(v2Str + vn2Str + f2Str, false);
+				if(isDownload)	download(v2Str + vn2Str + f2Str, "model_part" + outNodeIndex + ".obj", 'text/plain');
+				outNodeIndex++;
+
+				//Append string of .objs
+				objs.push(vStr + vnStr + f1Str);
+				objs.push(v2Str + vn2Str + f2Str);
+				break;
+			case "roof/hip":
+				//Divides the roof into two .obj
+				var vArr = new Array(), vnArr = new Array();
+				var iter = 0, lastIter = 0;
+				for(iter = 0, lastIter = 0;iter < vStr.length; iter++){
+					if(vStr[iter] == "\n"){
+
+						vArr.push(vStr.substring(lastIter, ++iter));
+						lastIter = iter;
+					}
+				}
+				
+				for(iter = 0, lastIter = 0;iter < vnStr.length; iter++){
+					if(vnStr[iter] == "\n"){
+						vnArr.push(vnStr.substring(lastIter, ++iter));
+						lastIter = iter;
+					}
+				}
+				var vStr = ["", "", "", ""], vnStr = ["", "", "", ""], fStr = ["", "", "", ""];
+				var mVIndex = new Array;			//Array of 4 elements storing model's vertices (original face indices)
+				mVIndex.push([0, 2, 3, 4, 6, 7, 12, 13, 14, 20, 22, 23, 36, 37, 38, 39]);		//Model1(quad)
+				mVIndex.push([12, 14, 15, 20, 21, 22, 32, 33, 34, 35]);							//Model2(triangle)
+				mVIndex.push([0, 1, 2, 4, 5, 6, 8, 9, 10, 16, 18, 19, 28, 29, 30, 31]);			//Model3(quad)
+				mVIndex.push([8, 10, 11, 16, 17, 18, 24, 25, 26, 27]);							//Model4(triangle)
+
+				var mVFacesI = new Array;			//Array of 4 elements storing model's vertices (output face indices, ordered)
+				mVFacesI.push([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 13, 15, 16]);	//For quad models
+				mVFacesI.push([1, 2, 3, 4, 5, 6, 7, 8, 9, 7, 9, 10]);							//For triangular models
+
+				//Adding to fStr
+				for(var i = 0;i<4;i++){
+					for(var j = 0;j<mVFacesI[i%2].length;j+=3){
+						fStr[i] += "f " + mVFacesI[i%2][j] + "//" + mVFacesI[i%2][j] + " " + mVFacesI[i%2][j+1] + "//" + mVFacesI[i%2][j+1] + " " + mVFacesI[i%2][j+2] + "//" + mVFacesI[i%2][j+2] + "\n";
+					}
+				}
+
+				for(i = 0;i<vArr.length;i++){
+					for(var modelNo = 0;modelNo<4;modelNo++){
+						if(mVIndex[modelNo].indexOf(i) > -1){
+							vStr[modelNo] += vArr[i];
+							vnStr[modelNo] += vnArr[i];
+						}
+					}
+				}
+
+				for(var i = 0;i<4;i++){
+					parseObj_withStoring(vStr[i] + "\n" + vnStr[i] + "\n" + fStr[i], false);
+					if(isDownload)	download(vStr[i] + "\n" + vnStr[i] + "\n" + fStr[i], "model_part" + outNodeIndex + ".obj", 'text/plain');
+					outNodeIndex++;
+				}
+
+				break;
+
+			default:
+				for(i = 0;i<tmpFaces.length;i += 3){
+					fStr += "f " + (tmpFaces[i]+1) + "//" + (tmpFaces[i]+1) + " " + (tmpFaces[i+1]+1) + "//" + (tmpFaces[i+1]+1) + " " + (tmpFaces[i+2]+1) + "//" + (tmpFaces[i+2]+1) + "\n";
+				}
+				fStr += "\n";
+
+				parseObj_withStoring(vStr + vnStr + fStr, isConnector(outNodeIndex));
+				if(isDownload)	download(vStr + vnStr + fStr, "model_part" + outNodeIndex + ".obj", 'text/plain');
+				outNodeIndex++;
+				objs.push(vStr + vnStr + fStr);
+				break;		
 		}
 	}
-	if(isDownload){
+	
+	// if(isDownload){
 		///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		//-------------------------------------------Dealing with latch faces------------------------------------------
 		//Printing total model number
-		infoStr = outNodeIndex + "\n";
+		// infoStr = outNodeIndex + "\n";
 		//Put two array, stores convex and concave string
 		var latchStrArr = new Array(outNodeIndex);
 		var latch2StrArr = new Array(outNodeIndex);
 		for(var i = 0;i<outNodeIndex;i++){
 			latchStrArr[i] = new Array;
 			latch2StrArr[i] = new Array;
+		}
+
+		var maxLayer = 2;
+		layerArray.forEach(function(element){
+			if(element > maxLayer)	maxLayer = element;
+		});
+		var connTree = new Array((maxLayer-1)*5 + 1);
+		//Init connTree
+		for(var i = 0;i<connTree.length;i++){
+			connTree[i] = new Array();
+		}
+		function findModelNo(no){
+			for(var i = 0;i<connTree.length;i++){
+				for(var j = 0;j<connTree[i].length;j++){
+					if(connTree[i][j].modelNo == no){
+						return [i, j];
+					}
+				}
+			}
+			return;
 		}
 		for(var conIter = 0;conIter < connector.length;conIter++){
 			for(var faceIter = 0;faceIter<connector[conIter].length;faceIter++){
@@ -310,103 +417,187 @@ function convertToMultiObj(inputNode, isDownload){
 					var result = isInside(nonConnector[model], connector[conIter][faceIter]);
 					if(result){
 						//Adding string to vexStr & caveStr
-						var isCave = 0;		//The nonConnector model convex or concave??
-						var pointStr = "", point2Str = "";
-						var curPos = String(posArray[nonConnector_No[model]]);
-						switch(curPos){
-							case "roof":
-								break;
-							case "base":
-								isCave = 1;
-								break;
-							default:
-								break;
-						}
-						for(var i = 0;i<3;i++){
-							for(var j = 0;j<3;j++){
-								pointStr += connector[conIter][faceIter][i][j] + " ";
-								if(modelExactLatchArea.indexOf(curPos) != -1)
-									//output the exact area of latch faces
-									point2Str += connector[conIter][faceIter][i][j] + " ";
-								else
-									point2Str += nonConnector[model][result[0]][i][j] + " ";
-							}
-							pointStr += String((isCave + 1)%2) + "\n";
-							point2Str += String(isCave) + "\n";
-						}
-						//Split into 2 elements
-						if(latchStrArr[nonConnector_No[model]].indexOf(point2Str) == -1){
-							latchStrArr[nonConnector_No[model]].push(point2Str);
-						}
-						if(modelExactLatchArea.indexOf(curPos) == -1){
-							point2Str = "";
-							for(var i = 0;i<3;i++){
-								for(var j = 0;j<3;j++){
+						// var isCave = 0;		//The nonConnector model convex or concave??
+						// var pointStr = "", point2Str = "";
+						// var curPos = String(posArray[nonConnector_No[model]]);
+						// switch(curPos){
+						// 	case "roof":
+						// 		break;
+						// 	case "base":
+						// 		isCave = 1;
+						// 		break;
+						// 	default:
+						// 		break;
+						// }
+						// for(var i = 0;i<3;i++){
+						// 	for(var j = 0;j<3;j++){
+						// 		pointStr += connector[conIter][faceIter][i][j] + " ";
+						// 		if(modelExactLatchArea.indexOf(curPos) != -1)
+						// 			//output the exact area of latch faces
+						// 			point2Str += connector[conIter][faceIter][i][j] + " ";
+						// 		else
+						// 			point2Str += nonConnector[model][result[0]][i][j] + " ";
+						// 	}
+						// 	pointStr += String((isCave + 1)%2) + "\n";
+						// 	point2Str += String(isCave) + "\n";
+						// }
+						// //Split into 2 elements
+						// if(latchStrArr[nonConnector_No[model]].indexOf(point2Str) == -1){
+						// 	latchStrArr[nonConnector_No[model]].push(point2Str);
+						// }
+						// if(modelExactLatchArea.indexOf(curPos) == -1){
+						// 	point2Str = "";
+						// 	for(var i = 0;i<3;i++){
+						// 		for(var j = 0;j<3;j++){
 
-									point2Str += nonConnector[model][result[1]][i][j] + " ";
-								}
-								point2Str += String(isCave) + "\n";
-							}
-							if(latchStrArr[nonConnector_No[model]].indexOf(point2Str) == -1){
-								latchStrArr[nonConnector_No[model]].push(point2Str);
-							}
+						// 			point2Str += nonConnector[model][result[1]][i][j] + " ";
+						// 		}
+						// 		point2Str += String(isCave) + "\n";
+						// 	}
+						// 	if(latchStrArr[nonConnector_No[model]].indexOf(point2Str) == -1){
+						// 		latchStrArr[nonConnector_No[model]].push(point2Str);
+						// 	}
+						// }
+						// if(latchStrArr[connector_No[conIter]].indexOf(pointStr) == -1){
+						// 	latchStrArr[connector_No[conIter]].push(pointStr);
+						// }
+
+						//The above handling latches
+
+						//These are handling dependency
+
+						//Checking their priority
+						var nonConPrior = treePriorMap.get(posArray[nonConnector_No[model]]);
+						var conPrior = treePriorMap.get(posArray[connector_No[conIter]]);
+						var newObj;
+						if(nonConPrior + maxPrior*layerArray[nonConnector_No[model]] > conPrior + maxPrior*layerArray[connector_No[conIter]]){
+							newObj = {modelNo:nonConnector_No[model], 
+									connecting:[connector_No[conIter]], 
+									priority:nonConPrior, 
+									layer:layerArray[nonConnector_No[model]]};
+						}else{
+							newObj = {modelNo:connector_No[conIter],
+									connecting:[nonConnector_No[model]],
+									priority:conPrior,
+									layer:layerArray[connector_No[conIter]]};
 						}
-						if(latchStrArr[connector_No[conIter]].indexOf(pointStr) == -1){
-							latchStrArr[connector_No[conIter]].push(pointStr);
+						var i = new Array(2);
+						if(i = findModelNo(newObj.modelNo)){
+							if(connTree[i[0]][i[1]].connecting.indexOf(newObj.connecting[0]) == -1){
+								connTree[i[0]][i[1]].connecting.push(newObj.connecting[0]);
+							}
+						}else{
+							if(maxLayer == layerArray[newObj.modelNo]){
+								//Dealing with 5 4
+								connTree[(newObj.layer-1)*5 - 1 + (newObj.priority-4)].push(newObj);
+							}else{
+								//Dealing with 3 2 1 0 4
+								connTree[(newObj.layer-1)*5 - 1 + (newObj.priority + 1)%5].push(newObj);
+							}
 						}
 					}
 				}
+
 				//Comparing with connector
 				for(var model = 0;model<connector.length;model++){
 					var result = isInside(connector[model], connector[conIter][faceIter]);
 					if(model != conIter && result){
-						var pointStr = "", point2Str = "";
-						for(var i = 0;i<3;i++){
-							for(var j = 0;j<3;j++){
-								pointStr += connector[conIter][faceIter][i][j] + " ";
-								point2Str += connector[model][result[0]][i][j] + " ";
+						// var pointStr = "", point2Str = "";
+						// for(var i = 0;i<3;i++){
+						// 	for(var j = 0;j<3;j++){
+						// 		pointStr += connector[conIter][faceIter][i][j] + " ";
+						// 		point2Str += connector[model][result[0]][i][j] + " ";
+						// 	}
+						// 	pointStr += 1 + "\n";
+						// 	point2Str += 0 + "\n";
+						// }
+
+						// //Split into 2 elements
+						// if(latch2StrArr[connector_No[model]].indexOf(point2Str) == -1){
+						// 	latch2StrArr[connector_No[model]].push(point2Str);
+						// }
+						// point2Str = "";
+
+						// for(var i = 0;i<3;i++){
+						// 	for(var j = 0;j<3;j++){
+						// 		point2Str += connector[model][result[1]][i][j] + " ";
+						// 	}
+						// 	point2Str += 0 + "\n";
+						// }
+
+						// if(latch2StrArr[connector_No[model]].indexOf(point2Str) == -1){
+						// 	latch2StrArr[connector_No[model]].push(point2Str);
+						// }
+						// if(latch2StrArr[connector_No[conIter]].indexOf(pointStr) == -1){
+						// 	latch2StrArr[connector_No[conIter]].push(pointStr);
+						// }
+
+						//The above handling latches
+
+						//These are handling dependency
+
+						//Checking their priority
+						var nonConPrior = treePriorMap.get(posArray[connector_No[model]]);
+						var conPrior = treePriorMap.get(posArray[connector_No[conIter]]);
+						var newObj;
+						if(nonConPrior + maxPrior*layerArray[connector_No[model]] > conPrior + maxPrior*layerArray[connector_No[conIter]]){
+							newObj = {modelNo:connector_No[model], 
+									connecting:[connector_No[conIter]], 
+									priority:nonConPrior, 
+									layer:layerArray[connector_No[model]]};
+						}else{
+							newObj = {modelNo:connector_No[conIter],
+									connecting:[connector_No[model]],
+									priority:conPrior,
+									layer:layerArray[connector_No[conIter]]};
+						}
+						var i = new Array(2);
+						if(i = findModelNo(newObj.modelNo)){
+							if(connTree[i[0]][i[1]].connecting.indexOf(newObj.connecting[0]) == -1){
+								connTree[i[0]][i[1]].connecting.push(newObj.connecting[0]);
 							}
-							pointStr += 1 + "\n";
-							point2Str += 0 + "\n";
-						}
+						}else{
+							if(maxLayer == layerArray[newObj.modelNo]){
+								//Dealing with 5 4
+								connTree[(newObj.layer-1)*5 - 1 + (newObj.priority-4)].push(newObj);
 
-						//Split into 2 elements
-						if(latch2StrArr[connector_No[model]].indexOf(point2Str) == -1){
-							latch2StrArr[connector_No[model]].push(point2Str);
-						}
-						point2Str = "";
-
-						for(var i = 0;i<3;i++){
-							for(var j = 0;j<3;j++){
-								point2Str += connector[model][result[1]][i][j] + " ";
+							}else{
+								//Dealing with 3 2 1 0 4
+								connTree[(newObj.layer-1)*5 - 1 + (newObj.priority + 1)%5].push(newObj);
 							}
-							point2Str += 0 + "\n";
-						}
-
-						if(latch2StrArr[connector_No[model]].indexOf(point2Str) == -1){
-							latch2StrArr[connector_No[model]].push(point2Str);
-						}
-						if(latch2StrArr[connector_No[conIter]].indexOf(pointStr) == -1){
-							latch2StrArr[connector_No[conIter]].push(pointStr);
 						}
 					}
 				}
 			}
 		}
+		
 
-		for(var i = 0;i<latchStrArr.length;i++){
-			infoStr += "model_part" + i + " " + posArray[i] + "\n";
-			var total = latchStrArr[i].length + latch2StrArr[i].length;
-			infoStr += total + "\n";
-			for(var j = 0;j<latchStrArr[i].length;j++){
-				infoStr += latchStrArr[i][j];
-			}
-			for(var j = 0;j<latch2StrArr[i].length;j++){
-				infoStr += latch2StrArr[i][j];
+
+		// for(var i = 0;i<latchStrArr.length;i++){
+		// 	infoStr += "model_part" + i + " " + posArray[i] + "\n";
+		// 	var total = latchStrArr[i].length + latch2StrArr[i].length;
+		// 	infoStr += total + "\n";
+		// 	for(var j = 0;j<latchStrArr[i].length;j++){
+		// 		infoStr += latchStrArr[i][j];
+		// 	}
+		// 	for(var j = 0;j<latch2StrArr[i].length;j++){
+		// 		infoStr += latch2StrArr[i][j];
+		// 	}
+		// }
+
+		//Adding dependency text info
+		for(var i = connTree.length - 1;i>=0;i--){
+			for(var j = 0;j<connTree[i].length;j++){
+				infoStr += "model_part" + connTree[i][j].modelNo + ": layer " + connTree[i][j].layer + "\n";
+				infoStr += "connecting with models: ";
+				for(var k = 0;k<connTree[i][j].connecting.length;k++){
+					infoStr += connTree[i][j].connecting[k] + " ";
+				}
+				infoStr += "\n\n";
 			}
 		}
 		download(infoStr, "info" + ".txt", 'text/plain');
-	}
+	// }
 	return objs;
 }
 
@@ -656,14 +847,6 @@ function dot(vecs){
 function magnitude(points){
 	if(points[0][0] == points[1][0] && points[0][1] == points[1][1] && points[0][2] == points[1][2])	return 0;
 	return(Math.sqrt(Math.pow(points[0][0] - points[1][0], 2) + Math.pow(points[0][1] - points[1][1], 2) + Math.pow(points[0][2] - points[1][2], 2)));
-}
-
-function decrFace1(param){
-	return (param<32?16:20);
-}
-
-function decrFace2(param){
-	return (param<16?0:16);
 }
 
 //Function used for converting the model in one .obj (NO DOWNLOADING)
@@ -1063,12 +1246,9 @@ function parseObj_withStoring(text, isConnector){
 		tmpVec.push([vertices[0][0], vertices[0][1], vertices[0][2]]);
 		tmpVec.push([vertices[1][0], vertices[1][1], vertices[1][2]]);
 		tmpVec.push([vertices[2][0], vertices[2][1], vertices[2][2]]);
-		// console.log(vertices);
 		
 		f.push([[vertices[0][0], vertices[0][1], vertices[0][2]], [vertices[1][0], vertices[1][1], vertices[1][2]], [vertices[2][0], vertices[2][1], vertices[2][2]]]);
-		// console.log(f[a]);
 	}
-	// console.log(f);
 	if(isConnector){
 		connector.push(f);
 		connector_No.push(outNodeIndex);
