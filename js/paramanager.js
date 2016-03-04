@@ -1,8 +1,13 @@
 // Namespace
 var utility = {};
 
-// Convert to the vector form
-utility.vectorForm = function(vector) { return [ vector.x , vector.y, vector.z ]; };
+// Convert object to the vector(array) form
+utility.vectorForm = function(vector) 
+{
+    if(vector.a != undefined && vector.b != undefined) { return [ vector.a, vector.b  ]  }
+    if(vector.x == undefined || vector.y == undefined || vector.z == undefined) { return vector; }
+    return [ vector.x , vector.y, vector.z ]; 
+};
 
 // Get the half value
 utility.makeHalf = function(value) { return value / 2; };

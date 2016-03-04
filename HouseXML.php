@@ -207,11 +207,20 @@ class HouseXML
 			{
 				$strlist = explode(",",$item->textContent);
 				if(count($strlist) == 1)
-					$str = $str."								".$item->nodeName.": ".$item->textContent.",\n";
-				else if(count($strlist) == 2)
+                {
+                    $content = $item->textContent;
+                    if(!is_numeric($content))
+                    {
+                        $content = " \"".$content."\"";
+                    }
+                    $str = $str."								".$item->nodeName.": ".$content.",\n";
+                }
+                else if(count($strlist) == 2)
 					$str = $str."								".$item->nodeName.": {a: ".$strlist[0].", b: ".$strlist[1]."},\n";
 				else if(count($strlist) == 3)
-					$str = $str."								".$item->nodeName.": {x: ".$strlist[0].", y: ".$strlist[1].", z: ".$strlist[2]."},\n";
+                    $str = $str."								".$item->nodeName.": {x: ".$strlist[0].", y: ".$strlist[1].", z: ".$strlist[2]."},\n";
+                else if(count($strlist) > 3)
+                    $str = $str."                               ".$item->nodeName.": [".implode(",", $strlist)."], \n";
 					
 			}
 		}

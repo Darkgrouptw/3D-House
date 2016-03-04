@@ -3,8 +3,8 @@ SceneJS.Types.addType("wall/single_window",
 {
 	construct: function (params) 
 	{
-		this._layer,
-		this.direction,
+		this._layer;
+		this.direction;
         this._paramana = new ParameterManager(params, function(property)
 		{
 			var moveTo = function(p, t) 

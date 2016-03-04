@@ -3,11 +3,11 @@ SceneJS.Types.addType("wall/no_window",
 { 
 	construct: function(params) 
 	{ 
-		this._percentX,
-		this._percentY,
-		this._priority,
-		this._layer,
-		this.direction,
+		this._percentX;
+		this._percentY;
+		this._priority;
+		this._layer;
+		this.direction;
 		this._paramana = new ParameterManager(params, function(property)
 		{
 			// Temporarlly do not make the half value.

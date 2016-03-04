@@ -2,8 +2,8 @@ SceneJS.Types.addType("wall/door_entry",
 {
     construct: function(params)
     {
-        this._layer,
-        this.direction,
+        this._layer;
+        this.direction;
         this._paramana = new ParameterManager(params, function(property)
         {
             var attachToLast = function(p, v) 
