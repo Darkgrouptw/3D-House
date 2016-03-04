@@ -1,23 +1,19 @@
 <layer>
     <element>
-		
-        <type>wall/single_window</type>
-        
+        <type>wall/door_entry</type>
         <transform>
             <scale>1,1,1</scale>
             <rotate>0,0,0</rotate>
-            <translate>0,0,5</translate>
+            <translate>0,0,0</translate>
         </transform>
-        
-        <texture>wall.jpg</texture>
-        
+
         <property>
             <width>10</width>
             <height>10</height>
-            <ratio>0.2,0.8</ratio>
-            <doorsize>3,5</doorsize>
             <thickness>1</thickness>
+            <posratio>0.5</posratio>
+            <doorW>3</doorW>
+            <doorH>3</doorH>
         </property>
-        
     </element>
-</layer>           
+</layer>
