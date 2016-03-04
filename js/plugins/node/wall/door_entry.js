@@ -58,6 +58,38 @@ SceneJS.Types.addType("wall/door_entry",
         this._paramana.addAttribute('posratio', params.posratio);
         this._paramana.addAttribute('doorW', params.doorW);
         this._paramana.addAttribute('doorH', params.doorH);
+        this._paramana.addFunction('texture', function(property)
+        {
+            var w = property.width, h = property.height, t = property.thickness, pr = property.posratio;
+            var dw = property.doorW, dh = property.doorH;
+
+            var initx = ((w - dw) * pr) / w;
+            var icr = [];
+            icr.push([initx, 0]);
+            icr.push([initx, dh / h]);
+            icr.push([initx + (dw / w), dh / h]);
+            icr.push([initx + (dw / w), 0]);
+
+            var ecr = [];
+            ecr.push([0, 0]); ecr.push([0, 1]); ecr.push([1, 1]); ecr.push([1, 0]);
+            
+            var uvset = [];
+
+            for(var i = 0; i < 3; i++)
+            {
+                uvset = uvset.concat(
+                [ 
+                    ecr[i][0], ecr[i][1], icr[i][0], icr[i][1], icr[i + 1][0], icr[i + 1][1], ecr[i + 1][0], ecr[i + 1][1],
+                    icr[i][0], icr[i][1], ecr[i][0], ecr[i][1], ecr[i + 1][0], ecr[i + 1][1], icr[i + 1][0], icr[i + 1][1],
+                    1, 1, 0, 1, 0, 0, 1, 0,
+                    1, 1, 0, 1, 0, 0, 1, 0
+                ]);
+            }
+
+            uvset = uvset.concat([1, 1, 0, 1, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0, 1, 0]);
+
+            return uvset;
+        });
 
         this.addNode(build.call(this, params));
         this.direction = params.direction;
@@ -67,6 +99,7 @@ SceneJS.Types.addType("wall/door_entry",
     updateNode: function()
     {
         this._paramana.updateGeometryNode(this);
+        this._paramana.updateTextureCoord(this); 
     },
 
     getLayer: function(){ return this._layer; },
@@ -106,7 +139,7 @@ function build(params)
 {
 	var positionSet = this._paramana.createPositions();
 	var indiceSet = utility.makeIndices(0, (positionSet.length / 3) - 1);
-	//var uvSet = this._paramana.createTextures();
+	var uvSet = this._paramana.createTextures();
 	
     var geometry = 
 	{
@@ -114,7 +147,7 @@ function build(params)
 		primitive: "triangles",
 		positions: positionSet,
 		normals: "auto",
-        //uv: uvSet,
+        uv: uvSet,
 		indices: indiceSet
 	};
 	

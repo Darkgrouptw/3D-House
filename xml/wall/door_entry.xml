@@ -7,6 +7,8 @@
             <translate>0,0,0</translate>
         </transform>
 
+        <texture>wall.jpg</texture>
+
         <property>
             <width>10</width>
             <height>10</height>
