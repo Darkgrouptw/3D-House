@@ -81,7 +81,7 @@
 			<height>13.3</height>
 			<width>16.8</width>
 			<thickness>1</thickness>
-			<direction>"vertical"</direction>
+			<direction>vertical</direction>
 		</property>
 	</element>
 	<element>
@@ -98,7 +98,7 @@
 			<height>13.3</height>
 			<width>16.8</width>
 			<thickness>1</thickness>
-			<direction>"vertical"</direction>
+			<direction>vertical</direction>
 		</property>
 	</element>
 	<element>
@@ -115,7 +115,7 @@
 			<height>13.3</height>
 			<width>36.7</width>
 			<thickness>1</thickness>
-			<direction>"horizontal"</direction>
+			<direction>horizontal</direction>
 		</property>
 	</element>
 </layer>

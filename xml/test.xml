@@ -47,7 +47,7 @@
 			<height>8</height>
 			<width>42.2</width>
 			<thickness>1</thickness>
-			<direction>"vertical"</direction>
+			<direction>vertical</direction>
 		</property>
 	</element>
 	<element>
@@ -64,7 +64,7 @@
 			<height>8</height>
 			<width>42.2</width>
 			<thickness>1</thickness>
-			<direction>"vertical"</direction>
+			<direction>vertical</direction>
 		</property>
 	</element>
 	<element>
@@ -81,7 +81,7 @@
 			<height>8</height>
 			<width>48.8</width>
 			<thickness>1</thickness>
-			<direction>"horizontal"</direction>
+			<direction>horizontal</direction>
 		</property>
 	</element>
 	<element>
@@ -101,7 +101,7 @@
 			<percentX>50</percentX>
 			<percentY>51.157407407407405</percentY>
 			<priority>1</priority>
-			<direction>"vertical"</direction>
+			<direction>vertical</direction>
 		</property>
 	</element>
 	<element>
@@ -136,7 +136,7 @@
 			<height>8</height>
 			<width>25.5</width>
 			<thickness>1</thickness>
-			<direction>"horizontal"</direction>
+			<direction>horizontal</direction>
 		</property>
 	</element>
 	<element>
@@ -153,7 +153,7 @@
 			<height>8</height>
 			<width>23.5</width>
 			<thickness>1</thickness>
-			<direction>"vertical"</direction>
+			<direction>vertical</direction>
 		</property>
 	</element>
 	<element>
@@ -170,7 +170,7 @@
 			<height>8</height>
 			<width>23.5</width>
 			<thickness>1</thickness>
-			<direction>"vertical"</direction>
+			<direction>vertical</direction>
 		</property>
 	</element>
 	<element>
@@ -204,7 +204,7 @@
 			<height>8</height>
 			<width>11</width>
 			<thickness>1</thickness>
-			<direction>"horizontal"</direction>
+			<direction>horizontal</direction>
 		</property>
 	</element>
 	<element>
@@ -221,7 +221,7 @@
 			<height>8</height>
 			<width>38</width>
 			<thickness>1</thickness>
-			<direction>"vertical"</direction>
+			<direction>vertical</direction>
 		</property>
 	</element>
 	<element>
@@ -238,7 +238,7 @@
 			<height>8</height>
 			<width>38</width>
 			<thickness>1</thickness>
-			<direction>"vertical"</direction>
+			<direction>vertical</direction>
 		</property>
 	</element>
 </layer>

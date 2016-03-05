@@ -762,7 +762,7 @@ function textureToggle(){
                 box[i]._initTexture();
             }else{
                 var src=box[i].getParent().getParent().getName();
-                box[i].setSrc("Images/GeometryTexture/"+src+"");
+                box[i].setSrc("images/GeometryTexture/"+src+"");
             }
         }
     }
@@ -854,7 +854,7 @@ function addInterWall(){
                             nodes:
                             [{
                                 type: "texture",
-                                src: "images/GeometryTexture/Wall.jpg",
+                                src: "images/GeometryTexture/wall.jpg",
                                 applyTo: "color",
     
                                 nodes:
@@ -916,7 +916,7 @@ function addBase(){
                     nodes:
                     [{
                         type: "name",
-                        name: "Ground.jpg",
+                        name: "ground.jpg",
     
                         nodes:
                         [{
@@ -926,7 +926,7 @@ function addBase(){
                             nodes:
                             [{
                                 type: "texture",
-                                src: "images/GeometryTexture/Ground.jpg",
+                                src: "images/GeometryTexture/ground.jpg",
                                 applyTo: "color",
     
                                 nodes:
@@ -974,7 +974,7 @@ function addBase(){
                             nodes:
                             [{
                                 type: "texture",
-                                src: "images/GeometryTexture/Wall.jpg",
+                                src: "images/GeometryTexture/wall.jpg",
                                 applyTo: "color",
     
                                 nodes:
@@ -1026,7 +1026,7 @@ function addBase(){
                             nodes:
                             [{
                                 type: "texture",
-                                src: "images/GeometryTexture/Wall.jpg",
+                                src: "images/GeometryTexture/wall.jpg",
                                 applyTo: "color",
     
                                 nodes:
@@ -1075,7 +1075,7 @@ function addBase(){
                             nodes:
                             [{
                                 type: "texture",
-                                src: "images/GeometryTexture/Wall.jpg",
+                                src: "images/GeometryTexture/wall.jpg",
                                 applyTo: "color",
     
                                 nodes:

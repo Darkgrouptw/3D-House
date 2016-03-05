@@ -81,7 +81,7 @@
 			<height>8.7</height>
 			<width>16.8</width>
 			<thickness>1</thickness>
-			<direction>"vertical"</direction>
+			<direction>vertical</direction>
 		</property>
 	</element>
 	<element>
@@ -98,7 +98,7 @@
 			<height>8.7</height>
 			<width>16.8</width>
 			<thickness>1</thickness>
-			<direction>"vertical"</direction>
+			<direction>vertical</direction>
 		</property>
 	</element>
 	<element>
@@ -115,7 +115,7 @@
 			<height>8.7</height>
 			<width>36.7</width>
 			<thickness>1</thickness>
-			<direction>"horizontal"</direction>
+			<direction>horizontal</direction>
 		</property>
 	</element>
 	<element>
@@ -135,7 +135,7 @@
 			<percentX>30.4</percentX>
 			<percentY>52.80898876404494</percentY>
 			<priority>1</priority>
-			<direction>"vertical"</direction>
+			<direction>vertical</direction>
 		</property>
 	</element>
 	<element>
@@ -168,7 +168,7 @@
 			<height>8.7</height>
 			<width>26.8</width>
 			<thickness>1</thickness>
-			<direction>"horizontal"</direction>
+			<direction>horizontal</direction>
 		</property>
 	</element>
 	<element>
@@ -185,7 +185,7 @@
 			<height>8.7</height>
 			<width>16.8</width>
 			<thickness>1</thickness>
-			<direction>"vertical"</direction>
+			<direction>vertical</direction>
 		</property>
 	</element>
 	<element>
@@ -202,7 +202,7 @@
 			<height>8.7</height>
 			<width>16.8</width>
 			<thickness>1</thickness>
-			<direction>"vertical"</direction>
+			<direction>vertical</direction>
 		</property>
 	</element>
 	<element>
@@ -221,7 +221,7 @@
 			<thickness>1</thickness>
 			<percentX>64.3</percentX>
 			<percentY>52.80898876404494</percentY>
-			<direction>"vertical"</direction>
+			<direction>vertical</direction>
 		</property>
 	</element>
 	<element>
@@ -254,7 +254,7 @@
 			<height>4.1</height>
 			<width>26.8</width>
 			<thickness>1</thickness>
-			<direction>"horizontal"</direction>
+			<direction>horizontal</direction>
 		</property>
 	</element>
 	<element>
@@ -271,7 +271,7 @@
 			<height>4.1</height>
 			<width>16.8</width>
 			<thickness>1</thickness>
-			<direction>"vertical"</direction>
+			<direction>vertical</direction>
 		</property>
 	</element>
 	<element>
@@ -288,7 +288,7 @@
 			<height>4.1</height>
 			<width>16.8</width>
 			<thickness>1</thickness>
-			<direction>"vertical"</direction>
+			<direction>vertical</direction>
 		</property>
 	</element>
 	<element>
@@ -308,7 +308,7 @@
 			<percentX>60.9</percentX>
 			<percentY>52.80898876404494</percentY>
 			<priority>2</priority>
-			<direction>"vertical"</direction>
+			<direction>vertical</direction>
 		</property>
 	</element>
 	<element>
@@ -327,7 +327,7 @@
 			<thickness>1</thickness>
 			<percentX>22.8</percentX>
 			<percentY>52.80898876404494</percentY>
-			<direction>"vertical"</direction>
+			<direction>vertical</direction>
 		</property>
 	</element>
 	<element>
@@ -346,7 +346,7 @@
 			<thickness>1</thickness>
 			<percentX>50</percentX>
 			<percentY>52.80898876404494</percentY>
-			<direction>"vertical"</direction>
+			<direction>vertical</direction>
 		</property>
 	</element>
 </layer>

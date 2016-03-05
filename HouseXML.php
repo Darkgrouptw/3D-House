@@ -220,7 +220,7 @@ class HouseXML
 				else if(count($strlist) == 3)
                     $str = $str."								".$item->nodeName.": {x: ".$strlist[0].", y: ".$strlist[1].", z: ".$strlist[2]."},\n";
                 else if(count($strlist) > 3)
-                    $str = $str."                               ".$item->nodeName.": [".implode(",", $strlist)."], \n";
+                    $str = $str."                               ".$item->nodeName.": [".implode(",", $strlist)."],\n";
 					
 			}
 		}

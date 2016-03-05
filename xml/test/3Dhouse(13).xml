@@ -47,7 +47,7 @@
 			<height>5</height>
 			<width>9.8</width>
 			<thickness>1</thickness>
-			<direction>"vertical"</direction>
+			<direction>vertical</direction>
 		</property>
 	</element>
 	<element>
@@ -64,7 +64,7 @@
 			<height>5</height>
 			<width>9.8</width>
 			<thickness>1</thickness>
-			<direction>"vertical"</direction>
+			<direction>vertical</direction>
 		</property>
 	</element>
 	<element>
@@ -81,7 +81,7 @@
 			<height>5</height>
 			<width>30.5</width>
 			<thickness>1</thickness>
-			<direction>"horizontal"</direction>
+			<direction>horizontal</direction>
 		</property>
 	</element>
 	<element>
@@ -91,7 +91,7 @@
 			<rotate>0,0,0</rotate>
 			<translate>0,12,0</translate>
 		</transform>
-		<texture>Ground.jpg</texture>
+		<texture>ground.jpg</texture>
 		<pos>base</pos>
 		<property>
 			<layer>2</layer>
@@ -107,14 +107,14 @@
 			<rotate>0,0,0</rotate>
 			<translate>0,18,-9.8</translate>
 		</transform>
-		<texture>Wall.jpg</texture>
+		<texture>wall.jpg</texture>
 		<pos>backWall</pos>
 		<property>
 			<layer>2</layer>
 			<height>5</height>
 			<width>30.5</width>
 			<thickness>1</thickness>
-			<direction>"horizontal"</direction>
+			<direction>horizontal</direction>
 		</property>
 	</element>
 	<element>
@@ -124,14 +124,14 @@
 			<rotate>0,90,0</rotate>
 			<translate>-29.5,18,1</translate>
 		</transform>
-		<texture>Wall.jpg</texture>
+		<texture>wall.jpg</texture>
 		<pos>leftWall</pos>
 		<property>
 			<layer>2</layer>
 			<height>5</height>
 			<width>9.8</width>
 			<thickness>1</thickness>
-			<direction>"vertical"</direction>
+			<direction>vertical</direction>
 		</property>
 	</element>
 	<element>
@@ -141,14 +141,14 @@
 			<rotate>0,90,0</rotate>
 			<translate>29.5,18,1</translate>
 		</transform>
-		<texture>Wall.jpg</texture>
+		<texture>wall.jpg</texture>
 		<pos>rightWall</pos>
 		<property>
 			<layer>2</layer>
 			<height>5</height>
 			<width>9.8</width>
 			<thickness>1</thickness>
-			<direction>"vertical"</direction>
+			<direction>vertical</direction>
 		</property>
 	</element>
 	<element>
@@ -158,7 +158,7 @@
 			<rotate>0,90,0</rotate>
 			<translate>-11.407,18,1</translate>
 		</transform>
-		<texture>Wall.jpg</texture>
+		<texture>wall.jpg</texture>
 		<pos>interWall</pos>
 		<property>
 			<layer>2</layer>
@@ -167,7 +167,7 @@
 			<thickness>1</thickness>
 			<percentX>31.3</percentX>
 			<percentY>54.629629629629626</percentY>
-			<direction>"vertical"</direction>
+			<direction>vertical</direction>
 		</property>
 	</element>
 	<element>
@@ -177,7 +177,7 @@
 			<rotate>0,90,0</rotate>
 			<translate>-11.407,6,1</translate>
 		</transform>
-		<texture>Wall.jpg</texture>
+		<texture>wall.jpg</texture>
 		<pos>interWall</pos>
 		<property>
 			<layer>1</layer>
@@ -186,7 +186,7 @@
 			<thickness>1</thickness>
 			<percentX>31.3</percentX>
 			<percentY>54.629629629629626</percentY>
-			<direction>"vertical"</direction>
+			<direction>vertical</direction>
 		</property>
 	</element>
 	<element>
@@ -196,7 +196,7 @@
 			<rotate>0,90,0</rotate>
 			<translate>6.649000000000001,18,1</translate>
 		</transform>
-		<texture>Wall.jpg</texture>
+		<texture>wall.jpg</texture>
 		<pos>interWall</pos>
 		<property>
 			<layer>2</layer>
@@ -205,7 +205,7 @@
 			<thickness>1</thickness>
 			<percentX>60.9</percentX>
 			<percentY>54.629629629629626</percentY>
-			<direction>"vertical"</direction>
+			<direction>vertical</direction>
 		</property>
 	</element>
 	<element>
@@ -215,7 +215,7 @@
 			<rotate>0,90,0</rotate>
 			<translate>6.649000000000001,6,1</translate>
 		</transform>
-		<texture>Wall.jpg</texture>
+		<texture>wall.jpg</texture>
 		<pos>interWall</pos>
 		<property>
 			<layer>1</layer>
@@ -224,7 +224,7 @@
 			<thickness>1</thickness>
 			<percentX>60.9</percentX>
 			<percentY>54.629629629629626</percentY>
-			<direction>"vertical"</direction>
+			<direction>vertical</direction>
 		</property>
 	</element>
 </layer>
