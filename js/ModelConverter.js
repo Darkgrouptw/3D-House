@@ -45,7 +45,6 @@ function exportMultiStl(inputNode){
 
 	//Parsing roof part number
 	var parseRoof = 0;
-
 	//Using the faceArray in connector and nonConnector to construct the stl models
 	//Only normals in objs are needed
 	for(var modelNo = 0;modelNo<objs.length;modelNo++){
@@ -64,54 +63,99 @@ function exportMultiStl(inputNode){
 		var minZ = 99999999;
 
 		//Storing the vec and angle of current rotation
-		var angle = 0, vec = 0;
+		var angle = [], vec = [];
 		//Rotating
 		switch(posArray[modelNo]){
 			case "roof":
 				switch(typeArray[modelNo]){
 					case "roof/gable":
 						if(parseRoof == 0){
-							angle = -39.5;
-							vec = 0;
+							angle = [-39.5];
+							vec = [0];
 						}else{
-							angle = 219.5;
-							vec = 0;
+							angle = [219.5];
+							vec = [0];
 						}
+						break;
+					case "roof/hip":
+						switch(parseRoof){
+							case 0:
+								// angle = -90;
+								// vec = 0;
+								// curObj = rotateOneAxis(curObj, angle, vec);
+								// faceArr = rotateOneAxis_faceArr(faceArr, angle, vec);
+								// vec = 1;
+								// angle = 41.58;
+								angle = [-90, 41.58];
+								vec = [0, 1];
+								break;
+							case 1:
+								vec = [0];
+								angle = [-17.5];
+								break;
+							case 2:
+								// angle = 90;
+								// vec = 0;
+								// curObj = rotateOneAxis(curObj, angle, vec);
+								// faceArr = rotateOneAxis_faceArr(faceArr, angle, vec);
+								// vec = 1;
+								// angle = 221.58;
+								angle = [90, 221.58];
+								vec = [0, 1];
+								break;
+							case 3:
+								vec = [0];
+								angle = [-162.5];
+								break;
+							default:
+								angle = [0];
+								vec = [0];
+								break;
+						}
+						break;
+					default:
+						angle = [0];
+						vec = [0];
 						break;
 				}
 				parseRoof++;
 				break;
 			case "leftTriangle":
-				vec = 1;
-				angle = 90;
+				vec = [1];
+				angle = [90];
 				break;
 			case "rightTriangle":
-				vec = 1;
-				angle = 90;
+				vec = [1];
+				angle = [90];
 				break;
 			case "base":
-				angle = -90;
-				vec = 0;
+				angle = -[90];
+				vec = [0];
 				break;
 			case "interWall":
-				angle = 90;
-				vec = 1;
+				angle = [90];
+				vec = [1];
 				break;
 			case "backWall":
+				angle = [-90, -90];
+				vec = [2, 2];
 				break;
 			case "leftWall":
-				angle = 90;
-				vec = 1;
+				angle = [90];
+				vec = [1];
 				break;
 			case "rightWall":
-				angle = 90;
-				vec = 1;
+				angle = [90];
+				vec = [1];
+				break;
+			default:
+				angle = [0];
+				vec = [0];
 				break;
 		}
 
 		curObj = rotateOneAxis(curObj, angle, vec);
 		faceArr = rotateOneAxis_faceArr(faceArr, angle, vec);
-
 		//Finding sum and min to align
 		for(var nv = 0;nv<curObj.vertices.length;nv++){
 			for(var nd = 0;nd<2;nd++){
@@ -337,13 +381,15 @@ function convertToMultiObj(inputNode, isDownload){
 				mVIndex.push([8, 10, 11, 16, 17, 18, 24, 25, 26, 27]);							//Model4(triangle)
 
 				var mVFacesI = new Array;			//Array of 4 elements storing model's vertices (output face indices, ordered)
-				mVFacesI.push([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 13, 15, 16]);	//For quad models
-				mVFacesI.push([1, 2, 3, 4, 5, 6, 7, 8, 9, 7, 9, 10]);							//For triangular models
+				mVFacesI.push([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 15, 14, 13, 16, 15, 1, 4, 2, 1, 5, 4, 2, 4, 6, 3, 2, 6, 7, 11, 10, 7, 9, 11]);	//For quad models ; later is the interfaces
+				mVFacesI.push([1, 2, 3, 4, 5, 6, 7, 9, 8, 7, 10, 9, 1, 9, 4, 9, 10, 4, 4, 8, 1, 8, 4, 7]);							//For triangular models
+				mVFacesI.push([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 15, 14, 13, 16, 15, 16, 13, 7, 10, 7, 13, 15, 1, 14, 6, 14, 1, 3, 4, 6, 1, 3, 6]);	//For quad models ; later is the interfaces
+				mVFacesI.push([1, 2, 3, 4, 5, 6, 7, 9, 8, 7, 10, 9, 1, 10, 4, 10, 7, 4, 4, 9, 1, 9, 4, 8]);							//For triangular models
 
 				//Adding to fStr
 				for(var i = 0;i<4;i++){
-					for(var j = 0;j<mVFacesI[i%2].length;j+=3){
-						fStr[i] += "f " + mVFacesI[i%2][j] + "//" + mVFacesI[i%2][j] + " " + mVFacesI[i%2][j+1] + "//" + mVFacesI[i%2][j+1] + " " + mVFacesI[i%2][j+2] + "//" + mVFacesI[i%2][j+2] + "\n";
+					for(var j = 0;j<mVFacesI[i].length;j+=3){
+						fStr[i] += "f " + mVFacesI[i][j] + "//" + mVFacesI[i][j] + " " + mVFacesI[i][j+1] + "//" + mVFacesI[i][j+1] + " " + mVFacesI[i][j+2] + "//" + mVFacesI[i][j+2] + "\n";
 					}
 				}
 
@@ -357,8 +403,13 @@ function convertToMultiObj(inputNode, isDownload){
 				}
 
 				for(var i = 0;i<4;i++){
-					parseObj_withStoring(vStr[i] + "\n" + vnStr[i] + "\n" + fStr[i], false);
-					if(isDownload)	download(vStr[i] + "\n" + vnStr[i] + "\n" + fStr[i], "model_part" + outNodeIndex + ".obj", 'text/plain');
+					vStr[i] += "\n";
+					vnStr[i] += "\n";
+
+					parseObj_withStoring(vStr[i] + vnStr[i] + fStr[i], false);
+					if(isDownload)	download(vStr[i] + vnStr[i] + fStr[i], "model_part" + outNodeIndex + ".obj", 'text/plain');
+					//Append string of .objs
+					objs.push(vStr[i] + vnStr[i] + fStr[i]);
 					outNodeIndex++;
 				}
 
@@ -377,7 +428,7 @@ function convertToMultiObj(inputNode, isDownload){
 				break;		
 		}
 	}
-	
+
 	// if(isDownload){
 		///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		//-------------------------------------------Dealing with latch faces------------------------------------------
@@ -605,52 +656,62 @@ function deg2Rad(degree){
 	return parseFloat(degree * Math.PI) / 180.0;
 }
 
+
+
+//Dealing with array
 function rotateOneAxis(obj, angle, vec){
-	var radAngle = deg2Rad(angle);
-	var matrices = new Array;
-	matrices.push([[1.0, 0.0, 0.0], [0.0, Math.cos(radAngle), -Math.sin(radAngle)], [0.0, Math.sin(radAngle), Math.cos(radAngle)]]);
-	matrices.push([[Math.cos(radAngle), 0.0, Math.sin(radAngle)], [0.0, 1.0, 0.0], [-Math.sin(radAngle), 0.0, Math.cos(radAngle)]]);
-	matrices.push([[Math.cos(radAngle), -Math.sin(radAngle), 0.0], [Math.sin(radAngle), Math.cos(radAngle), 0.0], [0, 0, 1]]);
-	function mulMat(mat, point){
-		var vecOut = [0.0, 0.0, 0.0];
-		for(var i = 0;i<3;i++){
-			var cur = 0.0;
-			for(var j = 0;j<3;j++){
-				cur += mat[i][j] * point[j];
+
+    for(var main = 0;main<angle.length;main++){
+    	var radAngle = deg2Rad(angle[main]);
+		var matrices = new Array;
+		matrices.push([[1.0, 0.0, 0.0], [0.0, Math.cos(radAngle), -Math.sin(radAngle)], [0.0, Math.sin(radAngle), Math.cos(radAngle)]]);
+		matrices.push([[Math.cos(radAngle), 0.0, Math.sin(radAngle)], [0.0, 1.0, 0.0], [-Math.sin(radAngle), 0.0, Math.cos(radAngle)]]);
+		matrices.push([[Math.cos(radAngle), -Math.sin(radAngle), 0.0], [Math.sin(radAngle), Math.cos(radAngle), 0.0], [0, 0, 1]]);
+		function mulMat(mat, point){
+			var vecOut = [0.0, 0.0, 0.0];
+			for(var i = 0;i<3;i++){
+				var cur = 0.0;
+				for(var j = 0;j<3;j++){
+					cur += mat[i][j] * point[j];
+				}
+				vecOut[i] = cur;
 			}
-			vecOut[i] = cur;
+			return vecOut;
 		}
-		return vecOut;
-	}
-	for(var i = 0;i<obj.vertices.length;i++){
-		obj.vertices[i] = mulMat(matrices[vec], obj.vertices[i]);
-		obj.normals[i] = mulMat(matrices[vec], obj.normals[i]);
-	}
+		for(var i = 0;i<obj.vertices.length;i++){
+			obj.vertices[i] = mulMat(matrices[vec[main]], obj.vertices[i]);
+			obj.normals[i] = mulMat(matrices[vec[main]], obj.normals[i]);
+		}
+    }
+	
 	return obj;
 }
 
+//Dealing with array
 function rotateOneAxis_faceArr(faceArr, angle, vec){
-	var radAngle = deg2Rad(angle);
-	var matrices = new Array;
-	matrices.push([[1.0, 0.0, 0.0], [0.0, Math.cos(radAngle), -Math.sin(radAngle)], [0.0, Math.sin(radAngle), Math.cos(radAngle)]]);
-	matrices.push([[Math.cos(radAngle), 0.0, Math.sin(radAngle)], [0.0, 1.0, 0.0], [-Math.sin(radAngle), 0.0, Math.cos(radAngle)]]);
-	matrices.push([[Math.cos(radAngle), -Math.sin(radAngle), 0.0], [Math.sin(radAngle), Math.cos(radAngle), 0.0], [0, 0, 1]]);
-	function mulMat(mat, point){
-		var vecOut = [0.0, 0.0, 0.0];
-		for(var i = 0;i<3;i++){
-			var cur = 0.0;
-			for(var j = 0;j<3;j++){
-				cur += mat[i][j] * point[j];
+    for(var main = 0;main<angle.length;main++){
+    	var radAngle = deg2Rad(angle[main]);
+		var matrices = new Array;
+		matrices.push([[1.0, 0.0, 0.0], [0.0, Math.cos(radAngle), -Math.sin(radAngle)], [0.0, Math.sin(radAngle), Math.cos(radAngle)]]);
+		matrices.push([[Math.cos(radAngle), 0.0, Math.sin(radAngle)], [0.0, 1.0, 0.0], [-Math.sin(radAngle), 0.0, Math.cos(radAngle)]]);
+		matrices.push([[Math.cos(radAngle), -Math.sin(radAngle), 0.0], [Math.sin(radAngle), Math.cos(radAngle), 0.0], [0, 0, 1]]);
+		function mulMat(mat, point){
+			var vecOut = [0.0, 0.0, 0.0];
+			for(var i = 0;i<3;i++){
+				var cur = 0.0;
+				for(var j = 0;j<3;j++){
+					cur += mat[i][j] * point[j];
+				}
+				vecOut[i] = cur;
 			}
-			vecOut[i] = cur;
+			return vecOut;
 		}
-		return vecOut;
-	}
-	for(var i = 0;i<faceArr.length;i++){
-		for(var j = 0;j<3;j++){
-			faceArr[i][j] = mulMat(matrices[vec], faceArr[i][j]);
+		for(var i = 0;i<faceArr.length;i++){
+			for(var j = 0;j<3;j++){
+				faceArr[i][j] = mulMat(matrices[vec[main]], faceArr[i][j]);
+			}
 		}
-	}
+    }
 	return faceArr;
 }
 
