@@ -697,14 +697,12 @@ function changeInterWallDirention(id)
     }
 }
 
-function changeViewpoint(id)
+function changeViewpoint(nameNode)
 {
     var camPos = scene.getNode(3).getEye();
     var dist = Math.sqrt( (camPos.x-0) * (camPos.x-0) + (camPos.y-0) * (camPos.y-0) + (camPos.z-0) * (camPos.z-0) );
     //console.log(dist);
 
-    var tmpId = scene.findNode(id);
-    var nameNode= tmpId.parent.parent.getName();
     switch(nameNode){
         case "base":
             tmpNormal = [0,1,0];
