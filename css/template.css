@@ -1,0 +1,120 @@
+/*This is for CSS Style*/
+html, body
+{
+	height: 100%;
+	width: 100%;
+	overflow: hidden;
+}
+#MODAL
+{
+	position: absolute;
+	top: 0%;
+	left: 0%;
+	height: 100%;
+	width: 100%;
+	overflow: hidden;
+	background-color: rgba(0, 0, 0, 0.6);
+}
+#FLOORTAB
+{
+	position: absolute;
+	top: 0%;
+	left: 0%;
+	background-color: #22A7F0; /*blue*/
+}
+#FLOORTAB nav ul
+{
+	padding: 0;
+	margin: 0;
+}
+#FLOORTAB nav li
+{
+	font-family: Segoe UI Emoji;
+	margin: 0px;
+}
+.general
+{
+	color: black;
+}
+.selected
+{
+	border: 3px;
+	border-color: #1E824C;
+	color: #1E824C;
+}
+/*canvas
+{
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	bottom: 0%;
+	background-image: url("../images/bg.png");
+	z-index:-1;
+}*/
+#FUNCBAR
+{
+	position: absolute;
+	width: 100%;
+	bottom: 0%;
+	right: 0%;
+}
+.funcsquare
+{
+	position: absolute;
+	right: 0%;
+	display: block;
+	background-color: rgba(34, 167, 240, 0.6);
+	color: white;
+	font-family: Segoe UI Emoji;
+	z-index: 100;
+}
+.edit
+{
+	bottom: 0%;
+}
+#EXPORTMENU
+{
+	position: absolute;
+	top: 0%;
+	right: 0%;
+	bottom: 0%;
+	left: 0%;
+	margin: auto;
+	background-color:white;
+	border-radius: 5%;
+	border: 1px solid #BDC3C7;
+	box-shadow: 5px 5px 30px #888888;
+	text-align: center;
+	font-family: Segoe UI Emoji;
+	z-index: 1;
+}
+#PARTBAR
+{
+	position: absolute;
+	bottom: 0%;
+	right: 0%;
+	background-color: rgb(247, 202, 24);/*yellow*/
+	
+}
+#PARTBAR ul
+{
+	white-space: nowrap;
+	overflow: hidden;
+	width: 100%;
+	height: 100%;
+}
+#TRASHCAN
+{
+	position: absolute;
+	left: 0%;
+	bottom: 0%;
+	
+}
+.fixed
+{
+	position: absolute;
+}
+.invisible
+{
+	display: none;
+}

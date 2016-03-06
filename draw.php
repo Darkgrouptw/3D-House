@@ -11,14 +11,15 @@
 	
 	<link href = "css/reset.css" rel = "stylesheet">
 	<link href = "css/style.css" rel = "stylesheet">
-    <link href = "css/default.css" rel = "stylesheet">
+    <link href = "css/template.css" rel = "stylesheet">
     <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">
 	<script src = "js/scenejs.js"></script>
 	<script src = "js/paramanager.js"></script>
 	<script src = "js/ui.js"></script>
-    <script src = "js/utility.js"></script>
+    <script src = "js/common.js"></script>
     <script src = "js/layout.js"></script>
     <script src = "js/interact.js"></script>
+	<script src = "js/animation.js"></script> 
     <script src = "js/ModelConverter.js"></script>
     <script src = "js/superXReProduction.js"></script>
 
@@ -55,21 +56,17 @@
 	//exit;
 ?>
 </head>
-<body onresize = "setlayout()" onload = "setlayout()">
+<body onresize = "setlayout()" onload = "initial()">
 	
-    <div id = "Top" class = "top bar">
-        <ul>
-            <li><i class = "fa fa-caret-square-o-down" onclick = "ExportClick()">  Export</i></li>
-            <div id = "ExportContent" class = "subcontent">
-                <p><i onclick="multiObjButtonFunc()">Export as multiple .obj</i></p>
-                <p><i onclick="oneObjButtonFunc()">Export as one .obj</i></p>
-                <p><i onclick="multiStlButtonFunc()">Export as multiple .stl</i></p>
-                <p><i onclick="oneStlButtonFunc()">Export as one .stl</i></p>
-                <p><i class="fa fa-times" onclick = "CloseExport()">  close</i></p>
-            </div>
-            <li><i class = "fa fa-file">  Save</i></li>
-        </ul>
-    </div>
+<div id = "FLOORTAB">
+	<nav>
+		<ul id = "Tab">
+			<li id = "0" class = "selected" onclick = "selectTab('0')"><i class="fa fa-home"></i></li>
+			<li id = "1" onclick = "selectTab('1')">1F</li>
+			<li id = "plus" onclick = "addTab()">+</li>
+		</ul>
+	</nav>
+</div>
 	
 	<div id="codewrapper" style="display: none" >
         <div id="srcbutton">
@@ -80,18 +77,10 @@
         	<input type="checkbox" id = "powerEditMode" checked = true>要不要啟動強力編輯模式<br>
         </div>            
     </div>
-	<input type="button" class="RightUpButton" value="關閉貼圖" onclick="textureToggle()">
-	<input type="button" class="RightUpButton" style="top: 100;right: 20; " value="新增牆壁" onclick="addInterWall()">
-	<input type="button" class="RightUpButton" style="top: 150;right: 20; " value="新增樓層" onclick="addBase()">
-	<input type="button" class="RightUpButton" style="top: 200;right: 20; " value="刪除樓層" onclick="deleteBase()">
-	<input type="button" class="RightUpButton" style="top: 250;right: 20; " value="儲存XML" onclick="saveXML()">
-	<!--<input type="button" class="RightUpButton" style="top: 300;right: 20; background: #FF5555" value="!!!!!!!" onclick="RedButtonClick()">-->
-	<!--<input type="button" class="MultiObjButtonStyle" value="Export as multiple .obj" onclick="multiObjButtonFunc()">
-	<input type="button" class="OneObjButtonStyle" value="Export as one .obj" onclick="oneObjButtonFunc()">
-	<input type="button" class="MultiStlButtonStyle" value="Export as multiple .stl" onclick="multiStlButtonFunc()">
-	<input type="button" class="OneStlButtonStyle" value="Export as one .stl" onclick="oneStlButtonFunc()">-->
 	
-    <div id = "Main" class = "maincanvas">
+
+	
+    
 	<?php
 		if($OpenSuccess)
 		{
@@ -101,36 +90,51 @@
 		else
 			PrintError($ErrorStr);
 	?>
-    </div>
-	<div id = "Bottom">
-        <div id = "Subaddbtn" class = "bottom btn sub">
-            <img src = "./images/addfloor.png">
-        </div>
-        
-        <div id = "Subdecoratebtn" class = "bottom btn sub" onclick = "SubdecoratebtnClick()">
-            <img src = "./images/decorate.png">
-        </div>
-        
-        <div id = "Mainbtn" class = "bottom btn main" onclick = "MainbtnClick()">
-            <img id = "mainbtnimg" src = "./images/add.png">
-        </div>
-        
-        <div id = "SubToolbar" class = "bottom bar">
-            <ul id = "SubToolbarContent">
-                
-                <li id = "SubToolbarClose" style = "float: right;"><img src = "./images/cross2.png" onclick = "CloseSubToolbarClick()"></li>
-            </ul>
-        </div>
-        
-        <div id = "Toolbar" class = "bottom bar">
-            <ul>
-                <li><img src = "./images/icon-window.png"></li>
-                <li><img src = "./images/icon-door.png"></li>
-                <li><img src = "./images/icon-roof.png" onclick = "RoofClick()"></li>
-                <li style = "float: right;"><img src = "./images/cross2.png" onclick = "CloseToolbarClick()"></li>
-            </ul>
-        </div>
-    </div>
+<div id = "FUNCBAR">
+	<div class = "funcsquare File invisible" onclick = "ExportClick()"><p>Export</p></div>
+	<div class = "funcsquare File invisible" onclick = "saveXML()"><p>Save</p></div>
+	<div class = "funcsquare File invisible"><p>Print</p></div>
+	<div id = "File_close" class = "funcsquare File" onclick = "FuncBarClick(this.className, 'funcsquare edit')"><p id = "File">File</p></div>
+	
+	<div class = "funcsquare Edit invisible" onclick = "PartClick()"><p>Part</p></div>
+	<div id = "Texture" class = "funcsquare Edit invisible" onclick = "TextureClick()"><p>Texture</p></div>
+	<div id = "Edit_close" class = "funcsquare Edit" onclick = "FuncBarClick(this.className, 'funcsquare file')"><p id = "Edit">Edit</p></div>
+</div>
+
+<div id = "EXPORTMENU" class = "invisible">
+	<h1>Export File:</h1>
+	<HR>
+	<h2 onclick = "oneStlButtonFunc()">Export as one .stl</h2>
+	<h2 onclick = "multiStlButtonFunc()">Export as multiple .stl</h2>
+	<h2 onclick = "oneObjButtonFunc()">Export as one .obj</</h2>
+	<h2 onclick = "multiObjButtonFunc()">Export as multiple .obj</h2>
+	<h1 style="position:absolute;right:0%;bottom:0%;" onclick = "closeExportMenu()">X</h1>
+</div>
+
+<div id = "PARTBAR" class = "invisible">
+	<ul id = "mainPartBar" class = "fixed">
+		<li id = "Part0" onclick = "componentClick(this.id)"><img src = "./images/icon-window.png"></li>
+		<li id = "Part1" onclick = "componentClick(this.id)"><img src = "./images/icon-door.png"></li>
+		<li id = "Part2" onclick = "componentClick(this.id)"><img src = "./images/icon-roof.png"></li>
+		<li onclick = "addInterWall()"><img src = "./images/icon-wall.png"></li>
+		<li onclick = "closePartBar('mainPartBar')"><img name = "ImgClose" src = "./images/icon-close.png" class = "fixed"></li>
+	</ul>
+	
+	<ul id = "subPartBar" class = "fixed invisible" style = "background-color:rgb(247, 202, 24);">
+		<div id = "fixed" class = "fixed">
+		<li id = "SubClose" onclick = "closePartBar('subPartBar')"><img name = "ImgClose" src = "./images/icon-close.png" class = "fixed"></li>
+		</div>
+		
+		<div id = "content" class = "fixed">
+		</div>
+	</ul>
+</div>
+
+<div id = "TRASHCAN" onclick = "deleteTab()"><i class="fa fa-trash-o"></i></div>
+
+<div id = "MODAL" class = "invisible"></div>
+
+	
 </body>
 </html>
 </html>
