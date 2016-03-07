@@ -32,6 +32,14 @@ utility.makeRandomID = function(size)
 	return text;
 };
 
+// Repeater
+utility.makeRepeatValue = function(value, times)
+{
+    var tmp = [];
+    for(var i = 0; i < times; i++) { tmp.push(value); }
+    return tmp;
+}
+
 // Try generate something like a indices given start and end.
 // For example: start = 0, end = 3, group = 4, result = [0, 1, 2, 0, 2, 3]
 utility.makeIndices = function(start, end, group)
@@ -439,7 +447,19 @@ ParameterManager.prototype.updateMatirxNode = function(that)
 ParameterManager.prototype.updateGeometryNode = function(that)
 {
 	var geometry = that.findNodesByType('geometry')[0];
-	geometry.setPositions({ positions: new Float32Array(this.functor.position(this.property)) });
+
+    // Check if existing length of positions is bigger than wanted
+    var prevPositions = geometry.getPositions();
+    var nextPositions = this.functor.position(this.property);
+    if(prevPositions.length > nextPositions.length)
+    {
+        var difftimes = prevPositions.length - nextPositions.length;
+        nextPositions = nextPositions.concat(utility.makeRepeatValue(0, difftimes));
+    }
+    else if(nextPositions.length > prevPositions.length)
+    { console.log('Warning: length of positions are large than original one.'); return; }
+    
+	geometry.setPositions({ positions: nextPositions });
 };
 
 // Only needed already have texture modification function
@@ -449,6 +469,18 @@ ParameterManager.prototype.updateTextureCoord = function(that)
 	if(!utility.checkIsUndefined(this.functor.texture))
 	{
 		var geometry = that.findNodesByType('geometry')[0];
-		geometry.setUV({ uv: new Float32Array(this.functor.texture(this.property)) });
+        
+        // Check if existing length of uvs is bigger than wanted
+        var prevUVs = geometry.getUV();
+        var nextUVs = this.functor.texture(this.property);
+        if(prevUVs.length > nextUVs.length) 
+        {
+            var difftimes = prevUVs.length - nextUVs.length;
+            nextUVs = nextUVs.concat(utility.makeRepeatValue(0, difftimes));
+        }
+        else if(nextUVs.length > prevUVs.length) 
+        { console.log('Warning: length of uvs are large than original one.'); return; }
+
+		geometry.setUV({ uv: new Float32Array(nextUVs) });
 	}
 }

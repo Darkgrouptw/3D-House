@@ -62,7 +62,7 @@ SceneJS.Types.addType("wall/single_window",
 					.concat(inter[tmprb]).concat(makePositive(inter[tmprb], 2));
             }
 			
-			return new Float32Array(pset);
+			return new pset;
 		});
 		
 		this._paramana.addAttribute('windowH', params.windowH);
@@ -107,7 +107,7 @@ SceneJS.Types.addType("wall/single_window",
 				1, 0, 1, 1, 0, 1, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0,
 			];
 			
-			return new Float32Array(uvset);
+			return new uvset;
 		});
         
 		this.addNode(build.call(this, params)); 

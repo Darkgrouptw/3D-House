@@ -11,8 +11,7 @@ SceneJS.Types.addType("base/basic",
 		this._paramana = new ParameterManager(params, function(property)
 		{
 			var w = property.width, h = property.height, t = property.thickness; 
-			var pset = new Float32Array(
-			[
+			var pset = [
 				w, t, h, -w, t, h, -w, -t, h, w, -t, h,
 				w, t, h, w, -t, h, w, -t, -h, w, t, -h,
 				w, t, h, w, t, -h, -w, t, -h, -w, t, h,
@@ -465,8 +464,7 @@ function build(params)
 {
     var positionSet = this._paramana.createPositions();
 	var indiceSet = utility.makeIndices(0, (positionSet.length / 3 ) - 1);
-	var uvSet = new Float32Array(
-	[
+	var uvSet = [
 		1, 1, 0, 1, 0, 0, 1, 0,
 		0, 1, 0, 0, 1, 0, 1, 1,
 		1, 0, 1, 1, 0, 1, 0, 0,

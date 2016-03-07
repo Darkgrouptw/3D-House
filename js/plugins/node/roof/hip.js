@@ -76,7 +76,7 @@ SceneJS.Types.addType("roof/hip",
 	            0, 1, 1, 1, 1, 0, 0, 0
             ];
 
-            return new Float32Array(uvset);
+            return uvset;
         });
 
         this.addNode(build.call(this, params)); 

@@ -159,7 +159,7 @@ SceneJS.Types.addType("wall/multi_window",
 			property.shared.fullwall = {w: w, h: h};
 			property.shared.sidenum = ((outter.length + inner.length + doorL.length + doorR.length) / 18);
 		
-            return new Float32Array(backside.concat(frontside).concat(outter).concat(inner).concat(doorL).concat(doorR));
+            return backside.concat(frontside).concat(outter).concat(inner).concat(doorL).concat(doorR);
 			
         });
 
