@@ -94,7 +94,7 @@ html, body
 	bottom: 0%;
 	right: 0%;
 	background-color: rgb(247, 202, 24);/*yellow*/
-	
+	z-index:1;
 }
 #PARTBAR ul
 {

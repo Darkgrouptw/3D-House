@@ -72,10 +72,13 @@ function setFloorTab(Property,Value)
 function setPartBar(RefSize, PropertyPBul, ValuePBli, PropertyPBimgclose, PropertyPBContent,Propertycloseli,Valuecloseli)
 {
 	rmvStyle(getElemByName("ImgClose"));
+	getElem("content").removeAttribute("style");
+	getElem("SubClose").removeAttribute("style");
 	setMultiStyle(getSubElem(PartBar,"img"),["width","height"],[0.07*RefSize + "px", 0.07*RefSize + "px"]);
 	setMultiStyle(getSubElem(PartBar,"ul"), PropertyPBul, 0.01*RefSize + "px");
 	setMultiStyle(getSubElem(PartBar,"li"), "display", ValuePBli);
 	setMultiStyle(getElemByName("ImgClose"),PropertyPBimgclose,["0%", "0%", 0.032*RefSize, 0.032*RefSize]);
+	getElem("content").style.position = "absolute";
 	getElem("content").style[PropertyPBContent[0]] = 5*0.07*RefSize + "px";
 	getElem("content").style[PropertyPBContent[1]] = 0.07*RefSize + "px";
 	getElem("content").style[PropertyPBContent[2]]= "hidden";
