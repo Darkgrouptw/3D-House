@@ -112,7 +112,7 @@
 			<rotate>0,0,0</rotate>
 			<translate>0,18,0</translate>
 		</transform>
-		<texture>Ground.jpg</texture>
+		<texture>ground.jpg</texture>
 		<pos>base</pos>
 		<property>
 			<layer>2</layer>
@@ -128,7 +128,7 @@
 			<rotate>0,0,0</rotate>
 			<translate>0,27,-7</translate>
 		</transform>
-		<texture>Wall.jpg</texture>
+		<texture>wall.jpg</texture>
 		<pos>backWall</pos>
 		<property>
 			<layer>2</layer>
@@ -145,7 +145,7 @@
 			<rotate>0,90,0</rotate>
 			<translate>-17,27,1</translate>
 		</transform>
-		<texture>Wall.jpg</texture>
+		<texture>wall.jpg</texture>
 		<pos>leftWall</pos>
 		<property>
 			<layer>2</layer>
@@ -162,7 +162,7 @@
 			<rotate>0,90,0</rotate>
 			<translate>17,27,1</translate>
 		</transform>
-		<texture>Wall.jpg</texture>
+		<texture>wall.jpg</texture>
 		<pos>rightWall</pos>
 		<property>
 			<layer>2</layer>
@@ -179,7 +179,7 @@
 			<rotate>0,90,0</rotate>
 			<translate>0,27,1</translate>
 		</transform>
-		<texture>Wall.jpg</texture>
+		<texture>wall.jpg</texture>
 		<pos>interWall</pos>
 		<property>
 			<layer>2</layer>

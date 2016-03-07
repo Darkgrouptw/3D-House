@@ -145,7 +145,7 @@
 			<rotate>0,90,0</rotate>
 			<translate>-10.662399999999998,9,-10.009375000000002</translate>
 		</transform>
-		<texture>Wall.jpg</texture>
+		<texture>wall.jpg</texture>
 		<pos>interWall</pos>
 		<property>
 			<layer>1</layer>
@@ -165,7 +165,7 @@
 			<rotate>0,0,0</rotate>
 			<translate>0,9,21.8</translate>
 		</transform>
-		<texture>Wall.jpg</texture>
+		<texture>wall.jpg</texture>
 		<pos>interWall</pos>
 		<property>
 			<layer>1</layer>
