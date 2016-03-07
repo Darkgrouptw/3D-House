@@ -129,7 +129,7 @@ function exportMultiStl(inputNode){
 				angle = [90];
 				break;
 			case "base":
-				angle = -[90];
+				angle = [90];
 				vec = [0];
 				break;
 			case "interWall":
