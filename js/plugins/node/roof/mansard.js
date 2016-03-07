@@ -17,12 +17,8 @@ SceneJS.Types.addType("roof/mansard",
 	        var dNwr = 2 * -w * r.a, dPwr = 2 * w * r.a; 
 	        var dNdr = 2 * -d * r.b, dPdr = 2 * d * r.b;        
 	
-<<<<<<< HEAD
-	        var pset = [
-=======
 	        var pset = 
             [
->>>>>>> ee90ce58789000bc00f7b2965dffd0d8a3adf5b4
 		        -w - dNwr, h, d - dPdr, -w, -h, d, -w, -h, -d, -w - dNwr, h, -d - dNdr,
 		        w - dPwr, h, -d - dNdr, -w - dNwr, h, -d - dNdr, -w, -h, -d, w, -h, -d,
 		        w - dPwr, h, d - dPdr, w - dPwr, h, -d - dNdr, w, -h, -d, w, -h, d, 
@@ -112,12 +108,8 @@ function build(params)
 {
     var positionSet = this._paramana.createPositions();
     var indiceSet = utility.makeIndices(0, (positionSet.length / 3) - 1);
-<<<<<<< HEAD
-	var uvSet = [
-=======
 	var uvSet = 
     [
->>>>>>> ee90ce58789000bc00f7b2965dffd0d8a3adf5b4
 		0, 1, 0, 0, 1, 0, 1, 1,			// Front West
 		1, 1, 1, 0, 0, 0, 0, 1,			// Front Sourth
 		0, 1, 1, 1, 1, 0, 0, 0,			// Front East

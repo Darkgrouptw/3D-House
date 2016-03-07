@@ -15,12 +15,8 @@ SceneJS.Types.addType("roof/gable",
 	        var be = (t * 2) / Math.sqrt(3) ;
 	        var wr = (w * r.a + -w * r.b) / 2;
 	
-<<<<<<< HEAD
-	        var pset = [
-=======
 	        var pset = 
             [
->>>>>>> ee90ce58789000bc00f7b2965dffd0d8a3adf5b4
 		        wr, h + be, -d, -w - be, -h, -d, -w - be, -h, d, wr, h + be, d,
 		        wr, h + be, -d, -w - be, -h, -d, -w, -h, -d, wr, h, -d,
 		        -w - be, -h, -d, -w - be, -h, d, -w, -h, d, -w, -h, -d,
@@ -200,12 +196,8 @@ function build(params)
 {
     var positionSet = this._paramana.createPositions();
     var indiceSet = utility.makeIndices(0, (positionSet.length / 3) - 1);
-<<<<<<< HEAD
-    var uvSet = [
-=======
     var uvSet = 
     [
->>>>>>> ee90ce58789000bc00f7b2965dffd0d8a3adf5b4
 	    0, 1, 0, 0, 1, 0, 1, 1,			// Back 
 	    1, 1, 1, 0, 0, 0, 0, 1,			// Back Right
 	    0, 1, 1, 1, 1, 0, 0, 0,			// Back Buttom
