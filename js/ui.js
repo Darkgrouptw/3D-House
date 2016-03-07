@@ -86,6 +86,7 @@ var uiPanel;
 var tmpNormal = null;
 var camDist = null;
 var isLock = false;
+var isRotation = true;
 function ScenePick(){
     var firstX;
     var firstY;
@@ -96,6 +97,7 @@ function ScenePick(){
     var stampUp;
     var count = 0;
     var objectId = null;
+    var pickNode = null;
     
     var canvas = scene.getCanvas();
 
@@ -152,8 +154,19 @@ function ScenePick(){
                     stampDown = event.timeStamp;
                 }
                 
-                firstX = event.targetTouches[0].clientX;
-                firstY = event.targetTouches[0].clientY;
+                if(event.targetTouches.length != 1)
+                {
+                    firstX = event.targetTouches[0].clientX;
+                    firstY = event.targetTouches[0].clientX;
+                    secondX = event.targetTouches[1].clientX;
+                    secondY = event.targetTouches[1].clientX;
+                }
+                else
+                {
+                    firstX = event.targetTouches[0].clientX;
+                    firstY = event.targetTouches[0].clientY;
+                }
+				
             }, true);
 
     canvas.addEventListener('touchend',
@@ -185,6 +198,7 @@ function ScenePick(){
             function (event) {
                 count = 0;
 
+                var currentAxis = getAxis();
                 if(event.targetTouches.length != 1)
                 {
                     var posX = event.targetTouches[0].clientX;
@@ -195,7 +209,7 @@ function ScenePick(){
                     var firstLength = Math.sqrt((firstX - secondX) * (firstX - secondX) + (firstY - secondY) * (firstY - secondY));
                     var secondLength = Math.sqrt((posX - pos1X) * (posX - pos1X) + (posY - pos1Y) * (posY - pos1Y));
                     var compareLength = (secondLength - firstLength);
-
+                    
                     var vecA = [];
                     var VecB = [];
                     if(pos1Y > posY)
@@ -212,48 +226,66 @@ function ScenePick(){
                         VecB.push(posX - pos1X);
                         VecB.push(0);
                     }
-                    var posCos = (vecA[0]*VecB[0] + vecA[1]*VecB[1]) / 
-                                 ( Math.sqrt(vecA[0]*vecA[0] + vecA[1]*vecA[1]) * Math.sqrt(VecB[0]*VecB[0] + VecB[1]*VecB[1] ) );
-
-                    var currentAxis = getAxis();
-                    if(compareLength > -1 && compareLength < 1)
+                    var scaleCos = (vecA[0]*VecB[0] + vecA[1]*VecB[1]) / 
+                                ( Math.sqrt(vecA[0]*vecA[0] + vecA[1]*vecA[1]) * Math.sqrt(VecB[0]*VecB[0] + VecB[1]*VecB[1] ) );  
+                    
+                    if(scaleCos < (1 / Math.sqrt(2)) && scaleCos >= 0 )
                     {
-                        var pointXLength = posX - firstX;
-                        var pointYLength = posY - firstY;
-                        switch(currentAxis)
-                        {
-                            case 0:
-                                interWallOffsetX(objectId, pointXLength);
-                                break;
-                            case 1:
-                                //interWallOffsetY(objectId, pointYLength);
-                                break;
-                            case 2:
-                                interWallOffsetX(objectId, pointXLength);
-                                break;
-                            case 3:
-                                //interWallOffsetY(objectId, pointYLength);
-                                break;
-                        }
+                        //Vertical
+                        verticalAxis(objectId, compareLength, currentAxis);
                     }
-                    else
+                    else if(scaleCos >= (1 / Math.sqrt(2)) && scaleCos <= 1)
                     {
-                        if(posCos < (1 / Math.sqrt(2)) && posCos >= 0 )
-                        {
-                            //Vertical
-                            verticalAxis(objectId, compareLength, currentAxis);
-                        }
-                        else if(posCos > (1 / Math.sqrt(2)) && posCos <= 1)
-                        {
-                            //Horizontal
-                            horizontalAxis(objectId, compareLength, currentAxis);
-                        }
+                        //Horizontal
+                        horizontalAxis(objectId, compareLength, currentAxis);
                     }
 
                     firstX = posX;
                     firstY = posY;
                     secondX = pos1X;
                     secondY = pos1Y;
+                }
+                else
+                {
+                    var posX = event.targetTouches[0].clientX;
+                    var posY = event.targetTouches[0].clientY;
+
+                    var vecC = [];
+                    var vecD = [];
+                    vecC.push(firstX - posX);
+                    vecC.push(firstY - posY);
+                    vecD.push(firstX - posX);
+                    vecD.push(0);
+                    var offsetCos = (vecC[0]*vecD[0] + vecC[1]*vecD[1]) /
+                                ( Math.sqrt(vecC[0]*vecC[0] + vecC[1]*vecC[1]) * Math.sqrt(vecD[0]*vecD[0] + vecD[1]*vecD[1] ) );
+
+                    var tmpXlength = posX - firstX;
+                    var tmpYlength = posY - firstY;
+                    if(offsetCos < (1 / Math.sqrt(2)) && offsetCos >= 0)
+                    {
+                        if(pickNode == "base")
+                        {
+                            baseOffsetY(objectId, tmpYlength, currentAxis);
+                        }
+                        else
+                        {
+                            interWallOffsetY(objectId, tmpYlength, currentAxis);
+                        }
+                    }
+                    else if(offsetCos >= (1 / Math.sqrt(2)) && offsetCos <= 1)
+                    {
+                        if(pickNode == "base")
+                        {
+                            baseOffsetX(objectId, tmpXlength, currentAxis);
+                        }
+                        else
+                        {
+                            interWallOffsetX(objectId, tmpXlength, currentAxis);
+                        }
+                    }
+                    
+                    firstX = posX;
+                    firstY = posY;
                 }
             }, true);
             
@@ -287,14 +319,19 @@ function ScenePick(){
                 //uiPanel.style.top = (hit.canvasPos[1]+50) + "px";
 
                 objectId = hit.nodeId;
+                pickNode = scene.findNode(objectId).parent.parent.getName();
+                var pickLayer = scene.getNode(objectId).nodes[0].nodes[0].nodes[0].getLayer();
+                if(pickNode == "interWall") { isRotation = false; }
+                else if(pickNode == "base" && pickLayer != 1) { isRotation = false; }
+                else { isRotation = true; }
+
                 if(count == 2)
                 {
                     if(stampUp < 500)
                     {
-                        var tmpNode = scene.findNode(objectId).parent.parent.getName();
-                        if(tmpNode != "interWall")
+                        if(pickNode != "interWall")
                         {
-                            changeViewpoint(tmpNode);
+                            changeViewpoint(pickNode);
                         }
                         else
                         {
@@ -319,6 +356,8 @@ function ScenePick(){
                 count = 0;
                 isLock = false;
                 objectId = null;
+                isRotation = true;
+                pickNode = null;
                 //for some ridiculurs reason i got to pick again!!
                 //scene.pick()
             });
@@ -329,33 +368,187 @@ function Sign(x)
     return typeof x === 'number' ? x ? x < 0 ? -1 : 1 : x === x ? 0 : NaN : NaN;
 }
 
-function interWallOffsetX(id, tmpLength)
+
+function baseOffsetX(id, tmpLength, tmpAxis)
 {
-    var tmpPercentX;
-    var tmpPercentY;
+    var tmpOffsetX;
+    var tmpOffsetY;
+    var n = scene.getNode(3).getEye();
     var tmpNode = scene.getNode(id).nodes[0].nodes[0].nodes[0];
 
-    if(tmpNode.getDirection() == "vertical")
+    switch(tmpAxis)
     {
-        tmpPercentX = tmpNode.getPercentX();
-        tmpPercentX += Sign(tmpLength);
-        tmpNode.setPercentX(tmpPercentX);
-        tmpNode.callBaseCalibration();
+        case 0:
+        case 2:
+            if(n.z > 0)
+            {
+                tmpOffsetX = tmpNode.getOffsetX();
+                tmpOffsetX += Sign(tmpLength);
+                tmpNode.setOffsetX(tmpOffsetX);
+                tmpNode.callBaseCalibration();
+            }
+            else
+            {
+                tmpOffsetX = tmpNode.getOffsetX();
+                tmpOffsetX -= Sign(tmpLength);
+                tmpNode.setOffsetX(tmpOffsetX);
+                tmpNode.callBaseCalibration();
+            }
+            break;
+        case 1:
+        case 3:
+            if(n.x < 0)
+            {
+                tmpOffsetY = tmpNode.getOffsetY();
+                tmpOffsetY += Sign(tmpLength);
+                tmpNode.setOffsetY(tmpOffsetY);
+                tmpNode.callBaseCalibration();
+            }
+            else
+            {
+                tmpOffsetY = tmpNode.getOffsetY();
+                tmpOffsetY -= Sign(tmpLength);
+                tmpNode.setOffsetY(tmpOffsetY);
+                tmpNode.callBaseCalibration();
+            }
+            break;
     }
 }
 
-function interWallOffsetY(id, tmpLength)
+function baseOffsetY(id, tmpLength, tmpAxis)
+{
+    var tmpOffsetX;
+    var tmpOffsetY;
+    var n = scene.getNode(3).getEye();
+    var tmpNode = scene.getNode(id).nodes[0].nodes[0].nodes[0];
+
+    switch(tmpAxis)
+    {
+        case 0:
+        case 2:
+            if(n.z > 0)
+            {
+                tmpOffsetY = tmpNode.getOffsetY();
+                tmpOffsetY += Sign(tmpLength);
+                tmpNode.setOffsetY(tmpOffsetY);
+                tmpNode.callBaseCalibration();
+            }
+            else
+            {
+                tmpOffsetY = tmpNode.getOffsetY();
+                tmpOffsetY -= Sign(tmpLength);
+                tmpNode.setOffsetY(tmpOffsetY);
+                tmpNode.callBaseCalibration();
+            }
+            break;
+        case 1:
+        case 3:
+            if(n.x < 0)
+            {
+                tmpOffsetX = tmpNode.getOffsetX();
+                tmpOffsetX -= Sign(tmpLength);
+                tmpNode.setOffsetX(tmpOffsetX);
+                tmpNode.callBaseCalibration();
+            }
+            else
+            {
+                tmpOffsetX = tmpNode.getOffsetX();
+                tmpOffsetX += Sign(tmpLength);
+                tmpNode.setOffsetX(tmpOffsetX);
+                tmpNode.callBaseCalibration();
+            }
+    }
+}
+
+function interWallOffsetX(id, tmplength, tmpAxis)
 {
     var tmpPercentX;
     var tmpPercentY;
+    var n = scene.getNode(3).getEye();
     var tmpNode = scene.getNode(id).nodes[0].nodes[0].nodes[0];
 
-    if(tmpNode.getDirection() == "horizontal")
+    switch(tmpAxis)
     {
-        tmpPercentY = tmpNode.getPercentY();
-        tmpPercentY += Sign(tmpLength);
-        tmpNode.setPercentY(tmpPercentY);
-        tmpNode.callBaseCalibration();
+        case 0:
+        case 2:
+            if(tmpNode.getDirection() == "vertical" && n.z > 0)
+            {
+                tmpPercentX = tmpNode.getPercentX();
+                tmpPercentX += Sign(tmplength);
+                tmpNode.setPercentX(tmpPercentX);
+                tmpNode.callBaseCalibration();
+            }
+            else if(tmpNode.getDirection() == "vertical" && n.z < 0)
+            {
+                tmpPercentX = tmpNode.getPercentX();
+                tmpPercentX -= Sign(tmplength);
+                tmpNode.setPercentX(tmpPercentX);
+                tmpNode.callBaseCalibration();
+            }
+            break;
+        case 1:
+        case 3:
+            if(tmpNode.getDirection() == "horizontal" && n.x < 0)
+            {
+                tmpPercentY = tmpNode.getPercentY();
+                tmpPercentY += Sign(tmplength);
+                tmpNode.setPercentY(tmpPercentY);
+                tmpNode.callBaseCalibration();
+            }
+            else if(tmpNode.getDirection() == "horizontal" && n.x > 0)
+            {
+                tmpPercentY = tmpNode.getPercentY();
+                tmpPercentY -= Sign(tmplength);
+                tmpNode.setPercentY(tmpPercentY);
+                tmpNode.callBaseCalibration();
+            }
+            break;
+    }
+}
+
+function interWallOffsetY(id, tmplength, tmpAxis)
+{
+    var tmpPercentX;
+    var tmpPercentY;
+    var n = scene.getNode(3).getEye();
+    var tmpNode = scene.getNode(id).nodes[0].nodes[0].nodes[0];
+
+    switch(tmpAxis)
+    {
+        case 0:
+        case 2:
+            if(tmpNode.getDirection() == "horizontal" && n.z > 0)
+            {
+                tmpPercentY = tmpNode.getPercentY();
+                tmpPercentY += Sign(tmplength);
+                tmpNode.setPercentY(tmpPercentY);
+                tmpNode.callBaseCalibration();
+            }
+            else if(tmpNode.getDirection() == "horizontal" && n.z < 0)
+            {
+                tmpPercentY = tmpNode.getPercentY();
+                tmpPercentY -= Sign(tmplength);
+                tmpNode.setPercentY(tmpPercentY);
+                tmpNode.callBaseCalibration();
+            }
+            break;
+        case 1:
+        case 3:
+            if(tmpNode.getDirection() == "vertical" && n.x < 0)
+            {
+                tmpPercentX = tmpNode.getPercentX();
+                tmpPercentX -= Sign(tmplength);
+                tmpNode.setPercentX(tmpPercentX);
+                tmpNode.callBaseCalibration();
+            }
+            else if(tmpNode.getDirection() == "vertical" && n.x > 0)
+            {
+                tmpPercentX = tmpNode.getPercentX();
+                tmpPercentX += Sign(tmplength);
+                tmpNode.setPercentX(tmpPercentX);
+                tmpNode.callBaseCalibration();
+            }
+            break;
     }
 }
 
@@ -364,7 +557,7 @@ function setObjectWidth(object, length, limit)
     var tmpWidth = object.getWidth();
     if(length >= 0)
     {
-        tmpWidth += Sign(length)/3;
+        tmpWidth += Sign(length);
         object.setWidth(tmpWidth);
         object.callBaseCalibration();
     }
@@ -372,7 +565,7 @@ function setObjectWidth(object, length, limit)
     {
         if(tmpWidth > limit)
         {
-            tmpWidth += Sign(length)/3;
+            tmpWidth += Sign(length);
             object.setWidth(tmpWidth);
             object.callBaseCalibration();
         }
@@ -390,7 +583,7 @@ function setObjectHeight(object, length, limit)
     var tmpHeight = object.getHeight();
     if(length >= 0)
     {
-        tmpHeight += Sign(length)/3;
+        tmpHeight += Sign(length);
         object.setHeight(tmpHeight);
         object.callBaseCalibration();
     }
@@ -398,7 +591,7 @@ function setObjectHeight(object, length, limit)
     {
         if(tmpHeight > limit)
         {
-            tmpHeight += Sign(length)/3;
+            tmpHeight += Sign(length);
             object.setHeight(tmpHeight);
             object.callBaseCalibration();
         }
@@ -416,7 +609,7 @@ function setObjectDepth(object, length, limit)
     var tmpDepth = object.getDepth();
     if(length >= 0)
     {
-        tmpDepth += Sign(length)/3;
+        tmpDepth += Sign(length);
         object.setDepth(tmpDepth);
         object.callBaseCalibration();
     }
@@ -424,7 +617,7 @@ function setObjectDepth(object, length, limit)
     {
         if(tmpDepth > limit)
         {
-            tmpDepth += Sign(length)/3;
+            tmpDepth += Sign(length);
             object.setDepth(tmpDepth);
             object.callBaseCalibration();
         }
@@ -761,6 +954,11 @@ function getCameraDistance()
 function getIsLock()
 {
     return isLock;
+}
+
+function getIsRotation()
+{
+    return isRotation;
 }
 
 function UIlog(log){

@@ -46,6 +46,7 @@ SceneJS.Types.addType("cameras/orbit", {
 		var tmpNormal = null;
         var camDist = null;
         var isLock = false;
+        var isRotation = true;
 		
         var dragging = false;
         var lookatDirty = false;
@@ -107,6 +108,7 @@ SceneJS.Types.addType("cameras/orbit", {
             tmpNormal = getNormal();
             camDist = getCameraDistance();
             isLock = getIsLock();
+            isRotation = getIsRotation();
 
 			if(tmpNormal != null)
             {
@@ -119,6 +121,7 @@ SceneJS.Types.addType("cameras/orbit", {
             tmpNormal = getNormal();
             camDist = getCameraDistance();
             isLock = getIsLock();
+            isRotation = getIsRotation();
 
 			if(tmpNormal != null)
             {
@@ -145,17 +148,20 @@ SceneJS.Types.addType("cameras/orbit", {
                 }
 			}
 			else{
-				var posX = event.targetTouches[0].clientX;
-				var posY = event.targetTouches[0].clientY;
-				actionMove(posX, posY);
+                if(isRotation == true)
+                {
+                    var posX = event.targetTouches[0].clientX;
+                    var posY = event.targetTouches[0].clientY;
+                    actionMove(posX, posY);
+                }
 			}
         }
 
         function actionMove(posX, posY) {
             if (dragging) {
 
-                yaw -= (posX - lastX) * 0.1;
-                pitch -= (posY - lastY) * 0.1;
+                yaw -= (posX - lastX) * 0.3;
+                pitch -= (posY - lastY) * 0.3;
 
                 update();
 
