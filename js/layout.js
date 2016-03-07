@@ -54,7 +54,7 @@ function setComponent()
 		Propertycloseli = "paddingLeft";
 		Valuecloseli = Width - 0.07*Height;
 	}
-	changeSize(FuncBar, -1, 0.25*RefSize);
+	changeSize(FuncBar, 0.12*RefSize, 0.25*RefSize);
 	
 	setFloorTab(PropertyFT,ValueFT);
 	setPartBar(RefSize, PropertyPBul, ValuePBli, PropertyPBimgclose,PropertyPBContent,Propertycloseli,Valuecloseli);
