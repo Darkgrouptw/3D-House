@@ -12,8 +12,12 @@ SceneJS.Types.addType("wall/no_window",
 		{
 			// Temporarlly do not make the half value.
 			var w = property.width, h = property.height, t = property.thickness; 
+<<<<<<< HEAD
+			var pset = [
+=======
 			var pset =
             [
+>>>>>>> ee90ce58789000bc00f7b2965dffd0d8a3adf5b4
 				w, h, t, -w, h, t, -w, -h, t, w, -h, t,
 				w, h, t, w, -h, t, w, -h, -t, w, h, -t,
 				w, h, t, w, h, -t, -w, h, -t, -w, h, t,
