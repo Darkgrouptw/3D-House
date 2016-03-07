@@ -64,6 +64,22 @@ function AddEventListenerList(list, event, functor)
     for(var i = 0; i < list.length; i++) { list[i].addEventListener(event, functor, false); }
 }
 
+function toggleFullScreen()
+{
+    var doc = window.document;
+    var docel = doc.documentElement;
+
+    var requestFullScreen = docel.requestFullscreen || docel.mozRequestFullScreen || docel.webkitRequestFullScreen;
+    var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen;
+
+    if(!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement)
+    {
+        requestFullScreen.call(docel);
+    }
+    else { cancelFullScreen.call(doc);  }
+}
+
+
 var lastid=-1;
 var lastFloor = -1;
 var uiPanel;
