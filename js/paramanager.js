@@ -4,7 +4,9 @@ var utility = {};
 // Convert object to the vector(array) form
 utility.vectorForm = function(vector) 
 {
-    if(vector.a != undefined && vector.b != undefined) { return [ vector.a, vector.b  ]  }
+	if(this.checkIsUndefined(vector)) { return; }
+	if(this.isNumeric(vector)) { return [vector]; }
+    if(vector.a !== undefined && vector.b !== undefined) { return [vector.a, vector.b];  }
     if(vector.x == undefined || vector.y == undefined || vector.z == undefined) { return vector; }
     return [ vector.x , vector.y, vector.z ]; 
 };
@@ -62,11 +64,71 @@ utility.makeIndices = function(start, end, group)
 	}
 };
 
-// Not yet implement
-utility.makeNormals = function (indices, positions) 
+// Normal vector repeater
+utility.makeNormals = function (repeat, vector) 
 { 
-	console.log('makeNormals: Not yet'); 
+	var nset = [];
+	for(var i = 0; i < repeat; i++) { nset = nset.concat(vector); }
+	return nset;
+	//console.log('makeNormals: Not yet'); 
 };
+
+// Find the nearest neighborhood value by mode
+utility.matchNearNeighborhood = function(l, v, m)
+{
+    // Default
+    if(m == undefined || m == 'less')
+    {
+        var tmp = 0;
+        for(var i = 0; i < l.length; i++)
+        { if(l[i] < v) { if(l[i] > tmp) { tmp = l[i]; } } }
+        return tmp;
+    }
+    else if(m == 'greater')
+    { 
+        var tmp = Number.POSITIVE_INFINITY;
+        for(var i = 0; i < l.length; i++)
+        { if(l[i] > v) { if(l[i] < tmp) { tmp = l[i]; } } }
+        return tmp;
+    }
+    else { console.log('Warning: In utility.matchNearNeighborhood not ' + m + ' mode');  }
+}
+
+// Generate combination give set and number
+utility.makeCombinations = function(s, k)
+{
+    var combs = [], tailcombs, head;
+    if(k > s.length || k <= 0) { return []; }
+    if(k == s.length) { return [s]; }
+    if(k == 1) 
+    {
+        for(var i = 0; i < s.length; i++) { combs.push([s[i]]); }
+        return combs;
+    }
+    
+    for(var i = 0; i < s.length - k + 1; i++)
+    {
+        head = s.slice(i, i + 1);
+        tailcombs = utility.makeCombinations(s.slice(i + 1), k - 1);
+        for(var j = 0; j < tailcombs.length; j++)
+        {
+            combs.push(head.concat(tailcombs[j]));
+        }
+    }
+    
+    return combs;
+};
+
+// Distance function
+utility.distance = function(al, bl)
+{
+    var part = 0;
+    if(al[2] != undefined && bl[2] != undefined) 
+    {
+        part = Math.pow(al[2] - bl[2], 2);
+    }
+    return Math.sqrt(Math.pow(al[0] - bl[0], 2) + Math.pow(al[1] - bl[1], 2) + part);
+}
 
 // Needed SceneJS support
 utility.transformMatrix = function(transform) 
@@ -285,7 +347,7 @@ utility.delaunay2D = function(positions, key)
 // For easy to management the parameter
 function ParameterManager(p, posfunc)
 {	
-	this.property = {}, this.transform = {}, this.functor = {};
+	this.property = {}, this.transform = {}, this.functor = {}, this.sharedvar = {};
 	
 	this.functor.unfunc = function(name) { console.log('Error: ' + name + ' undefined.'); return []; };
 	
@@ -354,10 +416,7 @@ ParameterManager.prototype.createPositions = function() { return this.functor.po
 // Optional for texture coordinate
 ParameterManager.prototype.createTextures = function() 
 { 
-	if (!utility.checkIsUndefined(this.functor.texture))
-	{
-		return this.functor.texture(this.property);
-	}
+	if (!utility.checkIsUndefined(this.functor.texture)) { return this.functor.texture(this.property); }
 	return [];
 }
 
@@ -393,4 +452,3 @@ ParameterManager.prototype.updateTextureCoord = function(that)
 		geometry.setUV({ uv: new Float32Array(this.functor.texture(this.property)) });
 	}
 }
-

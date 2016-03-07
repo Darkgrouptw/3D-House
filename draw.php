@@ -56,7 +56,7 @@
 	//exit;
 ?>
 </head>
-<body onresize = "setlayout()" onload = "initial()">
+<body onresize = "setLayout()" onload = "initial()">
 	
 <div id = "FLOORTAB">
 	<nav>
