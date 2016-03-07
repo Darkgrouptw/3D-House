@@ -11,14 +11,19 @@ SceneJS.Types.addType("base/basic",
 		this._paramana = new ParameterManager(params, function(property)
 		{
 			var w = property.width, h = property.height, t = property.thickness; 
+<<<<<<< HEAD
 			var pset = [
+=======
+			var pset = 
+            [
+>>>>>>> ee90ce58789000bc00f7b2965dffd0d8a3adf5b4
 				w, t, h, -w, t, h, -w, -t, h, w, -t, h,
 				w, t, h, w, -t, h, w, -t, -h, w, t, -h,
 				w, t, h, w, t, -h, -w, t, -h, -w, t, h,
 				-w, t, h, -w, t, -h, -w, -t, -h, -w, -t, h,
 				-w, -t, -h, w, -t, -h, w, -t, h, -w, -t, h, 
 				w, -t, -h, -w, -t, -h, -w, t, -h, w, t, -h
-			]);
+			];
 			return pset;
 		});
 		this._offsetX = 0;
@@ -464,14 +469,19 @@ function build(params)
 {
     var positionSet = this._paramana.createPositions();
 	var indiceSet = utility.makeIndices(0, (positionSet.length / 3 ) - 1);
+<<<<<<< HEAD
 	var uvSet = [
+=======
+	var uvSet = 
+    [
+>>>>>>> ee90ce58789000bc00f7b2965dffd0d8a3adf5b4
 		1, 1, 0, 1, 0, 0, 1, 0,
 		0, 1, 0, 0, 1, 0, 1, 1,
 		1, 0, 1, 1, 0, 1, 0, 0,
 		1, 1, 0, 1, 0, 0, 1, 0,
 		0, 0, 1, 0, 1, 1, 0, 1,
 		0, 0, 1, 0, 1, 1, 0, 1
-	]);
+	];
 	
 	var geometry = 
 	{
