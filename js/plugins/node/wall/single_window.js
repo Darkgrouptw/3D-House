@@ -49,20 +49,20 @@ SceneJS.Types.addType("wall/single_window",
 			{
 				var tmprb = (idxr + 1) % 4, tmpra = idxr;
 
-				pset = pset.concat(inter[tmpra]).concat(exter[tmpra])
-					.concat(exter[tmprb]).concat(inter[tmprb]);
+				pset = pset.concat(exter[tmprb]).concat(exter[tmpra])
+					.concat(inter[tmpra]).concat(inter[tmprb]);
 
-				pset = pset.concat(makePositive(exter[tmpra], 2)).concat(makePositive(inter[tmpra], 2))
-					.concat(makePositive(inter[tmprb], 2)).concat(makePositive(exter[tmprb], 2));
+				pset = pset.concat(makePositive(inter[tmprb], 2)).concat(makePositive(inter[tmpra], 2))
+					.concat(makePositive(exter[tmpra], 2)).concat(makePositive(exter[tmprb], 2));
 
-				pset = pset.concat(exter[tmpra]).concat(makePositive(exter[tmpra], 2))
-					.concat(makePositive(exter[tmprb], 2)).concat(exter[tmprb]);
+				pset = pset.concat(makePositive(exter[tmprb], 2)).concat(makePositive(exter[tmpra], 2))
+					.concat(exter[tmpra]).concat(exter[tmprb]);
 
-				pset = pset.concat(makePositive(inter[tmpra], 2)).concat(inter[tmpra])
-					.concat(inter[tmprb]).concat(makePositive(inter[tmprb], 2));
+				pset = pset.concat(inter[tmprb]).concat(inter[tmpra])
+					.concat(makePositive(inter[tmpra], 2)).concat(makePositive(inter[tmprb], 2));
             }
 			
-			return new Float32Array(pset);
+			return pset;
 		});
 		
 		this._paramana.addAttribute('windowH', params.windowH);
@@ -90,24 +90,24 @@ SceneJS.Types.addType("wall/single_window",
 			
 			var uvset = 
 			[
-				wrUL[0], wrUL[1], 0, 1, 0, 0, wrDL[0], wrDL[1],
-				0, 1, wrUL[0], wrUL[1], wrDL[0], wrDL[1], 0, 0,
+				0, 0, 0, 1, wrUL[0], wrUL[1], wrDL[0], wrDL[1],
+				wrDL[0], wrDL[1], wrUL[0], wrUL[1], 0, 1, 0, 0,
 				1, 0, 1, 1, 0, 1, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0,
 				
-				wrDL[0], wrDL[1], 0, 0, 1, 0, wrDR[0], wrDR[1],
-				0, 0, wrDL[0], wrDL[1], wrDR[0], wrDR[1], 1, 0,
+				1, 0, 0, 0, wrDL[0], wrDL[1], wrDR[0], wrDR[1],
+				wrDR[0], wrDR[1], wrDL[0], wrDL[1], 0, 0, 1, 0,
 				1, 0, 1, 1, 0, 1, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0,
 				
-				wrDR[0], wrDR[1], 1, 0, 1, 1, wrUR[0], wrUR[1],
-				1, 0, wrDR[0], wrDR[1], wrUR[0], wrUR[1], 1, 1,
+				1, 1, 1, 0, wrDR[0], wrDR[1], wrUR[0], wrUR[1],
+				wrUR[0], wrUR[1], wrDR[0], wrDR[1], 1, 0, 1, 1,
 				1, 0, 1, 1, 0, 1, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0,
 				
-				wrUR[0], wrUR[1], 1, 1, 0, 1, wrUL[0], wrUL[1],
-				1, 1, wrUR[0], wrUR[1], wrUL[0], wrUL[1], 0, 1,
+				0, 1, 1, 1, wrUR[0], wrUR[1], wrUL[0], wrUL[1],
+				wrUL[0], wrUL[1], wrUR[0], wrUR[1], 1, 1, 0, 1,
 				1, 0, 1, 1, 0, 1, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0,
 			];
 			
-			return new Float32Array(uvset);
+			return uvset;
 		});
         
 		this.addNode(build.call(this, params)); 

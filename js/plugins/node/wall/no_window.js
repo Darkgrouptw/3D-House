@@ -12,15 +12,15 @@ SceneJS.Types.addType("wall/no_window",
 		{
 			// Temporarlly do not make the half value.
 			var w = property.width, h = property.height, t = property.thickness; 
-			var pset = new Float32Array(
-			[
+			var pset =
+            [
 				w, h, t, -w, h, t, -w, -h, t, w, -h, t,
 				w, h, t, w, -h, t, w, -h, -t, w, h, -t,
 				w, h, t, w, h, -t, -w, h, -t, -w, h, t,
 				-w, h, t, -w, h, -t, -w, -h, -t, -w, -h, t,
 				-w, -h, -t, w, -h, -t, w, -h, t, -w, -h, t,
 				w, -h, -t, -w, -h, -t, -w, h, -t, w, h, -t
-			]);
+			];
 			return pset;
 		});
 		this.addNode(build.call(this, params)); 

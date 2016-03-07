@@ -17,8 +17,8 @@ SceneJS.Types.addType("roof/mansard",
 	        var dNwr = 2 * -w * r.a, dPwr = 2 * w * r.a; 
 	        var dNdr = 2 * -d * r.b, dPdr = 2 * d * r.b;        
 	
-	        var pset = new Float32Array(
-	        [
+	        var pset = 
+            [
 		        -w - dNwr, h, d - dPdr, -w, -h, d, -w, -h, -d, -w - dNwr, h, -d - dNdr,
 		        w - dPwr, h, -d - dNdr, -w - dNwr, h, -d - dNdr, -w, -h, -d, w, -h, -d,
 		        w - dPwr, h, d - dPdr, w - dPwr, h, -d - dNdr, w, -h, -d, w, -h, d, 
@@ -33,7 +33,7 @@ SceneJS.Types.addType("roof/mansard",
 		        w - t, -h, -d + t, w, -h, -d, -w, -h, -d, -w + t, -h, -d + t,
 		        w - t, -h, d - t, w, -h, d, w, -h, -d, w - t, -h, -d + t, 	
 		        w - t, -h, d - t, -w + t, -h, d - t, -w, -h, d, w, -h, d, 
-	        ]);
+	        ];
 	        
 	        return pset;
 	    });
@@ -108,7 +108,8 @@ function build(params)
 {
     var positionSet = this._paramana.createPositions();
     var indiceSet = utility.makeIndices(0, (positionSet.length / 3) - 1);
-	var uvSet = new Float32Array([
+	var uvSet = 
+    [
 		0, 1, 0, 0, 1, 0, 1, 1,			// Front West
 		1, 1, 1, 0, 0, 0, 0, 1,			// Front Sourth
 		0, 1, 1, 1, 1, 0, 0, 0,			// Front East
@@ -125,7 +126,7 @@ function build(params)
 		1, 1, 0, 1, 0, 0, 1, 1,			// Side Sourth
 		1, 0, 0, 0, 0, 1, 1, 1,			// Side East
 		1, 1, 0, 1, 0, 0, 1, 0,			// Side North
-	]);
+	];
 
     var geometry = 
 	{

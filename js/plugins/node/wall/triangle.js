@@ -8,14 +8,14 @@ SceneJS.Types.addType("wall/triangle",
 		{
 			var w = property.width, h = property.height, t = property.thickness, r = property.ratio;
 			var topw = (w * r.a + -w * r.b) / 2;
-			var pset = new Float32Array(
-			[
+			var pset = 
+            [
 				-w, -h, -t, w, -h, -t, topw, h, -t,
 				-w, -h, t, w, -h, t, topw, h, t,
 				w, -h, -t, topw, h, -t, topw, h, t, w, -h, t,
 				-w, -h, -t, topw, h, -t, topw, h, t, -w, -h, t,
 				-w, -h, -t, w, -h, -t, w, -h, t, -w, -h, t
-			]);
+			];
 			
 			return pset;
 		});
@@ -86,14 +86,14 @@ function build(params)
 {
     var positionSet = this._paramana.createPositions();
 	var indiceSet = utility.makeIndices(0, 5, 3).concat(utility.makeIndices(6, 17));
-	var uvSet =  new Float32Array(
-	[
+	var uvSet = 
+    [
 		0, 0, 1, 0, this._paramana.get('ratio').a, 1,
 		1, 0, 1, 1, 0, 1, 0, 0,
 		1, 1, 0, 1, 0, 0, 1, 0,
 		0, 1, 0, 0, 1, 0, 1, 1,
 		0, 0, 1, 0, this._paramana.get('ratio').b, 1
-	]);
+	];
 	
 	var geometry = 
 	{

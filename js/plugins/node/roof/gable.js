@@ -15,8 +15,8 @@ SceneJS.Types.addType("roof/gable",
 	        var be = (t * 2) / Math.sqrt(3) ;
 	        var wr = (w * r.a + -w * r.b) / 2;
 	
-	        var pset = new Float32Array(
-	        [
+	        var pset = 
+            [
 		        wr, h + be, -d, -w - be, -h, -d, -w - be, -h, d, wr, h + be, d,
 		        wr, h + be, -d, -w - be, -h, -d, -w, -h, -d, wr, h, -d,
 		        -w - be, -h, -d, -w - be, -h, d, -w, -h, d, -w, -h, -d,
@@ -29,7 +29,7 @@ SceneJS.Types.addType("roof/gable",
 		
 		        wr, h, -d, wr, h, d, -w, -h, d, -w, -h, -d,
 		        wr, h, -d, wr, h, d, w, -h, d, w, -h, -d
-	        ]); 
+	        ]; 
 	        
 	        return pset;
 	    });
@@ -196,7 +196,7 @@ function build(params)
 {
     var positionSet = this._paramana.createPositions();
     var indiceSet = utility.makeIndices(0, (positionSet.length / 3) - 1);
-    var uvSet = new Float32Array(
+    var uvSet = 
     [
 	    0, 1, 0, 0, 1, 0, 1, 1,			// Back 
 	    1, 1, 1, 0, 0, 0, 0, 1,			// Back Right
@@ -210,7 +210,7 @@ function build(params)
 	
 	    1, 1, 0, 1, 0, 0, 1, 0,			// Back Inside
 	    0, 1, 1, 1, 1, 0, 0, 0			// Front Inside
-    ]);
+    ];
 
     var geometry = 
 	{
