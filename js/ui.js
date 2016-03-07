@@ -2160,3 +2160,11 @@ function saveXML(){
 function RedButtonClick(){
     superXReProduction(generateXML());
 }
+
+function setlayout()
+{
+	var canvas = document.getElementById("archcanvas");
+	canvas.width = screen.width;
+	canvas.height = screen.height;
+	
+}
