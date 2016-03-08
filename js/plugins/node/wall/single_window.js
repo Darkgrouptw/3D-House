@@ -4,6 +4,9 @@ SceneJS.Types.addType("wall/single_window",
 	construct: function (params) 
 	{
 		this._layer;
+		this._percentX;
+        this._percentY;
+        this._priority;
 		this.direction;
         this._paramana = new ParameterManager(params, function(property)
 		{
@@ -112,6 +115,9 @@ SceneJS.Types.addType("wall/single_window",
         
 		this.addNode(build.call(this, params)); 
 		this.direction=params.direction;
+		this._percentY=params.percentY;
+        this._percentX=params.percentX;
+        this._priority=params.priority;
 		this._layer=params.layer;
 	},
 
@@ -123,6 +129,15 @@ SceneJS.Types.addType("wall/single_window",
 
     getLayer: function(){ return this._layer; },
 	setLayer: function(l){ this._layer = l; },
+
+	getPriority:function(){return this._priority;},
+    setPriority:function(p){this._priority=p;},
+
+    setPercentX:function(x){this._percentX=x;},
+    getPercentX:function(){return this._percentX;},
+
+    setPercentY:function(y){this._percentY=y;},
+    getPercentY:function(){return this._percentY;},
 
     getWidth: function() { return this._paramana.get('width'); },
 	setWidth: function(w) { this._paramana.set('width', w); this.updateNode(); },

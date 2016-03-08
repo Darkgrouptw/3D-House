@@ -3,6 +3,9 @@ SceneJS.Types.addType("wall/door_entry",
     construct: function(params)
     {
         this._layer;
+        this._percentX;
+        this._percentY;
+        this._priority;
         this.direction;
         this._paramana = new ParameterManager(params, function(property)
         {
@@ -93,6 +96,9 @@ SceneJS.Types.addType("wall/door_entry",
 
         this.addNode(build.call(this, params));
         this.direction = params.direction;
+        this._percentY=params.percentY;
+        this._percentX=params.percentX;
+        this._priority=params.priority;
         this._layer = params.layer;
      },
 
@@ -104,6 +110,15 @@ SceneJS.Types.addType("wall/door_entry",
 
     getLayer: function(){ return this._layer; },
 	setLayer: function(l){ this._layer = l; },
+
+    getPriority:function(){return this._priority;},
+    setPriority:function(p){this._priority=p;},
+
+    setPercentX:function(x){this._percentX=x;},
+    getPercentX:function(){return this._percentX;},
+
+    setPercentY:function(y){this._percentY=y;},
+    getPercentY:function(){return this._percentY;},
 
     getWidth: function() { return this._paramana.get('width'); },
 	setWidth: function(w) { this._paramana.set('width', w); this.updateNode(); },
@@ -118,8 +133,8 @@ SceneJS.Types.addType("wall/door_entry",
     setPosratio: function(r) { this._paramana.set('posratio', r); this.updateNode(); },
 
     getDoorSize: function() { return { w: this._paramana.get('doorW'), h: this._paramana.get('doorH') };  },
-    setDoorW: function(dw) { this._paramana.set('doorW', ww); this.updateNode(); },
-    setDoorH: function(dh) { this._paramana.set('doorH', wh); this.updateNode(); },
+    setDoorW: function(dw) { this._paramana.set('doorW', dw); this.updateNode(); },
+    setDoorH: function(dh) { this._paramana.set('doorH', dh); this.updateNode(); },
 
 	getScale: function() { return this._paramana.get('scale'); },
 	setScale: function(svec) { this._paramana.set('scale', svec); this._paramana.updateMatirxNode(this); },
@@ -133,6 +148,167 @@ SceneJS.Types.addType("wall/door_entry",
     setTranslateX: function(x) { var t = this.getTranslate(); this.setTranslate([x, t[1], t[2]]); },
     setTranslateY: function(y) { var t = this.getTranslate(); this.setTranslate([t[0], y, t[2]]); },
     setTranslateZ: function(z) { var t = this.getTranslate(); this.setTranslate([t[0], t[1], z]); },
+    getDirection:function(){return this.direction;},
+    setDirection:function(d){
+        if(d=="horizontal" || d=="vertical"){
+            this.direction=d;
+            var matrix= this.parent;
+            if(d=="horizontal"){
+                this.setRotate([0,0,0]);
+            }else{
+                this.setRotate([0,90,0]);
+            }
+        }
+    },
+    isInside:function(params){
+        var center=this.getTranslate();
+        var range=Math.sqrt(Math.pow(center[0] - params[0],2)+
+                            Math.pow(center[1] - params[1],2)+
+                            Math.pow(center[2] - params[2],2));
+        //if(range < this.getThickness()/2){
+        //    return true;
+        //}
+        if(this.direction=="vertical"){
+            //if(this.getPriority()==2){
+            //    console.log("meow");
+            //    console.log(params);
+            //    console.log(center);
+            //        console.log(params[0] <= center[0] + this.getThickness()/2);
+            //        console.log(params[0] >= center[0] - this.getThickness()/2);
+            //        console.log(params[1] <= center[1] + this.getHeight()/2);
+            //        console.log(params[1] >= center[1] - this.getHeight()/2);
+            //        console.log(params[2] <= center[2] + this.getWidth()/2);
+            //        console.log(params[2] >= center[2] - this.getWidth()/2);
+            //    }
+            if(params[0] <= center[0] + this.getThickness() &&
+                params[0] >= center[0] - this.getThickness() &&
+                params[1] <= center[1] + this.getHeight() &&
+                params[1] >= center[1] - this.getHeight() &&
+                params[2] <= center[2] + this.getWidth() &&
+                params[2] >= center[2] - this.getWidth()){
+                return true
+            }
+            else{
+                return false
+            }
+        }
+        else{
+            if(params[0] <= center[0] + this.getWidth() &&
+                params[0] >= center[0] - this.getWidth() &&
+                params[1] <= center[1] + this.getHeight() &&
+                params[1] >= center[1] - this.getHeight() &&
+                params[2] <= center[2] + this.getThickness() &&
+                params[2] >= center[2] - this.getThickness()){
+                return true
+            }
+            else{
+                return false
+            }
+        }
+    },
+    callBaseCalibration: function()
+    {
+        var mnmte = function(n) { return n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0]; }
+
+        var backWall=-1;
+        var rightWall=-1;
+        var leftWall=-1;
+        var frontWall=-1;
+        var downBase=-1;
+        var downWall=-1;
+        var roof=-1;
+        var base=-1;
+        var nodes = scene.findNodes();
+        for(var i=0;i<nodes.length;i++){
+            var n = nodes[i];
+            if(n.getType()=="name"){
+                if(n.getName()=="backWall" && mnmte(n).getLayer()==this.getLayer()){
+                    //         material  name     matrix  texture  element
+                    backWall=mnmte(n);
+                }
+                else if(n.getName()=="frontWall" && mnmte(n).getLayer()==this.getLayer())frontWall=mnmte(n);
+                else if(n.getName()=="leftWall"  && mnmte(n).getLayer()==this.getLayer())leftWall=mnmte(n);
+                else if(n.getName()=="rightWall" && mnmte(n).getLayer()==this.getLayer())rightWall=mnmte(n);
+                else if(n.getName()=="roof"                                             )roof=mnmte(n);
+                else if(n.getName()=="base" && mnmte(n).getLayer()==this.getLayer())base=mnmte(n);
+                else if(n.getName()=="base"      && mnmte(n).getLayer()==this.getLayer() - 1)downBase=mnmte(n);
+                else if(n.getName()=="backWall"  && mnmte(n).getLayer()==this.getLayer() - 1)downWall=mnmte(n);
+            }   
+        }
+        
+        if(base == -1) { console.log("ERROR"); return; }
+        if(frontWall != -1 && frontWall.getID() == this.getID()) {}
+        else if(backWall != -1 && backWall.getID() == this.getID())
+        {
+            base.setRealWidth(this.getWidth());
+            base.callBaseCalibration(this.getHeight());
+        }
+        else if(leftWall!= -1 && leftWall.getID() == this.getID())
+        {
+            if(backWall != -1 && frontWall != -1) {}
+            else if(frontWall != -1) {}
+            else if(backWall != -1)
+            {
+                base.setRealHeight(this.getWidth() + backWall.getThickness());
+                base.callBaseCalibration(this.getHeight());
+            }
+            else {}
+        }
+        else if(rightWall != -1 && rightWall.getID() == this.getID())
+        {
+            if(backWall != -1 && frontWall != -1) {}
+            else if(frontWall != -1) {}
+            else if(backWall != -1)
+            {
+                base.setRealHeight(this.getWidth() + backWall.getThickness());
+                base.callBaseCalibration(this.getHeight());
+            }
+            else {
+                
+            }
+        }
+        else{
+            base.callBaseCalibration();
+        }
+    },
+    adjustChildren: function()
+    {
+        var baseCenter = this.getTranslate();
+        var baseCenterX = baseCenter[0];
+        var baseCenterY = baseCenter[1];
+        var baseCenterZ = baseCenter[2];
+        var size =  this.getDoorSize();
+        var ratio = this.getPosratio();
+        var wh = size.h;
+        var ww = size.w;
+        var a = ratio;
+        var b = ratio;
+        if(ww>this.getWidth()-1){
+            ww = this.getWidth()-1;
+        }
+        if(wh>this.getHeight()-1){
+            wh = this.getHeight() - 1;
+        }
+        if((baseCenterX-this.getWidth())+(a*2*this.getWidth())+ww > baseCenterX + this.getWidth() - 1){
+            a = (baseCenterX + this.getWidth() - 1 - ww) - baseCenterX + this.getWidth();
+            a = a/(2*this.getWidth());
+        }
+        if((baseCenterX - this.getWidth())+(a*2*this.getWidth())-ww < baseCenterX -this.getWidth() + 1){
+            a = (baseCenterX -this.getWidth() + 1 + ww) -baseCenterX + this.getWidth();
+            a = a/(2*this.getWidth());
+        }
+        if((baseCenterZ-this.getHeight())+(b*2*this.getHeight())+wh>baseCenterZ + this.getHeight() - 1){
+            b = (baseCenterZ + this.getHeight() - 1 - wh) - baseCenterZ + this.getHeight();
+            b = b/(2*this.getHeight());
+        }
+        if((baseCenterZ - this.getHeight())+(b*2*this.getHeight()-wh)<baseCenterZ - this.getHeight() + 1){
+            b = (baseCenterZ - this.getHeight() + 1 + wh) -baseCenterZ +this.getHeight();
+            b = b/(2*this.getHeight());
+        }
+        this.setDoorH(wh);
+        this.setDoorW(ww);
+        this.setPosratio(a);
+    }
 });
 
 function build(params) 

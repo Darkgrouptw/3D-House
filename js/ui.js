@@ -1562,7 +1562,7 @@ function attachInput(pickId){
 
 
     //sigle Wall
-    if(n.getDirection && n.getParent().getParent().getParent().getParent().getParent().getName() != "interWall"){
+    if(n.getDirection){
         var div=document.createElement("div");
         inputarea.appendChild(div);
         //text
@@ -1611,6 +1611,12 @@ function attachInput(pickId){
                 var nWidth = n.getWidth();
                 var nrotate = n.getRotate();
                 var root = scene.findNode(3);
+                var nperX;
+                var nperY;
+                var nPro;
+                if(n.getPercentX)nperX = n.getPercentX();
+                if(n.getPercentY)nperY = n.getPercentY();
+                if(n.getPriority)nPro = n.getPriority();
                 root.addNode({
                     type: "flags",
                         flags:{transparent:false},
@@ -1651,6 +1657,9 @@ function attachInput(pickId){
                                                 ratio: {a: 0.5,b: 0.5},
                                                 windowW: 3,
                                                 windowH: 3,
+                                                priority: nPro,
+                                                percentX: nperX,
+                                                percentY: nperY,
                                                 scale: {x: 1, y: 1, z: 1},
                                                 rotate: {x: nrotate[0], y: nrotate[1], z: nrotate[2]},
                                                 translate: {x: 0, y: 0, z: 0}
@@ -1663,6 +1672,245 @@ function attachInput(pickId){
                 });
                 n.getParent().getParent().getParent().getParent().getParent().getParent().destroy();
                 //remove input
+                if(document.getElementById('inputarea')){
+                    document.getElementById('inputarea').remove();
+                }
+                //cancle pick
+                lastid=-1;
+            }
+
+        });
+    }
+    //door Wall
+    if(n.getDirection){
+        var div=document.createElement("div");
+        inputarea.appendChild(div);
+        //text
+        var doorpropertyName=document.createElement("lable");
+            doorpropertyName.textContent="door";
+            div.appendChild(doorpropertyName);
+        //input
+        var doorinput=document.createElement("input");
+            doorinput.value = "door";
+            doorinput.type="button";
+            div.appendChild(doorinput);
+
+        doorinput.addEventListener('click',function(event){
+            var backWall=-1;
+            var rightWall=-1;
+            var leftWall=-1;
+            var frontWall=-1;
+            var roof=-1;
+            var base=-1;
+            var interWall=[];
+            var nodes=scene.findNodes();
+            for(var i=0;i<nodes.length;i++){
+                var node = nodes[i];
+                if(node.getType()=="name"){
+                    if(node.getName()=="backWall"){
+                        //         material  name     matrix  texture  element
+                        backWall=node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
+                    }
+                    else if(node.getName()=="frontWall")frontWall=node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
+                    else if(node.getName()=="leftWall")leftWall=node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
+                    else if(node.getName()=="rightWall")rightWall=node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
+                    else if(node.getName()=="roof")roof=node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
+                    else if(node.getName()=="interWall")interWall.push(node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0]);
+                    else if(node.getName()=="base")base=node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
+                }
+            }
+
+            if(base != -1){
+                //flags  texture     //matrix    name        material    name
+                //n.getParent().getParent().getParent().getParent().getParent().getParent().destroy();
+                var nName = n.getParent().getParent().getParent().getParent().getParent().getName();
+                var nLayer = n.getLayer();
+                var nDir = n.getDirection();
+                var nThick = n.getThickness();
+                var nHeight = n.getHeight();
+                var nWidth = n.getWidth();
+                var nrotate = n.getRotate();
+                var root = scene.findNode(3);
+                var nperX;
+                var nperY;
+                var nPro;
+                if(n.getPercentX)nperX = n.getPercentX();
+                if(n.getPercentY)nperY = n.getPercentY();
+                if(n.getPriority)nPro = n.getPriority();
+                root.addNode({
+                    type: "flags",
+                        flags:{transparent:false},
+                        nodes:
+                        [{
+                            type: "name",
+                            name: nName,
+                
+                            nodes:
+                            [{
+                                type: "material",
+                                color:{ r:0.8, g:0.8, b:0.8 },
+                                alpha:0.2,
+                                nodes:
+                                [{
+                                    type: "name",
+                                    name: "Wall.jpg",
+                
+                                    nodes:
+                                    [{
+                                        type: "matrix",
+                                        elements:[0,0,1,0,1,0,0,0,0,1,0,0,9,8.5,0,1],
+                
+                                        nodes:
+                                        [{
+                                            type: "texture",
+                                            src: "images/GeometryTexture/wall.jpg",
+                                            applyTo: "color",
+                
+                                            nodes:
+                                            [{
+                                                type: "wall/door_entry",
+                                                layer: nLayer,
+                                                height: nHeight,
+                                                width: nWidth,
+                                                thickness: nThick,
+                                                direction: nDir,
+                                                posratio: 0.5,
+                                                doorW: 3,
+                                                doorH: 3,
+                                                priority: nPro,
+                                                percentX: nperX,
+                                                percentY: nperY,
+                                                scale: {x: 1, y: 1, z: 1},
+                                                rotate: {x: nrotate[0], y: nrotate[1], z: nrotate[2]},
+                                                translate: {x: 0, y: 0, z: 0}
+                                            }]
+                                        }]
+                                    }]
+                                }]
+                            }]
+                        }]
+                });
+                n.getParent().getParent().getParent().getParent().getParent().getParent().destroy();
+                //remove input
+                console.log("a");
+                if(document.getElementById('inputarea')){
+                    document.getElementById('inputarea').remove();
+                }
+                //cancle pick
+                lastid=-1;
+            }
+
+        });
+    }
+    //normal Wall
+    if(n.getDirection){
+        var div=document.createElement("div");
+        inputarea.appendChild(div);
+        //text
+        var normalpropertyName=document.createElement("lable");
+            normalpropertyName.textContent="normal";
+            div.appendChild(normalpropertyName);
+        //input
+        var normalinput=document.createElement("input");
+            normalinput.value = "normal";
+            normalinput.type="button";
+            div.appendChild(normalinput);
+
+        normalinput.addEventListener('click',function(event){
+            var backWall=-1;
+            var rightWall=-1;
+            var leftWall=-1;
+            var frontWall=-1;
+            var roof=-1;
+            var base=-1;
+            var interWall=[];
+            var nodes=scene.findNodes();
+            for(var i=0;i<nodes.length;i++){
+                var node = nodes[i];
+                if(node.getType()=="name"){
+                    if(node.getName()=="backWall"){
+                        //         material  name     matrix  texture  element
+                        backWall=node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
+                    }
+                    else if(node.getName()=="frontWall")frontWall=node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
+                    else if(node.getName()=="leftWall")leftWall=node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
+                    else if(node.getName()=="rightWall")rightWall=node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
+                    else if(node.getName()=="roof")roof=node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
+                    else if(node.getName()=="interWall")interWall.push(node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0]);
+                    else if(node.getName()=="base")base=node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
+                }
+            }
+
+            if(base != -1){
+                //flags  texture     //matrix    name        material    name
+                //n.getParent().getParent().getParent().getParent().getParent().getParent().destroy();
+                var nName = n.getParent().getParent().getParent().getParent().getParent().getName();
+                var nLayer = n.getLayer();
+                var nDir = n.getDirection();
+                var nThick = n.getThickness();
+                var nHeight = n.getHeight();
+                var nWidth = n.getWidth();
+                var nrotate = n.getRotate();
+                var root = scene.findNode(3);
+                var nperX;
+                var nperY;
+                var nPro;
+                if(n.getPercentX)nperX = n.getPercentX();
+                if(n.getPercentY)nperY = n.getPercentY();
+                if(n.getPriority)nPro = n.getPriority();
+                root.addNode({
+                    type: "flags",
+                        flags:{transparent:false},
+                        nodes:
+                        [{
+                            type: "name",
+                            name: nName,
+                
+                            nodes:
+                            [{
+                                type: "material",
+                                color:{ r:0.8, g:0.8, b:0.8 },
+                                alpha:0.2,
+                                nodes:
+                                [{
+                                    type: "name",
+                                    name: "Wall.jpg",
+                
+                                    nodes:
+                                    [{
+                                        type: "matrix",
+                                        elements:[0,0,1,0,1,0,0,0,0,1,0,0,9,8.5,0,1],
+                
+                                        nodes:
+                                        [{
+                                            type: "texture",
+                                            src: "images/GeometryTexture/wall.jpg",
+                                            applyTo: "color",
+                
+                                            nodes:
+                                            [{
+                                                type: "wall/no_window",
+                                                layer: nLayer,
+                                                height: nHeight,
+                                                width: nWidth,
+                                                thickness: nThick,
+                                                direction: nDir,
+                                                priority: nPro,
+                                                percentX: nperX,
+                                                percentY: nperY,
+                                                scale: {x: 1, y: 1, z: 1},
+                                                rotate: {x: nrotate[0], y: nrotate[1], z: nrotate[2]},
+                                                translate: {x: 0, y: 0, z: 0}
+                                            }]
+                                        }]
+                                    }]
+                                }]
+                            }]
+                        }]
+                });
+                n.getParent().getParent().getParent().getParent().getParent().getParent().destroy();
+                //remove input
+                console.log("a");
                 if(document.getElementById('inputarea')){
                     document.getElementById('inputarea').remove();
                 }
