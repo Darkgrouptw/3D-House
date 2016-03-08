@@ -79,7 +79,6 @@ function toggleFullScreen()
     else { cancelFullScreen.call(doc);  }
 }
 
-
 var lastid=-1;
 var lastFloor = -1;
 var uiPanel;
@@ -93,9 +92,7 @@ function ScenePick(){
     var secondX;
     var secondY;
     
-    var stampDown;
-    var stampUp;
-    var count = 0;
+    var lastTime;
     var objectId = null;
     var pickNode = null;
     
@@ -106,12 +103,6 @@ function ScenePick(){
                 tmpNormal = null;
                 camDist = null;
 
-                if(count == 0)
-                {
-                    stampDown = event.timeStamp;
-                    //console.log(stampDown);
-                }
-
                 firstX = event.clientX;
                 firstY = event.clientY;
             }, true);
@@ -119,22 +110,8 @@ function ScenePick(){
     canvas.addEventListener('mouseup',
             function (event) {
 
-                //if(Math.abs(event.clientX - firstX) < 3 && Math.abs(event.clientY - firstY) < 3)
                 if(event.clientX == firstX && event.clientY == firstY)
                 {
-                    count++;
-                    //console.log(count);
-
-                    if(count == 2)
-                    {
-                        stampUp = event.timeStamp - stampDown;
-                        if(stampUp > 500)
-                        { 
-                            count = 0;
-                        }
-                        //console.log(stampUp);
-                    }
-
                     scene.pick(event.clientX, event.clientY, {rayPick: true});
                     if(lastid == -1 && lastFloor == -1){
                         setAllTheElementPickable();
@@ -148,11 +125,6 @@ function ScenePick(){
             function (event) {
                 tmpNormal = null;
                 camDist = null;
-
-                if(count == 0)
-                {
-                    stampDown = event.timeStamp;
-                }
                 
                 if(event.targetTouches.length != 1)
                 {
@@ -172,19 +144,8 @@ function ScenePick(){
     canvas.addEventListener('touchend',
             function (event) {
                 
-                //if(Math.abs(event.targetTouches[0].clientX - firstX) < 3 && Math.abs(event.targetTouches[0].clientY - firstY) < 3)
                 if(event.targetTouches[0].clientX == firstX && event.targetTouches[0].clientY == firstY)
                 {
-                    count++;
-                    if(count == 2)
-                    {
-                        stampUp = event.timeStamp - stampDown;
-                        if(stampUp > 500) 
-                        {
-                            count = 0;
-                        }
-                    }
-
                     scene.pick(event.targetTouches[0].clientX, event.targetTouches[0].clientY, {rayPick: true});
                     if(lastid == -1 && lastFloor == -1){
                         setAllTheElementPickable();
@@ -196,7 +157,6 @@ function ScenePick(){
 			
 	canvas.addEventListener('touchmove',
             function (event) {
-                count = 0;
 
                 var currentAxis = getAxis();
                 if(event.targetTouches.length != 1)
@@ -325,21 +285,19 @@ function ScenePick(){
                 else if(pickNode == "base" && pickLayer != 1) { isRotation = false; }
                 else { isRotation = true; }
 
-                if(count == 2)
-                {
-                    if(stampUp < 500)
+                var now = new Date().getTime();
+                if(now - lastTime < 300) {
+                    if(pickNode != "interWall")
                     {
-                        if(pickNode != "interWall")
-                        {
-                            changeViewpoint(pickNode);
-                        }
-                        else
-                        {
-                            changeInterWallDirention(objectId);
-                        }
+                        changeViewpoint(pickNode);
                     }
-                    count = 0;
+                    else
+                    {
+                        changeInterWallDirention(objectId);
+                    }
                 }
+                lastTime = now;
+
                 attachInput(objectId);
             });
 
@@ -353,7 +311,6 @@ function ScenePick(){
                 lastid = -1;
                 lastFloor = -1;
                 console.log('Nothing picked!');
-                count = 0;
                 isLock = false;
                 objectId = null;
                 isRotation = true;
@@ -367,7 +324,6 @@ function Sign(x)
 {
     return typeof x === 'number' ? x ? x < 0 ? -1 : 1 : x === x ? 0 : NaN : NaN;
 }
-
 
 function baseOffsetX(id, tmpLength, tmpAxis)
 {
