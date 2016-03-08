@@ -1935,6 +1935,13 @@ function timeFuction(){
                         node.setColor({r:1,g:1,b:1});
                     }
                 }
+                if(node.getType() == "texture"){
+                    if(hasTexture){
+                        
+                    }else{
+                        node._initTexture();
+                    }
+                }
             }
             if(base != -1){
                 base.callBaseCalibration();
