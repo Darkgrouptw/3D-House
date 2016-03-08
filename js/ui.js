@@ -1604,6 +1604,118 @@ function attachInput(pickId){
         });
     }
 
+
+    //sigle Wall
+    if(n.getDirection && n.getParent().getParent().getParent().getParent().getParent().getName() != "interWall"){
+        var div=document.createElement("div");
+        inputarea.appendChild(div);
+        //text
+        var siglepropertyName=document.createElement("lable");
+            siglepropertyName.textContent="sigle";
+            div.appendChild(siglepropertyName);
+        //input
+        var sigleinput=document.createElement("input");
+            sigleinput.value = "sigle";
+            sigleinput.type="button";
+            div.appendChild(sigleinput);
+
+        sigleinput.addEventListener('click',function(event){
+            var backWall=-1;
+            var rightWall=-1;
+            var leftWall=-1;
+            var frontWall=-1;
+            var roof=-1;
+            var base=-1;
+            var interWall=[];
+            var nodes=scene.findNodes();
+            for(var i=0;i<nodes.length;i++){
+                var node = nodes[i];
+                if(node.getType()=="name"){
+                    if(node.getName()=="backWall"){
+                        //         material  name     matrix  texture  element
+                        backWall=node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
+                    }
+                    else if(node.getName()=="frontWall")frontWall=node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
+                    else if(node.getName()=="leftWall")leftWall=node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
+                    else if(node.getName()=="rightWall")rightWall=node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
+                    else if(node.getName()=="roof")roof=node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
+                    else if(node.getName()=="interWall")interWall.push(node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0]);
+                    else if(node.getName()=="base")base=node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
+                }
+            }
+
+            if(base != -1){
+                //flags  texture     //matrix    name        material    name
+                //n.getParent().getParent().getParent().getParent().getParent().getParent().destroy();
+                var nName = n.getParent().getParent().getParent().getParent().getParent().getName();
+                var nLayer = n.getLayer();
+                var nDir = n.getDirection();
+                var nThick = n.getThickness();
+                var nHeight = n.getHeight();
+                var nWidth = n.getWidth();
+                var nrotate = n.getRotate();
+                var root = scene.findNode(3);
+                root.addNode({
+                    type: "flags",
+                        flags:{transparent:false},
+                        nodes:
+                        [{
+                            type: "name",
+                            name: nName,
+                
+                            nodes:
+                            [{
+                                type: "material",
+                                color:{ r:0.8, g:0.8, b:0.8 },
+                                alpha:0.2,
+                                nodes:
+                                [{
+                                    type: "name",
+                                    name: "Wall.jpg",
+                
+                                    nodes:
+                                    [{
+                                        type: "matrix",
+                                        elements:[0,0,1,0,1,0,0,0,0,1,0,0,9,8.5,0,1],
+                
+                                        nodes:
+                                        [{
+                                            type: "texture",
+                                            src: "images/GeometryTexture/wall.jpg",
+                                            applyTo: "color",
+                
+                                            nodes:
+                                            [{
+                                                type: "wall/single_window",
+                                                layer: nLayer,
+                                                height: nHeight,
+                                                width: nWidth,
+                                                thickness: nThick,
+                                                direction: nDir,
+                                                ratio: {a: 0.5,b: 0.5},
+                                                windowW: 3,
+                                                windowH: 3,
+                                                scale: {x: 1, y: 1, z: 1},
+                                                rotate: {x: nrotate[0], y: nrotate[1], z: nrotate[2]},
+                                                translate: {x: 0, y: 0, z: 0}
+                                            }]
+                                        }]
+                                    }]
+                                }]
+                            }]
+                        }]
+                });
+                n.getParent().getParent().getParent().getParent().getParent().getParent().destroy();
+                //remove input
+                if(document.getElementById('inputarea')){
+                    document.getElementById('inputarea').remove();
+                }
+                //cancle pick
+                lastid=-1;
+            }
+
+        });
+    }
     //depth
     if(n.getDepth){
         var depthismove=false;
@@ -2150,19 +2262,8 @@ function changeRoof(){
                     }]
                 }] 
             };
-
-            for(var i = 0 ; i < root.nodes.length ; i++){
-                root.nodes[i].destroy();
-            }
-            root.disconnectNodes();
-            root.addNode(gable);
-            root.addNode(rightTriangle);
-            root.addNode(leftTriangle);
-            for(var i = 0 ; i < elements.length ; i++){
-                elements[i].disconnect();
-                root.addNode(elements[i]);
-            }
-            
+            root.addNode(hip);
+            roof.getParent().getParent().getParent().getParent().getParent().getParent().destroy();
         }else if(roof.getType() == "roof/gable"){
             console.log("changed to hip");
             var hip = {
@@ -2214,16 +2315,8 @@ function changeRoof(){
                     }]
                 }] 
             };
-
-            for(var i = 0 ; i < root.nodes.length ; i++){
-                root.nodes[i].destroy();
-            }
-            root.disconnectNodes();
             root.addNode(hip);
-            for(var i = 0 ; i < elements.length ; i++){
-                elements[i].disconnect();
-                root.addNode(elements[i]);
-            }
+            roof.getParent().getParent().getParent().getParent().getParent().getParent().destroy();
         }
         
     }
@@ -2233,67 +2326,7 @@ function changeRoof(){
     Calibration();
     
 }
-function testChangeRoof(){
-    var roof=-1;
-    var nodes=scene.findNodes();
-    var root = scene.findNode(3);
-    var layerNumber=getTopLayer()
-    for(var i=0;i<nodes.length;i++){
-        var node = nodes[i];
-        if(node.getType()=="name"){
-            if(node.getName()=="roof" ){
-                roof=node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
-            }
-        }
-    }
-    if(roof != -1){
-        var xml='';
-        xml+='<layer>'+'\n';
-        var nodes=scene.findNodes();
-        if(roof.getType() == "roof/hip"){
-            xml+=getgableInfo();
-        }else if(roof.getType() == "roof/gable"){
-            xml+=getHipInfo();
-        }
-        for(var i=0;i<nodes.length;i++){
-            var node = nodes[i];
-            if(node.getType()=="flags"){
-                var n= node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
-                if(n.getType() != "roof/gable" &&
-                    n.getType() != "roof/hip" &&
-                    n.getType() != "wall/triangle"){
-                    xml += getElementXML(n);
-                }
-            }
-        }
-        xml+='</layer>'+'\n';
-    }
-    var parseXml;
 
-    if (window.DOMParser) {
-        parseXml = function(xmlStr) {
-            return ( new window.DOMParser() ).parseFromString(xmlStr, "text/xml");
-        };
-    } else if (typeof window.ActiveXObject != "undefined" && new window.ActiveXObject("Microsoft.XMLDOM")) {
-        parseXml = function(xmlStr) {
-            var xmlDoc = new window.ActiveXObject("Microsoft.XMLDOM");
-            xmlDoc.async = "false";
-            xmlDoc.loadXML(xmlStr);
-            return xmlDoc;
-        };
-    } else {
-        parseXml = function() { return null; }
-    }
-    
-    var xmlDoc = parseXml(xml);
-    if (xmlDoc) {
-        window.alert(xmlDoc.documentElement.nodeName);
-    }
-    console.log(xmlDoc);
-
-
-    return xml;
-}
 function getHipInfo(){
     return "<element><type>roof/hip</type><transform><scale>1,1,1</scale><rotate>0,90,0</rotate><translate>0,0,0</translate></transform><texture>roof.jpg</texture><pos>roof</pos><property><width>18</width><height>8</height><depth>18</depth><thickness>2</thickness><ratio>0.5,0.5</ratio><toplen>6</toplen><layer>2</layer></property></element>";
 }
