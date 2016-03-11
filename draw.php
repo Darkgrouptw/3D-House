@@ -20,6 +20,7 @@
     <script src = "js/layout.js"></script>
     <script src = "js/interact.js"></script>
 	<script src = "js/animation.js"></script> 
+	<script src = "js/plugins/lib/jquery-1.8.3.min.js"></script>
     <script src = "js/ModelConverter.js"></script>
     <script src = "js/superXReProduction.js"></script>
 

@@ -23,6 +23,9 @@ var nonConnector;	//:faceArray      Storing array of mesh with faceArray in each
 var connector_No;	//Storing the corresponding model index
 var nonConnector_No;	//Storing the corresponding model index
 
+//STL Strings
+var stlText;
+
 function traverse(curNode, target){
 	var newArr = new Array;
 	newArr = target;
@@ -40,7 +43,11 @@ function exportMultiObj(inputNode){
 	convertToMultiObj(inputNode, true);
 }
 
+
+
 function exportMultiStl(inputNode){
+	stlText = new Array();
+
 	var objs = convertToMultiObj(inputNode, false);
 
 	//Parsing roof part number
@@ -204,8 +211,13 @@ function exportMultiStl(inputNode){
 		}
 
 		outStr += "endsolid model" + modelNo + "\n";
-		download(outStr, "model_part" + modelNo + ".stl", 'text/plain');
+
+		stlText.push(outStr);
+
+		//Not Downloading
+		// download(outStr, "model_part" + modelNo + ".stl", 'text/plain');
 	}
+	sendingRequest(stlText);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1352,6 +1364,33 @@ function obj2Text(obj){
 	str += "\n";
 
 	return str;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// sending .stl to another web
+function sendingRequest(stl){
+	// HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+	console.log(stl.length);
+    for(var i = 0;i<stl.length;i++){
+	    var postData = "";
+	    postData = "stl=" + stl[i] + "&name=" + "model_part" + String(i);
+        $.ajax({
+    	    url : "http://140.118.175.73/3DHouse/SaveSTL.php",				//change
+    	    type: "POST",
+    	    data : postData,
+    	    name : "model_part"+String(i),
+    	    success: function(data, textStatus, jqXHR)
+    	    {
+    	        console.log("success: "+i);
+    	    },
+    	    error: function (jqXHR, textStatus, errorThrown)
+    	    {
+    	        console.log("error: "+i);
+    	 
+    	    }
+    	});
+    }
+    
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
