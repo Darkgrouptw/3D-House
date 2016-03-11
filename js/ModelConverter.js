@@ -1,3 +1,4 @@
+var HOST_IP = "192.168.11.37";
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Wouldn't be changed stuff
 var typeDefined = ["roof", "base", "wall"];
@@ -1375,7 +1376,7 @@ function sendingRequest(stl){
 	    var postData = "";
 	    postData = "stl=" + stl[i] + "&name=" + "model_part" + String(i);
         $.ajax({
-    	    url : "http://140.118.175.73/3DHouse/SaveSTL.php",				//change
+    	    url : "http://" + HOST_IP + "/3DHouse/SaveSTL.php",				//change
     	    type: "POST",
     	    data : postData,
     	    name : "model_part"+String(i),
