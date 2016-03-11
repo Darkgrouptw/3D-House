@@ -659,7 +659,7 @@ function convertToMultiObj(inputNode, isDownload){
 				infoStr += "\n\n";
 			}
 		}
-		download(infoStr, "info" + ".txt", 'text/plain');
+		// download(infoStr, "info" + ".txt", 'text/plain');
 	// }
 	return objs;
 }
