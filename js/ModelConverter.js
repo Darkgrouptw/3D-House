@@ -88,12 +88,6 @@ function exportMultiStl(inputNode){
 					case "roof/hip":
 						switch(parseRoof){
 							case 0:
-								// angle = -90;
-								// vec = 0;
-								// curObj = rotateOneAxis(curObj, angle, vec);
-								// faceArr = rotateOneAxis_faceArr(faceArr, angle, vec);
-								// vec = 1;
-								// angle = 41.58;
 								angle = [-90, 41.58];
 								vec = [0, 1];
 								break;
@@ -102,12 +96,6 @@ function exportMultiStl(inputNode){
 								angle = [-17.5];
 								break;
 							case 2:
-								// angle = 90;
-								// vec = 0;
-								// curObj = rotateOneAxis(curObj, angle, vec);
-								// faceArr = rotateOneAxis_faceArr(faceArr, angle, vec);
-								// vec = 1;
-								// angle = 221.58;
 								angle = [90, 221.58];
 								vec = [0, 1];
 								break;
@@ -118,6 +106,34 @@ function exportMultiStl(inputNode){
 							default:
 								angle = [0];
 								vec = [0];
+								break;
+						}
+						break;
+					case "roof/mansard":
+						switch(parseRoof){
+							case 0:
+								vec = [0];
+								angle = [10];
+								break;
+							case 1:
+								vec = [1, 0];
+								angle = [270, 158];
+								break;
+							case 2:
+								vec = [0];
+								angle = [170];
+								break;
+							case 3:
+								vec = [1, 0];
+								angle = [90, 158];
+								break;
+							case 4:
+								vec = [0];
+								angle = [90];
+								break;
+							default:
+								vec = [0];
+								angle = [0];
 								break;
 						}
 						break;
@@ -253,6 +269,12 @@ function convertToMultiObj(inputNode, isDownload){
 				break;
 			case "roof/hip":
 				dup = 4;
+				break;
+			case "roof/mansard":
+				dup = 5;
+				break;
+			default:
+				dup = 1;
 				break;
 		}
 		for(var j = 0;j<dup;j++){
@@ -426,6 +448,66 @@ function convertToMultiObj(inputNode, isDownload){
 					outNodeIndex++;
 				}
 
+				break;
+			case "roof/mansard":
+				//Divides the roof into two .obj
+				var vArr = new Array(), vnArr = new Array();
+				var iter = 0, lastIter = 0;
+				for(iter = 0, lastIter = 0;iter < vStr.length; iter++){
+					if(vStr[iter] == "\n"){
+
+						vArr.push(vStr.substring(lastIter, ++iter));
+						lastIter = iter;
+					}
+				}
+				
+				for(iter = 0, lastIter = 0;iter < vnStr.length; iter++){
+					if(vnStr[iter] == "\n"){
+						vnArr.push(vnStr.substring(lastIter, ++iter));
+						lastIter = iter;
+					}
+				}
+				var vStr = ["", "", "", "", ""], vnStr = ["", "", "", "", ""], fStr = ["", "", "", "", ""];
+				var mVIndex = new Array;			//Array of 5 elements storing model's vertices (original face indices)
+				mVIndex.push([0, 1, 2, 3, 20, 21, 22, 23, 40, 41, 42, 43]);		//Left
+				mVIndex.push([4, 5, 6, 7, 24, 25, 26, 27, 44, 45, 46, 47]);		//Back
+				mVIndex.push([8, 9, 10, 11, 28, 29, 30, 31, 48, 49, 50, 51]);	//Right
+				mVIndex.push([12, 13, 14, 15, 32, 33, 34, 35, 52, 53, 54, 55]);	//Front
+				mVIndex.push([16, 17, 18, 19, 36, 37, 38, 39]);					//Top
+
+				var mVFacesI = new Array;			//Array of 5 elements storing model's vertices (output face indices, ordered)
+				mVFacesI.push([1, 3, 2, 1, 4, 3, 5, 7, 6, 5, 8, 7, 9, 11, 10, 9, 12, 11, 4, 6, 11, 11, 6, 10, 1, 12, 5, 12, 9, 5, 5, 6, 1, 4, 1, 6]);
+				mVFacesI.push([1, 3, 2, 1, 4, 3, 5, 7, 6, 5, 8, 7, 9, 11, 10, 9, 12, 11, 1, 5, 10, 10, 5, 9, 8, 2, 11, 11, 12, 8, 2, 8, 5, 5, 1, 2]);
+				mVFacesI.push([1, 3, 2, 1, 4, 3, 5, 7, 6, 5, 8, 7, 9, 11, 10, 9, 12, 11, 1, 5, 10, 10, 5, 9, 8, 2, 11, 11, 12, 8, 2, 8, 5, 5, 1, 2]);
+				mVFacesI.push([1, 3, 2, 1, 4, 3, 5, 7, 6, 5, 8, 7, 9, 11, 10, 9, 12, 11, 4, 6, 11, 11, 6, 10, 1, 12, 5, 12, 9, 5, 5, 6, 1, 4, 1, 6]);
+				mVFacesI.push([1, 3, 2, 1, 4, 3, 5, 7, 6, 5, 8, 7, 8, 5, 4, 4, 5, 3, 5, 6, 3, 3, 6, 2, 6, 7, 2, 2, 7, 1, 7, 8, 1, 4, 1, 8]);
+
+				//Adding to fStr
+				for(var i = 0;i<5;i++){
+					for(var j = 0;j<mVFacesI[i].length;j+=3){
+						fStr[i] += "f " + mVFacesI[i][j] + "//" + mVFacesI[i][j] + " " + mVFacesI[i][j+1] + "//" + mVFacesI[i][j+1] + " " + mVFacesI[i][j+2] + "//" + mVFacesI[i][j+2] + "\n";
+					}
+				}
+
+				for(i = 0;i<vArr.length;i++){
+					for(var modelNo = 0;modelNo<5;modelNo++){
+						if(mVIndex[modelNo].indexOf(i) > -1){
+							vStr[modelNo] += vArr[i];
+							vnStr[modelNo] += vnArr[i];
+						}
+					}
+				}
+
+				for(var i = 0;i<5;i++){
+					vStr[i] += "\n";
+					vnStr[i] += "\n";
+
+					parseObj_withStoring(vStr[i] + vnStr[i] + fStr[i], false);
+					if(isDownload)	download(vStr[i] + vnStr[i] + fStr[i], "model_part" + outNodeIndex + ".obj", 'text/plain');
+					//Append string of .objs
+					objs.push(vStr[i] + vnStr[i] + fStr[i]);
+					outNodeIndex++;
+				}
 				break;
 
 			default:
