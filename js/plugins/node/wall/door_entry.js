@@ -94,7 +94,7 @@ SceneJS.Types.addType("wall/door_entry",
             return uvset;
         });
 
-        this.addNode(build.call(this, params));
+        this.addNode(wall_door_entry_build.call(this, params));
         this.direction = params.direction;
         this._percentY=params.percentY;
         this._percentX=params.percentX;
@@ -311,7 +311,7 @@ SceneJS.Types.addType("wall/door_entry",
     }
 });
 
-function build(params) 
+function wall_door_entry_build(params) 
 {
 	var positionSet = this._paramana.createPositions();
 	var indiceSet = utility.makeIndices(0, (positionSet.length / 3) - 1);

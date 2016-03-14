@@ -79,7 +79,7 @@ SceneJS.Types.addType("roof/hip",
             return uvset;
         });
 
-        this.addNode(build.call(this, params)); 
+        this.addNode(roof_hip_build.call(this, params)); 
     },  
 
     updateNode: function()
@@ -156,7 +156,7 @@ SceneJS.Types.addType("roof/hip",
 });
 
 
-function build(params) 
+function roof_hip_build(params) 
 {
     var positionSet = this._paramana.createPositions();
     var indiceSet = utility.makeIndices(0, (positionSet.length / 3) - 1);

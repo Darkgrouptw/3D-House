@@ -20,7 +20,7 @@ SceneJS.Types.addType("wall/triangle",
 			return pset;
 		});
 		this._layer = params.layer;
-		this.addNode(build.call(this, params)); 
+		this.addNode(wall_triangle_build.call(this, params)); 
 	},
 	
 	getLayer: function() { return this._layer; },
@@ -82,7 +82,7 @@ SceneJS.Types.addType("wall/triangle",
     }
 });
 
-function build(params) 
+function wall_triangle_build(params) 
 {
     var positionSet = this._paramana.createPositions();
 	var indiceSet = utility.makeIndices(0, 5, 3).concat(utility.makeIndices(6, 17));

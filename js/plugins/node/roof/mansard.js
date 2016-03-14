@@ -37,7 +37,7 @@ SceneJS.Types.addType("roof/mansard",
 	        
 	        return pset;
 	    });
-        this.addNode(build.call(this, params)); 
+        this.addNode(roof_mansard_build.call(this, params)); 
     },
     
     getLayer:function(){ return this._layer; },
@@ -104,7 +104,7 @@ SceneJS.Types.addType("roof/mansard",
     }
 });
 
-function build(params) 
+function roof_mansard_build(params) 
 {
     var positionSet = this._paramana.createPositions();
     var indiceSet = utility.makeIndices(0, (positionSet.length / 3) - 1);
