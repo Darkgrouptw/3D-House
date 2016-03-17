@@ -7,6 +7,11 @@ function initial()
 	TrashCan = getElem("TRASHCAN");
 	Modal = getStyle("MODAL");
 	ExportMenu = getElem("EXPORTMENU");
+	if (Mobile)
+	{
+		setMultiStyle(getSubElem(getElem("codewrapper"), "div"),["display"],["none"]);
+		
+	}
 	setLayout();
 }
 function setLayout()//This function will run while onload and onresize

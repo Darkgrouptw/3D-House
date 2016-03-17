@@ -8,7 +8,8 @@
 
 
 	<title>3D House - Draw</title>
-	
+	<?php include 'detectdevice.php';?>
+	<script>var Mobile = <?php echo $Mobile;?>;</script>
 	<link href = "css/reset.css" rel = "stylesheet">
 	<link href = "css/style.css" rel = "stylesheet">
     <link href = "css/template.css" rel = "stylesheet">
