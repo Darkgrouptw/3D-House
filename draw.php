@@ -58,7 +58,8 @@
 	//exit;
 ?>
 </head>
-<body onresize = "setLayout()" onload = "initial()">
+<body onresize = "setLayout()" onload = "initial()" onclick = "showstate()" ondblclick = "showstate()">
+<i id = "Mode" class="fa fa-eye"></i>
 <i id = "ScreenController" class="fa fa-arrows-alt" onclick = "ScreenControll()"></i>	
 <div id = "FLOORTAB">
 	<nav>

@@ -1,8 +1,20 @@
-var fullScreen = 0;
+function showstate()
+{
+	if(watchmode)
+	{
+		Mode.className = "fa fa-eye";
+	}
+	else
+	{
+		Mode.className = "fa fa-pencil-square-o";
+	}
+			
+}
+var fullScreenflag = 0;
 function ScreenControll()
 {
-	fullScreen = !fullScreen;
-	if(fullScreen)
+	fullScreenflag = !fullScreenflag;
+	if(fullScreenflag)
 	{
 		ScreenController.className = "fa fa-compress";
 		toggleFullScreen();
@@ -13,7 +25,20 @@ function ScreenControll()
 		toggleFullScreen();
 	}
 }
+function toggleFullScreen()
+{
+    var doc = window.document;
+    var docel = doc.documentElement;
 
+    var requestFullScreen = docel.requestFullscreen || docel.mozRequestFullScreen || docel.webkitRequestFullScreen;
+    var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen;
+
+    if(!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement)
+    {
+        requestFullScreen.call(docel);
+    }
+    else { cancelFullScreen.call(doc);  }
+}
 //This is for interact ex:click
 
 var TabAmount = 1;// 樓層數初始為一層 屋頂是第0層

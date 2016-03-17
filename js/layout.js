@@ -8,6 +8,7 @@ function initial()
 	Modal = getStyle("MODAL");
 	ExportMenu = getElem("EXPORTMENU");
 	ScreenController = getElem("ScreenController");
+	Mode = getElem("Mode");
 	if (Mobile)
 	{
 		setMultiStyle(getSubElem(getElem("codewrapper"), "div"),["display"],["none"]);
@@ -15,11 +16,16 @@ function initial()
 	}
 	setLayout();
 }
+
 function setLayout()//This function will run while onload and onresize
 {
 	Width = window.innerWidth;
 	Height = window.innerHeight;
 	changeSize(getElem('archcanvas'),Width,Height);
+	Mode.style.position = "absolute";
+	Mode.style.fontSize = 0.05*Height + "px";
+	Mode.style.top = "10px";
+	Mode.style.right = 0.1*Height+10 + "px";
 	ScreenController.style.position = "absolute";
 	ScreenController.style.fontSize = 0.1*Height + "px";
 	ScreenController.style.top = "10px";
@@ -52,6 +58,7 @@ function setComponent()
 		//1.change component size
 		changeSize(FloorTab, Width, 0.05*Height);
 		ScreenController.style.top = 0.05*Height+"px";
+		Mode.style.top = 0.05*Height+"px";
 		changeSize(PartBar, Width, 0.085*Height);
 		RefSize = Height;
 		//2 for FloorTab Property / Value

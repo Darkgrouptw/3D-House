@@ -64,21 +64,6 @@ function AddEventListenerList(list, event, functor)
     for(var i = 0; i < list.length; i++) { list[i].addEventListener(event, functor, false); }
 }
 
-function toggleFullScreen()
-{
-    var doc = window.document;
-    var docel = doc.documentElement;
-
-    var requestFullScreen = docel.requestFullscreen || docel.mozRequestFullScreen || docel.webkitRequestFullScreen;
-    var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen;
-
-    if(!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement)
-    {
-        requestFullScreen.call(docel);
-    }
-    else { cancelFullScreen.call(doc);  }
-}
-
 var lastid=-1;
 var lastFloor = -1;
 var uiPanel;
@@ -287,6 +272,7 @@ function ScenePick(){
 
                 var now = new Date().getTime();
                 if(now - lastTime < 300) {
+					watchmode = 0;
                     if(pickNode != "interWall")
                     {
                         changeViewpoint(pickNode);
@@ -303,6 +289,7 @@ function ScenePick(){
 
     scene.on("nopick",
             function (hit) {
+				watchmode = 1;
                 uiPanel.style.display='none';
                 if(lastid>0){
                     material=scene.findNode(lastid);
@@ -1292,7 +1279,7 @@ function deleteBase(){
 }
 
 function attachInput(pickId){
-
+	watchmode = 0;
     var n = scene.findNode(pickId);
 
     var nameNode= n.parent.parent;
