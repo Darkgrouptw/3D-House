@@ -59,7 +59,7 @@
 ?>
 </head>
 <body onresize = "setLayout()" onload = "initial()">
-	
+<i id = "ScreenController" class="fa fa-arrows-alt" onclick = "ScreenControll()"></i>	
 <div id = "FLOORTAB">
 	<nav>
 		<ul id = "Tab">

@@ -1,3 +1,19 @@
+var fullScreen = 0;
+function ScreenControll()
+{
+	fullScreen = !fullScreen;
+	if(fullScreen)
+	{
+		ScreenController.className = "fa fa-compress";
+		toggleFullScreen();
+	}
+	else
+	{
+		ScreenController.className = "fa fa-arrows-alt";
+		toggleFullScreen();
+	}
+}
+
 //This is for interact ex:click
 
 var TabAmount = 1;// 樓層數初始為一層 屋頂是第0層

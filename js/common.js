@@ -33,7 +33,7 @@ function createTextNode(Content)
 }
 
 //Component
-var FloorTab, FuncBar, PartBar, TrashCan, Modal, ExportMenu;
+var FloorTab, FuncBar, PartBar, TrashCan, Modal, ExportMenu, ScreenController;
 var PropertyFT, ValueFT, PropertyPBul, ValuePBli, PropertyPBimgclose, PropertyPBContent, Propertycloseli,Valuecloseli,RefSize;
 var Height,Width;//window size
 
