@@ -40,3 +40,4 @@ var Height,Width;//window size
 var Orientation = -1;
 var Func_click_flag, Export_click_flag;
 var watchmode = 0;
+var partmode = -1;

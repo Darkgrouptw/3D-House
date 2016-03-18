@@ -119,6 +119,7 @@ var flag = [0, 0, 0];//0-window 1-door 2-roof
 function componentClick(id){
 	id = id.split("")[id.length-1];
 	var AddElem = function(id, Elemindex, MajorElem,BeforeElem){
+		partmode = parseInt(id);
 		var liElem = createElem("li");
 		liElem.id = id + Elemindex.toString();
 		liElem.onclick = function(){subPartClick(liElem.id)};
@@ -167,6 +168,10 @@ function closePartBar(id){
 	if(id == "mainPartBar"){
 		setInvisiblePartBar();
 		setOriFuncBar();
+	}
+	else
+	{
+		partmode = -1;
 	}
 	//click_flag = 0;
 	
