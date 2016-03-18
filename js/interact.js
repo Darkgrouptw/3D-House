@@ -77,6 +77,8 @@ function addTab(){
 function deleteTab(){
 	var ul = getElem("Tab");
 	if (TabAmount > 1){ //只剩一層樓時不能刪除
+		if(SelectId > 0)//屋頂、wholeview不能刪除
+		{
 		ul.removeChild(getElem(SelectId.toString()));
 		if (SelectId == TabAmount){
 			TabAmount--;
@@ -93,8 +95,12 @@ function deleteTab(){
 			TabAmount--;
 			selectTab(SelectId);
 		}
+		deleteBase();
+		lastFloor = SelectId;
+		}
+		
 	}
-	deleteBase();
+	
 }
 
 //For FuncBar
