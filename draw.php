@@ -64,8 +64,9 @@
 <div id = "FLOORTAB">
 	<nav>
 		<ul id = "Tab">
-			<li id = "0" class = "selected" onclick = "selectTab('0')"><i class="fa fa-home"></i></li>
+			<li id = "-1" class = "selected" onclick = "selectTab('-1')"><i class="fa fa-home"></i></li><!--Whole view-->
 			<li id = "1" onclick = "selectTab('1')">1F</li>
+			<li id = "0" onclick = "selectTab('0')">R</li>
 			<li id = "plus" onclick = "addTab()">+</li>
 		</ul>
 	</nav>

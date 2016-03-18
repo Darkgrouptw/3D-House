@@ -41,28 +41,34 @@ function toggleFullScreen()
 }
 //This is for interact ex:click
 
-var TabAmount = 1;// 樓層數初始為一層 屋頂是第0層
-var SelectId = 0; // 選取的樓層初始為0(屋頂)
+var TabAmount = 1;// 樓層數初始為一層 屋頂是第2層
+var SelectId = 0; // 選取的樓層初始為0
 
 function selectTab(id){
 	var Selected = getElem(id);
-	for (var i = 0; i <= TabAmount; i++){
-		getElem(i.toString()).className = "General";
+	var alltab = getSubElem(getElem("Tab"),"li");
+	for (var i = 0; i < alltab.length; i++){
+		alltab[i].className = "General";
 	}
 	Selected.className = "Selected";
 	SelectId = parseInt(id);
+	lastFloor = SelectId;
+	if (SelectId == 0)
+	{
+		lastFloor = TabAmount + 1;
+	}
 }
 
 function addTab(){
 	TabAmount++;
 	var ul = getElem("Tab");
-	var plus = getElem("plus");
+	var roof = getElem("0");
 	var liElem = createElem("li");
 	liElem.id = TabAmount.toString();
 	liElem.onclick = function(){selectTab(liElem.id)};
 	var text = createTextNode(TabAmount.toString() + "F");
 	liElem.appendChild(text);
-	ul.insertBefore(liElem, plus);
+	ul.insertBefore(liElem, roof);
 	selectTab(liElem.id);
 	setFloorTab(PropertyFT,ValueFT);
 	addBase();
