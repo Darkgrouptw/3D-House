@@ -57,6 +57,8 @@ function UIinit(boolFlag)
         else { codeBlock.style.display = 'none'; }
     });
 
+
+
     timeFuction();
 }
 function AddEventListenerList(list, event, functor)
@@ -2286,7 +2288,7 @@ function isPowerEditMode(){
     return powerEditMode.checked;
 }
 
-function changeRoof(){
+function changeRoof(type){
     go = false;
     var roof=-1;
     var nodes=scene.findNodes();
@@ -2309,204 +2311,58 @@ function changeRoof(){
     }
     if(roof != -1){
         if(roof.KillChildren)roof.KillChildren();
-        if(roof.getType() == "roof/hip"){
+        if(type == "roof/gable"){
             console.log("changed to gable");
-            var rightTriangle = {
-                type: "flags",
-                flags:{transparent:false},
-                nodes:
-                [{
-                    type: "name",
-                    name: "rightTriangle",
-        
-                    nodes:
-                    [{
-                        type: "material",
-                        color:{ r:0.8, g:0.8, b:0.8 },
-                        alpha:0.2,
-                        nodes:
-                        [{
-                            type: "name",
-                            name: "wall.jpg",
-        
-                            nodes:
-                            [{
-                                type: "matrix",
-                                elements:[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],
-        
-                                nodes:
-                                [{
-                                    type: "texture",
-                                    src: "images/GeometryTexture/wall.jpg",
-                                    applyTo: "color",
-        
-                                    nodes:
-                                    [{
-                                        type: "wall/triangle",
-                                        layer: layerNumber,
-                                        height: roof.getHeight(),
-                                        width: roof.getWidth(),
-                                        thickness: 1,
-                                        ratio: {a: roof.getRatio().a , b: roof.getRatio().b},
-                                        scale: {x: 1, y: 1, z: 1},
-                                        rotate: {x: 0, y: 90, z: 0},
-                                        translate: {x: 0, y: 0, z: 0}
-                                    }]
-                                }]
-                            }]
-                        }]
-                    }]
-                }] 
-            };
-            var leftTriangle = {
-                type: "flags",
-                flags:{transparent:false},
-                nodes:
-                [{
-                    type: "name",
-                    name: "leftTriangle",
-        
-                    nodes:
-                    [{
-                        type: "material",
-                        color:{ r:0.8, g:0.8, b:0.8 },
-                        alpha:0.2,
-                        nodes:
-                        [{
-                            type: "name",
-                            name: "wall.jpg",
-        
-                            nodes:
-                            [{
-                                type: "matrix",
-                                elements:[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],
-        
-                                nodes:
-                                [{
-                                    type: "texture",
-                                    src: "images/GeometryTexture/wall.jpg",
-                                    applyTo: "color",
-        
-                                    nodes:
-                                    [{
-                                        type: "wall/triangle",
-                                        layer: layerNumber,
-                                        height: roof.getHeight(),
-                                        width: roof.getWidth(),
-                                        thickness: 1,
-                                        ratio: {a: roof.getRatio().a , b: roof.getRatio().b},
-                                        scale: {x: 1, y: 1, z: 1},
-                                        rotate: {x: 0, y: 90, z: 0},
-                                        translate: {x: 0, y: 0, z: 0}
-                                    }]
-                                }]
-                            }]
-                        }]
-                    }]
-                }] 
-            };
-            var gable = {
-                type: "flags",
-                flags:{transparent:false},
-                nodes:
-                [{
-                    type: "name",
-                    name: "roof",
-        
-                    nodes:
-                    [{
-                        type: "material",
-                        color:{ r:0.8, g:0.8, b:0.8 },
-                        alpha:0.2,
-                        nodes:
-                        [{
-                            type: "name",
-                            name: "roof.jpg",
-        
-                            nodes:
-                            [{
-                                type: "matrix",
-                                elements:[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],
-        
-                                nodes:
-                                [{
-                                    type: "texture",
-                                    src: "images/GeometryTexture/roof.jpg",
-                                    applyTo: "color",
-        
-                                    nodes:
-                                    [{
-                                        type: "roof/gable",
-                                        layer: layerNumber,
-                                        height: roof.getHeight(),
-                                        width: roof.getWidth(),
-                                        thickness: 1,
-                                        depth: roof.getDepth(),
-                                        ratio: {a: roof.getRatio().a , b: roof.getRatio().b},
-                                        scale: {x: 1, y: 1, z: 1},
-                                        rotate: {x: 0, y: 90, z: 0},
-                                        translate: {x: 0, y: 0, z: 0}
-                                    }]
-                                }]
-                            }]
-                        }]
-                    }]
-                }] 
-            };
-            root.addNode(hip);
+            var rightTriangleS = getTriangleS({layerNumber: layerNumber,
+                Height: roof.getHeight(),
+                Width: roof.getWidth(),
+                Depth: roof.getDepth(),
+                Ratioa: roof.getRatio().a,
+                Ratiob: roof.getRatio().b,
+                pos: "rightTriangle"
+            });
+
+            var leftTriangleS = getTriangleS({layerNumber: layerNumber,
+                Height: roof.getHeight(),
+                Width: roof.getWidth(),
+                Depth: roof.getDepth(),
+                Ratioa: roof.getRatio().a,
+                Ratiob: roof.getRatio().b,
+                pos: "leftTriangle"
+            });
+            var gableS = getGableS({layerNumber: layerNumber,
+                Height: roof.getHeight(),
+                Width: roof.getWidth(),
+                Depth: roof.getDepth(),
+                Ratioa: roof.getRatio().a,
+                Ratiob: roof.getRatio().b
+            });
+            root.addNode(leftTriangleS);
+            root.addNode(rightTriangleS);
+            root.addNode(gableS);
             roof.getParent().getParent().getParent().getParent().getParent().getParent().destroy();
-        }else if(roof.getType() == "roof/gable"){
+        }else if(type == "roof/hip"){
             console.log("changed to hip");
-            var hip = {
-                type: "flags",
-                flags:{transparent:false},
-                nodes:
-                [{
-                    type: "name",
-                    name: "roof",
-        
-                    nodes:
-                    [{
-                        type: "material",
-                        color:{ r:0.8, g:0.8, b:0.8 },
-                        alpha:0.2,
-                        nodes:
-                        [{
-                            type: "name",
-                            name: "roof.jpg",
-        
-                            nodes:
-                            [{
-                                type: "matrix",
-                                elements:[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],
-        
-                                nodes:
-                                [{
-                                    type: "texture",
-                                    src: "images/GeometryTexture/roof.jpg",
-                                    applyTo: "color",
-        
-                                    nodes:
-                                    [{
-                                        type: "roof/hip",
-                                        layer: layerNumber,
-                                        height: roof.getHeight(),
-                                        width: roof.getWidth(),
-                                        thickness: 2,
-                                        depth: roof.getDepth(),
-                                        ratio: {a: roof.getRatio().a , b: roof.getRatio().b},
-                                        toplen: 0,
-                                        scale: {x: 1, y: 1, z: 1},
-                                        rotate: {x: 0, y: 90, z: 0},
-                                        translate: {x: 0, y: 0, z: 0}
-                                    }]
-                                }]
-                            }]
-                        }]
-                    }]
-                }] 
-            };
-            root.addNode(hip);
+            var hipS = getHipS({layerNumber: layerNumber,
+                Height: roof.getHeight(),
+                Width: roof.getWidth(),
+                Depth: roof.getDepth(),
+                Ratioa: roof.getRatio().a,
+                Ratiob: roof.getRatio().b
+            });
+            
+            root.addNode(hipS);
+            roof.getParent().getParent().getParent().getParent().getParent().getParent().destroy();
+        }else if(type == "roof/mansard"){
+            console.log("changed to mansard");
+            var mansardS = getMansardS({layerNumber: layerNumber,
+                Height: roof.getHeight(),
+                Width: roof.getWidth(),
+                Depth: roof.getDepth(),
+                Ratioa: roof.getRatio().a,
+                Ratiob: roof.getRatio().b
+            });
+            root.addNode(mansardS);
             roof.getParent().getParent().getParent().getParent().getParent().getParent().destroy();
         }
         
@@ -2612,4 +2468,212 @@ function setlayout()
 	canvas.width = screen.width;
 	canvas.height = screen.height;
 	
+}
+
+function getHipS(param){
+    var hipS = {
+        type: "flags",
+        flags:{transparent:false},
+        nodes:
+        [{
+            type: "name",
+            name: "roof",
+
+            nodes:
+            [{
+                type: "material",
+                color:{ r:0.8, g:0.8, b:0.8 },
+                alpha:0.2,
+                nodes:
+                [{
+                    type: "name",
+                    name: "roof.jpg",
+
+                    nodes:
+                    [{
+                        type: "matrix",
+                        elements:[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],
+
+                        nodes:
+                        [{
+                            type: "texture",
+                            src: "images/GeometryTexture/roof.jpg",
+                            applyTo: "color",
+
+                            nodes:
+                            [{
+                                type: "roof/hip",
+                                layer: param.layerNumber,
+                                height: param.Height,
+                                width: param.Width,
+                                thickness: 2,
+                                depth: param.Depth,
+                                ratio: {a: param.Ratioa , b: param.Ratiob },
+                                toplen: 0,
+                                scale: {x: 1, y: 1, z: 1},
+                                rotate: {x: 0, y: 90, z: 0},
+                                translate: {x: 0, y: 0, z: 0}
+                            }]
+                        }]
+                    }]
+                }]
+            }]
+        }] 
+    };
+    return hipS;
+}
+
+function getMansardS(param){
+    var mansardS = {
+        type: "flags",
+        flags:{transparent:false},
+        nodes:
+        [{
+            type: "name",
+            name: "roof",
+
+            nodes:
+            [{
+                type: "material",
+                color:{ r:0.8, g:0.8, b:0.8 },
+                alpha:0.2,
+                nodes:
+                [{
+                    type: "name",
+                    name: "roof.jpg",
+
+                    nodes:
+                    [{
+                        type: "matrix",
+                        elements:[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],
+
+                        nodes:
+                        [{
+                            type: "texture",
+                            src: "images/GeometryTexture/roof.jpg",
+                            applyTo: "color",
+
+                            nodes:
+                            [{
+                                type: "roof/mansard",
+                                layer: param.layerNumber,
+                                height: param.Height,
+                                width: param.Width,
+                                thickness: 1,
+                                depth: param.Depth,
+                                ratio: {a: param.Ratioa , b: param.Ratiob},
+                                scale: {x: 1, y: 1, z: 1},
+                                rotate: {x: 0, y: 90, z: 0},
+                                translate: {x: 0, y: 0, z: 0}
+                            }]
+                        }]
+                    }]
+                }]
+            }]
+        }] 
+    };
+    return mansardS
+}
+
+function getGableS(param){
+
+    var gableS = {
+        type: "flags",
+        flags:{transparent:false},
+        nodes:
+        [{
+            type: "name",
+            name: "roof",
+
+            nodes:
+            [{
+                type: "material",
+                color:{ r:0.8, g:0.8, b:0.8 },
+                alpha:0.2,
+                nodes:
+                [{
+                    type: "name",
+                    name: "roof.jpg",
+
+                    nodes:
+                    [{
+                        type: "matrix",
+                        elements:[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],
+
+                        nodes:
+                        [{
+                            type: "texture",
+                            src: "images/GeometryTexture/roof.jpg",
+                            applyTo: "color",
+
+                            nodes:
+                            [{
+                                type: "roof/gable",
+                                layer: param.layerNumber,
+                                height: param.Height,
+                                width: param.Width,
+                                thickness: 1,
+                                depth: param.Depth,
+                                ratio: {a: param.Ratioa , b: param.Ratiob},
+                                scale: {x: 1, y: 1, z: 1},
+                                rotate: {x: 0, y: 90, z: 0},
+                                translate: {x: 0, y: 0, z: 0}
+                            }]
+                        }]
+                    }]
+                }]
+            }]
+        }] 
+    };
+    return gableS
+}
+function getTriangleS(param){
+    var TriangleS = {
+        type: "flags",
+        flags:{transparent:false},
+        nodes:
+        [{
+            type: "name",
+            name: param.pos,
+
+            nodes:
+            [{
+                type: "material",
+                color:{ r:0.8, g:0.8, b:0.8 },
+                alpha:0.2,
+                nodes:
+                [{
+                    type: "name",
+                    name: "wall.jpg",
+
+                    nodes:
+                    [{
+                        type: "matrix",
+                        elements:[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],
+
+                        nodes:
+                        [{
+                            type: "texture",
+                            src: "images/GeometryTexture/wall.jpg",
+                            applyTo: "color",
+
+                            nodes:
+                            [{
+                                type: "wall/triangle",
+                                layer: param.layerNumber,
+                                height: param.Height,
+                                width: param.Width,
+                                thickness: 1,
+                                ratio: {a: param.Ratioa , b: param.Ratiob},
+                                scale: {x: 1, y: 1, z: 1},
+                                rotate: {x: 0, y: 90, z: 0},
+                                translate: {x: 0, y: 0, z: 0}
+                            }]
+                        }]
+                    }]
+                }]
+            }]
+        }] 
+    };
+    return TriangleS;
 }
