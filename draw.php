@@ -17,6 +17,7 @@
 	<script src = "js/scenejs.js"></script>
 	<script src = "js/paramanager.js"></script>
 	<script src = "js/ui.js"></script>
+	<script src = "js/gesture.js"></script>
     <script src = "js/common.js"></script>
     <script src = "js/layout.js"></script>
     <script src = "js/interact.js"></script>

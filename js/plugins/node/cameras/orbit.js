@@ -43,10 +43,10 @@ SceneJS.Types.addType("cameras/orbit", {
         var last1X;
         var last1Y;
 		
-		var tmpNormal = null;
-        var camDist = null;
-        var isLock = false;
-        var isRotation = true;
+		//var tmpNormal = null;
+        //var camDist = null;
+        //var isLock = false;
+        //var isRotation = true;
 		
         var dragging = false;
         var lookatDirty = false;
@@ -105,10 +105,10 @@ SceneJS.Types.addType("cameras/orbit", {
         }
 
         function mouseUp() {
-            tmpNormal = getNormal();
-            camDist = getCameraDistance();
-            isLock = getIsLock();
-            isRotation = getIsRotation();
+            //tmpNormal = getNormal();
+            //camDist = getCameraDistance();
+            //isLock = getIsLock();
+            //isRotation = getIsRotation();
 
 			if(tmpNormal != null)
             {
@@ -118,10 +118,10 @@ SceneJS.Types.addType("cameras/orbit", {
         }
 
         function touchEnd() {
-            tmpNormal = getNormal();
-            camDist = getCameraDistance();
-            isLock = getIsLock();
-            isRotation = getIsRotation();
+            //tmpNormal = getNormal();
+            //camDist = getCameraDistance();
+            //isLock = getIsLock();
+            //isRotation = getIsRotation();
 
 			if(tmpNormal != null)
             {
@@ -148,7 +148,7 @@ SceneJS.Types.addType("cameras/orbit", {
                 }
 			}
 			else{
-                if(isRotation == true)
+                if(isRotation == true && partmode == -1)
                 {
                     var posX = event.targetTouches[0].clientX;
                     var posY = event.targetTouches[0].clientY;
