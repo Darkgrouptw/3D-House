@@ -446,9 +446,11 @@ SceneJS.Types.addType("base/basic",
 				if(high)interWall[i].setHeight(high*1);
 				interWall[i].setPercentX((100*(interWall[i].getTranslate()[0] - baseCenterX + this.getRealWidth()))/(this.getRealWidth()*2));
 				interWall[i].setPercentY((100*(interWall[i].getTranslate()[2] - baseCenterZ + this.getRealHeight()))/(this.getRealHeight()*2));
-			}
-
-			if(interWall[i] && interWall[i].adjustChildren)interWall[i].adjustChildren();
+				if(interWall[i] && interWall[i].adjustChildren){
+					interWall[i].adjustChildren()
+				};
+			};
+			
 		}
 
 		//call 

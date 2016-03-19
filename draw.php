@@ -79,6 +79,9 @@
         </div>
         <div id="uiarea">
         	<input type="checkbox" id = "powerEditMode" checked = true>要不要啟動強力編輯模式<br>
+        	<input type="button" onclick="alert('Hello world!')" value = "gable">
+        	<input type="button" onclick="alert('Hello world!')" value = "hip">
+        	<input type="button" onclick="alert('Hello world!')" value = "mansard"><br>
         </div>            
     </div>
 	
