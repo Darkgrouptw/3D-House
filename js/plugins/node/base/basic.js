@@ -79,7 +79,7 @@ SceneJS.Types.addType("base/basic",
 	callBaseCalibration: function(high)
 	{
 		
-
+		try {
 		//get all the element
 		
 		var mnmte = function(n) { return n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0]; }
@@ -460,6 +460,13 @@ SceneJS.Types.addType("base/basic",
 				if(n.getName()=="base" && mnmte(n).getLayer() == this.getLayer()+1)mnmte(n).callBaseCalibration();
 			}
 		}
+		dirty = false;
+		}
+		catch(err) {
+		    //console.log(err.message);
+		    dirty = true;
+		}
+		 
 	}
 });
 

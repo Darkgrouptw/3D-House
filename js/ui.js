@@ -1,4 +1,4 @@
-var go = true;
+var dirty = true;
 function UIinit(boolFlag)
 {
     console.log('what did you done');
@@ -240,7 +240,7 @@ function ScenePick(){
     scene.on("pick",
             function (hit) {
 				isLock = true;
-                
+                dirty = true;
                 var material;
                 if(lastid>0){
                     material=scene.findNode(lastid);
@@ -291,6 +291,7 @@ function ScenePick(){
 
     scene.on("nopick",
             function (hit) {
+                dirty = true;
 				watchmode = 1;
                 uiPanel.style.display='none';
                 if(lastid>0){
@@ -1342,6 +1343,7 @@ function attachInput(pickId){
                 if(n.setRealHeight){n.setRealHeight(Number(heightinput.value*1.0));}
                 heightpropertyValue.textContent=heightinput.value;
                 n.callBaseCalibration();
+                dirty = true;
             }
         });
         //heightinput.addEventListener('change',function(event){
@@ -1387,6 +1389,7 @@ function attachInput(pickId){
                 if(n.setRealWidth){n.setRealWidth(Number(widthinput.value*1.0));}
                 widthpropertyValue.textContent=widthinput.value;
                 n.callBaseCalibration();
+                dirty = true;
             }
         });
         widthinput.addEventListener('mouseup',function(event){
@@ -1425,6 +1428,7 @@ function attachInput(pickId){
                 n.setPercentX(Number(percentXinput.value));
                 percentXpropertyValue.textContent=percentXinput.value;
                 n.callBaseCalibration();
+                dirty = true;
             }
         });
         percentXinput.addEventListener('mouseup',function(event){
@@ -1463,6 +1467,7 @@ function attachInput(pickId){
                 n.setPercentY(Number(percentYinput.value));
                 percentYpropertyValue.textContent=percentYinput.value;
                 n.callBaseCalibration();
+                dirty = true;
             }
         });
         percentYinput.addEventListener('mouseup',function(event){
@@ -1492,6 +1497,7 @@ function attachInput(pickId){
             n.setDirection(directioninput.checked ? "vertical":"horizontal");
             directioninput.textContent = directioninput.checked == "vertical" ? "vertical":"horizontal";
             n.callBaseCalibration();
+            dirty = true;
         });
     }
 
@@ -1544,6 +1550,7 @@ function attachInput(pickId){
                 }
                 //cancle pick
                 lastid=-1;
+                dirty = true;
             }
 
         });
@@ -1666,6 +1673,7 @@ function attachInput(pickId){
                 }
                 //cancle pick
                 lastid=-1;
+                dirty = true;
             }
 
         });
@@ -1787,6 +1795,7 @@ function attachInput(pickId){
                 }
                 //cancle pick
                 lastid=-1;
+                dirty = true;
             }
 
         });
@@ -1905,6 +1914,7 @@ function attachInput(pickId){
                 }
                 //cancle pick
                 lastid=-1;
+                dirty = true;
             }
 
         });
@@ -1939,6 +1949,7 @@ function attachInput(pickId){
                 n.setDepth(Number(depthinput.value));
                 depthpropertyValue.textContent=depthinput.value;
                 n.callBaseCalibration();
+                dirty = true;
             }
         });
         depthinput.addEventListener('mouseup',function(event){
@@ -1975,6 +1986,7 @@ function attachInput(pickId){
                 n.setToplen(Number(topleninput.value*1.0));
                 toplenpropertyValue.textContent=topleninput.value;
                 n.callBaseCalibration();
+                dirty = true;
             }
         });
         topleninput.addEventListener('mouseup',function(event){
@@ -2011,6 +2023,7 @@ function attachInput(pickId){
                 n.setOffsetX(Number(OffsetXinput.value*1.0));
                 OffsetXropertyValue.textContent=OffsetXinput.value;
                 n.callBaseCalibration();
+                dirty = true;
             }
         });
         OffsetXinput.addEventListener('mouseup',function(event){
@@ -2047,6 +2060,7 @@ function attachInput(pickId){
                 n.setOffsetY(Number(OffsetYinput.value*1.0));
                 OffsetYropertyValue.textContent=OffsetYinput.value;
                 n.callBaseCalibration();
+                dirty = true;
             }
         });
         OffsetYinput.addEventListener('mouseup',function(event){
@@ -2083,6 +2097,7 @@ function attachInput(pickId){
                 n.setRatioA(Number(RatioAinput.value*1.0));
                 RatioAropertyValue.textContent=RatioAinput.value;
                 n.callBaseCalibration();
+                dirty = true;
             }
         });
         RatioAinput.addEventListener('mouseup',function(event){
@@ -2118,6 +2133,7 @@ function attachInput(pickId){
                 n.setRatioB(Number(RatioBinput.value*1.0));
                 RatioBropertyValue.textContent=RatioBinput.value;
                 n.callBaseCalibration();
+                dirty = true;
             }
         });
         RatioBinput.addEventListener('mouseup',function(event){
@@ -2154,6 +2170,7 @@ function attachInput(pickId){
                 n.setWindowW(Number(WindowWinput.value*1.0));
                 WindowWropertyValue.textContent=WindowWinput.value;
                 n.callBaseCalibration();
+                dirty = true;
             }
         });
         WindowWinput.addEventListener('mouseup',function(event){
@@ -2189,6 +2206,7 @@ function attachInput(pickId){
                 n.setWindowH(Number(WindowHinput.value*1.0));
                 WindowHropertyValue.textContent=WindowHinput.value;
                 n.callBaseCalibration();
+                dirty = true;
             }
         });
         WindowHinput.addEventListener('mouseup',function(event){
@@ -2200,7 +2218,7 @@ function attachInput(pickId){
 
 function timeFuction(){
     setInterval(function(){
-        if(go){
+        if(dirty){
             var backWall=-1;
             var rightWall=-1;
             var leftWall=-1;
@@ -2289,11 +2307,10 @@ function isPowerEditMode(){
 }
 
 function changeRoof(type){
-    go = false;
     var roof=-1;
     var nodes=scene.findNodes();
     var root = scene.findNode(3);
-    var layerNumber=getTopLayer()
+    var layerNumber=getTopLayer()+1;
     var elements = [];
     for(var i=0;i<nodes.length;i++){
         var node = nodes[i];
@@ -2369,8 +2386,8 @@ function changeRoof(type){
     }
     lastFloor =-1;
     lastid=-1;
-    go = true;
     Calibration();
+    dirty = true;
     
 }
 
