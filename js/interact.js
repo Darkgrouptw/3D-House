@@ -126,7 +126,7 @@ function PartClick()
 	setInvisibleFuncBar();
 }
 //For PartBar
-var totalPart = [10, 10, 9];//0-window 1-door 2-roof
+var totalPart = [10, 10, 3];//0-window 1-door 2-roof
 var flag = [0, 0, 0];//0-window 1-door 2-roof
 function componentClick(id){
 	id = id.split("")[id.length-1];
@@ -160,8 +160,14 @@ function componentClick(id){
 	getStyle("subPartBar").display = "block";
 	
 }
+var rfcomponent = ["gable", "hip", "mansard"];
 function subPartClick(id){
-	console.log(id);
+	tmp = id.split("");
+	type = parseInt(tmp[0]);	index = parseInt(tmp[1]);
+	if(type ==2)//roof
+	{
+		changeRoof("roof/" + rfcomponent[index-1]);
+	}
 }
 
 function closePartBar(id){
