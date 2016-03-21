@@ -197,7 +197,7 @@ function closePartBar(id){
 
 
 
-var Texture_flag = 0;
+var Texture_flag = 1;
 function TextureClick()
 {
 	var Texture = getStyle('Texture');

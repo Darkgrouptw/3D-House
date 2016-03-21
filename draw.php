@@ -105,7 +105,7 @@
 	<div id = "File_close" class = "funcsquare File" onclick = "FuncBarClick(this.className, 'funcsquare edit')"><p id = "File">File</p></div>
 	
 	<div class = "funcsquare Edit invisible" onclick = "PartClick()"><p>Part</p></div>
-	<div id = "Texture" class = "funcsquare Edit invisible" onclick = "TextureClick()"><p>Texture</p></div>
+	<div id = "Texture" class = "funcsquare Edit invisible" onclick = "TextureClick()" style = "background-color:rgb(247,202,24);"><p>Texture</p></div>
 	<div id = "Edit_close" class = "funcsquare Edit" onclick = "FuncBarClick(this.className, 'funcsquare file')"><p id = "Edit">Edit</p></div>
 </div>
 
