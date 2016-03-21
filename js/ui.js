@@ -1865,7 +1865,7 @@ function getElementXML(n){
             if(n.getPercentY && n.getPercentY())xml+='\t\t\t'+'<percentY>'+n.getPercentY()+'</percentY>'+'\n';
             if(n.getPriority && n.getPriority())xml+='\t\t\t'+'<priority>'+n.getPriority()+'</priority>'+'\n';
             if(n.getToplen && n.getToplen())xml+='\t\t\t'+'<toplen>'+n.getToplen()+'</toplen>'+'\n';
-            if(n.getDirection)xml+='\t\t\t'+'<direction>'+'\"'+n.getDirection()+'\"'+'</direction>'+'\n';
+            if(n.getDirection)xml+='\t\t\t'+'<direction>'+n.getDirection()+'</direction>'+'\n';
             if(n.getOffsetX && n.getOffsetX())xml += '\t\t\t'+'<OffsetX>'+n.getOffsetX()+'</OffsetX>'+'\n';
             if(n.getOffsetY && n.getOffsetY())xml += '\t\t\t'+'<OffsetY>'+n.getOffsetY()+'</OffsetY>'+'\n';
             if(n.getWindowSize){
@@ -1873,6 +1873,9 @@ function getElementXML(n){
                 xml+='\t\t\t'+'<windowW>'+size.w+'</windowW>'+'\n';
                 xml+='\t\t\t'+'<windowH>'+size.h+'</windowH>'+'\n';
             }
+            if(n.getDoorSize && n.getDoorSize().w)xml+='\t\t\t'+'<doorW>'+n.getDoorSize().w+'</doorW>'+'\n';
+            if(n.getDoorSize && n.getDoorSize().h)xml+='\t\t\t'+'<doorH>'+n.getDoorSize().h+'</doorH>'+'\n';
+            if(n.getPosratio && n.getPosratio())xml+='\t\t\t'+'<posratio>'+n.getPosratio()+'</posratio>'+'\n';
         xml+='\t\t'+'</property>'+'\n';
     xml+='\t'+'</element>'+'\n';
     return xml;
@@ -1949,7 +1952,7 @@ function getHipS(param){
                                 width: param.Width,
                                 thickness: 2,
                                 depth: param.Depth,
-                                ratio: {a: param.Ratioa , b: param.Ratiob },
+                                ratio: {a: 0.5 , b: 0.5 },
                                 toplen: 0,
                                 scale: {x: 1, y: 1, z: 1},
                                 rotate: {x: 0, y: 90, z: 0},
@@ -2002,7 +2005,7 @@ function getMansardS(param){
                                 width: param.Width,
                                 thickness: 1,
                                 depth: param.Depth,
-                                ratio: {a: param.Ratioa , b: param.Ratiob},
+                                ratio: {a: 0.2 , b: 0.2},
                                 scale: {x: 1, y: 1, z: 1},
                                 rotate: {x: 0, y: 90, z: 0},
                                 translate: {x: 0, y: 0, z: 0}
@@ -2055,7 +2058,7 @@ function getGableS(param){
                                 width: param.Width,
                                 thickness: 1,
                                 depth: param.Depth,
-                                ratio: {a: param.Ratioa , b: param.Ratiob},
+                                ratio: {a: 0.5 , b: 0.5},
                                 scale: {x: 1, y: 1, z: 1},
                                 rotate: {x: 0, y: 90, z: 0},
                                 translate: {x: 0, y: 0, z: 0}
@@ -2105,7 +2108,7 @@ function getTriangleS(param){
                                 height: param.Height,
                                 width: param.Width,
                                 thickness: 1,
-                                ratio: {a: param.Ratioa , b: param.Ratiob},
+                                ratio: {a: 0.5 , b: 0.5},
                                 scale: {x: 1, y: 1, z: 1},
                                 rotate: {x: 0, y: 90, z: 0},
                                 translate: {x: 0, y: 0, z: 0}
