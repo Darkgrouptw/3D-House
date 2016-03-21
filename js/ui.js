@@ -349,6 +349,7 @@ function textureToggle(){
         }
     }
     hasTexture=!hasTexture;
+    dirty = true;
 }
 
 function addInterWall(){
@@ -462,6 +463,7 @@ function addInterWall(){
     });
     
     Calibration();
+    dirty = true;
 }
 
 function getTopLayer(){
@@ -681,6 +683,7 @@ function addBase(){
     });
 
     Calibration();
+    dirty = true;
 }
 
 function deleteBase(){
@@ -703,6 +706,7 @@ function deleteBase(){
     lastid=-1;
 
     Calibration();
+    dirty = true;
 }
 
 function attachInput(pickId){
@@ -1197,7 +1201,7 @@ function attachInput(pickId){
                                                 direction: nDir,
                                                 posratio: 0.5,
                                                 doorW: 3,
-                                                doorH: 3,
+                                                doorH: 6,
                                                 priority: nPro,
                                                 percentX: nperX,
                                                 percentY: nperY,
@@ -1213,7 +1217,6 @@ function attachInput(pickId){
                 });
                 n.getParent().getParent().getParent().getParent().getParent().getParent().destroy();
                 //remove input
-                console.log("a");
                 if(document.getElementById('inputarea')){
                     document.getElementById('inputarea').remove();
                 }
@@ -1332,7 +1335,6 @@ function attachInput(pickId){
                 });
                 n.getParent().getParent().getParent().getParent().getParent().getParent().destroy();
                 //remove input
-                console.log("a");
                 if(document.getElementById('inputarea')){
                     document.getElementById('inputarea').remove();
                 }
@@ -1639,10 +1641,15 @@ function attachInput(pickId){
     }
 }
 
-
+var time = 0;
 function timeFuction(){
     setInterval(function(){
-        if(dirty){
+        if(dirty || time > 0){
+            if(dirty){
+                time = 3;
+            }
+            time--;
+            console.log(time+'cc');
             var backWall=-1;
             var rightWall=-1;
             var leftWall=-1;
@@ -1941,7 +1948,7 @@ function getHipS(param){
                         nodes:
                         [{
                             type: "texture",
-                            src: "images/GeometryTexture/roof.jpg",
+                            src: "images/GeometryTexture/dark.jpg",
                             applyTo: "color",
 
                             nodes:
@@ -1994,7 +2001,7 @@ function getMansardS(param){
                         nodes:
                         [{
                             type: "texture",
-                            src: "images/GeometryTexture/roof.jpg",
+                            src: "images/GeometryTexture/dark.jpg",
                             applyTo: "color",
 
                             nodes:
