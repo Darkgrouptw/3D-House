@@ -1639,6 +1639,117 @@ function attachInput(pickId){
             WindowHismove=false;
         });
     }
+    //porsration
+    if(n.getPosratio){
+        var Posratioismove=false;
+        var div=document.createElement("div");
+        inputarea.appendChild(div);
+        //text
+        var PosratiopropertyName=document.createElement("lable");
+            PosratiopropertyName.textContent="Posratio";
+            div.appendChild(PosratiopropertyName);
+        //input
+        var Posratioinput=document.createElement("input");
+            Posratioinput.type="range";
+            Posratioinput.min="0";
+            Posratioinput.max="1";
+            Posratioinput.step="0.01";
+            Posratioinput.value=n.getPosratio();
+            div.appendChild(Posratioinput);
+    
+        var PosratioropertyValue=document.createElement("lable");
+            PosratioropertyValue.textContent=Posratioinput.value;
+            div.appendChild(PosratioropertyValue);
+    
+        Posratioinput.addEventListener('mousedown',function(event){
+            Posratioismove=true;
+        });
+        Posratioinput.addEventListener('mousemove',function(event){
+            if (Posratioismove) {
+                n.setPosratio(Number(Posratioinput.value*1.0));
+                PosratioropertyValue.textContent=Posratioinput.value;
+                n.callBaseCalibration();
+                dirty = true;
+            }
+        });
+        Posratioinput.addEventListener('mouseup',function(event){
+            Posratioismove=false;
+        });
+    }
+    //Doorw
+    if(n.getDoorSize && n.setDoorW){
+        var DoorWismove=false;
+        var div=document.createElement("div");
+        inputarea.appendChild(div);
+        //text
+        var DoorWpropertyName=document.createElement("lable");
+            DoorWpropertyName.textContent="DoorW";
+            div.appendChild(DoorWpropertyName);
+        //input
+        var DoorWinput=document.createElement("input");
+            DoorWinput.type="range";
+            DoorWinput.min="1";
+            DoorWinput.max="10";
+            DoorWinput.step="0.1";
+            DoorWinput.value=n.getDoorSize().w;
+            div.appendChild(DoorWinput);
+    
+        var DoorWropertyValue=document.createElement("lable");
+            DoorWropertyValue.textContent=DoorWinput.value;
+            div.appendChild(DoorWropertyValue);
+    
+        DoorWinput.addEventListener('mousedown',function(event){
+            DoorWismove=true;
+        });
+        DoorWinput.addEventListener('mousemove',function(event){
+            if (DoorWismove) {
+                n.setDoorW(Number(DoorWinput.value*1.0));
+                DoorWropertyValue.textContent=DoorWinput.value;
+                n.callBaseCalibration();
+                dirty = true;
+            }
+        });
+        DoorWinput.addEventListener('mouseup',function(event){
+            DoorWismove=false;
+        });
+    }
+    //Doorh
+    if(n.getDoorSize && n.setDoorH){
+        var DoorHismove=false;
+        var div=document.createElement("div");
+        inputarea.appendChild(div);
+        //text
+        var DoorHpropertyName=document.createElement("lable");
+            DoorHpropertyName.textContent="DoorH";
+            div.appendChild(DoorHpropertyName);
+        //input
+        var DoorHinput=document.createElement("input");
+            DoorHinput.type="range";
+            DoorHinput.min="1";
+            DoorHinput.max="10";
+            DoorHinput.step="0.01";
+            DoorHinput.value=n.getDoorSize().h;
+            div.appendChild(DoorHinput);
+    
+        var DoorHropertyValue=document.createElement("lable");
+            DoorHropertyValue.textContent=DoorHinput.value;
+            div.appendChild(DoorHropertyValue);
+    
+        DoorHinput.addEventListener('mousedown',function(event){
+            DoorHismove=true;
+        });
+        DoorHinput.addEventListener('mousemove',function(event){
+            if (DoorHismove) {
+                n.setDoorH(Number(DoorHinput.value*1.0));
+                DoorHropertyValue.textContent=DoorHinput.value;
+                n.callBaseCalibration();
+                dirty = true;
+            }
+        });
+        DoorHinput.addEventListener('mouseup',function(event){
+            DoorHismove=false;
+        });
+    }
 }
 
 var time = 0;
@@ -1948,7 +2059,7 @@ function getHipS(param){
                         nodes:
                         [{
                             type: "texture",
-                            src: "images/GeometryTexture/dark.jpg",
+                            src: "images/GeometryTexture/roof.jpg",
                             applyTo: "color",
 
                             nodes:
@@ -2001,7 +2112,7 @@ function getMansardS(param){
                         nodes:
                         [{
                             type: "texture",
-                            src: "images/GeometryTexture/dark.jpg",
+                            src: "images/GeometryTexture/roof.jpg",
                             applyTo: "color",
 
                             nodes:
