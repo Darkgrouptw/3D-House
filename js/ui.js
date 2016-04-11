@@ -1994,6 +1994,42 @@ function getElementXML(n){
             if(n.getDoorSize && n.getDoorSize().w)xml+='\t\t\t'+'<doorW>'+n.getDoorSize().w+'</doorW>'+'\n';
             if(n.getDoorSize && n.getDoorSize().h)xml+='\t\t\t'+'<doorH>'+n.getDoorSize().h+'</doorH>'+'\n';
             if(n.getPosratio && n.getPosratio())xml+='\t\t\t'+'<posratio>'+n.getPosratio()+'</posratio>'+'\n';
+            if(n.getDoorPosratio && n.getDoorPosratio()){
+                xml+='\t\t\t'+'<doorPosratio>';
+                var doorpostatios = n.getDoorPosratio();
+                for(var i=0;i<doorpostatios.length;i++){
+                    if(i==0)xml+=doorpostatios[i];
+                    else xml+=','+doorpostatios[i];
+                }
+                xml+='</doorPosratio>'+'\n';
+            }
+            if(n.getDoorSize && n.getDoorSize()){
+                xml+='\t\t\t'+'<doorSize>';
+                var values = n.getDoorSize();
+                for(var i=0;i<values.length;i++){
+                    if(i==0)xml+=values[i];
+                    else xml+=','+values[i];
+                }
+                xml+='</doorSize>'+'\n';
+            }
+            if(n.getWindowSize && n.getWindowSize()){
+                xml+='\t\t\t'+'<windowSize>';
+                var values = n.getWindowSize();
+                for(var i=0;i<values.length;i++){
+                    if(i==0)xml+=values[i];
+                    else xml+=','+values[i];
+                }
+                xml+='</windowSize>'+'\n';
+            }
+            if(n.getWindowCenter && n.getWindowCenter()){
+                xml+='\t\t\t'+'<windowCenter>';
+                var values = n.getWindowCenter();
+                for(var i=0;i<values.length;i++){
+                    if(i==0)xml+=values[i];
+                    else xml+=','+values[i];
+                }
+                xml+='</windowCenter>'+'\n';
+            }
         xml+='\t\t'+'</property>'+'\n';
     xml+='\t'+'</element>'+'\n';
     return xml;
