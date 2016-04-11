@@ -112,7 +112,7 @@
     </element>
 
     <element>
-        <type>wall/no_window</type>
+        <type>wall/multi_window</type>
 		<transform>
 			<scale>1,1,1</scale>
 			<rotate>0,0,0</rotate>
@@ -125,9 +125,15 @@
             <height>8</height>
             <width>18</width>
             <thickness>1</thickness>
+            <windowSize>2.5, 2.5, 2.5, 2.5, 2.5, 2.5, 2.5, 2.5</windowSize>
+            <windowCenter>0.2, 0.2, 0.4, 0.4, 0.6, 0.6, 0.8, 0.8</windowCenter>
+            <doorSize>3, 4</doorSize>
+            <doorPosratio>0.8</doorPosratio>
             <direction>horizontal</direction>
         </property>
     </element>
+    
+    
     <element>
         <type>wall/no_window</type>
         <transform>

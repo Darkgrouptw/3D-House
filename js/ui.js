@@ -1760,7 +1760,7 @@ function timeFuction(){
                 time = 3;
             }
             time--;
-            console.log(time+'cc');
+            //console.log(time+'cc');
             var backWall=-1;
             var rightWall=-1;
             var leftWall=-1;
