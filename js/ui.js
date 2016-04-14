@@ -223,7 +223,8 @@ function ScenePick(){
                                 break;
                             case "leftWall":
                             case "rightWall":
-                                if(partmode != -1)
+                            case "backWall":
+                                if(partmode == 0)
                                 {
                                     windowOffsetY(objectId, tmpYlength, currentAxis);
                                 }
@@ -242,9 +243,14 @@ function ScenePick(){
                                 break;
                             case "leftWall":
                             case "rightWall":
-                                if(partmode != -1)
+                            case "backWall":
+                                if(partmode == 0)
                                 {
                                     windowOffsetX(objectId, tmpXlength, currentAxis);
+                                }
+                                else if(partmode == 1)
+                                {
+                                    doorOffsetX(objectId, tmpXlength, currentAxis);
                                 }
                                 break;
                         }
@@ -284,6 +290,7 @@ function ScenePick(){
                 //uiPanel.style.left = (hit.canvasPos[0]+50) + "px";
                 //uiPanel.style.top = (hit.canvasPos[1]+50) + "px";
 
+                console.log("ID: ", hit.nodeId, " partmode: ", partmode);
                 objectId = hit.nodeId;
                 pickNode = scene.findNode(objectId).parent.parent.getName();
                 var pickLayer = scene.getNode(objectId).nodes[0].nodes[0].nodes[0].getLayer();
