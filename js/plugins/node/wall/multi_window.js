@@ -331,6 +331,78 @@ SceneJS.Types.addType("wall/multi_window",
             }
         }
     },
+    adjustChildren: function(){
+        var baseCenter = this.getTranslate();
+        var baseCenterX = baseCenter[0];
+        var baseCenterY = baseCenter[1];
+        var baseCenterZ = baseCenter[2];
+        var WindowSize =  this.getWindowSize();
+        var WindowCenter = this.getWindowCenter();
+        var DoorSize = this.getDoorSize();
+        var DoorPosratio = this.getDoorPosratio();
+        if(WindowCenter.length % 2 == 1){
+			//debugger.log("something is wroung");
+		}
+        var number_of_window = (WindowCenter.length / 2);
+        // if(DoorSize.length % 2 == 1)debugger.log("something woung here");
+        var number_of_door = (DoorSize.length / 2);
+        //it is a hard work
+        for(var i = 0;i<number_of_door;i+=2){
+            var door_widhth = DoorSize[i];
+            var door_height = DoorSize[i+1];
+            var door_ratio = DoorPosratio[i/2];
+            if(door_widhth > this.getWidth() - 1){
+                door_widhth = this.getWidth() -1;
+            }
+            if(door_height > this.getHeight() - 1){
+                door_height = this.getHeight() - 1;
+            }
+            if((baseCenterX - this.getWidth())+(door_ratio*2*this.getWidth())+door_widhth > baseCenterX + this.getWidth() - 1 ){
+                door_ratio = (baseCenterX + this.getWidth() +1 + door_widhth) - baseCenterX + this.getWidth();
+                door_ratio = door_ratio/(2*this.getWidth);
+            }
+            if((baseCenterX - this.getWidth())+(door_ratio*2*this.getWidth())-door_widhth < baseCenterX -this.getWidth() + 1){
+            	door_ratio = (baseCenterX -this.getWidth() + 1 + door_widhth) -baseCenterX + this.getWidth();
+                door_ratio = door_ratio/(2*this.getWidth());
+            }
+            this.setDoorSizeByIndex(door_widhth,i);
+            this.setDoorSizeByIndex(door_height,i+1);
+            this.setDoorPosratioByIndex(i/2,door_ratio);
+        }
+        for(var i = 0;i<number_of_window;i+=2){
+            var window_width = WindowSize[i];
+            var window_height = WindowSize[i+1];
+            var window_posX = WindowCenter[i];
+            var window_posY = WindowCenter[i+1];
+            if(window_width > this.getWidth() -1){
+                window_width = this.getWidth()-1;
+            }
+            if(window_height > this.getHeight() -1){
+                window_height = this.getHeight() -1;
+            }
+            if((baseCenterX - this.getWidth())+(window_posX*2*this.getWidth())+window_width > baseCenterX + this.getWidth() -1){
+                window_posX = (baseCenterX + this.getWidth() - 1 - window_width) - baseCenterX + this.getWidth();
+                window_posX = window_posX / (2*this.getWidth);
+            }
+            if((baseCenterX - this.getWidth())+(window_posX*2*this.getWidth())-door_widhth < baseCenterX -this.getWidth() + 1){
+                window_posX = (baseCenterX -this.getWidth() + 1 + door_widhth) -baseCenterX + this.getWidth();
+                window_posX = window_posX/(2*this.getWidth());
+            }
+			if((baseCenterZ - this.getHeight()) + (window_posY*2*this.getHeight()) + window_height > baseCenterZ + this.getHeight() -1){
+				window_posY = (baseCenterZ + this.getHeight() - 1 - window_height) - baseCenterZ + this.getHeight();
+				window_posY = window_posY/(2*this.getHeight());
+			}
+			if((baseCenterZ - this.getHeight())+(window_posY*2*this.getHeight()) - window_height < baseCenterZ - this.getHeight() +1){
+				window_posY = (baseCenterZ - this.getHeight() + 1 + window_height)-baseCenterZ + this.getHeight();
+				window_posY = window_posY/(2*this.getHeight());
+			}
+			this.setWindowSizeByIndex(window_width,i);
+			this.setWindowSizeByIndex(window_height,i+1);
+			this.setWindowCenterByIndex(window_posX,i);
+			this.setWindowCenterByIndex(window_posY,i+1);
+        }
+        
+    },
     callBaseCalibration: function(){
         var mnmte = function(n) { return n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0]; }
 
