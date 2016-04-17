@@ -1,4 +1,26 @@
+//最後選擇的零件
+var lastid=-1;
+//最後選擇的樓層
+var lastFloor = -1;
+// ???
+var uiPanel;
+// ???
+var tmpNormal = null;
+// ???
+var camDist = null;
+// ???
+var isLock = false;
+// ???
+var isRotation = true;
+// ???
+var pickType = null;
+// if equals to true redraw the house in next frams
 var dirty = true;
+// the value used only in time function since the house will need 1~4 frams to be ready to draw after the element be changed
+var time = 0;
+//this is for the element that is not gona printed
+var windows = [];
+var doors = [];
 function UIinit(boolFlag)
 {
     console.log('what did you done');
@@ -57,7 +79,7 @@ function UIinit(boolFlag)
         else { codeBlock.style.display = 'none'; }
     });
 
-
+	
 
     timeFuction();
 }
@@ -66,14 +88,6 @@ function AddEventListenerList(list, event, functor)
     for(var i = 0; i < list.length; i++) { list[i].addEventListener(event, functor, false); }
 }
 
-var lastid=-1;
-var lastFloor = -1;
-var uiPanel;
-var tmpNormal = null;
-var camDist = null;
-var isLock = false;
-var isRotation = true;
-var pickType = null;
 function ScenePick(){
     var firstX;
     var firstY;
@@ -1890,7 +1904,7 @@ function attachInput(pickId){
 	
 }
 
-var time = 0;
+
 function timeFuction(){
     setInterval(function(){
         if(dirty || time > 0){
@@ -1907,6 +1921,10 @@ function timeFuction(){
             var base=-1;
             var interWall=[];
             var nodes=scene.findNodes();
+			var Wall_id =[]
+			var the_number_of_window=0;
+			var the_number_of_door=0;
+			var q=0;
             for(var i=0;i<nodes.length;i++){
                 var node = nodes[i];
                 if(node.getType()=="name"){
@@ -1945,13 +1963,125 @@ function timeFuction(){
                         node._initTexture();
                     }
                 }
+				if(node.getType() == "wall/door_entry"){
+					//the_number_of_door++;
+					//Wall_id.push(i);
+				}else if(node.getType() == "wall/single_window"){
+					the_number_of_window++;
+					q++;
+					Wall_id.push(node);
+				}else if(node.getType() == "wall/multi_window"){
+					the_number_of_window += node.getWindowCenter().length/2;
+					the_number_of_door += node.getDoorPosratio().length;
+					q++;
+					Wall_id.push(node);
+				}
             }
             if(base != -1){
                 base.callBaseCalibration();
             }
-            
+			if(the_number_of_door >= doors.length){
+				create10Doors();
+			}
+			if(the_number_of_window >= windows.length){
+				create20Windows();
+			}
+			var next_window_used =0;
+			var next_door_used =0;
+			for(var i=0 ;i<Wall_id.length;i++){
+				var node =Wall_id[i];
+				if(node.getType() == "wall/door_entry"){
+				}else if(node.getType() == "wall/single_window"){
+					var rotate = node.getRotate();
+					var traslate = node.getTranslate();
+					var window_size_X = node.getWindowSize().w;
+					var window_size_Y = node.getWindowSize().h;
+					var window_ratio_X = node.getRatio().a;
+					var window_ratio_Y = node.getRatio().b;
+					var wall_width = node.getWidth();
+					var wall_height = node.getHeight();
+					var result=callculateWindow({rotate:rotate,translate:traslate,
+									 window_ratio_X:window_ratio_X,window_ratio_Y:window_ratio_Y,
+									 wall_width:wall_width,wall_height});
+					
+					var target = windows[next_window_used].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
+					target.setTranslate([result.x,result.y,result.z]);
+					target.setRotate([result.rx,result.ry,result.rz]);
+					target.setSize({a:window_size_X,b:window_size_Y});
+					next_window_used++;
+				}else if(node.getType() == "wall/multi_window"){
+					var number_of_windows_in_wall = node.getWindowCenter().length/2;
+					for(var j=0;j<number_of_windows_in_wall;j++){
+						var rotate = node.getRotate();
+						var traslate = node.getTranslate();
+						var window_size_X = node.getWindowSize()[2*j];
+						var window_size_Y = node.getWindowSize()[2*j+1];
+						var window_ratio_X = node.getWindowCenter()[2*j];
+						var window_ratio_Y = node.getWindowCenter()[2*j+1];
+						var wall_width = node.getWidth();
+						var wall_height = node.getHeight();
+						var result=callculateWindow({rotate:rotate,translate:traslate,
+									 window_ratio_X:window_ratio_X,window_ratio_Y:window_ratio_Y,
+									 wall_width:wall_width,wall_height});
+						var target = windows[next_window_used].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
+						target.setTranslate([result.x,result.y,result.z]);
+						target.setRotate([result.rx,result.ry,result.rz]);
+						target.setSize({a:window_size_X,b:window_size_Y});
+						next_window_used++;
+					}
+				}else{
+					console.log(node);
+				}
+			}
+			for(var i=next_window_used;i<windows.length;i++){
+				var target = windows[i].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
+				target.setTranslate([-1000,-1000,-1000]);
+			}
         }
     }, 16);
+}
+
+function callculateWindow(param){
+	var rotate = param.rotate;
+	var traslate = param.translate;
+	var window_ratio_X = param.window_ratio_X;
+	var window_ratio_Y = param.window_ratio_Y;
+	var wall_width = param.wall_width;
+	var wall_height = param.wall_height;
+	var x=0,y=0,z=0,rx=0,ry=0,rz=0;
+	rx=rotate[0];ry=rotate[1];rz=rotate[2];
+	if(rotate[1] == 270){
+		x = traslate[0];
+		y = traslate[1] - wall_height/2 + wall_height * (2*window_ratio_Y -0.5) ;
+		z = traslate[2] - wall_width/2 + wall_width * (2*window_ratio_X -0.5);
+	}else if(rotate[1] == 90){
+		x = traslate[0];
+		y = traslate[1] - wall_height/2 + wall_height * (2*window_ratio_Y -0.5) ;
+		z = traslate[2] + wall_width/2 - wall_width * (2*window_ratio_X -0.5);
+	}else{
+		x = traslate[0] - wall_width/2 + wall_width * (2*window_ratio_X -0.5);
+		y = traslate[1] - wall_height/2 + wall_height * (2*window_ratio_Y -0.5);
+		z = traslate[2];
+	}
+	if(ry == 90 && traslate[0] < 0){
+		ry=270;
+	}else if(ry == 270 && traslate[0] >0){
+		ry=90;
+	}else if(ry == 0 && traslate[2] < 0){
+		ry = 180;
+	}else if(ry == 180 && traslate[2] >0){
+		ry = 0;
+	}
+	if(ry==0){
+		z-=1;
+	}else if(ry == 90){
+		x-=1;
+	}else if(ry ==180){
+		z+=1;
+	}else if(ry ==270){
+		x+=1;
+	}
+	return {x:x,y:y,z:z,rx:rx,ry:ry,rz:rz};
 }
 
 function Calibration(){
@@ -1983,6 +2113,11 @@ function setAllTheElementPickable(){
 
 function isPowerEditMode(){
     var powerEditMode=document.getElementById('powerEditMode');
+    return powerEditMode.checked;
+}
+
+function isShowingTheNonePrintablePart(){
+	var powerEditMode=document.getElementById('powerEditMode');
     return powerEditMode.checked;
 }
 
@@ -2192,7 +2327,15 @@ function saveXML(){
     download(generateXML(), "3Dhouse.3Dhouse", 'text/plain');
 }
 
-
+function create20Windows(){
+	console.log(scene.findNode(3));
+	for(var i=0;i<20;i++){
+		windows.push(scene.findNode(3).addNode(getWindow_fixed({pos:window,extend:1,sizeX:4,sizeY:4,})));
+	}
+}
+function create10Doors(){
+	
+}
 
 function RedButtonClick(){
     superXReProduction(generateXML());
@@ -2417,35 +2560,49 @@ function getWindow_fixed(param){
 	var window_fixed = {
 		type: "flags",
 		flags:{transparent:false},
-		alpha:0.2,
 		nodes:
 		[{
-			type: "material",
-			name: "iron.jpg",
+			type: "name",
+			name: param.pos,
 			
 			nodes:
 			[{
-				type: "matrix",
-				elements:[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],
+				type: "material",
+				color:{ r:0.8, g:0.8, b:0.8 },
+                alpha:0.2,
 				
 				nodes:
 				[{
-					type: "texture",
-					src: "images/GeometryTexture/iron.jpg",
-					applyTo: "color",
+					type: "name",
+					name: "iron.jpg",
 					
 					nodes:
 					[{
-						type: "window/fixed",
-						extend: param.extend,
-						size: {a: param.sizex, b: param.sizey},
-						thickness: 1,
-						rotate: {x: 0, y: 0, z: 0},
-						translate: {x: 0, y: 0, z: 0},
-						scale: {x: 1, y: 1, z: 1}
+						type: "matrix",
+						elements:[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],
+						
+						nodes:
+						[{
+							type: "texture",
+							src: "images/GeometryTexture/iron.jpg",
+							applyTo: "color",
+							
+							nodes:
+							[{
+								type: "window/fixed",
+								extend: param.extend,
+								size: {a: param.sizeX, b: param.sizeY},
+								thickness: 1,
+								rotate: {x: 0, y: 0, z: 0},
+								translate: {x: 0, y: 0, z: 0},
+								scale: {x: 1, y: 1, z: 1}
+							}]
+						}]
 					}]
+					
 				}]
 			}]
+			
 		}]
 	};
 	return window_fixed;

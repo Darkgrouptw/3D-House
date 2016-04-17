@@ -86,7 +86,7 @@ SceneJS.Types.addType("window/fixed",
     setThickness: function(t) { this._paramana.set('thickness', t); this._paramana.updateGeometryNode(this); },
 
     getSize: function() { return this._paramana.get('size'); },
-    setSize: function(s) { this._paramana.set('size', l); this._paramana.updateGeometryNode(this); },
+    setSize: function(s) { this._paramana.set('size', s); this._paramana.updateGeometryNode(this); },
 
     getExtend: function() { return this._paramana.get('extend'); },
     setExtend: function(e) { this._paramana.set('extend', e); this._paramana.updateGeometryNode(this); },
