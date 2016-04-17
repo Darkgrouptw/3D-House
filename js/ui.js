@@ -79,8 +79,6 @@ function UIinit(boolFlag)
         else { codeBlock.style.display = 'none'; }
     });
 
-	
-
     timeFuction();
 }
 function AddEventListenerList(list, event, functor)
@@ -1924,7 +1922,6 @@ function timeFuction(){
 			var Wall_id =[]
 			var the_number_of_window=0;
 			var the_number_of_door=0;
-			var q=0;
             for(var i=0;i<nodes.length;i++){
                 var node = nodes[i];
                 if(node.getType()=="name"){
@@ -1968,12 +1965,10 @@ function timeFuction(){
 					//Wall_id.push(i);
 				}else if(node.getType() == "wall/single_window"){
 					the_number_of_window++;
-					q++;
 					Wall_id.push(node);
 				}else if(node.getType() == "wall/multi_window"){
 					the_number_of_window += node.getWindowCenter().length/2;
 					the_number_of_door += node.getDoorPosratio().length;
-					q++;
 					Wall_id.push(node);
 				}
             }
@@ -1988,51 +1983,54 @@ function timeFuction(){
 			}
 			var next_window_used =0;
 			var next_door_used =0;
-			for(var i=0 ;i<Wall_id.length;i++){
-				var node =Wall_id[i];
-				if(node.getType() == "wall/door_entry"){
-				}else if(node.getType() == "wall/single_window"){
-					var rotate = node.getRotate();
-					var traslate = node.getTranslate();
-					var window_size_X = node.getWindowSize().w;
-					var window_size_Y = node.getWindowSize().h;
-					var window_ratio_X = node.getRatio().a;
-					var window_ratio_Y = node.getRatio().b;
-					var wall_width = node.getWidth();
-					var wall_height = node.getHeight();
-					var result=callculateWindow({rotate:rotate,translate:traslate,
-									 window_ratio_X:window_ratio_X,window_ratio_Y:window_ratio_Y,
-									 wall_width:wall_width,wall_height});
-					
-					var target = windows[next_window_used].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
-					target.setTranslate([result.x,result.y,result.z]);
-					target.setRotate([result.rx,result.ry,result.rz]);
-					target.setSize({a:window_size_X,b:window_size_Y});
-					next_window_used++;
-				}else if(node.getType() == "wall/multi_window"){
-					var number_of_windows_in_wall = node.getWindowCenter().length/2;
-					for(var j=0;j<number_of_windows_in_wall;j++){
+			if(isShowingTheNonePrintablePart()){
+				for(var i=0 ;i<Wall_id.length;i++){
+					var node =Wall_id[i];
+					if(node.getType() == "wall/door_entry"){
+					}else if(node.getType() == "wall/single_window"){
 						var rotate = node.getRotate();
 						var traslate = node.getTranslate();
-						var window_size_X = node.getWindowSize()[2*j];
-						var window_size_Y = node.getWindowSize()[2*j+1];
-						var window_ratio_X = node.getWindowCenter()[2*j];
-						var window_ratio_Y = node.getWindowCenter()[2*j+1];
+						var window_size_X = node.getWindowSize().w;
+						var window_size_Y = node.getWindowSize().h;
+						var window_ratio_X = node.getRatio().a;
+						var window_ratio_Y = node.getRatio().b;
 						var wall_width = node.getWidth();
 						var wall_height = node.getHeight();
 						var result=callculateWindow({rotate:rotate,translate:traslate,
-									 window_ratio_X:window_ratio_X,window_ratio_Y:window_ratio_Y,
-									 wall_width:wall_width,wall_height});
+										 window_ratio_X:window_ratio_X,window_ratio_Y:window_ratio_Y,
+										 wall_width:wall_width,wall_height});
+						
 						var target = windows[next_window_used].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
 						target.setTranslate([result.x,result.y,result.z]);
 						target.setRotate([result.rx,result.ry,result.rz]);
 						target.setSize({a:window_size_X,b:window_size_Y});
 						next_window_used++;
+					}else if(node.getType() == "wall/multi_window"){
+						var number_of_windows_in_wall = node.getWindowCenter().length/2;
+						for(var j=0;j<number_of_windows_in_wall;j++){
+							var rotate = node.getRotate();
+							var traslate = node.getTranslate();
+							var window_size_X = node.getWindowSize()[2*j];
+							var window_size_Y = node.getWindowSize()[2*j+1];
+							var window_ratio_X = node.getWindowCenter()[2*j];
+							var window_ratio_Y = node.getWindowCenter()[2*j+1];
+							var wall_width = node.getWidth();
+							var wall_height = node.getHeight();
+							var result=callculateWindow({rotate:rotate,translate:traslate,
+										 window_ratio_X:window_ratio_X,window_ratio_Y:window_ratio_Y,
+										 wall_width:wall_width,wall_height});
+							var target = windows[next_window_used].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
+							target.setTranslate([result.x,result.y,result.z]);
+							target.setRotate([result.rx,result.ry,result.rz]);
+							target.setSize({a:window_size_X,b:window_size_Y});
+							next_window_used++;
+						}
+					}else{
+						console.log(node);
 					}
-				}else{
-					console.log(node);
 				}
 			}
+			
 			for(var i=next_window_used;i<windows.length;i++){
 				var target = windows[i].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
 				target.setTranslate([-1000,-1000,-1000]);
@@ -2117,8 +2115,8 @@ function isPowerEditMode(){
 }
 
 function isShowingTheNonePrintablePart(){
-	var powerEditMode=document.getElementById('powerEditMode');
-    return powerEditMode.checked;
+	var windowMode=document.getElementById('windowMode');
+    return windowMode.checked;
 }
 
 function changeRoof(type){
