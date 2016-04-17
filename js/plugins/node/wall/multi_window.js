@@ -347,6 +347,7 @@ SceneJS.Types.addType("wall/multi_window",
         // if(DoorSize.length % 2 == 1)debugger.log("something woung here");
         var number_of_door = (DoorSize.length / 2);
         //it is a hard work
+		
         for(var i = 0;i<number_of_door;i+=2){
             var door_widhth = DoorSize[i];
             var door_height = DoorSize[i+1];
@@ -365,15 +366,38 @@ SceneJS.Types.addType("wall/multi_window",
             	door_ratio = (baseCenterX -this.getWidth() + 1 + door_widhth) -baseCenterX + this.getWidth();
                 door_ratio = door_ratio/(2*this.getWidth());
             }
+			
+			//check other door
+			for(var j=0;j<i;j+=2){
+				var other_door_width = DoorSize[j];
+				var other_door_height = DoorSize[j+1];
+				var other_door_ratio = DoorSize[j/2];
+				var other_door_minx = this.getWidth() * other_door_ratio - other_door_width/2;
+				var other_door_maxx = this.getWidth() * other_door_ratio + other_door_width/2;
+				var other_door_center = this.getWidth() * other_door_ratio;
+				var door_minx = this.getWidth() * door_ratio - door_widhth/2;
+				var door_maxx = this.getWidth() * door_ratio + door_widhth/2;
+				var door_center = this.getWidth() * door_ratio;
+				if(Math.abs(door_center-other_door_center) <= other_door_width + other_door_height){
+					//we get trouble
+					if(other_door_center > door_center){
+						
+					}else{
+						
+					}
+				}
+			}
             this.setDoorSizeByIndex(door_widhth,i);
             this.setDoorSizeByIndex(door_height,i+1);
             this.setDoorPosratioByIndex(i/2,door_ratio);
         }
+		
         for(var i = 0;i<number_of_window;i+=2){
             var window_width = WindowSize[i];
             var window_height = WindowSize[i+1];
             var window_posX = WindowCenter[i];
             var window_posY = WindowCenter[i+1];
+			//check with wall
             if(window_width > this.getWidth() -1){
                 window_width = this.getWidth()-1;
             }
@@ -395,6 +419,10 @@ SceneJS.Types.addType("wall/multi_window",
 			if((baseCenterZ - this.getHeight())+(window_posY*2*this.getHeight()) - window_height < baseCenterZ - this.getHeight() +1){
 				window_posY = (baseCenterZ - this.getHeight() + 1 + window_height)-baseCenterZ + this.getHeight();
 				window_posY = window_posY/(2*this.getHeight());
+			}
+			
+			//check with other doors
+			for(var j =0 ; j<number_of_door;j+=2){
 			}
 			this.setWindowSizeByIndex(window_width,i);
 			this.setWindowSizeByIndex(window_height,i+1);

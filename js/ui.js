@@ -1757,6 +1757,137 @@ function attachInput(pickId){
             DoorHismove=false;
         });
     }
+	
+	//mutil wall
+	if(n.getDoorPosratio){
+		var DoorPosratio_is_move = false;
+		var div=document.createElement("div");
+		inputarea.appendChild(div);
+		var doors_posratio = n.getDoorPosratio();
+		for(var i=0;i<doors_posratio.length;i++){
+			//text
+			var DoorPostratio_property_name =document.createElement("lable");
+			DoorPostratio_property_name.textContent = "Number "+i+" Door";
+			div.appendChild(DoorPostratio_property_name);
+			//index
+			var DoorIndex = i;
+			//input
+			var DoorPostratio_input = document.createElement("input");
+			DoorPostratio_input.type = "range";
+			DoorPostratio_input.min="0";
+			DoorPostratio_input.max="1";
+			DoorPostratio_input.step="0.01";
+			DoorPostratio_input.value=doors_posratio[i];
+			div.appendChild(DoorPostratio_input);
+			//lable
+			var DoorPostraio_value = document.createElement("lable");
+			DoorPostraio_value.textContent = DoorPostratio_input.value;
+			div.appendChild(DoorPostraio_value);
+			//event
+			DoorPostratio_input.addEventListener('mousedown',function(event){
+				DoorPosratio_is_move = true;
+			});
+			DoorPostratio_input.addEventListener('mousemove',function(event){
+				if(DoorPosratio_is_move){
+					n.setDoorPosratioByIndex(DoorPostratio_input.value *1,DoorIndex);
+					DoorPostraio_value.textContent = DoorPostratio_input.value;
+					n.callBaseCalibration();
+					dirty = true;
+				}
+			});
+			DoorPostratio_input.addEventListener('mouseup',function(event){
+				DoorPosratio_is_move = false;
+			});
+			div.appendChild(document.createElement("br"));
+		}
+	}
+	
+	if(n.getWindowCenter){
+		var windowCenter_is_move = [];
+		var div = document.createElement("div");
+		inputarea.appendChild(div);
+		var windows_Center = n.getWindowCenter();
+		var windowCenter_property_name=[];
+		var windowCenter_input = [];
+		var windowCenter_value =[];
+		
+		for(var i=0;i<windows_Center.length;i+=2){
+			//texr
+			windowCenter_property_name.push(document.createElement("lable"));
+			windowCenter_property_name[i].textContent = "  Number "+i/2+" windowX";
+			div.appendChild(windowCenter_property_name[i]);
+			//index
+			var windowIndex = i;
+			//input
+			windowCenter_input.push(document.createElement("input"));
+			windowCenter_input[i].type = "range";
+			windowCenter_input[i].min="0";
+			windowCenter_input[i].max="1";
+			windowCenter_input[i].step="0.01";
+			windowCenter_input[i].value = windows_Center[i];
+			windowCenter_input[i].name = i;
+			div.appendChild(windowCenter_input[i]);
+			//lable
+			windowCenter_value.push(document.createElement("lable"));
+			windowCenter_value[i].textContent = windowCenter_input[i].value;
+			div.appendChild(windowCenter_value[i]);
+			//event
+			windowCenter_is_move.push(false);
+			windowCenter_input[i].addEventListener('mousedown',function(event){
+				windowCenter_is_move[this.name *1] = true;
+			});
+			windowCenter_input[i].addEventListener('mousemove',function(event){
+				if(windowCenter_is_move[this.name *1]){
+					n.setWindowCenterByIndex(windowCenter_input[this.name*1].value*1,this.name *1);
+					windowCenter_value[this.name *1].textContent = windowCenter_input[this.name *1].value;
+					n.callBaseCalibration();
+					dirty = true;
+				}
+			});
+			windowCenter_input[i].addEventListener('mouseup',function(event){
+				windowCenter_is_move[this.name *1] = false;
+			});
+			
+			
+			//texr
+			windowCenter_property_name.push(document.createElement("lable"));
+			windowCenter_property_name[i+1].textContent = "  Number "+i/2+" windowY";
+			div.appendChild(windowCenter_property_name[i+1]);
+			//index
+			var windowIndex = i+1;
+			//input
+			windowCenter_input.push(document.createElement("input"));
+			windowCenter_input[i+1].type = "range";
+			windowCenter_input[i+1].min="0";
+			windowCenter_input[i+1].max="1";
+			windowCenter_input[i+1].step="0.01";
+			windowCenter_input[i+1].value = windows_Center[i+1];
+			windowCenter_input[i+1].name = i+1;
+			div.appendChild(windowCenter_input[i+1]);
+			//lable
+			windowCenter_value.push(document.createElement("lable"));
+			windowCenter_value[i+1].textContent = windowCenter_input[i+1].value;
+			div.appendChild(windowCenter_value[i+1]);
+			//event
+			windowCenter_is_move.push(false);
+			windowCenter_input[i+1].addEventListener('mousedown',function(event){
+				windowCenter_is_move[this.name *1] = true;
+			});
+			windowCenter_input[i+1].addEventListener('mousemove',function(event){
+				if(windowCenter_is_move[this.name *1]){
+					n.setWindowCenterByIndex(windowCenter_input[this.name *1].value,this.name *1);
+					windowCenter_value[this.name *1].textContent = windowCenter_input[this.name *1].value;
+					n.callBaseCalibration();
+					dirty = true;
+				}
+			});
+			windowCenter_input[i+1].addEventListener('mouseup',function(event){
+				windowCenter_is_move[this.name *1] = false;
+			});
+			div.appendChild(document.createElement("br"));
+		}
+	}
+	
 }
 
 var time = 0;
@@ -2281,4 +2412,41 @@ function getTriangleS(param){
         }] 
     };
     return TriangleS;
+}
+function getWindow_fixed(param){
+	var window_fixed = {
+		type: "flags",
+		flags:{transparent:false},
+		alpha:0.2,
+		nodes:
+		[{
+			type: "material",
+			name: "iron.jpg",
+			
+			nodes:
+			[{
+				type: "matrix",
+				elements:[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],
+				
+				nodes:
+				[{
+					type: "texture",
+					src: "images/GeometryTexture/iron.jpg",
+					applyTo: "color",
+					
+					nodes:
+					[{
+						type: "window/fixed",
+						extend: param.extend,
+						size: {a: param.sizex, b: param.sizey},
+						thickness: 1,
+						rotate: {x: 0, y: 0, z: 0},
+						translate: {x: 0, y: 0, z: 0},
+						scale: {x: 1, y: 1, z: 1}
+					}]
+				}]
+			}]
+		}]
+	};
+	return window_fixed;
 }
