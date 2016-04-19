@@ -59,34 +59,6 @@ function windowOffsetX(id, tmpLength, tmpAxis)
     }
 }
 
-function doorOffsetX(id, tmpLength, tmpAxis)
-{
-    var tmpOffsetX;
-    var n = scene.getNode(3).getEye();
-    var tmpNode = scene.getNode(id).nodes[0].nodes[0].nodes[0];
-
-    switch(tmpAxis)
-    {
-        case 1:
-        case 3:
-            if(n.x < 0)
-            {
-                tmpOffsetX = tmpNode.getPosratio();
-                tmpOffsetX -= Sign(tmpLength) / 50;
-                tmpNode.setPosratio(tmpOffsetX);
-                tmpNode.callBaseCalibration();
-            }
-            else
-            {
-                tmpOffsetX = tmpNode.getPosratio();
-                tmpOffsetX += Sign(tmpLength) / 50;
-                tmpNode.setPosratio(tmpOffsetX);
-                tmpNode.callBaseCalibration();
-            }
-            break;
-    }
-}
-
 function baseOffsetX(id, tmpLength, tmpAxis)
 {
     var tmpOffsetX;
@@ -400,58 +372,6 @@ function setWindowHeight(object, length, limit)
     }
 }
 
-function setDoorWidth(object, length, limit)
-{
-    var tmpWidth = object.getDoorSize().w;
-    if(length >= 0)
-    {
-        tmpWidth += Sign(length);
-        object.setDoorW(tmpWidth) / 30;
-        object.callBaseCalibration();
-    }
-    else
-    {
-        if(tmpWidth > limit)
-        {
-            tmpWidth += Sign(length);
-            object.setDoorW(tmpWidth) / 30;
-            object.callBaseCalibration();
-        }
-        else
-        {
-            tmpWidth = limit;
-            object.setDoorW(tmpWidth) / 30;
-            object.callBaseCalibration();
-        }
-    }
-}
-
-function setDoorHeight(object, length, limit)
-{
-    var tmpHeight = object.getDoorSize().h;
-    if(length >= 0)
-    {
-        tmpHeight += Sign(length);
-        object.setDoorH(tmpHeight) / 30;
-        object.callBaseCalibration();
-    }
-    else
-    {
-        if(tmpHeight > limit)
-        {
-            tmpHeight += Sign(length);
-            object.setDoorH(tmpHeight) / 30;
-            object.callBaseCalibration();
-        }
-        else
-        {
-            tmpHeight = limit;
-            object.setDoorH(tmpHeight) / 30;
-            object.callBaseCalibration();
-        }
-    }
-}
-
 function horizontalAxis(id, tmpLength, tmpAxis)
 {
     var n;
@@ -496,13 +416,9 @@ function horizontalAxis(id, tmpLength, tmpAxis)
         case 1:
             if(nameNode == "rightWall" || nameNode == "leftWall")
             {
-                if(partmode == 0)
+                if(partmode != -1)
                 {
                     setWindowWidth(n, tmpLength, 3);
-                }
-                else if(partmode == 1)
-                {
-                    setDoorWidth(n, tmpLength, 3);
                 }
                 else
                 {
@@ -555,13 +471,9 @@ function horizontalAxis(id, tmpLength, tmpAxis)
         case 3:
             if(nameNode == "rightWall" || nameNode == "leftWall")
             {
-                if(partmode == 0)
+                if(partmode != -1)
                 {
                     setWindowWidth(n, tmpLength, 3);
-                }
-                else if(partmode == 1)
-                {
-                    setDoorWidth(n, tmpLength, 3);
                 }
                 else
                 {
@@ -620,13 +532,9 @@ function verticalAxis(id, tmpLength, tmpAxis)
         case 1:
             if(nameNode == "rightWall" || nameNode == "leftWall")
             {
-                if(partmode == 0)
+                if(partmode != -1)
                 {
                     setWindowHeight(n, tmpLength, 3);
-                }
-                else if(partmode == 1)
-                {
-                    setDoorHeight(n, tmpLength, 6);
                 }
                 else
                 {
@@ -669,13 +577,9 @@ function verticalAxis(id, tmpLength, tmpAxis)
         case 3:
             if(nameNode == "rightWall" || nameNode == "leftWall")
             {
-                if(partmode == 0)
+                if(partmode != -1)
                 {
                     setWindowHeight(n, tmpLength, 3);
-                }
-                else if(partmode == 1)
-                {
-                    setDoorHeight(n, tmpLength, 6);
                 }
                 else
                 {

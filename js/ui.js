@@ -1,26 +1,4 @@
-//最後選擇的零件
-var lastid=-1;
-//最後選擇的樓層
-var lastFloor = -1;
-// ???
-var uiPanel;
-// ???
-var tmpNormal = null;
-// ???
-var camDist = null;
-// ???
-var isLock = false;
-// ???
-var isRotation = true;
-// ???
-var pickType = null;
-// if equals to true redraw the house in next frams
 var dirty = true;
-// the value used only in time function since the house will need 1~4 frams to be ready to draw after the element be changed
-var time = 0;
-//this is for the element that is not gona printed
-var windows = [];
-var doors = [];
 function UIinit(boolFlag)
 {
     console.log('what did you done');
@@ -79,6 +57,8 @@ function UIinit(boolFlag)
         else { codeBlock.style.display = 'none'; }
     });
 
+
+
     timeFuction();
 }
 function AddEventListenerList(list, event, functor)
@@ -86,6 +66,14 @@ function AddEventListenerList(list, event, functor)
     for(var i = 0; i < list.length; i++) { list[i].addEventListener(event, functor, false); }
 }
 
+var lastid=-1;
+var lastFloor = -1;
+var uiPanel;
+var tmpNormal = null;
+var camDist = null;
+var isLock = false;
+var isRotation = true;
+var pickType = null;
 function ScenePick(){
     var firstX;
     var firstY;
@@ -235,8 +223,7 @@ function ScenePick(){
                                 break;
                             case "leftWall":
                             case "rightWall":
-                            case "backWall":
-                                if(partmode == 0)
+                                if(partmode != -1)
                                 {
                                     windowOffsetY(objectId, tmpYlength, currentAxis);
                                 }
@@ -255,14 +242,9 @@ function ScenePick(){
                                 break;
                             case "leftWall":
                             case "rightWall":
-                            case "backWall":
-                                if(partmode == 0)
+                                if(partmode != -1)
                                 {
                                     windowOffsetX(objectId, tmpXlength, currentAxis);
-                                }
-                                else if(partmode == 1)
-                                {
-                                    doorOffsetX(objectId, tmpXlength, currentAxis);
                                 }
                                 break;
                         }
@@ -302,7 +284,6 @@ function ScenePick(){
                 //uiPanel.style.left = (hit.canvasPos[0]+50) + "px";
                 //uiPanel.style.top = (hit.canvasPos[1]+50) + "px";
 
-                console.log("ID: ", hit.nodeId, " partmode: ", partmode);
                 objectId = hit.nodeId;
                 pickNode = scene.findNode(objectId).parent.parent.getName();
                 var pickLayer = scene.getNode(objectId).nodes[0].nodes[0].nodes[0].getLayer();
@@ -1769,140 +1750,9 @@ function attachInput(pickId){
             DoorHismove=false;
         });
     }
-	
-	//mutil wall
-	if(n.getDoorPosratio){
-		var DoorPosratio_is_move = false;
-		var div=document.createElement("div");
-		inputarea.appendChild(div);
-		var doors_posratio = n.getDoorPosratio();
-		for(var i=0;i<doors_posratio.length;i++){
-			//text
-			var DoorPostratio_property_name =document.createElement("lable");
-			DoorPostratio_property_name.textContent = "Number "+i+" Door";
-			div.appendChild(DoorPostratio_property_name);
-			//index
-			var DoorIndex = i;
-			//input
-			var DoorPostratio_input = document.createElement("input");
-			DoorPostratio_input.type = "range";
-			DoorPostratio_input.min="0";
-			DoorPostratio_input.max="1";
-			DoorPostratio_input.step="0.01";
-			DoorPostratio_input.value=doors_posratio[i];
-			div.appendChild(DoorPostratio_input);
-			//lable
-			var DoorPostraio_value = document.createElement("lable");
-			DoorPostraio_value.textContent = DoorPostratio_input.value;
-			div.appendChild(DoorPostraio_value);
-			//event
-			DoorPostratio_input.addEventListener('mousedown',function(event){
-				DoorPosratio_is_move = true;
-			});
-			DoorPostratio_input.addEventListener('mousemove',function(event){
-				if(DoorPosratio_is_move){
-					n.setDoorPosratioByIndex(DoorPostratio_input.value *1,DoorIndex);
-					DoorPostraio_value.textContent = DoorPostratio_input.value;
-					n.callBaseCalibration();
-					dirty = true;
-				}
-			});
-			DoorPostratio_input.addEventListener('mouseup',function(event){
-				DoorPosratio_is_move = false;
-			});
-			div.appendChild(document.createElement("br"));
-		}
-	}
-	
-	if(n.getWindowCenter){
-		var windowCenter_is_move = [];
-		var div = document.createElement("div");
-		inputarea.appendChild(div);
-		var windows_Center = n.getWindowCenter();
-		var windowCenter_property_name=[];
-		var windowCenter_input = [];
-		var windowCenter_value =[];
-		
-		for(var i=0;i<windows_Center.length;i+=2){
-			//texr
-			windowCenter_property_name.push(document.createElement("lable"));
-			windowCenter_property_name[i].textContent = "  Number "+i/2+" windowX";
-			div.appendChild(windowCenter_property_name[i]);
-			//index
-			var windowIndex = i;
-			//input
-			windowCenter_input.push(document.createElement("input"));
-			windowCenter_input[i].type = "range";
-			windowCenter_input[i].min="0";
-			windowCenter_input[i].max="1";
-			windowCenter_input[i].step="0.01";
-			windowCenter_input[i].value = windows_Center[i];
-			windowCenter_input[i].name = i;
-			div.appendChild(windowCenter_input[i]);
-			//lable
-			windowCenter_value.push(document.createElement("lable"));
-			windowCenter_value[i].textContent = windowCenter_input[i].value;
-			div.appendChild(windowCenter_value[i]);
-			//event
-			windowCenter_is_move.push(false);
-			windowCenter_input[i].addEventListener('mousedown',function(event){
-				windowCenter_is_move[this.name *1] = true;
-			});
-			windowCenter_input[i].addEventListener('mousemove',function(event){
-				if(windowCenter_is_move[this.name *1]){
-					n.setWindowCenterByIndex(windowCenter_input[this.name*1].value*1,this.name *1);
-					windowCenter_value[this.name *1].textContent = windowCenter_input[this.name *1].value;
-					n.callBaseCalibration();
-					dirty = true;
-				}
-			});
-			windowCenter_input[i].addEventListener('mouseup',function(event){
-				windowCenter_is_move[this.name *1] = false;
-			});
-			
-			
-			//texr
-			windowCenter_property_name.push(document.createElement("lable"));
-			windowCenter_property_name[i+1].textContent = "  Number "+i/2+" windowY";
-			div.appendChild(windowCenter_property_name[i+1]);
-			//index
-			var windowIndex = i+1;
-			//input
-			windowCenter_input.push(document.createElement("input"));
-			windowCenter_input[i+1].type = "range";
-			windowCenter_input[i+1].min="0";
-			windowCenter_input[i+1].max="1";
-			windowCenter_input[i+1].step="0.01";
-			windowCenter_input[i+1].value = windows_Center[i+1];
-			windowCenter_input[i+1].name = i+1;
-			div.appendChild(windowCenter_input[i+1]);
-			//lable
-			windowCenter_value.push(document.createElement("lable"));
-			windowCenter_value[i+1].textContent = windowCenter_input[i+1].value;
-			div.appendChild(windowCenter_value[i+1]);
-			//event
-			windowCenter_is_move.push(false);
-			windowCenter_input[i+1].addEventListener('mousedown',function(event){
-				windowCenter_is_move[this.name *1] = true;
-			});
-			windowCenter_input[i+1].addEventListener('mousemove',function(event){
-				if(windowCenter_is_move[this.name *1]){
-					n.setWindowCenterByIndex(windowCenter_input[this.name *1].value,this.name *1);
-					windowCenter_value[this.name *1].textContent = windowCenter_input[this.name *1].value;
-					n.callBaseCalibration();
-					dirty = true;
-				}
-			});
-			windowCenter_input[i+1].addEventListener('mouseup',function(event){
-				windowCenter_is_move[this.name *1] = false;
-			});
-			div.appendChild(document.createElement("br"));
-		}
-	}
-	
 }
 
-
+var time = 0;
 function timeFuction(){
     setInterval(function(){
         if(dirty || time > 0){
@@ -1919,9 +1769,6 @@ function timeFuction(){
             var base=-1;
             var interWall=[];
             var nodes=scene.findNodes();
-			var Wall_id =[]
-			var the_number_of_window=0;
-			var the_number_of_door=0;
             for(var i=0;i<nodes.length;i++){
                 var node = nodes[i];
                 if(node.getType()=="name"){
@@ -1960,126 +1807,13 @@ function timeFuction(){
                         node._initTexture();
                     }
                 }
-				if(node.getType() == "wall/door_entry"){
-					//the_number_of_door++;
-					//Wall_id.push(i);
-				}else if(node.getType() == "wall/single_window"){
-					the_number_of_window++;
-					Wall_id.push(node);
-				}else if(node.getType() == "wall/multi_window"){
-					the_number_of_window += node.getWindowCenter().length/2;
-					the_number_of_door += node.getDoorPosratio().length;
-					Wall_id.push(node);
-				}
             }
             if(base != -1){
                 base.callBaseCalibration();
             }
-			if(the_number_of_door >= doors.length){
-				create10Doors();
-			}
-			if(the_number_of_window >= windows.length){
-				create20Windows();
-			}
-			var next_window_used =0;
-			var next_door_used =0;
-			if(isShowingTheNonePrintablePart()){
-				for(var i=0 ;i<Wall_id.length;i++){
-					var node =Wall_id[i];
-					if(node.getType() == "wall/door_entry"){
-					}else if(node.getType() == "wall/single_window"){
-						var rotate = node.getRotate();
-						var traslate = node.getTranslate();
-						var window_size_X = node.getWindowSize().w;
-						var window_size_Y = node.getWindowSize().h;
-						var window_ratio_X = node.getRatio().a;
-						var window_ratio_Y = node.getRatio().b;
-						var wall_width = node.getWidth();
-						var wall_height = node.getHeight();
-						var result=callculateWindow({rotate:rotate,translate:traslate,
-										 window_ratio_X:window_ratio_X,window_ratio_Y:window_ratio_Y,
-										 wall_width:wall_width,wall_height});
-						
-						var target = windows[next_window_used].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
-						target.setTranslate([result.x,result.y,result.z]);
-						target.setRotate([result.rx,result.ry,result.rz]);
-						target.setSize({a:window_size_X,b:window_size_Y});
-						next_window_used++;
-					}else if(node.getType() == "wall/multi_window"){
-						var number_of_windows_in_wall = node.getWindowCenter().length/2;
-						for(var j=0;j<number_of_windows_in_wall;j++){
-							var rotate = node.getRotate();
-							var traslate = node.getTranslate();
-							var window_size_X = node.getWindowSize()[2*j];
-							var window_size_Y = node.getWindowSize()[2*j+1];
-							var window_ratio_X = node.getWindowCenter()[2*j];
-							var window_ratio_Y = node.getWindowCenter()[2*j+1];
-							var wall_width = node.getWidth();
-							var wall_height = node.getHeight();
-							var result=callculateWindow({rotate:rotate,translate:traslate,
-										 window_ratio_X:window_ratio_X,window_ratio_Y:window_ratio_Y,
-										 wall_width:wall_width,wall_height});
-							var target = windows[next_window_used].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
-							target.setTranslate([result.x,result.y,result.z]);
-							target.setRotate([result.rx,result.ry,result.rz]);
-							target.setSize({a:window_size_X,b:window_size_Y});
-							next_window_used++;
-						}
-					}else{
-						console.log(node);
-					}
-				}
-			}
-			
-			for(var i=next_window_used;i<windows.length;i++){
-				var target = windows[i].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
-				target.setTranslate([-1000,-1000,-1000]);
-			}
+            
         }
     }, 16);
-}
-
-function callculateWindow(param){
-	var rotate = param.rotate;
-	var traslate = param.translate;
-	var window_ratio_X = param.window_ratio_X;
-	var window_ratio_Y = param.window_ratio_Y;
-	var wall_width = param.wall_width;
-	var wall_height = param.wall_height;
-	var x=0,y=0,z=0,rx=0,ry=0,rz=0;
-	rx=rotate[0];ry=rotate[1];rz=rotate[2];
-	if(rotate[1] == 270){
-		x = traslate[0];
-		y = traslate[1] - wall_height/2 + wall_height * (2*window_ratio_Y -0.5) ;
-		z = traslate[2] - wall_width/2 + wall_width * (2*window_ratio_X -0.5);
-	}else if(rotate[1] == 90){
-		x = traslate[0];
-		y = traslate[1] - wall_height/2 + wall_height * (2*window_ratio_Y -0.5) ;
-		z = traslate[2] + wall_width/2 - wall_width * (2*window_ratio_X -0.5);
-	}else{
-		x = traslate[0] - wall_width/2 + wall_width * (2*window_ratio_X -0.5);
-		y = traslate[1] - wall_height/2 + wall_height * (2*window_ratio_Y -0.5);
-		z = traslate[2];
-	}
-	if(ry == 90 && traslate[0] < 0){
-		ry=270;
-	}else if(ry == 270 && traslate[0] >0){
-		ry=90;
-	}else if(ry == 0 && traslate[2] < 0){
-		ry = 180;
-	}else if(ry == 180 && traslate[2] >0){
-		ry = 0;
-	}
-	if(ry==0){
-		z-=1;
-	}else if(ry == 90){
-		x-=1;
-	}else if(ry ==180){
-		z+=1;
-	}else if(ry ==270){
-		x+=1;
-	}
-	return {x:x,y:y,z:z,rx:rx,ry:ry,rz:rz};
 }
 
 function Calibration(){
@@ -2112,11 +1846,6 @@ function setAllTheElementPickable(){
 function isPowerEditMode(){
     var powerEditMode=document.getElementById('powerEditMode');
     return powerEditMode.checked;
-}
-
-function isShowingTheNonePrintablePart(){
-	var windowMode=document.getElementById('windowMode');
-    return windowMode.checked;
 }
 
 function changeRoof(type){
@@ -2325,15 +2054,7 @@ function saveXML(){
     download(generateXML(), "3Dhouse.3Dhouse", 'text/plain');
 }
 
-function create20Windows(){
-	console.log(scene.findNode(3));
-	for(var i=0;i<20;i++){
-		windows.push(scene.findNode(3).addNode(getWindow_fixed({pos:window,extend:1,sizeX:4,sizeY:4,})));
-	}
-}
-function create10Doors(){
-	
-}
+
 
 function RedButtonClick(){
     superXReProduction(generateXML());
@@ -2553,55 +2274,4 @@ function getTriangleS(param){
         }] 
     };
     return TriangleS;
-}
-function getWindow_fixed(param){
-	var window_fixed = {
-		type: "flags",
-		flags:{transparent:false},
-		nodes:
-		[{
-			type: "name",
-			name: param.pos,
-			
-			nodes:
-			[{
-				type: "material",
-				color:{ r:0.8, g:0.8, b:0.8 },
-                alpha:0.2,
-				
-				nodes:
-				[{
-					type: "name",
-					name: "iron.jpg",
-					
-					nodes:
-					[{
-						type: "matrix",
-						elements:[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],
-						
-						nodes:
-						[{
-							type: "texture",
-							src: "images/GeometryTexture/iron.jpg",
-							applyTo: "color",
-							
-							nodes:
-							[{
-								type: "window/fixed",
-								extend: param.extend,
-								size: {a: param.sizeX, b: param.sizeY},
-								thickness: 1,
-								rotate: {x: 0, y: 0, z: 0},
-								translate: {x: 0, y: 0, z: 0},
-								scale: {x: 1, y: 1, z: 1}
-							}]
-						}]
-					}]
-					
-				}]
-			}]
-			
-		}]
-	};
-	return window_fixed;
 }
