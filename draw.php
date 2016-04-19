@@ -101,7 +101,7 @@
 <div id = "FUNCBAR">
 	<div class = "funcsquare File invisible" onclick = "ExportClick()"><p>Export</p></div>
 	<div class = "funcsquare File invisible" onclick = "saveXML()"><p>Save</p></div>
-	<div class = "funcsquare File invisible"><p>Print</p></div>
+	<div class = "funcsquare File invisible" onclick = "sendingRequest()"><p>Print</p></div>
 	<div id = "File_close" class = "funcsquare File" onclick = "FuncBarClick(this.className, 'funcsquare edit')"><p id = "File">File</p></div>
 	
 	<div class = "funcsquare Edit invisible" onclick = "PartClick()"><p>Part</p></div>

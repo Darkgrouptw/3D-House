@@ -1,4 +1,4 @@
-var HOST_IP = "192.168.11.37";
+var HOST_IP = "140.118.175.76:8098";
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Wouldn't be changed stuff
 var typeDefined = ["roof", "base", "wall"];
@@ -1449,32 +1449,53 @@ function obj2Text(obj){
 	return str;
 }
 
+function sendingRequest(){
+	var xml = generateXML();
+	$.support.cors = true;
+	$.ajax({
+    url : "http://" + HOST_IP + "/SaveSTL.php",
+    type: 'POST',
+    crossDomain: true,
+    data: xml,
+    dataType: 'text',
+    name: "house",
+    success: function (result) {
+    	console.log("yes");
+    },
+    error: function (jqXHR, tranStatus, errorThrown) {
+        alert(
+            'Status: ' + jqXHR.status + ' ' + jqXHR.statusText + '. ' +
+            'Response: ' + jqXHR.responseText
+        );
+    }
+});
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // sending .stl to another web
-function sendingRequest(stl){
-	// HttpURLConnection conn = (HttpURLConnection)url.openConnection();
-	console.log(stl.length);
-    for(var i = 0;i<stl.length;i++){
-	    var postData = "";
-	    postData = "stl=" + stl[i] + "&name=" + "model_part" + String(i);
-        $.ajax({
-    	    url : "http://" + HOST_IP + "/3DHouse/SaveSTL.php",				//change
-    	    type: "POST",
-    	    data : postData,
-    	    name : "model_part"+String(i),
-    	    success: function(data, textStatus, jqXHR)
-    	    {
-    	        console.log("success: "+i);
-    	    },
-    	    error: function (jqXHR, textStatus, errorThrown)
-    	    {
-    	        console.log("error: "+i);
+// function sendingRequest(stl){
+// 	// HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+//     for(var i = 0;i<stl.length;i++){
+// 	    var postData = "";
+// 	    postData = "stl=" + stl[i] + "&name=" + "model_part" + String(i);
+//         $.ajax({
+//     	    url : "http://" + HOST_IP + "/SaveSTL.php",				//change
+//     	    type: "POST",
+//     	    data : postData,
+//     	    name : "model_part"+String(i),
+//     	    success: function(data, textStatus, jqXHR)
+//     	    {
+//     	        console.log("success: "+i);
+//     	    },
+//     	    error: function (jqXHR, textStatus, errorThrown)
+//     	    {
+//     	        console.log("error: "+i);
     	 
-    	    }
-    	});
-    }
+//     	    }
+//     	});
+//     }
     
-}
+// }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //.obj export as local download files
