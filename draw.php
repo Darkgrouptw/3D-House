@@ -80,6 +80,7 @@
         </div>
         <div id="uiarea">
         	<input type="checkbox" id = "powerEditMode" checked = true>要不要啟動強力編輯模式<br>
+			<input type="checkbox" id = "windowMode" checked = true onclick='dirty = true;'>要不要顯示配件<br>
         	<input type="button" onclick="changeRoof('roof/gable')" value = "gable">
         	<input type="button" onclick="changeRoof('roof/hip')" value = "hip">
         	<input type="button" onclick="changeRoof('roof/mansard')" value = "mansard"><br>
@@ -101,7 +102,7 @@
 <div id = "FUNCBAR">
 	<div class = "funcsquare File invisible" onclick = "ExportClick()"><p>Export</p></div>
 	<div class = "funcsquare File invisible" onclick = "saveXML()"><p>Save</p></div>
-	<div class = "funcsquare File invisible" onclick = "sendingRequest()"><p>Print</p></div>
+	<div class = "funcsquare File invisible"><p>Print</p></div>
 	<div id = "File_close" class = "funcsquare File" onclick = "FuncBarClick(this.className, 'funcsquare edit')"><p id = "File">File</p></div>
 	
 	<div class = "funcsquare Edit invisible" onclick = "PartClick()"><p>Part</p></div>

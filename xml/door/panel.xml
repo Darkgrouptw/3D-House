@@ -1,0 +1,21 @@
+<layer>
+    <element>
+		
+        <type>door/panel</type>
+        
+        <transform>
+            <scale>1,1,1</scale>
+            <rotate>0,0,0</rotate>
+            <translate>0,0,0</translate>
+        </transform>
+        
+        <texture>door.jpg</texture>
+        
+        <property>
+            <extend>1</extend>
+            <size>5, 9</size>
+            <thickness>1</thickness>
+        </property>
+        
+    </element>
+</layer> 
