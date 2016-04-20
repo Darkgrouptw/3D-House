@@ -113,10 +113,10 @@ function ScenePick(){
 
                 if(event.clientX == firstX && event.clientY == firstY)
                 {
-                    scene.pick(event.clientX, event.clientY, {rayPick: true});
+                    scene.pick(event.clientX, event.clientY);
                     if(lastid == -1 && lastFloor == -1){
                         setAllTheElementPickable();
-                        scene.pick(event.clientX, event.clientY, {rayPick: true});
+                        scene.pick(event.clientX, event.clientY);
                     }
                 }
 
@@ -148,10 +148,10 @@ function ScenePick(){
                 
                 if(event.targetTouches[0].clientX == firstX && event.targetTouches[0].clientY == firstY)
                 {
-                    scene.pick(event.targetTouches[0].clientX, event.targetTouches[0].clientY, {rayPick: true});
+                    scene.pick(event.targetTouches[0].clientX, event.targetTouches[0].clientY);
                     if(lastid == -1 && lastFloor == -1){
                         setAllTheElementPickable();
-                        scene.pick(event.targetTouches[0].clientX, event.targetTouches[0].clientY, {rayPick: true});
+                        scene.pick(event.targetTouches[0].clientX, event.targetTouches[0].clientY);
                     }
                 }
                 
