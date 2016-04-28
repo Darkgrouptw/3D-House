@@ -717,7 +717,7 @@ function deleteBase(){
         var n = nodes[i];
         if(n.getLayer){
             if(n.getLayer() == layerNumber){
-                n.getParent().getParent().getParent().getParent().getParent().getParent().destroy();
+                housenode2flag(n).destroy();
             }
         }
     }
@@ -989,7 +989,7 @@ function attachInput(pickId){
 
             if(base != -1){
                 //flags  texture     //matrix    name        material    name
-                n.getParent().getParent().getParent().getParent().getParent().getParent().destroy();
+                housenode2flag(n).destroy();
                 
                 //remove input
                 if(document.getElementById('inputarea')){
@@ -1937,7 +1937,7 @@ function timeFuction(){
                 }
                 if(node.getType()=="flags"){
                     if(lastFloor == -1 ||
-                        (node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].getLayer && node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].getLayer() == lastFloor)){
+                        (flag2housenode(node).getLayer && flag2housenode(node).getLayer() == lastFloor)){
                         node.setTransparent(false);
                         node.setPicking(true);
                     }
@@ -1960,16 +1960,24 @@ function timeFuction(){
                         node._initTexture();
                     }
                 }
+				
 				if(node.getType() == "wall/door_entry"){
-					//the_number_of_door++;
-					//Wall_id.push(i);
+					if(housenode2flag(node).nodes[0].getName() != "interWall"){
+						//the_number_of_door++;
+						//Wall_id.push(i);
+					}
 				}else if(node.getType() == "wall/single_window"){
-					the_number_of_window++;
-					Wall_id.push(node);
+					if(housenode2flag(node).nodes[0].getName() != "interWall"){
+						the_number_of_window++;
+						Wall_id.push(node);
+					}
 				}else if(node.getType() == "wall/multi_window"){
-					the_number_of_window += node.getWindowCenter().length/2;
-					the_number_of_door += node.getDoorPosratio().length;
-					Wall_id.push(node);
+					if(housenode2flag(node).nodes[0].getName() != "interWall"){
+						the_number_of_window += node.getWindowCenter().length/2;
+						the_number_of_door += node.getDoorPosratio().length;
+						Wall_id.push(node);
+					}
+					
 				}
             }
             if(base != -1){
@@ -2000,7 +2008,7 @@ function timeFuction(){
 										 window_ratio_X:window_ratio_X,window_ratio_Y:window_ratio_Y,
 										 wall_width:wall_width,wall_height});
 						
-						var target = windows[next_window_used].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
+						var target = flag2housenode(windows[next_window_used]);
 						target.setTranslate([result.x,result.y,result.z]);
 						target.setRotate([result.rx,result.ry,result.rz]);
 						target.setSize({a:window_size_X,b:window_size_Y});
@@ -2019,7 +2027,7 @@ function timeFuction(){
 							var result=callculateWindow({rotate:rotate,translate:traslate,
 										 window_ratio_X:window_ratio_X,window_ratio_Y:window_ratio_Y,
 										 wall_width:wall_width,wall_height});
-							var target = windows[next_window_used].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
+							var target = flag2housenode(windows[next_window_used]);
 							target.setTranslate([result.x,result.y,result.z]);
 							target.setRotate([result.rx,result.ry,result.rz]);
 							target.setSize({a:window_size_X,b:window_size_Y});
@@ -2032,9 +2040,10 @@ function timeFuction(){
 			}
 			
 			for(var i=next_window_used;i<windows.length;i++){
-				var target = windows[i].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
+				var target = flag2housenode(windows[i]);
 				target.setTranslate([-1000,-1000,-1000]);
 			}
+			dirty = false;
         }
     }, 16);
 }
@@ -2170,7 +2179,7 @@ function changeRoof(type){
             root.addNode(leftTriangleS);
             root.addNode(rightTriangleS);
             root.addNode(gableS);
-            roof.getParent().getParent().getParent().getParent().getParent().getParent().destroy();
+            housenode2flag(roof).destroy();
         }else if(type == "roof/hip"){
             console.log("changed to hip");
             var hipS = getHipS({layerNumber: layerNumber,
@@ -2182,7 +2191,7 @@ function changeRoof(type){
             });
             
             root.addNode(hipS);
-            roof.getParent().getParent().getParent().getParent().getParent().getParent().destroy();
+            housenode2flag(roof).destroy();
         }else if(type == "roof/mansard"){
             console.log("changed to mansard");
             var mansardS = getMansardS({layerNumber: layerNumber,
@@ -2193,7 +2202,7 @@ function changeRoof(type){
                 Ratiob: roof.getRatio().b
             });
             root.addNode(mansardS);
-            roof.getParent().getParent().getParent().getParent().getParent().getParent().destroy();
+            housenode2flag(roof).destroy();
         }
         
     }
@@ -2312,7 +2321,7 @@ function generateXML(){
     for(var i=0;i<nodes.length;i++){
         var node = nodes[i];
         if(node.getType()=="flags"){
-            var n= node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
+            var n= flag2housenode(node);
             xml += getElementXML(n);
         }
     }
@@ -2333,6 +2342,13 @@ function create20Windows(){
 }
 function create10Doors(){
 	
+}
+
+function housenode2flag(node){
+	return node.getParent().getParent().getParent().getParent().getParent().getParent();
+}
+function flag2housenode(node){
+	return node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
 }
 
 function RedButtonClick(){

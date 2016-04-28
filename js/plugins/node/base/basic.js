@@ -460,7 +460,7 @@ SceneJS.Types.addType("base/basic",
 				if(n.getName()=="base" && mnmte(n).getLayer() == this.getLayer()+1)mnmte(n).callBaseCalibration();
 			}
 		}
-		dirty = false;
+		//dirty = false;
 		}
 		catch(err) {
 		    //console.log(err.message);
