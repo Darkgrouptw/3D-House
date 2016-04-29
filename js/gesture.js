@@ -1,3 +1,8 @@
+//pick object normal to decide which view point you want
+var tmpNormal = null;
+// distance between origin point and camera position
+var camDist = null;
+
 function Sign(x) 
 {
     return typeof x === 'number' ? x ? x < 0 ? -1 : 1 : x === x ? 0 : NaN : NaN;

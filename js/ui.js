@@ -4,16 +4,10 @@ var lastid=-1;
 var lastFloor = -1;
 // ???
 var uiPanel;
-// ???
-var tmpNormal = null;
-// ???
-var camDist = null;
-// ???
+// Scale object in lock mode, zoom in/out in unlock mode (for two fingers gesture)
 var isLock = false;
-// ???
+// Tranalate interWall or base object When isRotation is false, Rotate camera when isRotation is true (for a finger gesture)
 var isRotation = true;
-// ???
-var pickType = null;
 // if equals to true redraw the house in next frams
 var dirty = true;
 // the value used only in time function since the house will need 1~4 frams to be ready to draw after the element be changed
@@ -102,7 +96,6 @@ function ScenePick(){
             function (event) {
                 tmpNormal = null;
                 camDist = null;
-                pickType = null;
 
                 firstX = event.clientX;
                 firstY = event.clientY;
@@ -126,7 +119,6 @@ function ScenePick(){
             function (event) {
                 tmpNormal = null;
                 camDist = null;
-                pickType = null;
                 
                 if(event.targetTouches.length != 1)
                 {
@@ -306,7 +298,6 @@ function ScenePick(){
                 objectId = hit.nodeId;
                 pickNode = scene.findNode(objectId).parent.parent.getName();
                 var pickLayer = scene.getNode(objectId).nodes[0].nodes[0].nodes[0].getLayer();
-                pickType = scene.getNode(objectId).nodes[0].nodes[0].nodes[0].getType();
                 if(pickNode == "interWall") { isRotation = false; }
                 else if(pickNode == "base" && pickLayer != 1) { isRotation = false; }
                 else { isRotation = true; }
@@ -344,7 +335,6 @@ function ScenePick(){
                 objectId = null;
                 isRotation = true;
                 pickNode = null;
-                pickType = null;
                 //for some ridiculurs reason i got to pick again!!
                 //scene.pick()
             });

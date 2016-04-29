@@ -43,11 +43,6 @@ SceneJS.Types.addType("cameras/orbit", {
         var last1X;
         var last1Y;
 		
-		//var tmpNormal = null;
-        //var camDist = null;
-        //var isLock = false;
-        //var isRotation = true;
-		
         var dragging = false;
         var lookatDirty = false;
 
@@ -105,11 +100,6 @@ SceneJS.Types.addType("cameras/orbit", {
         }
 
         function mouseUp() {
-            //tmpNormal = getNormal();
-            //camDist = getCameraDistance();
-            //isLock = getIsLock();
-            //isRotation = getIsRotation();
-
 			if(tmpNormal != null)
             {
                 rotateCamera();
@@ -118,11 +108,6 @@ SceneJS.Types.addType("cameras/orbit", {
         }
 
         function touchEnd() {
-            //tmpNormal = getNormal();
-            //camDist = getCameraDistance();
-            //isLock = getIsLock();
-            //isRotation = getIsRotation();
-
 			if(tmpNormal != null)
             {
                 rotateCamera();
