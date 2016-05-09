@@ -9884,7 +9884,12 @@ new (function () {
             var core = this._core;
             core.vertexBuf.bind();
             core.vertexBuf.setData(new Float32Array(data.positions), data.positionsOffset || 0);
-            core.arrays.positions.set(data.positions, data.positionsOffset || 0);
+           
+            /* The original one is be commented @ 4.29 '16
+             * core.arrays.positions.set(data.positions, data.positionsOffset || 0);
+             */
+            core.arrays.positions = new Float32Array(data.positions);
+            
             this._engine.display.imageDirty = true;
             if (core.interleavedBuf) {
                 core.interleavedBuf.dirty = true;
@@ -9901,7 +9906,12 @@ new (function () {
             var core = this._core;
             core.normalBuf.bind();
             core.normalBuf.setData(new Float32Array(data.normals), data.normalsOffset || 0);
-            core.arrays.normals.set(data.normals, data.normalsOffset || 0);
+
+            /* The original one is be commented @ 4.29 '16
+             * core.arrays.normals.set(data.normals, data.normalsOffset || 0);
+             */
+            core.arrays.normals = new Float32Array(data.normals);
+            
             this._engine.display.imageDirty = true;
             if (core.interleavedBuf) {
                 core.interleavedBuf.dirty = true;
@@ -9918,7 +9928,12 @@ new (function () {
             var core = this._core;
             core.colorBuf.bind();
             core.colorBuf.setData(new Float32Array(data.colors), data.colorsOffset || 0);
-            core.arrays.colors.set(data.colors, data.colorsOffset || 0);
+
+            /* The original one is be commented @ 4.29 '16
+             * core.arrays.colors.set(data.colors, data.colorsOffset || 0);
+             */
+            core.arrays.colors = new Float32Array(data.colors);
+
             this._engine.display.imageDirty = true;
             if (core.interleavedBuf) {
                 core.interleavedBuf.dirty = true;
@@ -9935,9 +9950,15 @@ new (function () {
             this._boundary = null;
             var core = this._core;
             core.indexBuf.bind();
-            var IndexArrayType = this._engine.canvas.UINT_INDEX_ENABLED ? Uint32Array : Uint16Array;
-            core.indexBuf.setData(new IndexArrayType(data.indices), data.indicesOffset || 0);
-            core.arrays.indices.set(data.indices, data.indicesOffset || 0);
+            
+            /* The original one is be commented @ 4.29 '16
+             * var IndexArrayType = this._engine.canvas.UINT_INDEX_ENABLED ? Uint32Array : Uint16Array;
+             * core.indexBuf.setData(new IndexArrayType(data.indices), data.indicesOffset || 0);
+             * core.arrays.indices.set(data.indices, data.indicesOffset || 0);
+             */
+            core.indexBuf.setData(new Uint32Array(data.indices), data.indicesOffset || 0);
+            core.arrays.indices = new Uint32Array(data.indices);
+
             this._engine.display.imageDirty = true;
         }
     };
@@ -9951,7 +9972,12 @@ new (function () {
             var core = this._core;
             core.uvBuf.bind();
             core.uvBuf.setData(new Float32Array(data.uv), data.uvOffset || 0);
-            core.arrays.uv.set(data.uv, data.uvOffset || 0);
+
+            /* The original one is be commented @ 4.29 '16
+             * core.arrays.uv.set(data.uv, data.uvOffset || 0);
+             */
+            core.arrays.uv = new Float32Array(data.uv);
+
             this._engine.display.imageDirty = true;
             if (core.interleavedBuf) {
                 core.interleavedBuf.dirty = true;

@@ -16,6 +16,7 @@ utility.makeHalf = function(value) { return value / 2; };
 
 // True if value is numeric, else get the false
 utility.isNumeric = function(value) { return !isNaN(parseFloat(value)) && isFinite(value); };
+utility.isFloat = function(value) { return Number(value) === value && value % 1 !== 0; }
 
 // True if value undefined, else get the false, notices: null is not undefined
 utility.checkIsUndefined = function(value) { return (value !== undefined ? false : true); };
@@ -78,7 +79,6 @@ utility.makeNormals = function (repeat, vector)
 	var nset = [];
 	for(var i = 0; i < repeat; i++) { nset = nset.concat(vector); }
 	return nset;
-	//console.log('makeNormals: Not yet'); 
 };
 
 // Find the nearest neighborhood value by mode
@@ -451,14 +451,15 @@ ParameterManager.prototype.updateGeometryNode = function(that)
     // Check if existing length of positions is bigger than wanted
     var prevPositions = geometry.getPositions();
     var nextPositions = this.functor.position(this.property);
-    if(prevPositions.length > nextPositions.length)
+    
+    /*if(prevPositions.length > nextPositions.length)
     {
         var difftimes = prevPositions.length - nextPositions.length;
         nextPositions = nextPositions.concat(utility.makeRepeatValue(0, difftimes));
     }
-    else if(nextPositions.length > prevPositions.length)
-    { console.log('Warning: length of positions are large than original one.'); return; }
-    
+    else*/ 
+    if(nextPositions.length != prevPositions.length) { console.log('Warning: length of positions will be changed to: ' + nextPositions.length); }
+
 	geometry.setPositions({ positions: nextPositions });
 };
 
@@ -473,14 +474,102 @@ ParameterManager.prototype.updateTextureCoord = function(that)
         // Check if existing length of uvs is bigger than wanted
         var prevUVs = geometry.getUV();
         var nextUVs = this.functor.texture(this.property);
-        if(prevUVs.length > nextUVs.length) 
+        
+        /*if(prevUVs.length > nextUVs.length) 
         {
             var difftimes = prevUVs.length - nextUVs.length;
             nextUVs = nextUVs.concat(utility.makeRepeatValue(0, difftimes));
         }
-        else if(nextUVs.length > prevUVs.length) 
-        { console.log('Warning: length of uvs are large than original one.'); return; }
+        else*/ 
+        if(nextUVs.length != prevUVs.length) { console.log('Warning: length of uvs will be changed to: ' + nextUVs.length); }
 
-		geometry.setUV({ uv: new Float32Array(nextUVs) });
+		geometry.setUV({ uv: nextUVs });
 	}
 }
+
+ParameterManager.prototype.updateIndicesValue = function(that)
+{
+    if(!utility.checkIsUndefined(this.functor.index))
+    {
+        var geometry = that.findNodesByType('geometry')[0];
+
+        var prevIndices = geometry.getIndices();
+        var nextIndices = this.functor.index(geometry._core.arrays.positions);
+
+        if(prevIndices.length != nextIndices.length) { console.log('Warning: length of indices will be changed to: ' + nextIndices.length); }
+
+        geometry.setIndices({ indices: nextIndices });
+    }
+}
+
+ParameterManager.prototype.updateNormalDirect = function(that)
+{
+    // Recompute normals
+    var geometry = that.findNodesByType('geometry')[0];
+    var prevNormal = geometry.getNormals();
+
+    var positions = geometry._core.arrays.positions;
+    var indices = geometry._core.arrays.indices;
+    var nvecs = new Array(positions.length / 3);
+    var j0;
+    var j1;
+    var j2;
+    var v1;
+    var v2;
+    var v3;
+
+    for (var i = 0, len = indices.length - 3; i < len; i += 3) 
+    {
+        j0 = indices[i + 0];
+        j1 = indices[i + 1];
+        j2 = indices[i + 2];
+
+        v1 = [positions[j0 * 3 + 0], positions[j0 * 3 + 1], positions[j0 * 3 + 2]];
+        v2 = [positions[j1 * 3 + 0], positions[j1 * 3 + 1], positions[j1 * 3 + 2]];
+        v3 = [positions[j2 * 3 + 0], positions[j2 * 3 + 1], positions[j2 * 3 + 2]];
+
+        v2 = SceneJS_math_subVec4(v2, v1, [0, 0, 0, 0]);
+        v3 = SceneJS_math_subVec4(v3, v1, [0, 0, 0, 0]);
+
+        var n = SceneJS_math_normalizeVec4(SceneJS_math_cross3Vec4(v2, v3, [0, 0, 0, 0]), [0, 0, 0, 0]);
+
+        if (!nvecs[j0]) nvecs[j0] = [];
+        if (!nvecs[j1]) nvecs[j1] = [];
+        if (!nvecs[j2]) nvecs[j2] = [];
+
+        nvecs[j0].push(n);
+        nvecs[j1].push(n);
+        nvecs[j2].push(n);
+    }
+
+    var nextNormal = new Array(positions.length);
+
+    // now go through and average out everything
+    for (var i = 0, len = nvecs.length; i < len; i++) 
+    {
+        var nvec = nvecs[i];
+        if (!nvec) { continue; }
+        var count = nvec.length;
+        var x = 0;
+        var y = 0;
+        var z = 0;
+        for (var j = 0; j < count; j++) 
+        {
+            x += nvec[j][0];
+            y += nvec[j][1];
+            z += nvec[j][2];
+        }
+        nextNormal[i * 3 + 0] = (x / count);
+        nextNormal[i * 3 + 1] = (y / count);
+        nextNormal[i * 3 + 2] = (z / count);
+    }
+
+    if(prevNormal.length != nextNormal.length) 
+    { 
+        console.log('Warning: length of normals will be changed to: ' + nextNormal.length); 
+    }
+
+    geometry.setNormals({ normals: nextNormal });
+
+}
+

@@ -1,0 +1,31 @@
+<layer>
+    <element>
+        <type>roof/cross_gable</type>
+        
+        <transform>
+            <scale>1,1,1</scale>
+            <rotate>0,0,0</rotate>
+            <translate>0,0,0</translate>
+        </transform>
+		
+		<pos></pos>
+		
+        <property>
+            <width>8</width>
+            <height>5</height>
+            <depth>18</depth>
+            <thickness>1</thickness>
+            <ratio>0.5,0.5</ratio>
+            <backside>on</backside>
+            <back_grasp>2</back_grasp>
+            <extrude_len>6</extrude_len>
+            <extrude_pos>0.5</extrude_pos>
+            <extrude_bas>6</extrude_bas>
+            <extrude_hgt>0.7</extrude_hgt>
+        </property>
+		
+        <texture>roof.jpg</texture>
+		        
+    </element> 
+</layer>
+

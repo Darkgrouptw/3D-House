@@ -1,3 +1,4 @@
+
 SceneJS.Types.addType("wall/multi_window", 
 { 
     construct: function (params) 
@@ -187,13 +188,21 @@ SceneJS.Types.addType("wall/multi_window",
 			return uvset;
 		});
 
+        this._paramana.addFunction('index', function(pointset)
+        {
+	        var indiceset = utility.makeIndices(0, (pointset.length / 3) - 1, 3);
+            return indiceset;
+        });
+
         this.addNode(wall_multi_window_build.call(this, params));
     },
 	
 	update: function() 
 	{ 
 		this._paramana.updateGeometryNode(this); 
-		this._paramana.updateTextureCoord(this); 
+		this._paramana.updateTextureCoord(this);
+        this._paramana.updateNormalDirect(this);
+        this._paramana.updateIndicesValue(this);
 	},
 	
 	getLayer: function() { return this._layer; },
