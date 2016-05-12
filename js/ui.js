@@ -748,6 +748,32 @@ function attachInput(pickId){
     inputarea.id="inputarea";
     uiarea.appendChild(inputarea);
 
+	//roof backSide
+	if(n.getBackSide && n.getBackSide()){
+		var div=document.createElement("div");
+        inputarea.appendChild(div);
+        //text
+        var roof_back_side_propertyName=document.createElement("lable");
+            roof_back_side_propertyName.textContent="BackSide";
+            div.appendChild(roof_back_side_propertyName);
+        //input
+        var roof_back_side_input=document.createElement("input");
+            roof_back_side_input.type="checkbox";
+            roof_back_side_input.checked=(n.getBackSide()=="off");
+            div.appendChild(roof_back_side_input);
+
+        var roof_back_side_propertyValue = document.createElement("lable");
+            roof_back_side_propertyValue.textContent = (roof_back_side_input.checked ? "off":"on");
+            div.appendChild(roof_back_side_propertyValue);
+
+        roof_back_side_input.addEventListener('click',function(event){
+			n.setBackSide(roof_back_side_input.checked ? "off":"on");
+            roof_back_side_propertyValue.textContent = roof_back_side_input.checked ? "off":"on";
+            n.callBaseCalibration();
+            dirty = true;
+        });
+	}
+	
     //hight
     if(n.getHeight && n.getParent().getParent().getParent().getParent().getParent().getName() != "interWall"){
         var heightismove=false;
@@ -932,7 +958,7 @@ function attachInput(pickId){
 
         directioninput.addEventListener('click',function(event){
             n.setDirection(directioninput.checked ? "vertical":"horizontal");
-            directioninput.textContent = directioninput.checked == "vertical" ? "vertical":"horizontal";
+            directionpropertyValue.textContent = directioninput.checked ? "vertical":"horizontal";
             n.callBaseCalibration();
             dirty = true;
         });
@@ -2589,7 +2615,7 @@ function getCrossGableS(param){
                                 height: param.Height,
                                 width: param.Width,
 								backside: "on",
-								back_grasp:2,
+								back_grasp:4,
 								extrude_len:6,
 								extrude_pos:0.5,
 								extrude_bas:6,
