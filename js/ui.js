@@ -1916,6 +1916,145 @@ function attachInput(pickId){
 		}
 	}
 	
+	//corss_galbe extrude
+	if(n.getExtrudeBas && n.getExtrudeBas()){
+		var roof_extrudeBas_ismove = false;
+		var div = document.createElement("div");
+		inputarea.appendChild(div);
+		//text
+		var roof_extrudeBas_propertyName = document.createElement("lable");
+			roof_extrudeBas_propertyName.textContent = "roof_extrudeBas";
+			div.appendChild(roof_extrudeBas_propertyName);
+		//input
+		var roof_extrudeBas_input = document.createElement("input");
+			roof_extrudeBas_input.type = "range";
+			roof_extrudeBas_input.min = "1";
+			roof_extrudeBas_input.max = "50";
+			roof_extrudeBas_input.step = "0.1";
+			roof_extrudeBas_input.value = n.getExtrudeBas();
+			div.appendChild(roof_extrudeBas_input);
+		var roof_extrudeBas_propertyValue = document.createElement("lable");
+			roof_extrudeBas_propertyValue.textContent = roof_extrudeBas_input.value;
+			div.appendChild(roof_extrudeBas_propertyValue);
+		roof_extrudeBas_input.addEventListener('mousedown',function(event){
+			roof_extrudeBas_ismove = true;
+		});
+		roof_extrudeBas_input.addEventListener('mousemove',function(event){
+			if(roof_extrudeBas_ismove){
+				n.setExtrudeBas(Number(roof_extrudeBas_input.value*1.0));
+				roof_extrudeBas_propertyValue.textContent = roof_extrudeBas_input.value;
+				n.callBaseCalibration();
+				dirty = true;
+			}
+		});
+		roof_extrudeBas_input.addEventListener('mouseup',function(event){
+			roof_extrudeBas_ismove = false;
+		});
+		
+	}
+	if(n.getExtrudeLen && n.getExtrudeLen()){
+		var roof_extrudeLen_ismove = false;
+		var div = document.createElement("div");
+		inputarea.appendChild(div);
+		//text
+		var roof_extrudeLen_propertyName = document.createElement("lable");
+			roof_extrudeLen_propertyName.textContent = "roof_extrudeLen";
+			div.appendChild(roof_extrudeLen_propertyName);
+		//input
+		var roof_extrudeLen_input = document.createElement("input");
+			roof_extrudeLen_input.type = "range";
+			roof_extrudeLen_input.min = "1";
+			roof_extrudeLen_input.max = "50";
+			roof_extrudeLen_input.step = "0.1";
+			roof_extrudeLen_input.value = n.getExtrudeLen();
+			div.appendChild(roof_extrudeLen_input);
+		var roof_extrudeLen_propertyValue = document.createElement("lable");
+			roof_extrudeLen_propertyValue.textContent = roof_extrudeLen_input.value;
+			div.appendChild(roof_extrudeLen_propertyValue);
+		roof_extrudeLen_input.addEventListener('mousedown',function(event){
+			roof_extrudeLen_ismove = true;
+		});
+		roof_extrudeLen_input.addEventListener('mousemove',function(event){
+			if(roof_extrudeLen_ismove){
+				n.setExtrudeLen(Number(roof_extrudeLen_input.value*1.0));
+				roof_extrudeLen_propertyValue.textContent = roof_extrudeLen_input.value;
+				n.callBaseCalibration();
+				dirty = true;
+			}
+		});
+		roof_extrudeLen_input.addEventListener('mouseup',function(event){
+			roof_extrudeLen_ismove = false;
+		});
+	}
+	if(n.getExtrudePos && n.getExtrudePos()){
+		var roof_extrudePos_ismove = false;
+		var div = document.createElement("div");
+		inputarea.appendChild(div);
+		//text
+		var roof_extrudePos_propertyName = document.createElement("lable");
+			roof_extrudePos_propertyName.textContent = "roof_extrudePos";
+			div.appendChild(roof_extrudePos_propertyName);
+		//input
+		var roof_extrudePos_input = document.createElement("input");
+			roof_extrudePos_input.type = "range";
+			roof_extrudePos_input.min = "0";
+			roof_extrudePos_input.max = "1";
+			roof_extrudePos_input.step = "0.1";
+			roof_extrudePos_input.value = n.getExtrudePos();
+			div.appendChild(roof_extrudePos_input);
+		var roof_extrudePos_propertyValue = document.createElement("lable");
+			roof_extrudePos_propertyValue.textContent = roof_extrudePos_input.value;
+			div.appendChild(roof_extrudePos_propertyValue);
+		roof_extrudePos_input.addEventListener('mousedown',function(event){
+			roof_extrudePos_ismove = true;
+		});
+		roof_extrudePos_input.addEventListener('mousemove',function(event){
+			if(roof_extrudePos_ismove){
+				n.setExtrudePos(Number(roof_extrudePos_input.value*1.0));
+				roof_extrudePos_propertyValue.textContent = roof_extrudePos_input.value;
+				n.callBaseCalibration();
+				dirty = true;
+			}
+		});
+		roof_extrudePos_input.addEventListener('mouseup',function(event){
+			roof_extrudePos_ismove = false;
+		});
+	}
+	if(n.getExtrudeHgt && n.getExtrudeHgt()){
+		var roof_extrudeHgt_ismove = false;
+		var div = document.createElement("div");
+		inputarea.appendChild(div);
+		//text
+		var roof_extrudeHgt_propertyName = document.createElement("lable");
+			roof_extrudeHgt_propertyName.textContent = "roof_extrudeHgt";
+			div.appendChild(roof_extrudeHgt_propertyName);
+		//input
+		var roof_extrudeHgt_input = document.createElement("input");
+			roof_extrudeHgt_input.type = "range";
+			roof_extrudeHgt_input.min = "0";
+			roof_extrudeHgt_input.max = "1";
+			roof_extrudeHgt_input.step = "0.1";
+			roof_extrudeHgt_input.value = n.getExtrudeHgt();
+			div.appendChild(roof_extrudeHgt_input);
+		var roof_extrudeHgt_propertyValue = document.createElement("lable");
+			roof_extrudeHgt_propertyValue.textContent = roof_extrudeHgt_input.value;
+			div.appendChild(roof_extrudeHgt_propertyValue);
+		roof_extrudeHgt_input.addEventListener('mousedown',function(event){
+			roof_extrudeHgt_ismove = true;
+		});
+		roof_extrudeHgt_input.addEventListener('mousemove',function(event){
+			if(roof_extrudeHgt_ismove){
+				n.setExtrudeHgt(Number(roof_extrudeHgt_input.value*1.0));
+				roof_extrudeHgt_propertyValue.textContent = roof_extrudeHgt_input.value;
+				n.callBaseCalibration();
+				dirty = true;
+			}
+		});
+		roof_extrudeHgt_input.addEventListener('mouseup',function(event){
+			roof_extrudeHgt_ismove = false;
+		});
+	}
+	
 }
 
 
