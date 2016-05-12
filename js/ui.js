@@ -2170,7 +2170,38 @@ function changeRoof(type){
             root.addNode(rightTriangleS);
             root.addNode(gableS);
             housenode2flag(roof).destroy();
-        }else if(type == "roof/hip"){
+        }else if(type=="roof/cross_gable"){
+			console.log("change to cross_gable");
+			var rightTriangleS = getTriangleS({layerNumber: layerNumber,
+                Height: roof.getHeight(),
+                Width: roof.getWidth(),
+                Depth: roof.getDepth(),
+                Ratioa: roof.getRatio().a,
+                Ratiob: roof.getRatio().b,
+                pos: "rightTriangle"
+            });
+
+            var leftTriangleS = getTriangleS({layerNumber: layerNumber,
+                Height: roof.getHeight(),
+                Width: roof.getWidth(),
+                Depth: roof.getDepth(),
+                Ratioa: roof.getRatio().a,
+                Ratiob: roof.getRatio().b,
+                pos: "leftTriangle"
+            });
+			var cross_gableS = getCrossGableS({layerNumber: layerNumber,
+                Height: roof.getHeight(),
+                Width: roof.getWidth(),
+                Depth: roof.getDepth(),
+                Ratioa: roof.getRatio().a,
+                Ratiob: roof.getRatio().b
+            });
+			root.addNode(leftTriangleS);
+            root.addNode(rightTriangleS);
+			root.addNode(cross_gableS);
+			housenode2flag(roof).destroy();
+			
+		}else if(type == "roof/hip"){
             console.log("changed to hip");
             var hipS = getHipS({layerNumber: layerNumber,
                 Height: roof.getHeight(),
@@ -2300,6 +2331,12 @@ function getElementXML(n){
                 }
                 xml+='</windowCenter>'+'\n';
             }
+			if(n.getExtrudePos && n.getExtrudePos())xml+='\t\t\t'+'<extrude_pos>'+n.getExtrudePos()+'</extrude_pos>'+'\n';
+			if(n.getExtrudeHgt && n.getExtrudeHgt())xml+='\t\t\t'+'<extrude_hgt>'+n.getExtrudeHgt()+'</extrude_hgt>'+'\n';
+			if(n.getExtrudeLen && n.getExtrudeLen())xml+='\t\t\t'+'<extrude_len>'+n.getExtrudeLen()+'</extrude_len>'+'\n';
+			if(n.getExtrudeBas && n.getExtrudeBas())xml+='\t\t\t'+'<extrude_bas>'+n.getExtrudeBas()+'</extrude_bas>'+'\n';
+			if(n.getBackGrasp && n.getBackGrasp())xml+='\t\t\t'+'<back_grasp>'+n.getBackGrasp()+'</back_grasp>'+'\n';
+			if(n.getBackSide && n.getBackSide())xml+='\t\t\t'+'<backside>'+n.getBackSide()+'</backside>'+'\n';
         xml+='\t\t'+'</property>'+'\n';
     xml+='\t'+'</element>'+'\n';
     return xml;
@@ -2312,7 +2349,11 @@ function generateXML(){
         var node = nodes[i];
         if(node.getType()=="flags"){
             var n= flag2housenode(node);
-            xml += getElementXML(n);
+			if(n.getType() == "window/fixed"){
+			}else{
+				xml += getElementXML(n);
+			}
+            
         }
     }
     xml+='</layer>'+'\n';
@@ -2508,7 +2549,65 @@ function getGableS(param){
             }]
         }] 
     };
-    return gableS
+    return gableS;
+}
+
+function getCrossGableS(param){
+	var cross_gableS={
+		type: "flags",
+        flags:{transparent:false},
+        nodes:
+        [{
+            type: "name",
+            name: "roof",
+
+            nodes:
+            [{
+                type: "material",
+                color:{ r:0.8, g:0.8, b:0.8 },
+                alpha:0.2,
+                nodes:
+                [{
+                    type: "name",
+                    name: "roof.jpg",
+
+                    nodes:
+                    [{
+                        type: "matrix",
+                        elements:[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],
+
+                        nodes:
+                        [{
+                            type: "texture",
+                            src: "images/GeometryTexture/roof.jpg",
+                            applyTo: "color",
+
+                            nodes:
+                            [{
+                                type: "roof/cross_gable",
+                                layer: param.layerNumber,
+                                height: param.Height,
+                                width: param.Width,
+								backside: "on",
+								back_grasp:2,
+								extrude_len:6,
+								extrude_pos:0.5,
+								extrude_bas:6,
+								extrude_hgt:0.7,
+                                thickness: 1,
+                                depth: param.Depth,
+                                ratio: {a: 0.5 , b: 0.5},
+                                scale: {x: 1, y: 1, z: 1},
+                                rotate: {x: 0, y: 180, z: 0},
+                                translate: {x: 0, y: 0, z: 0}
+                            }]
+                        }]
+                    }]
+                }]
+            }]
+        }]
+	};
+	return cross_gableS;
 }
 function getTriangleS(param){
     var TriangleS = {
