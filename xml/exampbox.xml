@@ -1,0 +1,17 @@
+<layer>
+    
+    <element>
+        <type>geometry/box</type>
+		<transform>
+			<scale>1,1,1</scale>
+			<rotate>0,0,0</rotate>
+			<translate>0,0,0</translate>
+        </transform>
+        <texture>wall.jpg</texture>
+        <pos>backWall</pos>
+        <property>
+            <size>10, 10, 10</size>
+        </property>
+    </element>
+    
+</layer> 

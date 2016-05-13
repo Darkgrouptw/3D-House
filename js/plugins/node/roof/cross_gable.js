@@ -30,17 +30,22 @@ SceneJS.Types.addType("roof/cross_gable",
             r.a = ratio_boundary(r.a);
             r.b = ratio_boundary(r.b);
 
-            var el = property.extrude_len * 2, eb = property.extrude_bas * 2;
+            var el = property.extrude_len * 2;
+            var eb = property.extrude_bas * 2;
 
             var eh = property.extrude_hgt;
             eh = ratio_boundary(eh);
 
             var ep = property.extrude_pos;
             ep = ratio_boundary(ep);
-	
-	        var wr = (w * r.a + -w * r.b) / 2;
 
-            var dr = 2 * d * ep, db = d - eb * 0.5;
+            var td = d - (3 * t);
+            if(eb > (2 * td)) { eb = 2 * td; }
+
+	        var wr = (w * r.a + -w * r.b) / 2;
+            var db = (d - (eb * 0.5)) - (3 * t);
+            var dr = (2 * db) * (1 - ep), dl = (2 * db) * ep;
+            var ldb = db * 2 * ep, rdb = db * 2 * (1 - ep);
 
             var base_len = w;
             if(base_len < (wr + el)) { base_len = wr + el; }
@@ -56,8 +61,8 @@ SceneJS.Types.addType("roof/cross_gable",
 	        var pset = 
             [
                 //front bottom
-                -d + db - dt, -h, w + dt, -d, -h, w + dt, -d, -h, w, -d + db, -h, w,
-                d, -h, w + dt, d - db + dt, -h, w + dt, d - db, -h, w, d, -h, w,
+                -td + ldb - dt, -h, w + dt, -d, -h, w + dt, -d, -h, w, -td + ldb, -h, w,
+                d, -h, w + dt, td - rdb + dt, -h, w + dt, td - rdb, -h, w, d, -h, w,
 
                 // backside: nesseary part, L M R
                 -d, h, wr, -d, -h, -w, -d + gs, -h, -w, -d + gs, h - mh, wr - mw,
@@ -69,19 +74,19 @@ SceneJS.Types.addType("roof/cross_gable",
                 d - gs, h - mh + st, wr - mw, d, h + st, wr, d, -h, -w - dt, d - gs, -h, -w - dt,
 
                 // extrude
-                -d + dr, sh, wr + el, -d + db, -h, base_len, -d + db, -h, w, -d + dr, sh, wr + whr,
-                -d + dr, sh + st, wr + el, -d + dr, sh + st, wr + whr, -d + db - dt, -h, w + dt, -d + db - dt, -h, base_len,
+                -db + dl, sh, wr + el, -td + ldb, -h, base_len, -td + ldb, -h, w, -db + dl, sh, wr + whr,
+                -db + dl, sh + st, wr + el, -db + dl, sh + st, wr + whr, -td + ldb - dt, -h, w + dt, -td + ldb - dt, -h, base_len,
 
-                -d + dr, sh, wr + whr, d - db, -h, w, d - db, -h, base_len, -d + dr, sh, wr + el,
-                -d + dr, sh + st, wr + whr, -d + dr, sh + st, wr + el, d - db + dt, -h, base_len, d - db + dt, -h, w + dt,
+                -db + dl, sh, wr + whr, td - rdb, -h, w, td - rdb, -h, base_len, -db + dl, sh, wr + el,
+                -db + dl, sh + st, wr + whr, -db + dl, sh + st, wr + el, td - rdb + dt, -h, base_len, td - rdb + dt, -h, w + dt,
 
                 // extrude bottom 
-                -d + db, -h, base_len, -d + db - dt, -h, base_len, -d + db - dt, -h, w + dt, -d + db, -h, w, 
-                d - db, -h, w, d - db + dt, -h, w + dt, d - db + dt, -h, base_len, d - db, -h, base_len,
+                -td + ldb, -h, base_len, -td + ldb - dt, -h, base_len, -td + ldb - dt, -h, w + dt, -td + ldb, -h, w, 
+                td - rdb, -h, w, td - rdb + dt, -h, w + dt, td - rdb + dt, -h, base_len, td - rdb, -h, base_len,
 
                 // extrude side
-                -d + dr, sh, wr + el, -d + dr, sh + st, wr + el, -d + db - dt, -h, base_len, -d + db, -h, base_len, 
-                -d + dr, sh + st, wr + el, -d + dr, sh, wr + el, d - db, -h, base_len, d - db + dt, -h, base_len, 
+                -db + dl, sh, wr + el, -db + dl, sh + st, wr + el, -td + ldb - dt, -h, base_len, -td + ldb, -h, base_len, 
+                -db + dl, sh + st, wr + el, -db + dl, sh, wr + el, td - rdb, -h, base_len, td - rdb + dt, -h, base_len, 
                 
                 // backside bottom 
                 d - gs, -h, -w - dt, d, -h, -w - dt, d, -h, -w, d - gs, -h, -w,
@@ -128,20 +133,26 @@ SceneJS.Types.addType("roof/cross_gable",
             pset = pset.concat(
             [
                 // frontside
-                -d + dr, sh, wr + whr, -d + db, -h, w, -d, -h, w, -d, h, wr, 
-                -d + dr, sh + st, wr + whr, -d, h + st, wr, -d, -h, w + dt, -d + db - dt, -h, w + dt,
+                -db + dl, sh, wr + whr, -td + ldb, -h, w, -d, -h, w, -d, h, wr, 
+                -db + dl, sh + st, wr + whr, -d, h + st, wr, -d, -h, w + dt, -td + ldb - dt, -h, w + dt,
 
-                d, h, wr, d, -h, w, d - db, -h, w, d - dr, sh, wr + whr,
-                d, h + st, wr, d - dr, sh + st, wr + whr, d - db + dt, -h, w + dt, d, -h, w + dt,
+                d, h, wr, d, -h, w, td - rdb, -h, w, db - dr, sh, wr + whr,
+                d, h + st, wr, db - dr, sh + st, wr + whr, td - rdb + dt, -h, w + dt, d, -h, w + dt,
             ]);
 
             if(1 != eh)
             {
                 var appendpet = 
                 [
-                    -d, h, wr, -d, h, wr, d, h, wr, -d + dr, sh, wr + whr,
-                    -d, h + st, wr, -d + dr, sh + st, wr + whr, d, h + st, wr, -d, h + st, wr
+                    -d, h, wr, -d, h, wr, d, h, wr, -db + dl, sh, wr + whr,
+                    -d, h + st, wr, -db + dl, sh + st, wr + whr, d, h + st, wr, -d, h + st, wr
                 ];
+                pset = pset.concat(appendpet);
+            }
+            else
+            {
+                var appendpet = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
                 pset = pset.concat(appendpet);
             }
 
