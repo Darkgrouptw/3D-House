@@ -3,16 +3,136 @@ var tmpNormal = null;
 // distance between origin point and camera position
 var camDist = null;
 
+//console.log("objectId ", objectId);
+//var noLayer = getNodeLayer(objectId);
+//console.log("nodeLayer ", scene.getNode(objectId).nodes[0].nodes[0].nodes[0].getLayer());
+//console.log("noLayer ", noLayer);
+//var noName = getNodeName(objectId);
+//var noType = getNodeType(objectId);
+//console.log("nodeType ", scene.getNode(objectId).nodes[0].nodes[0].nodes[0]);
+//console.log("noType ", noType);
+//console.log("nodeName ", scene.getNode(objectId).parent.parent.getName());
+//console.log("noName ", noName);
+//pickNode = scene.findNode(objectId).parent.parent.getName();
+//var pickLayer = scene.getNode(objectId).nodes[0].nodes[0].nodes[0].getLayer();
+
+var numberOfType = ["base/basic","wall/door_entry","wall/single_window","wall/no_window","wall/multi_window",
+                    "roof/cross_gable","roof/gable","roof/hip","roof/mansard","wall/triangle","window/fixed"];
+
+var numberOfName = ["base","rightWall","leftWall","backWall","roof","rightTriangle","leftTriangle","interWall"];
+
+var numberOfRoof = ["roof/cross_gable","roof/gable","roof/hip","roof/mansard"];
+
 function Sign(x) 
 {
     return typeof x === 'number' ? x ? x < 0 ? -1 : 1 : x === x ? 0 : NaN : NaN;
+}
+
+function getNodeBase(objName, objLayer)
+{
+    var tmpNode = scene.findNodes();
+    var nodeObject;
+    for(var i = 0; i < tmpNode.length; i++)
+    {
+        var nodeType = tmpNode[i].type;
+        if(nodeType == "name")
+        {
+            if(tmpNode[i].getName() == objName && getNodeLayer(tmpNode[i].getID()) == objLayer)
+            {
+                nodeObject = getNodeType(tmpNode[i].getID());
+                break;
+            }
+        }
+    }
+    return nodeObject;
+}
+
+function getNodeRoof()
+{
+    var tmpNode = scene.findNodes();
+    var nodeObject;
+    for(var i = 0; i < tmpNode.length; i++)
+    {
+        if(numberOfRoof.indexOf(tmpNode[i].type) > -1)
+        {
+            nodeObject = tmpNode[i];
+            break;
+        }
+    }
+    return nodeObject;
+}
+
+function getNodeLayer(id)
+{
+    var currentNode = scene.getNode(id).nodes[0];
+    var nodeType;
+    var nodeLayer;
+    while(true)
+    {
+        nodeType = currentNode.type;
+        // Move to next node
+        if (numberOfType.indexOf(nodeType) > -1) {
+            nodeLayer = currentNode.getLayer();
+            break;
+        } 
+        else {
+            currentNode = currentNode.nodes[0];
+        }
+    }
+    return nodeLayer;
+}
+
+function getNodeType(id)
+{
+    var currentNode = scene.getNode(id).nodes[0];
+    var nodeType;
+    while(true)
+    {
+        nodeType = currentNode.type;
+        // Move to next node
+        if (numberOfType.indexOf(nodeType) > -1) {
+            break;
+        } else {
+            currentNode = currentNode.nodes[0];
+        }
+    }
+    return currentNode;
+}
+
+function getNodeName(id)
+{
+    var currentNode = scene.getNode(id).parent;
+    var nodeType;
+    var nodeName;
+    while(true)
+    {
+        nodeType = currentNode.type;
+        if(nodeType == 'name')
+        {
+            nodeName = currentNode.getName();
+            // Move to the parent
+            if (numberOfName.indexOf(nodeName) > -1) {
+                break;
+            }
+            else
+            {
+                console.log("NodeName was not found!!!");
+                break;
+            }
+        }
+        else
+        {
+            currentNode = currentNode.parent;
+        }
+    }
+    return nodeName;
 }
 
 function windowOffsetY(id, tmpLength, tmpAxis)
 {
     var tmpOffsetY;
     var n = scene.getNode(3).getEye();
-    var tmpNode = scene.getNode(id).nodes[0].nodes[0].nodes[0];
+    var tmpNode = getNodeType(id);
 
     switch(tmpAxis)
     {
@@ -40,7 +160,7 @@ function windowOffsetX(id, tmpLength, tmpAxis)
 {
     var tmpOffsetX;
     var n = scene.getNode(3).getEye();
-    var tmpNode = scene.getNode(id).nodes[0].nodes[0].nodes[0];
+    var tmpNode = getNodeType(id);
 
     switch(tmpAxis)
     {
@@ -68,7 +188,7 @@ function doorOffsetX(id, tmpLength, tmpAxis)
 {
     var tmpOffsetX;
     var n = scene.getNode(3).getEye();
-    var tmpNode = scene.getNode(id).nodes[0].nodes[0].nodes[0];
+    var tmpNode = getNodeType(id);
 
     switch(tmpAxis)
     {
@@ -97,7 +217,7 @@ function baseOffsetX(id, tmpLength, tmpAxis)
     var tmpOffsetX;
     var tmpOffsetY;
     var n = scene.getNode(3).getEye();
-    var tmpNode = scene.getNode(id).nodes[0].nodes[0].nodes[0];
+    var tmpNode = getNodeType(id);
 
     switch(tmpAxis)
     {
@@ -143,7 +263,7 @@ function baseOffsetY(id, tmpLength, tmpAxis)
     var tmpOffsetX;
     var tmpOffsetY;
     var n = scene.getNode(3).getEye();
-    var tmpNode = scene.getNode(id).nodes[0].nodes[0].nodes[0];
+    var tmpNode = getNodeType(id);
 
     switch(tmpAxis)
     {
@@ -188,7 +308,7 @@ function interWallOffsetX(id, tmplength, tmpAxis)
     var tmpPercentX;
     var tmpPercentY;
     var n = scene.getNode(3).getEye();
-    var tmpNode = scene.getNode(id).nodes[0].nodes[0].nodes[0];
+    var tmpNode = getNodeType(id);
 
     switch(tmpAxis)
     {
@@ -234,7 +354,7 @@ function interWallOffsetY(id, tmplength, tmpAxis)
     var tmpPercentX;
     var tmpPercentY;
     var n = scene.getNode(3).getEye();
-    var tmpNode = scene.getNode(id).nodes[0].nodes[0].nodes[0];
+    var tmpNode = getNodeType(id);
 
     switch(tmpAxis)
     {
@@ -460,16 +580,15 @@ function setDoorHeight(object, length, limit)
 function horizontalAxis(id, tmpLength, tmpAxis)
 {
     var n;
-    var tmpNode = scene.findNodes();
-    var tmpLayer = scene.getNode(id).nodes[0].nodes[0].nodes[0].getLayer();
-    var nameNode = scene.getNode(id).parent.parent.getName();
+    var tmpLayer = getNodeLayer(id);
+    var nameNode = getNodeName(id);
     if(nameNode == "rightTriangle" || nameNode == "leftTriangle")
     {
-        n = scene.getNode(7).nodes[0].nodes[0].nodes[0];
+        n = getNodeRoof();
     }
     else
     {
-        n = scene.getNode(id).nodes[0].nodes[0].nodes[0];
+        n = getNodeType(id);
     }
 
     switch(tmpAxis)
@@ -485,17 +604,8 @@ function horizontalAxis(id, tmpLength, tmpAxis)
             }
             else if(nameNode == "base")
             {
-                for(var i = 0; i < tmpNode.length; i++)
-                {
-                    if(tmpNode[i].getType() == "name")
-                    {
-                        if(tmpNode[i].getName() == "backWall" && tmpNode[i].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].getLayer() == tmpLayer)
-                        {
-                            var tmpBackWall = tmpNode[i].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
-                            setObjectWidth(tmpBackWall, tmpLength, 18);
-                        }
-                    }
-                }
+                var tmpBackWall = getNodeBase("backWall", tmpLayer);
+                setObjectWidth(tmpBackWall, tmpLength, 18);
             }
             break;
         case 1:
@@ -520,17 +630,8 @@ function horizontalAxis(id, tmpLength, tmpAxis)
             }
             else if(nameNode == "base")
             {
-                for(var i = 0; i < tmpNode.length; i++)
-                {
-                    if(tmpNode[i].getType() == "name")
-                    {
-                        if(tmpNode[i].getName() == "rightWall" && tmpNode[i].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].getLayer() == tmpLayer)
-                        {
-                            var tmpRightWall = tmpNode[i].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
-                            setObjectWidth(tmpRightWall, tmpLength, 7);
-                        }
-                    }
-                }
+                var tmpRightWall = getNodeBase("rightWall", tmpLayer);
+                setObjectWidth(tmpRightWall, tmpLength, 7);
             }
             break;
         case 2:
@@ -544,17 +645,8 @@ function horizontalAxis(id, tmpLength, tmpAxis)
             }
             else if(nameNode == "base")
             {
-                for(var i = 0; i < tmpNode.length; i++)
-                {
-                    if(tmpNode[i].getType() == "name")
-                    {
-                        if(tmpNode[i].getName() == "backWall" && tmpNode[i].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].getLayer() == tmpLayer)
-                        {
-                            var tmpBackWall = tmpNode[i].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
-                            setObjectWidth(tmpBackWall, tmpLength, 18);
-                        }
-                    }
-                }
+                var tmpBackWall = getNodeBase("backWall", tmpLayer);
+                setObjectWidth(tmpBackWall, tmpLength, 18);
             }
             break;
         case 3:
@@ -579,17 +671,8 @@ function horizontalAxis(id, tmpLength, tmpAxis)
             }
             else if(nameNode == "base")
             {
-                for(var i = 0; i < tmpNode.length; i++)
-                {
-                    if(tmpNode[i].getType() == "name")
-                    {
-                        if(tmpNode[i].getName() == "rightWall" && tmpNode[i].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].getLayer() == tmpLayer)
-                        {
-                            var tmpRightWall = tmpNode[i].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
-                            setObjectWidth(tmpRightWall, tmpLength, 7);
-                        }
-                    }
-                }
+                var tmpRightWall = getNodeBase("rightWall", tmpLayer);
+                setObjectWidth(tmpRightWall, tmpLength, 7);
             }
             break;
     }
@@ -598,16 +681,15 @@ function horizontalAxis(id, tmpLength, tmpAxis)
 function verticalAxis(id, tmpLength, tmpAxis)
 {
     var n;
-    var tmpNode = scene.findNodes();
-    var tmpLayer = scene.getNode(id).nodes[0].nodes[0].nodes[0].getLayer();
-    var nameNode = scene.getNode(id).parent.parent.getName();
+    var tmpLayer = getNodeLayer(id);
+    var nameNode = getNodeName(id);
     if(nameNode == "rightTriangle" || nameNode == "leftTriangle")
     {
-        n = scene.getNode(7).nodes[0].nodes[0].nodes[0];
+        n = getNodeRoof();
     }
     else
     {
-        n = scene.getNode(id).nodes[0].nodes[0].nodes[0];
+        n = getNodeType(id);
     }
 
     switch(tmpAxis)
@@ -658,17 +740,8 @@ function verticalAxis(id, tmpLength, tmpAxis)
             }
             else if(nameNode == "base")
             {
-                for(var i = 0; i < tmpNode.length; i++)
-                {
-                    if(tmpNode[i].getType() == "name")
-                    {
-                        if(tmpNode[i].getName() == "rightWall" && tmpNode[i].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].getLayer() == tmpLayer)
-                        {
-                            var tmpRightWall = tmpNode[i].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
-                            setObjectWidth(tmpRightWall, tmpLength, 7);
-                        }
-                    }
-                }
+                var tmpRightWall = getNodeBase("rightWall", tmpLayer);
+                setObjectWidth(tmpRightWall, tmpLength, 7);
             }
             break;
         case 3:
@@ -697,17 +770,8 @@ function verticalAxis(id, tmpLength, tmpAxis)
             }
             else if(nameNode == "base")
             {
-                for(var i = 0; i < tmpNode.length; i++)
-                {
-                    if(tmpNode[i].getType() == "name")
-                    {
-                        if(tmpNode[i].getName() == "backWall" && tmpNode[i].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].getLayer() == tmpLayer)
-                        {
-                            var tmpBackWall = tmpNode[i].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
-                            setObjectWidth(tmpBackWall, tmpLength, 18);
-                        }
-                    }
-                }
+                var tmpBackWall = getNodeBase("backWall", tmpLayer);
+                setObjectWidth(tmpBackWall, tmpLength, 18);
             }
             break;
     }
@@ -772,8 +836,8 @@ function getAxis()
 
 function changeInterWallDirention(id)
 {
-    var tmpNode = scene.getNode(id).nodes[0].nodes[0].nodes[0];
-    //console.log("this is ",tmpNode);
+    var tmpNode = getNodeType(id);
+
     if(tmpNode.getDirection() == "vertical")
     {
         tmpNode.setDirection("horizontal");
