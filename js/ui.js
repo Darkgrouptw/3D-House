@@ -15,6 +15,10 @@ var time = 0;
 //this is for the element that is not gona printed
 var windows = [];
 var doors = [];
+//get dependency between wall and window
+var getWallID = [];
+var getWindowID = [];
+
 function UIinit(boolFlag)
 {
     console.log('what did you done');
@@ -225,6 +229,10 @@ function ScenePick(){
                             case "interWall":
                                 interWallOffsetY(objectId, tmpYlength, currentAxis);
                                 break;
+                            case "window":
+                                var changeId = getWallID[getWindowID.indexOf(objectId)];
+                                windowOffsetY(changeId, tmpYlength, currentAxis);
+                                break;
                             case "leftWall":
                             case "rightWall":
                             case "backWall":
@@ -244,6 +252,10 @@ function ScenePick(){
                                 break;
                             case "interWall":
                                 interWallOffsetX(objectId, tmpXlength, currentAxis);
+                                break;
+                            case "window":
+                                var changeId = getWallID[getWindowID.indexOf(objectId)];
+                                windowOffsetX(changeId, tmpXlength, currentAxis);
                                 break;
                             case "leftWall":
                             case "rightWall":
@@ -294,12 +306,15 @@ function ScenePick(){
                 //uiPanel.style.left = (hit.canvasPos[0]+50) + "px";
                 //uiPanel.style.top = (hit.canvasPos[1]+50) + "px";
 
+                //console.log("getWallID ", getWallID);
+                //console.log("getWindowID ", getWindowID);
                 console.log("ID: ", hit.nodeId, " partmode: ", partmode);
                 objectId = hit.nodeId;
-                pickNode = scene.findNode(objectId).parent.parent.getName();
-                var pickLayer = scene.getNode(objectId).nodes[0].nodes[0].nodes[0].getLayer();
-                if(pickNode == "interWall") { isRotation = false; }
+                pickNode = getNodeName(objectId);
+                var pickLayer = getNodeLayer(objectId);
+                if(pickNode == "window") { isRotation = false; }
                 else if(pickNode == "base" && pickLayer != 1) { isRotation = false; }
+                else if(pickNode == "interWall") { isRotation = false; }
                 else { isRotation = true; }
 
                 var now = new Date().getTime();
@@ -2057,7 +2072,6 @@ function attachInput(pickId){
 	
 }
 
-
 function timeFuction(){
     setInterval(function(){
         if(dirty || time > 0){
@@ -2077,6 +2091,8 @@ function timeFuction(){
 			var Wall_id =[]
 			var the_number_of_window=0;
 			var the_number_of_door=0;
+            getWallID = [];
+            getWindowID = [];
             for(var i=0;i<nodes.length;i++){
                 var node = nodes[i];
                 if(node.getType()=="name"){
@@ -2125,12 +2141,27 @@ function timeFuction(){
 					if(housenode2flag(node).nodes[0].getName() != "interWall"){
 						the_number_of_window++;
 						Wall_id.push(node);
+
+                        //console.log("single_window ID ", node.parent.parent.parent.getID());
+                        if(getWallID.indexOf(node.parent.parent.parent.getID()) < 0)
+                        {
+                            getWallID.push(node.parent.parent.parent.getID());
+                        }
 					}
 				}else if(node.getType() == "wall/multi_window"){
 					if(housenode2flag(node).nodes[0].getName() != "interWall"){
 						the_number_of_window += node.getWindowCenter().length/2;
 						the_number_of_door += node.getDoorPosratio().length;
 						Wall_id.push(node);
+
+                        var numberOfCenter = node.getWindowCenter().length / 2;
+                        if(getWallID.indexOf(node.parent.parent.parent.getID()) < 0)
+                        {
+                            for(var num = 0; num < numberOfCenter; num++)
+                            {
+                                getWallID.push(node.parent.parent.parent.getID());
+                            }
+                        }
 					}
 					
 				}
@@ -2162,7 +2193,14 @@ function timeFuction(){
 						var result=callculateWindow({rotate:rotate,translate:traslate,
 										 window_ratio_X:window_ratio_X,window_ratio_Y:window_ratio_Y,
 										 wall_width:wall_width,wall_height});
-						
+
+						//console.log("next window ", flag2housenode(windows[next_window_used]).parent.parent.parent.getID());
+                        if(getWindowID.indexOf(flag2housenode(windows[next_window_used]).parent.parent.parent.getID()) < 0)
+                        {
+                            getWindowID.push(flag2housenode(windows[next_window_used]).parent.parent.parent.getID());
+
+                        }
+
 						var target = flag2housenode(windows[next_window_used]);
 						target.setTranslate([result.x,result.y,result.z]);
 						target.setRotate([result.rx,result.ry,result.rz]);
@@ -2182,6 +2220,14 @@ function timeFuction(){
 							var result=callculateWindow({rotate:rotate,translate:traslate,
 										 window_ratio_X:window_ratio_X,window_ratio_Y:window_ratio_Y,
 										 wall_width:wall_width,wall_height});
+                            
+                            //console.log("next window ", flag2housenode(windows[next_window_used]).parent.parent.parent.getID());
+                            if(getWindowID.indexOf(flag2housenode(windows[next_window_used]).parent.parent.parent.getID()) < 0)
+                            {
+                                getWindowID.push(flag2housenode(windows[next_window_used]).parent.parent.parent.getID());
+
+                            }
+
 							var target = flag2housenode(windows[next_window_used]);
 							target.setTranslate([result.x,result.y,result.z]);
 							target.setRotate([result.rx,result.ry,result.rz]);
@@ -2533,7 +2579,7 @@ function saveXML(){
 function create20Windows(){
 	console.log(scene.findNode(3));
 	for(var i=0;i<20;i++){
-		windows.push(scene.findNode(3).addNode(getWindow_fixed({pos:window,extend:1,sizeX:4,sizeY:4,})));
+		windows.push(scene.findNode(3).addNode(getWindow_fixed({pos:'window',extend:1,sizeX:4,sizeY:4,})));
 	}
 }
 function create10Doors(){

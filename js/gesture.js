@@ -19,7 +19,7 @@ var camDist = null;
 var numberOfType = ["base/basic","wall/door_entry","wall/single_window","wall/no_window","wall/multi_window",
                     "roof/cross_gable","roof/gable","roof/hip","roof/mansard","wall/triangle","window/fixed"];
 
-var numberOfName = ["base","rightWall","leftWall","backWall","roof","rightTriangle","leftTriangle","interWall"];
+var numberOfName = ["base","rightWall","leftWall","backWall","roof","rightTriangle","leftTriangle","interWall","window"];
 
 var numberOfRoof = ["roof/cross_gable","roof/gable","roof/hip","roof/mansard"];
 
@@ -609,7 +609,12 @@ function horizontalAxis(id, tmpLength, tmpAxis)
             }
             break;
         case 1:
-            if(nameNode == "rightWall" || nameNode == "leftWall")
+            if(nameNode == "window")
+            {
+                n = getNodeType(getWallID[getWindowID.indexOf(id)]);
+                setWindowWidth(n, tmpLength, 3);
+            }
+            else if(nameNode == "rightWall" || nameNode == "leftWall")
             {
                 if(partmode == 0)
                 {
@@ -650,7 +655,12 @@ function horizontalAxis(id, tmpLength, tmpAxis)
             }
             break;
         case 3:
-            if(nameNode == "rightWall" || nameNode == "leftWall")
+            if(nameNode == "window")
+            {
+                n = getNodeType(getWallID[getWindowID.indexOf(id)]);
+                setWindowWidth(n, tmpLength, 3);
+            }
+            else if(nameNode == "rightWall" || nameNode == "leftWall")
             {
                 if(partmode == 0)
                 {
@@ -705,7 +715,12 @@ function verticalAxis(id, tmpLength, tmpAxis)
             }
             break;
         case 1:
-            if(nameNode == "rightWall" || nameNode == "leftWall")
+            if(nameNode == "window")
+            {
+                n = getNodeType(getWallID[getWindowID.indexOf(id)]);
+                setWindowHeight(n, tmpLength, 3);
+            }
+            else if(nameNode == "rightWall" || nameNode == "leftWall")
             {
                 if(partmode == 0)
                 {
@@ -745,7 +760,12 @@ function verticalAxis(id, tmpLength, tmpAxis)
             }
             break;
         case 3:
-            if(nameNode == "rightWall" || nameNode == "leftWall")
+            if(nameNode == "window")
+            {
+                n = getNodeType(getWallID[getWindowID.indexOf(id)]);
+                setWindowHeight(n, tmpLength, 3);
+            }
+            else if(nameNode == "rightWall" || nameNode == "leftWall")
             {
                 if(partmode == 0)
                 {
