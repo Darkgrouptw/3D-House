@@ -1,57 +1,5 @@
 <layer>
 	<element>
-		<type>roof/gable</type>
-		<transform>
-			<scale>1,1,1</scale>
-			<rotate>0,90,0</rotate>
-			<translate>0,22,0</translate>
-		</transform>
-		<texture>roof.jpg</texture>
-		<pos>roof</pos>
-		<property>
-			<layer>2</layer>
-			<height>5</height>
-			<width>8</width>
-			<thickness>1</thickness>
-			<depth>18</depth>
-			<ratio>0.5,0.5</ratio>
-		</property>
-	</element>
-	<element>
-		<type>wall/triangle</type>
-		<transform>
-			<scale>1,1,1</scale>
-			<rotate>0,90,0</rotate>
-			<translate>17,22,0</translate>
-		</transform>
-		<texture>wall.jpg</texture>
-		<pos>rightTriangle</pos>
-		<property>
-			<layer>2</layer>
-			<height>5</height>
-			<width>8</width>
-			<thickness>1</thickness>
-			<ratio>0.5,0.5</ratio>
-		</property>
-	</element>
-	<element>
-		<type>wall/triangle</type>
-		<transform>
-			<scale>1,1,1</scale>
-			<rotate>0,-90,0</rotate>
-			<translate>-17,22,0</translate>
-		</transform>
-		<texture>wall.jpg</texture>
-		<pos>leftTriangle</pos>
-		<property>
-			<layer>2</layer>
-			<height>5</height>
-			<width>8</width>
-			<thickness>1</thickness>
-			<ratio>0.5,0.5</ratio>
-		</property>
-	</element>
-	<element>
 		<type>base/basic</type>
 		<transform>
 			<scale>1,1,1</scale>
@@ -62,48 +10,97 @@
 		<pos>base</pos>
 		<property>
 			<layer>1</layer>
-			<height>8</height>
-			<width>18</width>
+			<height>16</height>
+			<width>24</width>
 			<thickness>1</thickness>
 		</property>
 	</element>
 	<element>
-		<type>wall/single_window</type>
+		<type>wall/no_window</type>
 		<transform>
 			<scale>1,1,1</scale>
 			<rotate>0,90,0</rotate>
-			<translate>17,9,1</translate>
+			<translate>0,11,1</translate>
 		</transform>
 		<texture>wall.jpg</texture>
-		<pos>rightWall</pos>
+		<pos>interWall</pos>
 		<property>
 			<layer>1</layer>
-			<height>8</height>
-			<width>7</width>
+			<height>10</height>
+			<width>15</width>
 			<thickness>1</thickness>
-			<ratio>0.36,0.5875</ratio>
-			<windowW>3</windowW>
-			<windowH>3</windowH>
+			<percentX>50</percentX>
+			<percentY>53.125</percentY>
+			<priority>1</priority>
 			<direction>vertical</direction>
 		</property>
 	</element>
 	<element>
-		<type>wall/single_window</type>
+		<type>wall/triangle</type>
 		<transform>
 			<scale>1,1,1</scale>
 			<rotate>0,90,0</rotate>
-			<translate>-17,9,1</translate>
+			<translate>-23,26,0</translate>
 		</transform>
 		<texture>wall.jpg</texture>
-		<pos>leftWall</pos>
+		<pos>leftTriangle</pos>
 		<property>
-			<layer>1</layer>
-			<height>8</height>
-			<width>7</width>
+			<layer>2</layer>
+			<height>5</height>
+			<width>16</width>
 			<thickness>1</thickness>
 			<ratio>0.5,0.5</ratio>
-			<windowW>3</windowW>
-			<windowH>3</windowH>
+		</property>
+	</element>
+	<element>
+		<type>wall/triangle</type>
+		<transform>
+			<scale>1,1,1</scale>
+			<rotate>0,90,0</rotate>
+			<translate>23,26,0</translate>
+		</transform>
+		<texture>wall.jpg</texture>
+		<pos>rightTriangle</pos>
+		<property>
+			<layer>2</layer>
+			<height>5</height>
+			<width>16</width>
+			<thickness>1</thickness>
+			<ratio>0.5,0.5</ratio>
+		</property>
+	</element>
+	<element>
+		<type>roof/gable</type>
+		<transform>
+			<scale>1,1,1</scale>
+			<rotate>0,90,0</rotate>
+			<translate>0,26,0</translate>
+		</transform>
+		<texture>roof.jpg</texture>
+		<pos>roof</pos>
+		<property>
+			<layer>2</layer>
+			<height>5</height>
+			<width>16</width>
+			<thickness>1</thickness>
+			<depth>24</depth>
+			<ratio>0.5,0.5</ratio>
+		</property>
+	</element>
+	<element>
+		<type>wall/no_window</type>
+		<transform>
+			<scale>1,1,1</scale>
+			<rotate>0,90,0</rotate>
+			<translate>23,11,1</translate>
+		</transform>
+		<texture>Wall.jpg</texture>
+		<pos>rightWall</pos>
+		<property>
+			<layer>1</layer>
+			<height>10</height>
+			<width>15</width>
+			<thickness>1</thickness>
 			<direction>vertical</direction>
 		</property>
 	</element>
@@ -112,14 +109,14 @@
 		<transform>
 			<scale>1,1,1</scale>
 			<rotate>0,0,0</rotate>
-			<translate>0,9,-7</translate>
+			<translate>0,11,-15</translate>
 		</transform>
-		<texture>wall.jpg</texture>
+		<texture>Wall.jpg</texture>
 		<pos>backWall</pos>
 		<property>
 			<layer>1</layer>
-			<height>8</height>
-			<width>18</width>
+			<height>10</height>
+			<width>24</width>
 			<thickness>1</thickness>
 			<direction>horizontal</direction>
 		</property>
@@ -129,18 +126,15 @@
 		<transform>
 			<scale>1,1,1</scale>
 			<rotate>0,90,0</rotate>
-			<translate>0,9,1</translate>
+			<translate>-23,11,1</translate>
 		</transform>
-		<texture>wall.jpg</texture>
-		<pos>interWall</pos>
+		<texture>Wall.jpg</texture>
+		<pos>leftWall</pos>
 		<property>
 			<layer>1</layer>
-			<height>8</height>
-			<width>7</width>
+			<height>10</height>
+			<width>15</width>
 			<thickness>1</thickness>
-			<percentX>50</percentX>
-			<percentY>56.25</percentY>
-			<priority>1</priority>
 			<direction>vertical</direction>
 		</property>
 	</element>
