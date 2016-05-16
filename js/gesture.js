@@ -3,19 +3,6 @@ var tmpNormal = null;
 // distance between origin point and camera position
 var camDist = null;
 
-//console.log("objectId ", objectId);
-//var noLayer = getNodeLayer(objectId);
-//console.log("nodeLayer ", scene.getNode(objectId).nodes[0].nodes[0].nodes[0].getLayer());
-//console.log("noLayer ", noLayer);
-//var noName = getNodeName(objectId);
-//var noType = getNodeType(objectId);
-//console.log("nodeType ", scene.getNode(objectId).nodes[0].nodes[0].nodes[0]);
-//console.log("noType ", noType);
-//console.log("nodeName ", scene.getNode(objectId).parent.parent.getName());
-//console.log("noName ", noName);
-//pickNode = scene.findNode(objectId).parent.parent.getName();
-//var pickLayer = scene.getNode(objectId).nodes[0].nodes[0].nodes[0].getLayer();
-
 var numberOfType = ["base/basic","wall/door_entry","wall/single_window","wall/no_window","wall/multi_window",
                     "roof/cross_gable","roof/gable","roof/hip","roof/mansard","wall/triangle","window/fixed"];
 
@@ -26,6 +13,170 @@ var numberOfRoof = ["roof/cross_gable","roof/gable","roof/hip","roof/mansard"];
 function Sign(x) 
 {
     return typeof x === 'number' ? x ? x < 0 ? -1 : 1 : x === x ? 0 : NaN : NaN;
+}
+
+/*function getDependencyWall(id)
+{
+    var tmpNode = getNodeType(getWallID[getWindowID.indexOf(id)]);
+    var tmpWidth = tmpNode.getWidth();
+    var tmpHeight = tmpNode.getHeight();
+    var tmpWindowCenter = tmpNode.getWindowCenter();
+    var tmpCenter = getNodeCenter(id);
+    console.log("tmpNode ", tmpNode);
+    console.log("tmpWidth ", tmpWidth, " tmpHeight ", tmpHeight);
+    console.log("tmpCenter ", tmpCenter, " tmpWindowCenter ", tmpWindowCenter);
+
+    var centerX = (tmpWidth + tmpCenter[0]) / (2 * tmpWidth);
+    var centerY = (2 * tmpHeight - tmpCenter[1]) / (2 * tmpHeight);
+    console.log("centerX ", centerX, " centerY ", centerY);
+
+    var getX = 999, index = 0;
+    for(var i = 0; i < (tmpWindowCenter.length / 2); i++)
+    {
+        var tmpX = Math.sqrt(Math.pow((centerX - tmpWindowCenter[i * 2]), 2));
+        console.log("i ", i, " tmpX ", tmpX);
+        if(tmpX < getX)
+        {
+            getX = tmpX;
+            index = i;
+        }
+    }
+    console.log("index ", index * 2, " [index * 2]", tmpWindowCenter[index * 2]);
+    console.log("tmpWindowCenter[0]", tmpWindowCenter[0]);
+    console.log("tmpWindowCenter[1]", tmpWindowCenter[1]);
+    console.log("tmpWindowCenter[2]", tmpWindowCenter[2]);
+    console.log("tmpWindowCenter[3]", tmpWindowCenter[3]);
+}*/
+
+function multiWindowOffsetX(id, tmpLength, tmpAxis)
+{
+    var n = scene.getNode(3).getEye();
+    var tmpNode = getNodeType(getWallID[getWindowID.indexOf(id)]);
+    var tmpWidth = tmpNode.getWidth();
+    var tmpHeight = tmpNode.getHeight();
+    var tmpWindowCenter = tmpNode.getWindowCenter();
+    var tmpCenter = getNodeCenter(id);
+    var centerX = (tmpWidth + tmpCenter[0]) / (2 * tmpWidth);
+    var centerY = (2 * tmpHeight - tmpCenter[1]) / (2 * tmpHeight);
+
+    var getX = 999, index = -1;
+    for(var i = 0; i < (tmpWindowCenter.length / 2); i++)
+    {
+        var tmpX = Math.sqrt(Math.pow((centerX - tmpWindowCenter[i * 2]), 2) + Math.pow((centerY - tmpWindowCenter[i * 2 + 1]), 2));
+        if(tmpX < getX)
+        {
+            getX = tmpX;
+            index = i;
+        }
+    }
+
+    switch(tmpAxis)
+    {
+        case 0:
+        case 2:
+            if(n.z < 0)
+            {
+                tmpWindowCenter[index * 2] -= Sign(tmpLength) / 100;
+                tmpNode.setWindowCenter(tmpWindowCenter);
+                tmpNode.callBaseCalibration();
+            }
+            else
+            {
+                tmpWindowCenter[index * 2] += Sign(tmpLength) / 100;
+                tmpNode.setWindowCenter(tmpWindowCenter);
+                tmpNode.callBaseCalibration();
+            }
+            break;
+    }
+}
+
+function multiWindowOffsetY(id, tmpLength, tmpAxis)
+{
+    var n = scene.getNode(3).getEye();
+    var tmpNode = getNodeType(getWallID[getWindowID.indexOf(id)]);
+    var tmpWidth = tmpNode.getWidth();
+    var tmpHeight = tmpNode.getHeight();
+    var tmpWindowCenter = tmpNode.getWindowCenter();
+    var tmpCenter = getNodeCenter(id);
+    var centerX = (tmpWidth + tmpCenter[0]) / (2 * tmpWidth);
+    var centerY = (2 * tmpHeight - tmpCenter[1]) / (2 * tmpHeight);
+
+    var getY = 999, index = -1;
+    for(var i = 0; i < (tmpWindowCenter.length / 2); i++)
+    {
+        var tmpY = Math.sqrt(Math.pow((centerX - tmpWindowCenter[i * 2]), 2) + Math.pow((centerY - tmpWindowCenter[i * 2 + 1]), 2));
+        if(tmpY < getY)
+        {
+            getY = tmpY;
+            index = i;
+        }
+    }
+
+    switch(tmpAxis)
+    {
+        case 0:
+        case 2:
+            if(n.z < 0)
+            {
+                tmpWindowCenter[index * 2 + 1] -= Sign(tmpLength) / 50;
+                tmpNode.setWindowCenter(tmpWindowCenter);
+                tmpNode.callBaseCalibration();
+            }
+            else
+            {
+                tmpWindowCenter[index * 2 + 1] += Sign(tmpLength) / 50;
+                tmpNode.setWindowCenter(tmpWindowCenter);
+                tmpNode.callBaseCalibration();
+            }
+            break;
+    }
+}
+
+function getNodeCenter(id)
+{
+    var VertexX = [];
+    var VertexY = [];
+    var VertexZ = [];
+    var center = [];
+    var tmpNode = getNodeType(id);
+
+    var tmpT = {};
+    tmpT.rotate = tmpNode.getRotate();
+    tmpT.scale = tmpNode.getScale();
+    tmpT.translate = tmpNode.getTranslate();
+    var transMatrix = utility.transformMatrix(tmpT);
+
+    var getPos = tmpNode.nodes[0].getPositions();
+    for(var j = 0; j < getPos.length; j += 3)
+    {
+        var tmpP = [];
+        tmpP.push(getPos[j]);
+        tmpP.push(getPos[j + 1]);
+        tmpP.push(getPos[j + 2]);
+        tmpP.push(1);
+        var transPos = SceneJS_math_mulMat4v4(transMatrix, tmpP);
+        VertexX.push(transPos[0]);
+        VertexY.push(transPos[1]);
+        VertexZ.push(transPos[2]);
+    }
+    //console.log(VertexX);
+
+    var minX = Math.min(...VertexX);
+    var maxX = Math.max(...VertexX);
+    var minY = Math.min(...VertexY);
+    var maxY = Math.max(...VertexY);
+    var minZ = Math.min(...VertexZ);
+    var maxZ = Math.max(...VertexZ);
+    //console.log("minX ", minX, " maxX ", maxX);
+    //console.log("minY ", minY, " maxY ", maxY);
+    //console.log("minZ ", minZ, " maxZ ", maxZ);
+
+    center.push((minX + maxX) / 2);
+    center.push((minY + maxY) / 2);
+    center.push((minZ + maxZ) / 2);
+    //console.log("center ", center);
+
+    return center;
 }
 
 function getNodeBase(objName, objLayer)
@@ -136,6 +287,23 @@ function windowOffsetY(id, tmpLength, tmpAxis)
 
     switch(tmpAxis)
     {
+        case 0:
+        case 2:
+            if(n.z < 0)
+            {
+                tmpOffsetY = tmpNode.getRatio().b;
+                tmpOffsetY -= Sign(tmpLength) / 50;
+                tmpNode.setRatioB(tmpOffsetY);
+                tmpNode.callBaseCalibration();
+            }
+            else
+            {
+                tmpOffsetY = tmpNode.getRatio().b;
+                tmpOffsetY -= Sign(tmpLength) / 50;
+                tmpNode.setRatioB(tmpOffsetY);
+                tmpNode.callBaseCalibration();
+            }
+            break;
         case 1:
         case 3:
             if(n.x < 0)
@@ -164,6 +332,23 @@ function windowOffsetX(id, tmpLength, tmpAxis)
 
     switch(tmpAxis)
     {
+        case 0:
+        case 2:
+            if(n.z < 0)
+            {
+                tmpOffsetX = tmpNode.getRatio().a;
+                tmpOffsetX -= Sign(tmpLength) / 50;
+                tmpNode.setRatioA(tmpOffsetX);
+                tmpNode.callBaseCalibration();
+            }
+            else
+            {
+                tmpOffsetX = tmpNode.getRatio().a;
+                tmpOffsetX += Sign(tmpLength) / 50;
+                tmpNode.setRatioA(tmpOffsetX);
+                tmpNode.callBaseCalibration();
+            }
+            break;
         case 1:
         case 3:
             if(n.x < 0)
@@ -192,6 +377,23 @@ function doorOffsetX(id, tmpLength, tmpAxis)
 
     switch(tmpAxis)
     {
+        case 0:
+        case 2:
+            if(n.z < 0)
+            {
+                tmpOffsetX = tmpNode.getPosratio();
+                tmpOffsetX -= Sign(tmpLength) / 50;
+                tmpNode.setPosratio(tmpOffsetX);
+                tmpNode.callBaseCalibration();
+            }
+            else
+            {
+                tmpOffsetX = tmpNode.getPosratio();
+                tmpOffsetX += Sign(tmpLength) / 50;
+                tmpNode.setPosratio(tmpOffsetX);
+                tmpNode.callBaseCalibration();
+            }
+            break;
         case 1:
         case 3:
             if(n.x < 0)
@@ -594,95 +796,105 @@ function horizontalAxis(id, tmpLength, tmpAxis)
     switch(tmpAxis)
     {
         case 0: 
-            if(nameNode == "backWall")
+            if(nameNode == "window")
             {
-                setObjectWidth(n, tmpLength, 18);
+                n = getNodeType(getWallID[getWindowID.indexOf(id)]);
+                setWindowWidth(n, tmpLength, 4);
+            }
+            else if(nameNode == "backWall")
+            {
+                setObjectWidth(n, tmpLength, 24);
             }
             else if(nameNode == "roof" || nameNode == "rightTriangle" || nameNode == "leftTriangle")
             {
-                setObjectDepth(n, tmpLength, 18);
+                setObjectDepth(n, tmpLength, 24);
             }
             else if(nameNode == "base")
             {
                 var tmpBackWall = getNodeBase("backWall", tmpLayer);
-                setObjectWidth(tmpBackWall, tmpLength, 18);
+                setObjectWidth(tmpBackWall, tmpLength, 24);
             }
             break;
         case 1:
             if(nameNode == "window")
             {
                 n = getNodeType(getWallID[getWindowID.indexOf(id)]);
-                setWindowWidth(n, tmpLength, 3);
+                setWindowWidth(n, tmpLength, 4);
             }
             else if(nameNode == "rightWall" || nameNode == "leftWall")
             {
                 if(partmode == 0)
                 {
-                    setWindowWidth(n, tmpLength, 3);
+                    setWindowWidth(n, tmpLength, 4);
                 }
                 else if(partmode == 1)
                 {
-                    setDoorWidth(n, tmpLength, 3);
+                    setDoorWidth(n, tmpLength, 5);
                 }
                 else
                 {
-                    setObjectWidth(n, tmpLength, 7);
+                    setObjectWidth(n, tmpLength, 15);
                 }
             }
             else if(nameNode == "roof" || nameNode == "rightTriangle" || nameNode == "leftTriangle")
             {
-                setObjectWidth(n, tmpLength, 8);
+                setObjectWidth(n, tmpLength, 16);
             }
             else if(nameNode == "base")
             {
                 var tmpRightWall = getNodeBase("rightWall", tmpLayer);
-                setObjectWidth(tmpRightWall, tmpLength, 7);
+                setObjectWidth(tmpRightWall, tmpLength, 15);
             }
             break;
         case 2:
-            if(nameNode == "backWall")
+            if(nameNode == "window")
             {
-                setObjectWidth(n, tmpLength, 18);
+                n = getNodeType(getWallID[getWindowID.indexOf(id)]);
+                setWindowWidth(n, tmpLength, 4);
+            }
+            else if(nameNode == "backWall")
+            {
+                setObjectWidth(n, tmpLength, 24);
             }
             else if(nameNode == "roof" || nameNode == "rightTriangle" || nameNode == "leftTriangle")
             {
-                setObjectDepth(n, tmpLength, 18);
+                setObjectDepth(n, tmpLength, 24);
             }
             else if(nameNode == "base")
             {
                 var tmpBackWall = getNodeBase("backWall", tmpLayer);
-                setObjectWidth(tmpBackWall, tmpLength, 18);
+                setObjectWidth(tmpBackWall, tmpLength, 24);
             }
             break;
         case 3:
             if(nameNode == "window")
             {
                 n = getNodeType(getWallID[getWindowID.indexOf(id)]);
-                setWindowWidth(n, tmpLength, 3);
+                setWindowWidth(n, tmpLength, 4);
             }
             else if(nameNode == "rightWall" || nameNode == "leftWall")
             {
                 if(partmode == 0)
                 {
-                    setWindowWidth(n, tmpLength, 3);
+                    setWindowWidth(n, tmpLength, 4);
                 }
                 else if(partmode == 1)
                 {
-                    setDoorWidth(n, tmpLength, 3);
+                    setDoorWidth(n, tmpLength, 5);
                 }
                 else
                 {
-                    setObjectWidth(n, tmpLength, 7);
+                    setObjectWidth(n, tmpLength, 15);
                 }
             }
             else if(nameNode == "roof" || nameNode == "rightTriangle" || nameNode == "leftTriangle")
             {
-                setObjectWidth(n, tmpLength, 8);
+                setObjectWidth(n, tmpLength, 16);
             }
             else if(nameNode == "base")
             {
                 var tmpRightWall = getNodeBase("rightWall", tmpLayer);
-                setObjectWidth(tmpRightWall, tmpLength, 7);
+                setObjectWidth(tmpRightWall, tmpLength, 15);
             }
             break;
     }
@@ -705,7 +917,12 @@ function verticalAxis(id, tmpLength, tmpAxis)
     switch(tmpAxis)
     {
         case 0:
-            if(nameNode == "rightWall" || nameNode == "leftWall" || nameNode == "backWall")
+            if(nameNode == "window")
+            {
+                n = getNodeType(getWallID[getWindowID.indexOf(id)]);
+                setWindowHeight(n, tmpLength, 4);
+            }
+            else if(nameNode == "rightWall" || nameNode == "leftWall" || nameNode == "backWall")
             {
                 setObjectHeight(n, tmpLength, 8);
             }
@@ -718,17 +935,17 @@ function verticalAxis(id, tmpLength, tmpAxis)
             if(nameNode == "window")
             {
                 n = getNodeType(getWallID[getWindowID.indexOf(id)]);
-                setWindowHeight(n, tmpLength, 3);
+                setWindowHeight(n, tmpLength, 4);
             }
             else if(nameNode == "rightWall" || nameNode == "leftWall")
             {
                 if(partmode == 0)
                 {
-                    setWindowHeight(n, tmpLength, 3);
+                    setWindowHeight(n, tmpLength, 4);
                 }
                 else if(partmode == 1)
                 {
-                    setDoorHeight(n, tmpLength, 6);
+                    setDoorHeight(n, tmpLength, 9);
                 }
                 else
                 {
@@ -745,13 +962,18 @@ function verticalAxis(id, tmpLength, tmpAxis)
             }
             break;
         case 2:
-            if(nameNode == "rightWall" || nameNode == "leftWall")
+            if(nameNode == "window")
+            {
+                n = getNodeType(getWallID[getWindowID.indexOf(id)]);
+                setWindowHeight(n, tmpLength, 4);
+            }
+            else if(nameNode == "rightWall" || nameNode == "leftWall")
             {
                 setObjectWidth(n, tmpLength, 7);
             }
             else if(nameNode == "roof" || nameNode == "rightTriangle" || nameNode == "leftTriangle")
             {
-                setObjectWidth(n, tmpLength, 8);
+                setObjectWidth(n, tmpLength, 16);
             }
             else if(nameNode == "base")
             {
@@ -763,17 +985,17 @@ function verticalAxis(id, tmpLength, tmpAxis)
             if(nameNode == "window")
             {
                 n = getNodeType(getWallID[getWindowID.indexOf(id)]);
-                setWindowHeight(n, tmpLength, 3);
+                setWindowHeight(n, tmpLength, 4);
             }
             else if(nameNode == "rightWall" || nameNode == "leftWall")
             {
                 if(partmode == 0)
                 {
-                    setWindowHeight(n, tmpLength, 3);
+                    setWindowHeight(n, tmpLength, 4);
                 }
                 else if(partmode == 1)
                 {
-                    setDoorHeight(n, tmpLength, 6);
+                    setDoorHeight(n, tmpLength, 9);
                 }
                 else
                 {
@@ -782,16 +1004,16 @@ function verticalAxis(id, tmpLength, tmpAxis)
             }
             else if(nameNode == "backWall")
             {
-                setObjectWidth(n, tmpLength, 18);
+                setObjectWidth(n, tmpLength, 24);
             }
             else if(nameNode == "roof" || nameNode == "rightTriangle" || nameNode == "leftTriangle")
             {
-                setObjectDepth(n, tmpLength, 18);
+                setObjectDepth(n, tmpLength, 24);
             }
             else if(nameNode == "base")
             {
                 var tmpBackWall = getNodeBase("backWall", tmpLayer);
-                setObjectWidth(tmpBackWall, tmpLength, 18);
+                setObjectWidth(tmpBackWall, tmpLength, 24);
             }
             break;
     }
@@ -825,11 +1047,11 @@ function getAxis()
                 (Math.sqrt(subCamA[0]*subCamA[0] + subCamA[1]*subCamA[1]) * Math.sqrt(subCamB[0]*subCamB[0] + subCamB[1]*subCamB[1]));
         if(subCamCos > (1 / Math.sqrt(2)) && subCamCos <= 1)
         {
-            return 0;
+            return 0; // look at z axis  0 - 45 degree
         }
         else if(subCamCos <= (1 / Math.sqrt(2)) && subCamCos >= 0)
         {
-            return 1;
+            return 1; // look at x axis 0 - 45 degree
         }
     }
     else if(cam3DCos <= (1 / Math.sqrt(2)) && cam3DCos >= 0)
@@ -845,11 +1067,11 @@ function getAxis()
                 (Math.sqrt(subCamA[0]*subCamA[0] + subCamA[1]*subCamA[1]) * Math.sqrt(subCamB[0]*subCamB[0] + subCamB[1]*subCamB[1]));
         if(subCamCos > (1 / Math.sqrt(2)) && subCamCos <= 1)
         {
-            return 2;
+            return 2; // look at z axis 45 - 90 degree
         }
         else if(subCamCos <= (1 / Math.sqrt(2)) && subCamCos >= 0)
         {
-            return 3;
+            return 3;   // look at x axis 45 - 90 degree
         }
     }
 }

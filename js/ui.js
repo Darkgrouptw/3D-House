@@ -231,7 +231,15 @@ function ScenePick(){
                                 break;
                             case "window":
                                 var changeId = getWallID[getWindowID.indexOf(objectId)];
-                                windowOffsetY(changeId, tmpYlength, currentAxis);
+                                var tmpNodeType = getNodeType(changeId);
+                                if(tmpNodeType.type != "wall/multi_window")
+                                {
+                                    windowOffsetY(changeId, tmpYlength, currentAxis);
+                                }
+                                else
+                                {
+                                    multiWindowOffsetY(objectId, tmpYlength, currentAxis);
+                                }
                                 break;
                             case "leftWall":
                             case "rightWall":
@@ -255,7 +263,15 @@ function ScenePick(){
                                 break;
                             case "window":
                                 var changeId = getWallID[getWindowID.indexOf(objectId)];
-                                windowOffsetX(changeId, tmpXlength, currentAxis);
+                                var tmpNodeType = getNodeType(changeId);
+                                if(tmpNodeType.type != "wall/multi_window")
+                                {
+                                    windowOffsetX(changeId, tmpXlength, currentAxis);
+                                }
+                                else
+                                {
+                                    multiWindowOffsetX(objectId, tmpXlength, currentAxis);
+                                }
                                 break;
                             case "leftWall":
                             case "rightWall":
