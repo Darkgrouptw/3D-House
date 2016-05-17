@@ -1,7 +1,7 @@
 var HOST_IP = "140.118.175.76:8098";
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Wouldn't be changed stuff
-var typeDefined = ["roof", "base", "wall"];
+var typeDefined = ["roof", "base", "wall", "wind"];
 var modelExactLatchArea = ["base"];	//Storing the models which latch faces output with exact area
 
 //Storing the priority of the dependency used for puzzling
@@ -27,13 +27,16 @@ var nonConnector_No;	//Storing the corresponding model index
 //STL Strings
 var stlText;
 
+//Printing info.txt??
+var infoPrint = true;
+
 function traverse(curNode, target){
-	var newArr = new Array;
+	var newArr = [];
 	newArr = target;
 	if(newArr.length == 1){
 		for(;newArr.indexOf(curNode.type) == -1;curNode = curNode.nodes[0]);
 	}else{
-		for(;newArr.indexOf(String(curNode.type).substring(0, 4)) == -1;curNode = curNode.nodes[0]);
+		for(;curNode.type && newArr.indexOf(String(curNode.type).substring(0, 4)) == -1;curNode = curNode.nodes[0]);
 	}
 	return curNode;
 }
@@ -44,7 +47,15 @@ function exportMultiObj(inputNode){
 	convertToMultiObj(inputNode, true);
 }
 
-
+function deleteWindows(nodes){
+	for(var i = 0;i<nodes.length;i++){
+		if(String(traverse(nodes[i], typeDefined).type).substring(0, 6) == "window"){
+			nodes.splice(i, 1);
+			i--;
+		}
+	}
+	return nodes;
+}
 
 function exportMultiStl(inputNode){
 	stlText = new Array();
@@ -136,6 +147,8 @@ function exportMultiStl(inputNode){
 								angle = [0];
 								break;
 						}
+						break;
+					case "roof/cross_gable":
 						break;
 					default:
 						angle = [0];
@@ -232,9 +245,9 @@ function exportMultiStl(inputNode){
 		stlText.push(outStr);
 
 		//Not Downloading
-		// download(outStr, "model_part" + modelNo + ".stl", 'text/plain');
+		download(outStr, "model_part" + modelNo + ".stl", 'text/plain');
 	}
-	sendingRequest(stlText);
+	//sendingRequest(stlText);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -249,6 +262,8 @@ function convertToMultiObj(inputNode, isDownload){
 	nonConnector = new Array;
 	connector_No = new Array;
 	nonConnector_No = new Array;
+
+	inputNode.nodes = deleteWindows(inputNode.nodes);
 
 	var nodesArr = inputNode.nodes;
 	outNodeIndex = 0;
@@ -272,6 +287,9 @@ function convertToMultiObj(inputNode, isDownload){
 				break;
 			case "roof/mansard":
 				dup = 5;
+				break;
+			case "roof/cross_gable":
+				dup = 4;
 				break;
 			default:
 				dup = 1;
@@ -316,6 +334,27 @@ function convertToMultiObj(inputNode, isDownload){
 		}
 		vnStr += "\n";
 		
+		/////////////////////////////////////////////////////////////////
+		//For roof decomposing
+		var vArr = new Array(), vnArr = new Array();
+		var iter = 0, lastIter = 0;
+		for(iter = 0, lastIter = 0;iter < vStr.length; iter++){
+			if(vStr[iter] == "\n"){
+
+				vArr.push(vStr.substring(lastIter, ++iter));
+				lastIter = iter;
+			}
+		}
+		
+		for(iter = 0, lastIter = 0;iter < vnStr.length; iter++){
+			if(vnStr[iter] == "\n"){
+				vnArr.push(vnStr.substring(lastIter, ++iter));
+				lastIter = iter;
+			}
+		}
+		///////////////////////////////////////////////////////////////
+
+
 		switch(traverse(nodesArr[nodeI], typeDefined).type){
 			case "roof/gable":
 				//Functions about modifying the vertices' number of each face
@@ -327,23 +366,6 @@ function convertToMultiObj(inputNode, isDownload){
 					return (param<16?0:16);
 				}
 
-				//Divides the roof into two .obj
-				var vArr = new Array(), vnArr = new Array();
-				var iter = 0, lastIter = 0;
-				for(iter = 0, lastIter = 0;iter < vStr.length; iter++){
-					if(vStr[iter] == "\n"){
-
-						vArr.push(vStr.substring(lastIter, ++iter));
-						lastIter = iter;
-					}
-				}
-				
-				for(iter = 0, lastIter = 0;iter < vnStr.length; iter++){
-					if(vnStr[iter] == "\n"){
-						vnArr.push(vnStr.substring(lastIter, ++iter));
-						lastIter = iter;
-					}
-				}
 				var f1Str = "", f2Str = "";
 				var m1VIndex = [16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 36, 37, 38, 39];
 				for(i = 0;i<tmpFaces.length;i += 3){
@@ -391,23 +413,6 @@ function convertToMultiObj(inputNode, isDownload){
 				objs.push(v2Str + vn2Str + f2Str);
 				break;
 			case "roof/hip":
-				//Divides the roof into two .obj
-				var vArr = new Array(), vnArr = new Array();
-				var iter = 0, lastIter = 0;
-				for(iter = 0, lastIter = 0;iter < vStr.length; iter++){
-					if(vStr[iter] == "\n"){
-
-						vArr.push(vStr.substring(lastIter, ++iter));
-						lastIter = iter;
-					}
-				}
-				
-				for(iter = 0, lastIter = 0;iter < vnStr.length; iter++){
-					if(vnStr[iter] == "\n"){
-						vnArr.push(vnStr.substring(lastIter, ++iter));
-						lastIter = iter;
-					}
-				}
 				var vStr = ["", "", "", ""], vnStr = ["", "", "", ""], fStr = ["", "", "", ""];
 				var mVIndex = new Array;			//Array of 4 elements storing model's vertices (original face indices)
 				mVIndex.push([0, 2, 3, 4, 6, 7, 12, 13, 14, 20, 22, 23, 36, 37, 38, 39]);		//Model1(quad)
@@ -450,23 +455,6 @@ function convertToMultiObj(inputNode, isDownload){
 
 				break;
 			case "roof/mansard":
-				//Divides the roof into two .obj
-				var vArr = new Array(), vnArr = new Array();
-				var iter = 0, lastIter = 0;
-				for(iter = 0, lastIter = 0;iter < vStr.length; iter++){
-					if(vStr[iter] == "\n"){
-
-						vArr.push(vStr.substring(lastIter, ++iter));
-						lastIter = iter;
-					}
-				}
-				
-				for(iter = 0, lastIter = 0;iter < vnStr.length; iter++){
-					if(vnStr[iter] == "\n"){
-						vnArr.push(vnStr.substring(lastIter, ++iter));
-						lastIter = iter;
-					}
-				}
 				var vStr = ["", "", "", "", ""], vnStr = ["", "", "", "", ""], fStr = ["", "", "", "", ""];
 				var mVIndex = new Array;			//Array of 5 elements storing model's vertices (original face indices)
 				mVIndex.push([0, 1, 2, 3, 20, 21, 22, 23, 40, 41, 42, 43]);		//Left
@@ -509,6 +497,47 @@ function convertToMultiObj(inputNode, isDownload){
 					outNodeIndex++;
 				}
 				break;
+			// case "roof/cross_gable":
+			// 	var vStr = ["", "", "", ""], vnStr = ["", "", "", ""], fStr = ["", "", "", ""];
+			// 	var mVIndex = [];			//Array of 5 elements storing model's vertices (original face indices)
+			// 	mVIndex.push([8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,64,65,66,67,68,69,70,71,72,73,74,75,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,116,117,118,121,123,124]);		//Back
+			// 	mVIndex.push([0, 1, 2, 3, 20, 21, 22, 23, 40, 41, 42, 43]);		//Left
+			// 	mVIndex.push([8, 9, 10, 11, 28, 29, 30, 31, 48, 49, 50, 51]);	//Right
+			// 	mVIndex.push([12, 13, 14, 15, 32, 33, 34, 35, 52, 53, 54, 55]);	//Front
+
+			// 	var mVFacesI = new Array;			//Array of 5 elements storing model's vertices (output face indices, ordered)
+			// 	mVFacesI.push([1, 3, 2, 1, 4, 3, 5, 7, 6, 5, 8, 7, 9, 11, 10, 9, 12, 11, 4, 6, 11, 11, 6, 10, 1, 12, 5, 12, 9, 5, 5, 6, 1, 4, 1, 6]);
+			// 	mVFacesI.push([1, 3, 2, 1, 4, 3, 5, 7, 6, 5, 8, 7, 9, 11, 10, 9, 12, 11, 1, 5, 10, 10, 5, 9, 8, 2, 11, 11, 12, 8, 2, 8, 5, 5, 1, 2]);
+			// 	mVFacesI.push([1, 3, 2, 1, 4, 3, 5, 7, 6, 5, 8, 7, 9, 11, 10, 9, 12, 11, 1, 5, 10, 10, 5, 9, 8, 2, 11, 11, 12, 8, 2, 8, 5, 5, 1, 2]);
+			// 	mVFacesI.push([1, 3, 2, 1, 4, 3, 5, 7, 6, 5, 8, 7, 9, 11, 10, 9, 12, 11, 4, 6, 11, 11, 6, 10, 1, 12, 5, 12, 9, 5, 5, 6, 1, 4, 1, 6]);
+
+			// 	//Adding to fStr
+			// 	for(var i = 0;i<5;i++){
+			// 		for(var j = 0;j<mVFacesI[i].length;j+=3){
+			// 			fStr[i] += "f " + mVFacesI[i][j] + "//" + mVFacesI[i][j] + " " + mVFacesI[i][j+1] + "//" + mVFacesI[i][j+1] + " " + mVFacesI[i][j+2] + "//" + mVFacesI[i][j+2] + "\n";
+			// 		}
+			// 	}
+
+			// 	for(i = 0;i<vArr.length;i++){
+			// 		for(var modelNo = 0;modelNo<5;modelNo++){
+			// 			if(mVIndex[modelNo].indexOf(i) > -1){
+			// 				vStr[modelNo] += vArr[i];
+			// 				vnStr[modelNo] += vnArr[i];
+			// 			}
+			// 		}
+			// 	}
+
+			// 	for(var i = 0;i<5;i++){
+			// 		vStr[i] += "\n";
+			// 		vnStr[i] += "\n";
+
+			// 		parseObj_withStoring(vStr[i] + vnStr[i] + fStr[i], false);
+			// 		if(isDownload)	download(vStr[i] + vnStr[i] + fStr[i], "model_part" + outNodeIndex + ".obj", 'text/plain');
+			// 		//Append string of .objs
+			// 		objs.push(vStr[i] + vnStr[i] + fStr[i]);
+			// 		outNodeIndex++;
+			// 	}
+			// 	break;
 
 			default:
 				for(i = 0;i<tmpFaces.length;i += 3){
@@ -524,7 +553,7 @@ function convertToMultiObj(inputNode, isDownload){
 		}
 	}
 
-	// if(isDownload){
+	if(infoPrint){
 		///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		//-------------------------------------------Dealing with latch faces------------------------------------------
 		//Printing total model number
@@ -563,84 +592,83 @@ function convertToMultiObj(inputNode, isDownload){
 					var result = isInside(nonConnector[model], connector[conIter][faceIter]);
 					if(result){
 						//Adding string to vexStr & caveStr
-						// var isCave = 0;		//The nonConnector model convex or concave??
-						// var pointStr = "", point2Str = "";
-						// var curPos = String(posArray[nonConnector_No[model]]);
-						// switch(curPos){
-						// 	case "roof":
-						// 		break;
-						// 	case "base":
-						// 		isCave = 1;
-						// 		break;
-						// 	default:
-						// 		break;
-						// }
-						// for(var i = 0;i<3;i++){
-						// 	for(var j = 0;j<3;j++){
-						// 		pointStr += connector[conIter][faceIter][i][j] + " ";
-						// 		if(modelExactLatchArea.indexOf(curPos) != -1)
-						// 			//output the exact area of latch faces
-						// 			point2Str += connector[conIter][faceIter][i][j] + " ";
-						// 		else
-						// 			point2Str += nonConnector[model][result[0]][i][j] + " ";
-						// 	}
-						// 	pointStr += String((isCave + 1)%2) + "\n";
-						// 	point2Str += String(isCave) + "\n";
-						// }
-						// //Split into 2 elements
-						// if(latchStrArr[nonConnector_No[model]].indexOf(point2Str) == -1){
-						// 	latchStrArr[nonConnector_No[model]].push(point2Str);
-						// }
-						// if(modelExactLatchArea.indexOf(curPos) == -1){
-						// 	point2Str = "";
-						// 	for(var i = 0;i<3;i++){
-						// 		for(var j = 0;j<3;j++){
-
-						// 			point2Str += nonConnector[model][result[1]][i][j] + " ";
-						// 		}
-						// 		point2Str += String(isCave) + "\n";
-						// 	}
-						// 	if(latchStrArr[nonConnector_No[model]].indexOf(point2Str) == -1){
-						// 		latchStrArr[nonConnector_No[model]].push(point2Str);
-						// 	}
-						// }
-						// if(latchStrArr[connector_No[conIter]].indexOf(pointStr) == -1){
-						// 	latchStrArr[connector_No[conIter]].push(pointStr);
-						// }
+						var isCave = 0;		//The nonConnector model convex or concave??
+						var pointStr = "", point2Str = "";
+						var curPos = String(posArray[nonConnector_No[model]]);
+						switch(curPos){
+							case "roof":
+								break;
+							case "base":
+								isCave = 1;
+								break;
+							default:
+								break;
+						}
+						for(var i = 0;i<3;i++){
+							for(var j = 0;j<3;j++){
+								pointStr += connector[conIter][faceIter][i][j] + " ";
+								if(modelExactLatchArea.indexOf(curPos) != -1)
+									//output the exact area of latch faces
+									point2Str += connector[conIter][faceIter][i][j] + " ";
+								else
+									point2Str += nonConnector[model][result[0]][i][j] + " ";
+							}
+							pointStr += String((isCave + 1)%2) + "\n";
+							point2Str += String(isCave) + "\n";
+						}
+						//Split into 2 elements
+						if(latchStrArr[nonConnector_No[model]].indexOf(point2Str) == -1){
+							latchStrArr[nonConnector_No[model]].push(point2Str);
+						}
+						if(modelExactLatchArea.indexOf(curPos) == -1){
+							point2Str = "";
+							for(var i = 0;i<3;i++){
+								for(var j = 0;j<3;j++){
+									point2Str += nonConnector[model][result[1]][i][j] + " ";
+								}
+								point2Str += String(isCave) + "\n";
+							}
+							if(latchStrArr[nonConnector_No[model]].indexOf(point2Str) == -1){
+								latchStrArr[nonConnector_No[model]].push(point2Str);
+							}
+						}
+						if(latchStrArr[connector_No[conIter]].indexOf(pointStr) == -1){
+							latchStrArr[connector_No[conIter]].push(pointStr);
+						}
 
 						//The above handling latches
 
 						//These are handling dependency
 
-						//Checking their priority
-						var nonConPrior = treePriorMap.get(posArray[nonConnector_No[model]]);
-						var conPrior = treePriorMap.get(posArray[connector_No[conIter]]);
-						var newObj;
-						if(nonConPrior + maxPrior*layerArray[nonConnector_No[model]] > conPrior + maxPrior*layerArray[connector_No[conIter]]){
-							newObj = {modelNo:nonConnector_No[model], 
-									connecting:[connector_No[conIter]], 
-									priority:nonConPrior, 
-									layer:layerArray[nonConnector_No[model]]};
-						}else{
-							newObj = {modelNo:connector_No[conIter],
-									connecting:[nonConnector_No[model]],
-									priority:conPrior,
-									layer:layerArray[connector_No[conIter]]};
-						}
-						var i = new Array(2);
-						if(i = findModelNo(newObj.modelNo)){
-							if(connTree[i[0]][i[1]].connecting.indexOf(newObj.connecting[0]) == -1){
-								connTree[i[0]][i[1]].connecting.push(newObj.connecting[0]);
-							}
-						}else{
-							if(maxLayer == layerArray[newObj.modelNo]){
-								//Dealing with 5 4
-								connTree[(newObj.layer-1)*5 - 1 + (newObj.priority-4)].push(newObj);
-							}else{
-								//Dealing with 3 2 1 0 4
-								connTree[(newObj.layer-1)*5 - 1 + (newObj.priority + 1)%5].push(newObj);
-							}
-						}
+						// //Checking their priority
+						// var nonConPrior = treePriorMap.get(posArray[nonConnector_No[model]]);
+						// var conPrior = treePriorMap.get(posArray[connector_No[conIter]]);
+						// var newObj;
+						// if(nonConPrior + maxPrior*layerArray[nonConnector_No[model]] > conPrior + maxPrior*layerArray[connector_No[conIter]]){
+						// 	newObj = {modelNo:nonConnector_No[model], 
+						// 			connecting:[connector_No[conIter]], 
+						// 			priority:nonConPrior, 
+						// 			layer:layerArray[nonConnector_No[model]]};
+						// }else{
+						// 	newObj = {modelNo:connector_No[conIter],
+						// 			connecting:[nonConnector_No[model]],
+						// 			priority:conPrior,
+						// 			layer:layerArray[connector_No[conIter]]};
+						// }
+						// var i = new Array(2);
+						// if(i = findModelNo(newObj.modelNo)){
+						// 	if(connTree[i[0]][i[1]].connecting.indexOf(newObj.connecting[0]) == -1){
+						// 		connTree[i[0]][i[1]].connecting.push(newObj.connecting[0]);
+						// 	}
+						// }else{
+						// 	if(maxLayer == layerArray[newObj.modelNo]){
+						// 		//Dealing with 5 4
+						// 		connTree[(newObj.layer-1)*5 - 1 + (newObj.priority-4)].push(newObj);
+						// 	}else{
+						// 		//Dealing with 3 2 1 0 4
+						// 		connTree[(newObj.layer-1)*5 - 1 + (newObj.priority + 1)%5].push(newObj);
+						// 	}
+						// }
 					}
 				}
 
@@ -648,102 +676,240 @@ function convertToMultiObj(inputNode, isDownload){
 				for(var model = 0;model<connector.length;model++){
 					var result = isInside(connector[model], connector[conIter][faceIter]);
 					if(model != conIter && result){
-						// var pointStr = "", point2Str = "";
-						// for(var i = 0;i<3;i++){
-						// 	for(var j = 0;j<3;j++){
-						// 		pointStr += connector[conIter][faceIter][i][j] + " ";
-						// 		point2Str += connector[model][result[0]][i][j] + " ";
-						// 	}
-						// 	pointStr += 1 + "\n";
-						// 	point2Str += 0 + "\n";
-						// }
+						var pointStr = "", point2Str = "";
+						for(var i = 0;i<3;i++){
+							for(var j = 0;j<3;j++){
+								pointStr += connector[conIter][faceIter][i][j] + " ";
+								point2Str += connector[model][result[0]][i][j] + " ";
+							}
+							pointStr += 1 + "\n";
+							point2Str += 0 + "\n";
+						}
 
-						// //Split into 2 elements
-						// if(latch2StrArr[connector_No[model]].indexOf(point2Str) == -1){
-						// 	latch2StrArr[connector_No[model]].push(point2Str);
-						// }
-						// point2Str = "";
+						//Split into 2 elements
+						if(latch2StrArr[connector_No[model]].indexOf(point2Str) == -1){
+							latch2StrArr[connector_No[model]].push(point2Str);
+						}
+						point2Str = "";
 
-						// for(var i = 0;i<3;i++){
-						// 	for(var j = 0;j<3;j++){
-						// 		point2Str += connector[model][result[1]][i][j] + " ";
-						// 	}
-						// 	point2Str += 0 + "\n";
-						// }
+						for(var i = 0;i<3;i++){
+							for(var j = 0;j<3;j++){
+								point2Str += connector[model][result[1]][i][j] + " ";
+							}
+							point2Str += 0 + "\n";
+						}
 
-						// if(latch2StrArr[connector_No[model]].indexOf(point2Str) == -1){
-						// 	latch2StrArr[connector_No[model]].push(point2Str);
-						// }
-						// if(latch2StrArr[connector_No[conIter]].indexOf(pointStr) == -1){
-						// 	latch2StrArr[connector_No[conIter]].push(pointStr);
-						// }
+						if(latch2StrArr[connector_No[model]].indexOf(point2Str) == -1){
+							latch2StrArr[connector_No[model]].push(point2Str);
+						}
+						if(latch2StrArr[connector_No[conIter]].indexOf(pointStr) == -1){
+							latch2StrArr[connector_No[conIter]].push(pointStr);
+						}
 
 						//The above handling latches
 
 						//These are handling dependency
 
-						//Checking their priority
-						var nonConPrior = treePriorMap.get(posArray[connector_No[model]]);
-						var conPrior = treePriorMap.get(posArray[connector_No[conIter]]);
-						var newObj;
-						if(nonConPrior + maxPrior*layerArray[connector_No[model]] > conPrior + maxPrior*layerArray[connector_No[conIter]]){
-							newObj = {modelNo:connector_No[model], 
-									connecting:[connector_No[conIter]], 
-									priority:nonConPrior, 
-									layer:layerArray[connector_No[model]]};
-						}else{
-							newObj = {modelNo:connector_No[conIter],
-									connecting:[connector_No[model]],
-									priority:conPrior,
-									layer:layerArray[connector_No[conIter]]};
-						}
-						var i = new Array(2);
-						if(i = findModelNo(newObj.modelNo)){
-							if(connTree[i[0]][i[1]].connecting.indexOf(newObj.connecting[0]) == -1){
-								connTree[i[0]][i[1]].connecting.push(newObj.connecting[0]);
-							}
-						}else{
-							if(maxLayer == layerArray[newObj.modelNo]){
-								//Dealing with 5 4
-								connTree[(newObj.layer-1)*5 - 1 + (newObj.priority-4)].push(newObj);
+						// //Checking their priority
+						// var nonConPrior = treePriorMap.get(posArray[connector_No[model]]);
+						// var conPrior = treePriorMap.get(posArray[connector_No[conIter]]);
+						// var newObj;
+						// if(nonConPrior + maxPrior*layerArray[connector_No[model]] > conPrior + maxPrior*layerArray[connector_No[conIter]]){
+						// 	newObj = {modelNo:connector_No[model], 
+						// 			connecting:[connector_No[conIter]], 
+						// 			priority:nonConPrior, 
+						// 			layer:layerArray[connector_No[model]]};
+						// }else{
+						// 	newObj = {modelNo:connector_No[conIter],
+						// 			connecting:[connector_No[model]],
+						// 			priority:conPrior,
+						// 			layer:layerArray[connector_No[conIter]]};
+						// }
+						// var i = new Array(2);
+						// if(i = findModelNo(newObj.modelNo)){
+						// 	if(connTree[i[0]][i[1]].connecting.indexOf(newObj.connecting[0]) == -1){
+						// 		connTree[i[0]][i[1]].connecting.push(newObj.connecting[0]);
+						// 	}
+						// }else{
+						// 	if(maxLayer == layerArray[newObj.modelNo]){
+						// 		//Dealing with 5 4
+						// 		connTree[(newObj.layer-1)*5 - 1 + (newObj.priority-4)].push(newObj);
 
-							}else{
-								//Dealing with 3 2 1 0 4
-								connTree[(newObj.layer-1)*5 - 1 + (newObj.priority + 1)%5].push(newObj);
-							}
-						}
+						// 	}else{
+						// 		//Dealing with 3 2 1 0 4
+						// 		connTree[(newObj.layer-1)*5 - 1 + (newObj.priority + 1)%5].push(newObj);
+						// 	}
+						// }
 					}
 				}
 			}
 		}
-		
 
-
-		// for(var i = 0;i<latchStrArr.length;i++){
-		// 	infoStr += "model_part" + i + " " + posArray[i] + "\n";
-		// 	var total = latchStrArr[i].length + latch2StrArr[i].length;
-		// 	infoStr += total + "\n";
-		// 	for(var j = 0;j<latchStrArr[i].length;j++){
-		// 		infoStr += latchStrArr[i][j];
-		// 	}
-		// 	for(var j = 0;j<latch2StrArr[i].length;j++){
-		// 		infoStr += latch2StrArr[i][j];
-		// 	}
-		// }
-
-		//Adding dependency text info
-		for(var i = connTree.length - 1;i>=0;i--){
-			for(var j = 0;j<connTree[i].length;j++){
-				infoStr += "model_part" + connTree[i][j].modelNo + ": layer " + connTree[i][j].layer + "\n";
-				infoStr += "connecting with models: ";
-				for(var k = 0;k<connTree[i][j].connecting.length;k++){
-					infoStr += connTree[i][j].connecting[k] + " ";
+		//Rearrange the triangles to rectangles with correct indices
+		for(var i = 0;i<latchStrArr.length;i++){
+			for(var j = 0;j<latchStrArr[i].length;j += 2){
+				var points = [], caves = [];
+				var pointArr = latchStrArr[i][j].split('\n');
+				for(var k = 0;k<3;k++){
+					caves.push(pointArr[k].split(' ').map(parseInt)[3]);
+					points.push(pointArr[k].split(' ').map(parseFloat).splice(0, 3));
 				}
-				infoStr += "\n\n";
+
+				pointArr = latchStrArr[i][j + 1].split('\n');
+				for(var k = 0;k<3;k++){
+					caves.push(pointArr[k].split(' ').map(parseInt)[3]);
+					points.push(pointArr[k].split(' ').map(parseFloat).splice(0, 3));
+				}
+
+				//Reset latchStrArr
+				latchStrArr[i][j] = "";
+				latchStrArr[i][j+1] = "";
+
+				var nonEqualPointIndex = -1;
+				var equalPointIndex2 = [];
+
+				//Finding non equal point index and second triangle's equal indices
+				for(var k = 0;k<3;k++){
+					var _iter = 0;
+					for(;_iter + 3 < points.length && !pointsEqual([points[_iter + 3], points[k]]);_iter++);
+					if(_iter+3 >= points.length){
+						nonEqualPointIndex = k;
+					}else{
+						equalPointIndex2.push(_iter+3);
+					}
+				}
+				var equalPointIndex1 = [0, 1, 2];
+				equalPointIndex1.splice(nonEqualPointIndex, 1);
+				
+				//Adding initial point
+				for(var l = 0;l<3;l++){
+					latchStrArr[i][j] += points[equalPointIndex1[0]][l] + " ";
+				}
+				latchStrArr[i][j] += caves[equalPointIndex1[0]] + "\n";
+
+				//Adding second point
+				for(var l = 0;l<3;l++){
+					latchStrArr[i][j] += points[nonEqualPointIndex][l] + " ";
+				}
+				latchStrArr[i][j] += caves[nonEqualPointIndex] + "\n";
+
+				//Adding third point
+				for(var l = 0;l<3;l++){
+					latchStrArr[i][j] += points[equalPointIndex1[1]][l] + " ";
+				}
+				latchStrArr[i][j] += caves[equalPointIndex1[1]] + "\n";
+
+				//Adding fourth and fifth point
+				equalPointIndex2.forEach(function(element){
+					for(var l = 0;l<3;l++){
+						latchStrArr[i][j+1] += points[element][l] + " ";
+					}
+					latchStrArr[i][j+1] += caves[element] + "\n";
+				});
+				
+				//Adding last point
+				for(var l = 0;l<3;l++){
+					latchStrArr[i][j+1] += points[12 - equalPointIndex2[0] - equalPointIndex2[1]][l] + " ";
+				}
+				latchStrArr[i][j+1] += caves[12 - equalPointIndex2[0] - equalPointIndex2[1]] + "\n";
+			}
+			for(var j = 0;j<latch2StrArr[i].length;j += 2){
+				var points = [], caves = [];
+				var pointArr = latch2StrArr[i][j].split('\n');
+				for(var k = 0;k<3;k++){
+					caves.push(pointArr[k].split(' ').map(parseInt)[3]);
+					points.push(pointArr[k].split(' ').map(parseFloat).splice(0, 3));
+				}
+
+				pointArr = latch2StrArr[i][j + 1].split('\n');
+				for(var k = 0;k<3;k++){
+					caves.push(pointArr[k].split(' ').map(parseInt)[3]);
+					points.push(pointArr[k].split(' ').map(parseFloat).splice(0, 3));
+				}
+
+				//Reset latchStrArr
+				latch2StrArr[i][j] = "";
+				latch2StrArr[i][j+1] = "";
+
+				var nonEqualPointIndex = -1;
+				var equalPointIndex2 = [];
+
+				//Finding non equal point index and second triangle's equal indices
+				for(var k = 0;k<3;k++){
+					var _iter = 0;
+					for(;_iter + 3 < points.length && !pointsEqual([points[_iter + 3], points[k]]);_iter++);
+					if(_iter+3 >= points.length){
+						nonEqualPointIndex = k;
+					}else{
+						equalPointIndex2.push(_iter+3);
+					}
+				}
+				console.log(equalPointIndex2);
+				var equalPointIndex1 = [0, 1, 2];
+				equalPointIndex1.splice(nonEqualPointIndex, 1);
+				
+				//Adding initial point
+				for(var l = 0;l<3;l++){
+					latch2StrArr[i][j] += points[equalPointIndex1[0]][l] + " ";
+				}
+				latch2StrArr[i][j] += caves[equalPointIndex1[0]] + "\n";
+
+				//Adding second point
+				for(var l = 0;l<3;l++){
+					latch2StrArr[i][j] += points[nonEqualPointIndex][l] + " ";
+				}
+				latch2StrArr[i][j] += caves[nonEqualPointIndex] + "\n";
+
+				//Adding third point
+				for(var l = 0;l<3;l++){
+					latch2StrArr[i][j] += points[equalPointIndex1[1]][l] + " ";
+				}
+				latch2StrArr[i][j] += caves[equalPointIndex1[1]] + "\n";
+
+				//Adding fourth and fifth point
+				equalPointIndex2.forEach(function(element){
+					for(var l = 0;l<3;l++){
+						latch2StrArr[i][j+1] += points[element][l] + " ";
+					}
+					latch2StrArr[i][j+1] += caves[element] + "\n";
+				});
+				
+				//Adding last point
+				for(var l = 0;l<3;l++){
+					latch2StrArr[i][j+1] += points[12 - equalPointIndex2[0] - equalPointIndex2[1]][l] + " ";
+				}
+				latch2StrArr[i][j+1] += caves[12 - equalPointIndex2[0] - equalPointIndex2[1]] + "\n";
 			}
 		}
-		// download(infoStr, "info" + ".txt", 'text/plain');
-	// }
+		
+		//Printing the model total quantity
+		infoStr += latchStrArr.length + "\n";
+
+		for(var i = 0;i<latchStrArr.length;i++){
+			infoStr += "model_part" + i + " " + posArray[i] + "\n";
+			var total = latchStrArr[i].length + latch2StrArr[i].length;
+			infoStr += total + "\n";
+			for(var j = 0;j<latchStrArr[i].length;j++){
+				infoStr += latchStrArr[i][j];
+			}
+			for(var j = 0;j<latch2StrArr[i].length;j++){
+				infoStr += latch2StrArr[i][j];
+			}
+		}
+
+		// //Adding dependency text info
+		// for(var i = connTree.length - 1;i>=0;i--){
+		// 	for(var j = 0;j<connTree[i].length;j++){
+		// 		infoStr += "model_part" + connTree[i][j].modelNo + ": layer " + connTree[i][j].layer + "\n";
+		// 		infoStr += "connecting with models: ";
+		// 		for(var k = 0;k<connTree[i][j].connecting.length;k++){
+		// 			infoStr += connTree[i][j].connecting[k] + " ";
+		// 		}
+		// 		infoStr += "\n\n";
+		// 	}
+		// }
+		download(infoStr, "info" + ".txt", 'text/plain');
+	}
 	return objs;
 }
 
@@ -858,7 +1024,7 @@ function faceNormal(points){
 }
 
 function pointsEqual(points){
-	return((Math.abs(parseFloat(points[0][0] - points[1][0])) < 0.0000001) && (Math.abs(parseFloat(points[0][1] - points[1][1])) < 0.0000001) && (Math.abs(parseFloat(points[0][2] - points[1][2])) < 0.0000001));
+	return((Math.abs(parseFloat(points[0][0] - points[1][0])) < 0.00001) && (Math.abs(parseFloat(points[0][1] - points[1][1])) < 0.00001) && (Math.abs(parseFloat(points[0][2] - points[1][2])) < 0.00001));
 }
 
 function isInside(meshFaces, testPoints){
