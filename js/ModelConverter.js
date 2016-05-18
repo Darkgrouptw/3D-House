@@ -497,47 +497,47 @@ function convertToMultiObj(inputNode, isDownload){
 					outNodeIndex++;
 				}
 				break;
-			// case "roof/cross_gable":
-			// 	var vStr = ["", "", "", ""], vnStr = ["", "", "", ""], fStr = ["", "", "", ""];
-			// 	var mVIndex = [];			//Array of 5 elements storing model's vertices (original face indices)
-			// 	mVIndex.push([8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,64,65,66,67,68,69,70,71,72,73,74,75,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,116,117,118,121,123,124]);		//Back
-			// 	mVIndex.push([0, 1, 2, 3, 20, 21, 22, 23, 40, 41, 42, 43]);		//Left
-			// 	mVIndex.push([8, 9, 10, 11, 28, 29, 30, 31, 48, 49, 50, 51]);	//Right
-			// 	mVIndex.push([12, 13, 14, 15, 32, 33, 34, 35, 52, 53, 54, 55]);	//Front
+			case "roof/cross_gable":
+				var vStr = ["", "", "", ""], vnStr = ["", "", "", ""], fStr = ["", "", "", ""];
+				var mVIndex = [];			//Array of 4 elements storing model's vertices (original face indices)
+				mVIndex.push([8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,64,65,66,67,68,69,70,71,72,73,74,75,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,116,117,118,120,122,123]);		//Back
+				mVIndex.push([0,1,2,3,4,5,6,7,76,77,78,79,80,81,82,83,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123]);		//FrontBase
+				mVIndex.push([40,41,42,43,44,45,46,47,52,53,54,55,60,61,62,63]);	//Cover1
+				mVIndex.push([32,33,34,35,36,37,38,39,48,49,50,51,56,57,58,59]);	//Cover2
 
-			// 	var mVFacesI = new Array;			//Array of 5 elements storing model's vertices (output face indices, ordered)
-			// 	mVFacesI.push([1, 3, 2, 1, 4, 3, 5, 7, 6, 5, 8, 7, 9, 11, 10, 9, 12, 11, 4, 6, 11, 11, 6, 10, 1, 12, 5, 12, 9, 5, 5, 6, 1, 4, 1, 6]);
-			// 	mVFacesI.push([1, 3, 2, 1, 4, 3, 5, 7, 6, 5, 8, 7, 9, 11, 10, 9, 12, 11, 1, 5, 10, 10, 5, 9, 8, 2, 11, 11, 12, 8, 2, 8, 5, 5, 1, 2]);
-			// 	mVFacesI.push([1, 3, 2, 1, 4, 3, 5, 7, 6, 5, 8, 7, 9, 11, 10, 9, 12, 11, 1, 5, 10, 10, 5, 9, 8, 2, 11, 11, 12, 8, 2, 8, 5, 5, 1, 2]);
-			// 	mVFacesI.push([1, 3, 2, 1, 4, 3, 5, 7, 6, 5, 8, 7, 9, 11, 10, 9, 12, 11, 4, 6, 11, 11, 6, 10, 1, 12, 5, 12, 9, 5, 5, 6, 1, 4, 1, 6]);
+				var mVFacesI = [];			//Array of 4 elements storing model's vertices (output face indices, ordered)
+				mVFacesI.push([1,2,3,1,3,4,5,6,7,5,7,8,9,10,11,9,11,12,13,14,15,13,15,16,17,18,19,17,19,20,21,22,23,21,23,24,25,26,27,25,27,28,29,30,31,29,31,32,33,34,35,33,35,36,37,38,39,37,39,40,41,42,43,41,43,44,45,46,47,45,47,48,49,50,51,49,51,52,53,54,55,56,57,58,58,54,55,58,55,57]);
+				mVFacesI.push([1,2,3,1,3,4,5,6,7,5,7,8,9,10,11,9,11,12,13,14,15,13,15,16,17,18,19,17,19,20,21,22,23,21,23,24,25,26,27,25,27,28,29,30,31,29,31,32,33,34,35,33,35,36,37,38,39,37,39,40,27,31,38,27,38,36,36,38,24,36,24,18,34,40,39,34,39,35]);
+				mVFacesI.push([1,2,3,1,3,4,5,6,7,5,7,8,9,10,11,9,11,12,13,14,15,13,15,16,14,13,5,5,1,14,5,1,10,10,9,1]);
+				mVFacesI.push([1,2,3,1,3,4,5,6,7,5,7,8,9,10,11,9,11,12,13,14,15,13,15,16,14,13,6,4,6,13,11,6,12,6,4,12]);
 
-			// 	//Adding to fStr
-			// 	for(var i = 0;i<5;i++){
-			// 		for(var j = 0;j<mVFacesI[i].length;j+=3){
-			// 			fStr[i] += "f " + mVFacesI[i][j] + "//" + mVFacesI[i][j] + " " + mVFacesI[i][j+1] + "//" + mVFacesI[i][j+1] + " " + mVFacesI[i][j+2] + "//" + mVFacesI[i][j+2] + "\n";
-			// 		}
-			// 	}
+				//Adding to fStr
+				for(var i = 0;i<4;i++){
+					for(var j = 0;j<mVFacesI[i].length;j+=3){
+						fStr[i] += "f " + mVFacesI[i][j] + "//" + mVFacesI[i][j] + " " + mVFacesI[i][j+1] + "//" + mVFacesI[i][j+1] + " " + mVFacesI[i][j+2] + "//" + mVFacesI[i][j+2] + "\n";
+					}
+				}
 
-			// 	for(i = 0;i<vArr.length;i++){
-			// 		for(var modelNo = 0;modelNo<5;modelNo++){
-			// 			if(mVIndex[modelNo].indexOf(i) > -1){
-			// 				vStr[modelNo] += vArr[i];
-			// 				vnStr[modelNo] += vnArr[i];
-			// 			}
-			// 		}
-			// 	}
+				for(i = 0;i<vArr.length;i++){
+					for(var modelNo = 0;modelNo<4;modelNo++){
+						if(mVIndex[modelNo].indexOf(i) > -1){
+							vStr[modelNo] += vArr[i];
+							vnStr[modelNo] += vnArr[i];
+						}
+					}
+				}
 
-			// 	for(var i = 0;i<5;i++){
-			// 		vStr[i] += "\n";
-			// 		vnStr[i] += "\n";
-
-			// 		parseObj_withStoring(vStr[i] + vnStr[i] + fStr[i], false);
-			// 		if(isDownload)	download(vStr[i] + vnStr[i] + fStr[i], "model_part" + outNodeIndex + ".obj", 'text/plain');
-			// 		//Append string of .objs
-			// 		objs.push(vStr[i] + vnStr[i] + fStr[i]);
-			// 		outNodeIndex++;
-			// 	}
-			// 	break;
+				for(var i = 0;i<4;i++){
+					vStr[i] += "\n";
+					vnStr[i] += "\n";
+					console.log(vStr[i] + vnStr[i] + fStr[i]);
+					parseObj_withStoring(vStr[i] + vnStr[i] + fStr[i], false);
+					if(isDownload)	download(vStr[i] + vnStr[i] + fStr[i], "model_part" + outNodeIndex + ".obj", 'text/plain');
+					//Append string of .objs
+					objs.push(vStr[i] + vnStr[i] + fStr[i]);
+					outNodeIndex++;
+				}
+				break;
 
 			default:
 				for(i = 0;i<tmpFaces.length;i += 3){
