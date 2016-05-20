@@ -300,7 +300,7 @@ function ScenePick(){
                 dirty = true;
                 var material;
                 if(lastid>0){
-                    material=scene.findNode(lastid);
+                    material=scene.findNode(lastid).parent.parent.parent.parent;
                     material.setColor({ r:1, g:1, b:1});
                 }
                 var id=hit.nodeId;
@@ -309,7 +309,7 @@ function ScenePick(){
                 //這是我知道name被material包住，正常藥用id來找但現在id都還沒定
                 material=scene.findNode(id).parent;
                 material.setColor({r:0.7,g:0.7,b:0.3});
-                id=material.id;
+                id=element.id;
                 lastid=id;
                 if(!element.getLayer){
                     //something uneditale clicked
@@ -324,7 +324,7 @@ function ScenePick(){
 
                 //console.log("getWallID ", getWallID);
                 //console.log("getWindowID ", getWindowID);
-                console.log("ID: ", hit.nodeId, " partmode: ", partmode);
+                console.log("ID: ", element.getID(), " partmode: ", partmode);
                 objectId = hit.nodeId;
                 pickNode = getNodeName(objectId);
                 var pickLayer = getNodeLayer(objectId);
@@ -356,7 +356,7 @@ function ScenePick(){
 				watchmode = 1;
                 uiPanel.style.display='none';
                 if(lastid>0){
-                    material=scene.findNode(lastid);
+                    material=scene.findNode(lastid).parent.parent.parent.parent;
                     material.setColor({ r:0.8, g:0.8, b:0.8});
                 }
                 lastid = -1;
@@ -1010,43 +1010,7 @@ function attachInput(pickId){
             div.appendChild(deleteinput);
 
         deleteinput.addEventListener('click',function(event){
-            var backWall=-1;
-            var rightWall=-1;
-            var leftWall=-1;
-            var frontWall=-1;
-            var roof=-1;
-            var base=-1;
-            var interWall=[];
-            var nodes=scene.findNodes();
-            for(var i=0;i<nodes.length;i++){
-                var node = nodes[i];
-                if(node.getType()=="name"){
-                    if(node.getName()=="backWall"){
-                        //         material  name     matrix  texture  element
-                        backWall=node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
-                    }
-                    else if(node.getName()=="frontWall")frontWall=node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
-                    else if(node.getName()=="leftWall")leftWall=node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
-                    else if(node.getName()=="rightWall")rightWall=node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
-                    else if(node.getName()=="roof")roof=node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
-                    else if(node.getName()=="interWall")interWall.push(node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0]);
-                    else if(node.getName()=="base")base=node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
-                }
-            }
-
-            if(base != -1){
-                //flags  texture     //matrix    name        material    name
-                housenode2flag(n).destroy();
-                
-                //remove input
-                if(document.getElementById('inputarea')){
-                    document.getElementById('inputarea').remove();
-                }
-                //cancle pick
-                lastid=-1;
-                dirty = true;
-            }
-
+            deleteWall(n.getID());
         });
     }
 
@@ -1066,31 +1030,7 @@ function attachInput(pickId){
             div.appendChild(sigleinput);
 
         sigleinput.addEventListener('click',function(event){
-			var root = scene.findNode(3);
-			var single_wallS = getSingleWallS({
-				pos: n.getParent().getParent().getParent().getParent().getParent().getName(),
-				layer: n.getLayer(),
-				height: n.getHeight(),
-				width: n.getWidth(),
-				thick: n.getThickness(),
-				dir: n.getDirection(),
-				pri: n.getPriority(),
-				perX: n.getPercentX(),
-				perY: n.getPercentY(),
-				rotateX: n.getRotate()[0],
-				rotateY: n.getRotate()[1],
-				rotateZ: n.getRotate()[2]
-			});
-			root.addNode(single_wallS);
-            n.getParent().getParent().getParent().getParent().getParent().getParent().destroy();
-            //remove input
-            if(document.getElementById('inputarea')){
-                document.getElementById('inputarea').remove();
-            }
-            //cancle pick
-            lastid=-1;
-            dirty = true;
-
+			changeWall(n.getID(),"wall/single_window");
         });
     }
     //door Wall
@@ -1108,30 +1048,8 @@ function attachInput(pickId){
             div.appendChild(doorinput);
 
         doorinput.addEventListener('click',function(event){
-            var root = scene.findNode(3);
-			var door_WallS = getDoorWallS({
-				pos: n.getParent().getParent().getParent().getParent().getParent().getName(),
-				layer: n.getLayer(),
-				height: n.getHeight(),
-				width: n.getWidth(),
-				thick: n.getThickness(),
-				dir: n.getDirection(),
-				pri: n.getPriority(),
-				perX: n.getPercentX(),
-				perY: n.getPercentY(),
-				rotateX: n.getRotate()[0],
-				rotateY: n.getRotate()[1],
-				rotateZ: n.getRotate()[2]
-			});
-			root.addNode(door_WallS);
-            n.getParent().getParent().getParent().getParent().getParent().getParent().destroy();
-            //remove input
-            if(document.getElementById('inputarea')){
-                document.getElementById('inputarea').remove();
-            }
-            //cancle pick
-            lastid=-1;
-            dirty = true;
+			changeWall(n.getID(),"wall/door_entry");
+            
         });
     }
     //normal Wall
@@ -1149,30 +1067,7 @@ function attachInput(pickId){
             div.appendChild(normalinput);
 
         normalinput.addEventListener('click',function(event){
-			var root = scene.findNode(3);
-			var normal_WallS = getNormalWallS({
-				pos: n.getParent().getParent().getParent().getParent().getParent().getName(),
-				layer: n.getLayer(),
-				height: n.getHeight(),
-				width: n.getWidth(),
-				thick: n.getThickness(),
-				dir: n.getDirection(),
-				pri: n.getPriority(),
-				perX: n.getPercentX(),
-				perY: n.getPercentY(),
-				rotateX: n.getRotate()[0],
-				rotateY: n.getRotate()[1],
-				rotateZ: n.getRotate()[2]
-			});
-			root.addNode(normal_WallS);
-            n.getParent().getParent().getParent().getParent().getParent().getParent().destroy();
-            //remove input
-            if(document.getElementById('inputarea')){
-                document.getElementById('inputarea').remove();
-            }
-            //cancle pick
-            lastid=-1;
-            dirty = true;
+			changeWall(n.getID(),"wall/no_window");
         });
     }
     //depth
@@ -1350,10 +1245,8 @@ function attachInput(pickId){
         });
         RatioAinput.addEventListener('mousemove',function(event){
             if (RatioAismove) {
-                n.setRatioA(Number(RatioAinput.value*1.0));
+				moveWindow(n.getID(),Number(RatioAinput.value*1.0),n.getRatio().b);
                 RatioAropertyValue.textContent=RatioAinput.value;
-                n.callBaseCalibration();
-                dirty = true;
             }
         });
         RatioAinput.addEventListener('mouseup',function(event){
@@ -1386,10 +1279,8 @@ function attachInput(pickId){
         });
         RatioBinput.addEventListener('mousemove',function(event){
             if (RatioBismove) {
-                n.setRatioB(Number(RatioBinput.value*1.0));
+				moveWindow(n.getID(),n.getRatio().a,Number(RatioBinput.value*1.0));
                 RatioBropertyValue.textContent=RatioBinput.value;
-                n.callBaseCalibration();
-                dirty = true;
             }
         });
         RatioBinput.addEventListener('mouseup',function(event){
@@ -1496,10 +1387,8 @@ function attachInput(pickId){
         });
         Posratioinput.addEventListener('mousemove',function(event){
             if (Posratioismove) {
-                n.setPosratio(Number(Posratioinput.value*1.0));
+				moveDoor(n.getID(),Number(Posratioinput.value*1.0));
                 PosratioropertyValue.textContent=Posratioinput.value;
-                n.callBaseCalibration();
-                dirty = true;
             }
         });
         Posratioinput.addEventListener('mouseup',function(event){
@@ -1859,32 +1748,27 @@ function timeFuction(){
                 time = 3;
             }
             time--;
-            //console.log(time+'cc');
-            var backWall=-1;
-            var rightWall=-1;
-            var leftWall=-1;
-            var frontWall=-1;
-            var roof=-1;
             var base=-1;
             var interWall=[];
             var nodes=scene.findNodes();
 			var Wall_id =[]
 			var the_number_of_window=0;
 			var the_number_of_door=0;
+			var select_node=-1;
+			if(lastid > 0){
+				select_node = scene.findNode(lastid).getID();
+			}
+			
             getWallID = [];
             getWindowID = [];
             for(var i=0;i<nodes.length;i++){
                 var node = nodes[i];
                 if(node.getType()=="name"){
-                    if(node.getName()=="backWall"){
-                        //         material  name     matrix  texture  element
-                        backWall=node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
-                    }
-                    else if(node.getName()=="frontWall")frontWall=node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
-                    else if(node.getName()=="leftWall")leftWall=node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
-                    else if(node.getName()=="rightWall")rightWall=node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
-                    else if(node.getName()=="interWall")interWall.push(node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0]);
-                    else if(node.getName()=="base" && node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].getLayer() == 1)base=node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
+                   	if(node.getName()=="base" && node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].getLayer() == 1)base=node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
+					if(node.getID() == lastid){
+						console.log(lasted);
+						select_node = node.parent.parent.parent.parent.getID();
+					}
                 }
                 if(node.getType()=="flags"){
                     if(lastFloor == -1 ||
@@ -1898,7 +1782,7 @@ function timeFuction(){
                     }
                 }
                 if(node.getType() == "material"){
-                    if(node.getID() == lastid){
+                    if(node.nodes[0].nodes[0].nodes[0].nodes[0].getID() == select_node){
                         node.setColor({r:0.7,g:0.7,b:0.3});
                     }else{
                         node.setColor({r:1,g:1,b:1});
@@ -2868,14 +2752,77 @@ function getDoorWallS(param){
 }
 
 function changeWall(wall_id,wall_type){
+	var n = scene.findNode(wall_id);
+	if(n.getType() !="wall/no_window" &&
+	  n.getType() !="wall/single_window" &&
+	  n.getType() !="wall/door_entry" ){
+		return;
+	}
 	
+	var root = scene.findNode(3);
+	var param = {
+				pos: n.getParent().getParent().getParent().getParent().getParent().getName(),
+				layer: n.getLayer(),
+				height: n.getHeight(),
+				width: n.getWidth(),
+				thick: n.getThickness(),
+				dir: n.getDirection(),
+				pri: n.getPriority(),
+				perX: n.getPercentX(),
+				perY: n.getPercentY(),
+				rotateX: n.getRotate()[0],
+				rotateY: n.getRotate()[1],
+				rotateZ: n.getRotate()[2]
+			}
+	if(wall_type == "wall/no_window"){
+		var normal_WallS = getNormalWallS(param);
+		root.addNode(normal_WallS);
+			
+            
+	}else if(wall_type == "wall/single_window"){
+		var single_wallS = getSingleWallS(param);
+			root.addNode(single_wallS);
+	}else if(wall_type == "wall/door_entry"){
+		var door_wallS = getDoorWallS(param);
+			root.addNode(door_wallS);
+	}
+	
+	n.getParent().getParent().getParent().getParent().getParent().getParent().destroy();
+    //remove input
+    if(document.getElementById('inputarea')){
+        document.getElementById('inputarea').remove();
+    }
+    //cancle pick
+    lastid=-1;
+    dirty = true;
 }
 function deleteWall(wall_id){
-	
+	var n = scene.findNode(wall_id);
+	if(n.getDirection && housenode2flag(n).nodes[0].getName() == "interWall")
+	 housenode2flag(n).destroy();
+     
+     //remove input
+     if(document.getElementById('inputarea')){
+         document.getElementById('inputarea').remove();
+     }
+     //cancle pick
+     lastid=-1;
+     dirty = true;
 }
 function moveWindow(wall_id,ratioA,ratioB){
-	
+	var n = scene.findNode(wall_id);
+	if(n.getRatio){
+		n.setRatioA(ratioA);
+		n.setRatioB(ratioB);
+		n.callBaseCalibration();
+		dirty = true;
+	}
 }
 function moveDoor(wall_id,pos_ration){
-	
+	var n = scene.findNode(wall_id);
+	if(n.getPosratio){
+		n.setPosratio(pos_ration);
+		n.callBaseCalibration();
+		dirty = true;
+	}
 }
