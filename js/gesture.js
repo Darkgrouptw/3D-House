@@ -48,6 +48,21 @@ function Sign(x)
     console.log("tmpWindowCenter[3]", tmpWindowCenter[3]);
 }*/
 
+function trackPosition(id)
+{
+    scene.getNode(id,
+        function (id) {
+            id.on("rendered",
+                function (event) {
+                    console.log("pos ", event.getCanvasPos());
+                    console.log("pro ", event.getProjPos());
+                    console.log("cam ", event.getCameraPos());
+                    console.log("view ", event.getViewPos());
+                    console.log("world ", event.getWorldPos());
+                });
+        });
+}
+
 function multiWindowOffsetX(id, tmpLength, tmpAxis)
 {
     var n = scene.getNode(3).getEye();

@@ -328,7 +328,12 @@ function ScenePick(){
                 objectId = hit.nodeId;
                 pickNode = getNodeName(objectId);
                 var pickLayer = getNodeLayer(objectId);
-                if(pickNode == "window") { isRotation = false; }
+                if(pickNode == "window") { 
+                    isRotation = false; 
+                    var changeId = getWallID[getWindowID.indexOf(objectId)];
+                    changeViewpoint(getNodeName(changeId));
+                    trackPosition(objectId);
+                }
                 else if(pickNode == "base" && pickLayer != 1) { isRotation = false; }
                 else if(pickNode == "interWall") { isRotation = false; }
                 else { isRotation = true; }
