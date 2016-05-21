@@ -59,6 +59,7 @@ function trackPosition(id)
                     console.log("cam ", event.getCameraPos());
                     console.log("view ", event.getViewPos());
                     console.log("world ", event.getWorldPos());
+					return event.getCanvasPos();
                 });
         });
 }

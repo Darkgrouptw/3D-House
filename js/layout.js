@@ -43,8 +43,8 @@ function setComponent()
 		changeSize(PartBar, 0.085*Width, Height);
 		RefSize = Width;
 		//2 for FloorTab Property / Value
-		PropertyFT = ["font-size", "display","padding-top","padding-left"];
-		ValueFT = [0.03*Width + "px", "block", 0.015*Width + "px", 0.01*Width + "px"];
+		PropertyFT = ["font-size", "display","padding-top","padding-left","margin-top", "border-top-right-radius", "border-bottom-right-radius"];
+		ValueFT = [0.03*Width + "px", "block", 0.015*Width + "px", 0.01*Width + "px", -2 + "px", 10 + "px", 15 + "px"];
 		//3 for PartBar Property / Value
 		PropertyPBul = "marginLeft";
 		ValuePBli = "block";
@@ -62,8 +62,8 @@ function setComponent()
 		changeSize(PartBar, Width, 0.085*Height);
 		RefSize = Height;
 		//2 for FloorTab Property / Value
-		PropertyFT = ["font-size", "display", "padding-left","line-height"];
-		ValueFT = [0.03*Height + "px", "inline-block", 0.015*Height + "px", 0.05*Height + "px"];
+		PropertyFT = ["font-size", "display", "padding-left","line-height", "margin-left", "border-bottom-left-radius", "border-bottom-right-radius","width"];
+		ValueFT = [0.03*Height + "px", "inline-block", 0.013*Height + "px", 0.05*Height + "px", -2 + "px",10 + "px", 20 + "px", 0.08*Width+ "px"];
 		//3 for PartBar Property / Value
 		PropertyPBul = "marginTop";
 		ValuePBli = "inline-block";

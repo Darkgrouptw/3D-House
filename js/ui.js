@@ -326,13 +326,14 @@ function ScenePick(){
                 //console.log("getWindowID ", getWindowID);
                 console.log("ID: ", element.getID(), " partmode: ", partmode);
                 objectId = hit.nodeId;
+				pickObjId = objectId;
                 pickNode = getNodeName(objectId);
                 var pickLayer = getNodeLayer(objectId);
                 if(pickNode == "window") { 
                     isRotation = false; 
                     var changeId = getWallID[getWindowID.indexOf(objectId)];
                     changeViewpoint(getNodeName(changeId));
-                    trackPosition(objectId);
+                    hitPos = trackPosition(objectId);
                 }
                 else if(pickNode == "base" && pickLayer != 1) { isRotation = false; }
                 else if(pickNode == "interWall") { isRotation = false; }
@@ -351,7 +352,10 @@ function ScenePick(){
                     }
                 }
                 lastTime = now;
-
+				if (!Mobile)
+				{
+					moveComponent();
+				}
                 attachInput(objectId);
             });
 
@@ -366,11 +370,14 @@ function ScenePick(){
                 }
                 lastid = -1;
                 lastFloor = -1;
+				pickObjId = null;
                 console.log('Nothing picked!');
                 isLock = false;
                 objectId = null;
                 isRotation = true;
                 pickNode = null;
+				if (!Mobile)
+				moveComponent();
                 //for some ridiculurs reason i got to pick again!!
                 //scene.pick()
             });

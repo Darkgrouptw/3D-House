@@ -25,7 +25,7 @@
 	<script src = "js/plugins/lib/jquery-1.8.3.min.js"></script>
     <script src = "js/ModelConverter.js"></script>
     <script src = "js/superXReProduction.js"></script>
-
+	<script src = "js/uiedit.js"></script>
 	<?php
 		include	"HouseXML.php";
 		
@@ -63,14 +63,11 @@
 <i id = "Mode" class="fa fa-eye"></i>
 <i id = "ScreenController" class="fa fa-arrows-alt" onclick = "ScreenControll()"></i>	
 <div id = "FLOORTAB">
-	<nav>
 		<ul id = "Tab">
-			<li id = "-1" class = "selected" onclick = "selectTab('-1')"><i class="fa fa-home"></i></li><!--Whole view-->
 			<li id = "1" onclick = "selectTab('1')">1F</li>
 			<li id = "0" onclick = "selectTab('0')">R</li>
 			<li id = "plus" onclick = "addTab()">+</li>
 		</ul>
-	</nav>
 </div>
 	
 	<div id="codewrapper" style="display: none" >
@@ -88,7 +85,9 @@
         </div>            
     </div>
 	
-
+	<div id="DRAGCONTROLL" data-draggable="true">
+		<i class="fa fa-arrows" aria-hidden="true"></i>
+	</div>
 	
     
 	<?php

@@ -18,19 +18,19 @@ html, body
 #FLOORTAB
 {
 	position: absolute;
-	top: 0%;
-	left: 0%;
-	background-color: #22A7F0; /*blue*/
+
 }
-#FLOORTAB nav ul
+
+#FLOORTAB  li
 {
-	padding: 0;
-	margin: 0;
-}
-#FLOORTAB nav li
-{
-	font-family: Segoe UI Emoji;
-	margin: 0px;
+	background-color:rgb(209,206,203);
+	border:1px solid rgb(170,170,170);
+	text-align:center;
+	padding:10px 5px 10px 5px;
+	font-family:fantasy;
+	-webkit-box-shadow: 2px 1px 5px -1px rgba(54,53,54,1);
+	-moz-box-shadow: 2px 1px 5px -1px rgba(54,53,54,1);
+	box-shadow: 2px 1px 5px -1px rgba(54,53,54,1);
 }
 .general
 {
@@ -41,6 +41,22 @@ html, body
 	border: 3px;
 	border-color: #1E824C;
 	color: #1E824C;
+}
+#DRAGCONTROLL
+{
+	width: 50px;
+    height: 50px;
+	background-color: #22A7F0;
+	cursor: move;
+    position: fixed;	
+	border-radius: 25px;
+	display:none;
+}
+#DRAGCONTROLL i
+{
+	color:white;
+	font-size:30px;
+	padding:9px;
 }
 /*canvas
 {
