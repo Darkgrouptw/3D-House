@@ -44,7 +44,7 @@ function setComponent()
 		RefSize = Width;
 		//2 for FloorTab Property / Value
 		PropertyFT = ["font-size", "display","padding-top","padding-left","margin-top", "border-top-right-radius", "border-bottom-right-radius"];
-		ValueFT = [0.03*Width + "px", "block", 0.015*Width + "px", 0.01*Width + "px", -2 + "px", 10 + "px", 15 + "px"];
+		ValueFT = [0.02*Width + "px", "block", 0.015*Width + "px", 0.005*Width + "px", -2 + "px", 10 + "px", 15 + "px"];
 		//3 for PartBar Property / Value
 		PropertyPBul = "marginLeft";
 		ValuePBli = "block";

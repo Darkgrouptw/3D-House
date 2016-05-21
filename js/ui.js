@@ -296,6 +296,7 @@ function ScenePick(){
     uiPanel=document.getElementById('codewrapper');
     scene.on("pick",
             function (hit) {
+				
 				isLock = true;
                 dirty = true;
                 var material;
@@ -327,14 +328,15 @@ function ScenePick(){
                 console.log("ID: ", element.getID(), " partmode: ", partmode);
                 objectId = hit.nodeId;
 				pickObjId = objectId;
+				selectLayer();
                 pickNode = getNodeName(objectId);
                 var pickLayer = getNodeLayer(objectId);
                 if(pickNode == "window") { 
                     isRotation = false; 
                     var changeId = getWallID[getWindowID.indexOf(objectId)];
                     changeViewpoint(getNodeName(changeId));
-                    hitPos = trackPosition(objectId);
-                }
+                    trackPosition(objectId);
+                } 
                 else if(pickNode == "base" && pickLayer != 1) { isRotation = false; }
                 else if(pickNode == "interWall") { isRotation = false; }
                 else { isRotation = true; }
@@ -352,15 +354,20 @@ function ScenePick(){
                     }
                 }
                 lastTime = now;
-				if (!Mobile)
+				if (!Mobile && !isEmpty(hitPos))
 				{
 					moveComponent();
 				}
                 attachInput(objectId);
             });
-
     scene.on("nopick",
             function (hit) {
+				var alltab = getSubElem(getElem("Tab"),"li");
+				for (var i = 0; i < alltab.length; i++){
+					alltab[i].className = "General";
+				}
+				var key = getElem("functionkey");
+				key.innerHTML = "+";
                 dirty = true;
 				watchmode = 1;
                 uiPanel.style.display='none';

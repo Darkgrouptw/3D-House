@@ -39,11 +39,42 @@ function toggleFullScreen()
     }
     else { cancelFullScreen.call(doc);  }
 }
-//This is for interact ex:click
 
 var TabAmount = 1;// 樓層數初始為一層 屋頂是第2層
-var SelectId = 0; // 選取的樓層初始為0
-
+var SelectId = -1; // 選取的樓層初始為0
+function functionkey()
+{
+	var key = getElem("functionkey");
+	if(key.innerHTML=="X")
+	{
+		deleteTab();
+	}
+	else
+	{
+		addTab();
+	}
+	
+}
+function selectLayer()
+{
+	var node = scene.getNode(lastid);
+	var n = scene.findNode(pickObjId);
+	var type = n.parent.parent.getName();
+	
+	var key = getElem("functionkey");
+	if (type == "base" ||type == "backWall") 
+	{
+		SelectId = node.getLayer();
+		selectTab(SelectId);
+		key.innerHTML = "X";
+	}
+	else if(type == "roof")
+	{
+		SelectId = 0;
+		selectTab(SelectId);
+		key.innerHTML = "X";
+	}
+}
 function selectTab(id){
 	var Selected = getElem(id);
 	var alltab = getSubElem(getElem("Tab"),"li");
@@ -53,7 +84,9 @@ function selectTab(id){
 	Selected.className = "Selected";
 	SelectId = parseInt(id);
 	lastFloor = SelectId;
-	if (SelectId == 0)
+	var key = getElem("functionkey");
+	key.innerHTML = "X";
+	if (SelectId == -1)
 	{
 		lastFloor = TabAmount + 1;
 	}

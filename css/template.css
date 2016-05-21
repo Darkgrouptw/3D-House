@@ -31,6 +31,7 @@ html, body
 	-webkit-box-shadow: 2px 1px 5px -1px rgba(54,53,54,1);
 	-moz-box-shadow: 2px 1px 5px -1px rgba(54,53,54,1);
 	box-shadow: 2px 1px 5px -1px rgba(54,53,54,1);
+	cursor: pointer;
 }
 .general
 {

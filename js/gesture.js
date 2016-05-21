@@ -10,6 +10,7 @@ var numberOfName = ["base","rightWall","leftWall","backWall","roof","rightTriang
 
 var numberOfRoof = ["roof/cross_gable","roof/gable","roof/hip","roof/mansard"];
 
+var hitPos = {};
 function Sign(x) 
 {
     return typeof x === 'number' ? x ? x < 0 ? -1 : 1 : x === x ? 0 : NaN : NaN;
@@ -54,12 +55,12 @@ function trackPosition(id)
         function (id) {
             id.on("rendered",
                 function (event) {
-                    console.log("pos ", event.getCanvasPos());
-                    console.log("pro ", event.getProjPos());
+					hitPos = event.getCanvasPos();
+/*                    console.log("pos ", event.getCanvasPos());
+                     console.log("pro ", event.getProjPos());
                     console.log("cam ", event.getCameraPos());
                     console.log("view ", event.getViewPos());
-                    console.log("world ", event.getWorldPos());
-					return event.getCanvasPos();
+                    console.log("world ", event.getWorldPos()); */
                 });
         });
 }

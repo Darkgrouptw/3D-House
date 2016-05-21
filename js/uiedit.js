@@ -7,19 +7,20 @@ function moveComponent()
 		var componentType = getNodeName(pickObjId);
 		if(componentType == "window")//pick what
 		{
+			
 			var windowCenter = getNodeCenter(pickObjId);
 			var X = windowCenter[0];
 			var Y = windowCenter[1];
 			var W = 4;
 			var H = 4;
-			var leftPoint = [X-W, Y-H];
+			var leftPoint = [hitPos.x-W, hitPos.y-H];
 			console.log(leftPoint);
 			/* document.getElementsByTagName("body")[0].addEventListener('mousedown',function(event)
 			{
 				console.log(event.clientX);
 				console.log(event.clientY);
 			}); */
-			DragController(hitPos);			
+			DragController(leftPoint);			
 		}
 		else
 		{
