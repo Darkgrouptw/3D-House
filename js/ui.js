@@ -751,7 +751,7 @@ function deleteTopBase(){
 }
 function deleteBase(layerNumber){
     var nodes=scene.findNodes();
-    if(layerNumber <=1){
+    if(layerNumber <=0  || getTopLayer() <= 1){
         lastid =-1;
         lastFloor=-1;
         return;
