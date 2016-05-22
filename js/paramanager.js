@@ -127,6 +127,20 @@ utility.makeCombinations = function(s, k)
     return combs;
 };
 
+// Prevent the reference problem
+utility.deepCopy = function(value)
+{
+    if(null == value || "object" != typeof value) { return value; }
+    var copy = value.constructor();
+
+    for(var attr in value) 
+    {
+        if(value.hasOwnProperty(attr)) { copy[attr] = value[attr]; }
+    }
+
+    return copy;
+}
+
 // Distance function
 utility.distance = function(al, bl)
 {
@@ -398,12 +412,12 @@ ParameterManager.prototype.addFunction = function(name, func)
 ParameterManager.prototype.get = function(attribute)
 {
 	// If attribute in the property
-	if(!utility.checkIsUndefined(this.property[attribute])) { return this.property[attribute]; }
+	if(!utility.checkIsUndefined(this.property[attribute])) { return utility.deepCopy(this.property[attribute]); }
 	else 
 	{
 		// Consider transform
-		if(!utility.checkIsUndefined(this.transform[attribute])) { return this.transform[attribute]; }
-		else { console.log('Error: No ' + attribute + ' attribute in parameter manager.'); }
+		if(!utility.checkIsUndefined(this.transform[attribute])) { return utility.deepCopy(this.transform[attribute]); }
+		else { console.log('Error: No ' + attribute + ' attribute in parameter manager.'); return []; }
 	}
 }
 
@@ -414,7 +428,7 @@ ParameterManager.prototype.set = function(attribute, value)
 	else 
 	{
 		if(!utility.checkIsUndefined(this.transform[attribute])) { this.transform[attribute] = value; }
-		else { console.log('Error: No ' + attribute + ' attribute in parameter manager.'); }
+		else { console.log('Error: No ' + attribute + ' attribute in parameter manager.'); return [];}
 	}
 };
 

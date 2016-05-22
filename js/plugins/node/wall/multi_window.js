@@ -93,8 +93,17 @@ SceneJS.Types.addType("wall/multi_window",
 					for(var j = 0; j < wc.length; j = j + 2)
 					{
 						var window = {}, c = {}, half = {};
-						c.x = ((2 * w) * wc[j]) - w; c.y = ((2 * h) * wc[j + 1]) - h;
-						half.w = ws[j]; half.h = ws[j + 1];
+                        var bound = 2 * t;
+                        var rwt = ((2 * w) - bound) - (ws[j] * 2);
+                        var hrwt = rwt / 2;
+
+                        var rht = ((2 * h) - bound) - (ws[j + 1] * 2);
+                        var hrht = rht / 2;
+
+						c.x = (rwt * wc[j]) - hrwt; 
+                        c.y = (rht * wc[j + 1]) - hrht;
+						half.w = ws[j]; 
+                        half.h = ws[j + 1];
 						
 						window.id = j; window.points = []; window.side = 4;
 						window.points.push([c.x - half.w, c.y - half.h]);
@@ -168,6 +177,8 @@ SceneJS.Types.addType("wall/multi_window",
         this._paramana.addAttribute('windowCenter', utility.vectorForm(params.windowCenter));
 		this._paramana.addAttribute('doorSize', utility.vectorForm(params.doorSize));
         this._paramana.addAttribute('doorPosratio', utility.vectorForm(params.doorPosratio));
+        
+        this._paramana.addAttribute('gap', params.gap);
 		
 		// For share variable in texture
 		this._paramana.addAttribute('shared', {});
@@ -261,7 +272,51 @@ SceneJS.Types.addType("wall/multi_window",
 	},
 	
 	getWindowCenter: function() { return this._paramana.get('windowCenter'); },
-	setWindowCenter: function(wc) { this._paramana.set('windowCenter', wc); this.update(); },
+	setWindowCenter: function(wc) 
+    {
+        var wrap = function(l)
+        {
+            var t = [];
+            for(var i = 0; i < l.length; i = i + 2) 
+            { 
+                t.push([l[i], l[i + 1]]); 
+            }
+            return t;
+        };
+
+        apw = utility.makeCombinations(wrap(wc), 2);
+
+        var flag = true;
+                
+        // window size is fixed to 4 (half size)
+        var wspace = (this.getWidth() * 2) - (4 * this.getThickness()) - 8;
+        var hspace = (this.getHeight() * 2) - (4 * this.getThickness()) - 8;
+        var wgap = this.getGap() + 8;
+
+        var checkspace = function(pair)
+        {
+            var xp = Math.abs(pair[0][0] - pair[1][0]) * wspace;
+            var yp = Math.abs(pair[0][1] - pair[1][1]) * hspace;
+            var pgap = Math.sqrt(Math.pow(xp, 2) + Math.pow(yp, 2));
+            if(pgap < wgap) 
+            {
+                console.log('warning: ' + pgap);
+                flag = false; 
+            }
+        };
+
+        // two center distance
+        apw.forEach(checkspace);
+
+        // if any two window center so close, it not allow set it.
+        if(flag)
+        {
+            console.log('setting');
+            this._paramana.set('windowCenter', wc); 
+            this.update(); 
+        }
+    },
+
 	setWindowCenterByPush: function(v) { var tmp = this.getWindowCenter(); this.setWindowCenter(tmp.push(v)); },
 	setWindowCenterByIndex: function(v, i)
 	{
@@ -281,6 +336,9 @@ SceneJS.Types.addType("wall/multi_window",
 		tmp[i] = v;
 		this.setWindowSize(tmp);
 	},
+
+    getGap: function() { return this._paramana.get('gap'); },
+    setGap: function(wg) { this._paramana.set('gap', g); this.update(); },
 	
 	getScale: function() { return this._paramana.get('scale'); },
 	setScale: function(svec) { this._paramana.set('scale', svec); this._paramana.updateMatirxNode(this); },

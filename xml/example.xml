@@ -17,7 +17,7 @@
             <depth>18</depth>
             <thickness>1</thickness>
             <ratio>0.5,0.5</ratio>
-            <backside>on</backside>
+            <back_side>on</back_side>
             <back_grasp>2</back_grasp>
             <extrude_len>6</extrude_len>
             <extrude_pos>0.5</extrude_pos>
@@ -139,6 +139,7 @@
             <windowCenter>0.2, 0.5,0.8, 0.5</windowCenter>
             <doorSize>5, 9</doorSize>
             <doorPosratio>0.5</doorPosratio>
+            <gap>2</gap>
             <direction>horizontal</direction>
         </property>
     </element>

@@ -1520,7 +1520,7 @@ function attachInput(pickId){
 			});
 			DoorPostratio_input.addEventListener('mousemove',function(event){
 				if(DoorPosratio_is_move){
-					n.setDoorPosratioByIndex(DoorPostratio_input.value *1,DoorIndex);
+					n.setDoorPosratioByIndex(Number(DoorPostratio_input.value),DoorIndex);
 					DoorPostraio_value.textContent = DoorPostratio_input.value;
 					n.callBaseCalibration();
 					dirty = true;
@@ -1565,18 +1565,20 @@ function attachInput(pickId){
 			//event
 			windowCenter_is_move.push(false);
 			windowCenter_input[i].addEventListener('mousedown',function(event){
-				windowCenter_is_move[this.name *1] = true;
+				windowCenter_is_move[Number(this.name)] = true;
 			});
 			windowCenter_input[i].addEventListener('mousemove',function(event){
-				if(windowCenter_is_move[this.name *1]){
-					n.setWindowCenterByIndex(windowCenter_input[this.name*1].value*1,this.name *1);
-					windowCenter_value[this.name *1].textContent = windowCenter_input[this.name *1].value;
+                var tn = Number(this.name);
+                var wctn = Number(windowCenter_input[tn].value);
+				if(windowCenter_is_move[tn]){
+					n.setWindowCenterByIndex(wctn, tn);
+					windowCenter_value[tn].textContent = windowCenter_input[tn].value;
 					n.callBaseCalibration();
 					dirty = true;
 				}
 			});
 			windowCenter_input[i].addEventListener('mouseup',function(event){
-				windowCenter_is_move[this.name *1] = false;
+				windowCenter_is_move[Number(this.name)] = false;
 			});
 			
 			
@@ -1602,18 +1604,20 @@ function attachInput(pickId){
 			//event
 			windowCenter_is_move.push(false);
 			windowCenter_input[i+1].addEventListener('mousedown',function(event){
-				windowCenter_is_move[this.name *1] = true;
+				windowCenter_is_move[Number(this.name)] = true;
 			});
 			windowCenter_input[i+1].addEventListener('mousemove',function(event){
-				if(windowCenter_is_move[this.name *1]){
-					n.setWindowCenterByIndex(windowCenter_input[this.name *1].value,this.name *1);
-					windowCenter_value[this.name *1].textContent = windowCenter_input[this.name *1].value;
+                var tn = Number(this.name);
+                var wctn = Number(windowCenter_input[tn].value);
+				if(windowCenter_is_move[tn]){
+					n.setWindowCenterByIndex(wctn, tn);
+					windowCenter_value[tn].textContent = windowCenter_input[tn].value;
 					n.callBaseCalibration();
 					dirty = true;
 				}
 			});
 			windowCenter_input[i+1].addEventListener('mouseup',function(event){
-				windowCenter_is_move[this.name *1] = false;
+				windowCenter_is_move[Number(this.name)] = false;
 			});
 			div.appendChild(document.createElement("br"));
 		}
@@ -1644,7 +1648,7 @@ function attachInput(pickId){
 		});
 		roof_extrudeBas_input.addEventListener('mousemove',function(event){
 			if(roof_extrudeBas_ismove){
-				n.setExtrudeBas(Number(roof_extrudeBas_input.value*1.0));
+				n.setExtrudeBas(Number(roof_extrudeBas_input.value));
 				roof_extrudeBas_propertyValue.textContent = roof_extrudeBas_input.value;
 				n.callBaseCalibration();
 				dirty = true;
@@ -1679,7 +1683,7 @@ function attachInput(pickId){
 		});
 		roof_extrudeLen_input.addEventListener('mousemove',function(event){
 			if(roof_extrudeLen_ismove){
-				n.setExtrudeLen(Number(roof_extrudeLen_input.value*1.0));
+				n.setExtrudeLen(Number(roof_extrudeLen_input.value));
 				roof_extrudeLen_propertyValue.textContent = roof_extrudeLen_input.value;
 				n.callBaseCalibration();
 				dirty = true;

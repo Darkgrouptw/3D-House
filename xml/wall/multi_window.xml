@@ -16,6 +16,7 @@
             <thickness>1</thickness>
             <windowSize>2.5, 2.5, 2.5, 2.5, 2.5, 2.5, 2.5, 2.5</windowSize>
             <windowCenter>0.2, 0.2, 0.4, 0.4, 0.6, 0.6, 0.8, 0.8</windowCenter>
+            <gap>3</gap>
             <doorSize>3, 4</doorSize>
             <doorPosratio>0.8</doorPosratio>
         </property>

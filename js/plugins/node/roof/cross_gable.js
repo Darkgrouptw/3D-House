@@ -19,7 +19,7 @@ SceneJS.Types.addType("roof/cross_gable",
                 return reval;
             };
 
-            var bs = property.backside == 'on' ? true: false;
+            var bs = property.back_side == 'on' ? true: false;
 
             var w = property.width;
             var d = property.depth;
@@ -163,9 +163,17 @@ SceneJS.Types.addType("roof/cross_gable",
         this._paramana.addAttribute('extrude_hgt', params.extrude_hgt);
         this._paramana.addAttribute('extrude_len', params.extrude_len);
         this._paramana.addAttribute('extrude_bas', params.extrude_bas);
-        this._paramana.addAttribute('backside', params.backside);
+        this._paramana.addAttribute('back_side', params.back_side);
         this._paramana.addAttribute('back_grasp', params.back_grasp);
-        this.addNode(roof_gable_build.call(this, params)); 
+
+        // for texture
+        this._paramana.addAttribute('shared', {});
+
+        this._paramana.addFunction('texture', function(property)
+        {
+        });
+
+        this.addNode(roof_cross_gable_build.call(this, params)); 
     },
     
     getLayer:function(){ return this._layer; },
@@ -201,8 +209,8 @@ SceneJS.Types.addType("roof/cross_gable",
     getBackGrasp: function() { return this._paramana.get('back_grasp'); },
     setBackGrasp: function(bg) { this._paramana.set('back_grasp', bg); this.ParameterManager.updateGeometryNode(this); },
 
-    getBackSide: function() { return this._paramana.get('backside'); },
-    setBackSide: function(bs) { this._paramana.set('backside', bs); this._paramana.updateGeometryNode(this); },
+    getBackSide: function() { return this._paramana.get('back_side'); },
+    setBackSide: function(bs) { this._paramana.set('back_side', bs); this._paramana.updateGeometryNode(this); },
 
 	getScale: function() { return this._paramana.get('scale'); },
 	setScale: function(svec) { this._paramana.set('scale', svec); this._paramana.updateMatirxNode(this); },
@@ -342,7 +350,7 @@ SceneJS.Types.addType("roof/cross_gable",
     }
  });
 
-function roof_gable_build(params) 
+function roof_cross_gable_build(params) 
 {
     var positionSet = this._paramana.createPositions();
 
