@@ -328,7 +328,7 @@ function ScenePick(){
                 console.log("ID: ", element.getID(), " partmode: ", partmode);
                 objectId = hit.nodeId;
 				pickObjId = objectId;
-				//selectLayer();
+				selectLayer();
                 pickNode = getNodeName(objectId);
                 var pickLayer = getNodeLayer(objectId);
                 if(pickNode == "window") { 
