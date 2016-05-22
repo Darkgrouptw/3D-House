@@ -46,13 +46,16 @@ SceneJS.Types.addType("roof/cross_gable",
             var db = (d - (eb * 0.5)) - (3 * t);
             var dr = (2 * db) * (1 - ep), dl = (2 * db) * ep;
             var ldb = db * 2 * ep, rdb = db * 2 * (1 - ep);
-
+            
             var base_len = w;
             if(base_len < (wr + el)) { base_len = wr + el; }
 
             var dt = t;
             var st = (2 * h / ( w * r.a + w * r.b)) * dt, sh = h * eh;
             var whr = (w / 2) * (1 - eh);
+
+            var hrate = st / (sh + h);
+            var dtt = eb * 0.5 * hrate;
 
             var gs = property.back_grasp * 0.7;
             var gsr = property.back_grasp / Math.sqrt((Math.pow((2 * h),2) + Math.pow((2 * w), 2)));
@@ -61,8 +64,8 @@ SceneJS.Types.addType("roof/cross_gable",
 	        var pset = 
             [
                 //front bottom
-                -td + ldb - dt, -h, w + dt, -d, -h, w + dt, -d, -h, w, -td + ldb, -h, w,
-                d, -h, w + dt, td - rdb + dt, -h, w + dt, td - rdb, -h, w, d, -h, w,
+                -td + ldb - dtt, -h, w + dt, -d, -h, w + dt, -d, -h, w, -td + ldb, -h, w,
+                d, -h, w + dt, td - rdb + dtt, -h, w + dt, td - rdb, -h, w, d, -h, w,
 
                 // backside: nesseary part, L M R
                 -d, h, wr, -d, -h, -w, -d + gs, -h, -w, -d + gs, h - mh, wr - mw,
@@ -75,18 +78,18 @@ SceneJS.Types.addType("roof/cross_gable",
 
                 // extrude
                 -db + dl, sh, wr + el, -td + ldb, -h, base_len, -td + ldb, -h, w, -db + dl, sh, wr + whr,
-                -db + dl, sh + st, wr + el, -db + dl, sh + st, wr + whr, -td + ldb - dt, -h, w + dt, -td + ldb - dt, -h, base_len,
+                -db + dl, sh + st, wr + el, -db + dl, sh + st, wr + whr, -td + ldb - dtt, -h, w + dt, -td + ldb - dtt, -h, base_len,
 
                 -db + dl, sh, wr + whr, td - rdb, -h, w, td - rdb, -h, base_len, -db + dl, sh, wr + el,
-                -db + dl, sh + st, wr + whr, -db + dl, sh + st, wr + el, td - rdb + dt, -h, base_len, td - rdb + dt, -h, w + dt,
+                db - dr, sh + st, wr + whr, -db + dl, sh + st, wr + el, td - rdb + dtt, -h, base_len, td - rdb + dtt, -h, w + dt,
 
                 // extrude bottom 
-                -td + ldb, -h, base_len, -td + ldb - dt, -h, base_len, -td + ldb - dt, -h, w + dt, -td + ldb, -h, w, 
-                td - rdb, -h, w, td - rdb + dt, -h, w + dt, td - rdb + dt, -h, base_len, td - rdb, -h, base_len,
+                -td + ldb, -h, base_len, -td + ldb - dtt, -h, base_len, -td + ldb - dtt, -h, w + dt, -td + ldb, -h, w, 
+                td - rdb, -h, w, td - rdb + dtt, -h, w + dt, td - rdb + dtt, -h, base_len, td - rdb, -h, base_len,
 
                 // extrude side
-                -db + dl, sh, wr + el, -db + dl, sh + st, wr + el, -td + ldb - dt, -h, base_len, -td + ldb, -h, base_len, 
-                -db + dl, sh + st, wr + el, -db + dl, sh, wr + el, td - rdb, -h, base_len, td - rdb + dt, -h, base_len, 
+                -db + dl, sh, wr + el, -db + dl, sh + st, wr + el, -td + ldb - dtt, -h, base_len, -td + ldb, -h, base_len, 
+                -db + dl, sh + st, wr + el, -db + dl, sh, wr + el, td - rdb, -h, base_len, td - rdb + dtt, -h, base_len, 
                 
                 // backside bottom 
                 d - gs, -h, -w - dt, d, -h, -w - dt, d, -h, -w, d - gs, -h, -w,
@@ -134,11 +137,34 @@ SceneJS.Types.addType("roof/cross_gable",
             [
                 // frontside
                 -db + dl, sh, wr + whr, -td + ldb, -h, w, -d, -h, w, -d, h, wr, 
-                -db + dl, sh + st, wr + whr, -d, h + st, wr, -d, -h, w + dt, -td + ldb - dt, -h, w + dt,
+                
+                //-db + dl, sh + st, wr + whr, -d, h + st, wr, -d, -h, w + dt, -td + ldb - dt, -h, w + dt,
+                -db + dl, sh + st, wr + whr, -d, h + st, wr, -d, -h, w + dt, -td + ldb - dtt, -h, w + dt,
 
                 d, h, wr, d, -h, w, td - rdb, -h, w, db - dr, sh, wr + whr,
-                d, h + st, wr, db - dr, sh + st, wr + whr, td - rdb + dt, -h, w + dt, d, -h, w + dt,
+                d, h + st, wr, db - dr, sh + st, wr + whr, td - rdb + dtt, -h, w + dt, d, -h, w + dt,
+
             ]);
+
+
+            var ap = [-db + dl, sh + st, wr + whr];
+            var bp = [-td + ldb - dtt, -h, w + dt];
+            var cp = [-td + ldb, -h, w];
+            var dp = [-db + dl, sh, wr + whr];
+
+            var a = [], b = [], c = [];
+            SceneJS_math_subVec3(ap, dp, a);
+            SceneJS_math_subVec3(bp, cp, b);
+            SceneJS_math_subVec3(cp, dp, c);
+
+            console.log(a);
+            console.log(b);
+            console.log(c);
+
+            var tmpr = [];
+            SceneJS_math_cross3Vec3(b,c,tmpr);
+            var rr = SceneJS_math_dotVec3(a, tmpr);
+            console.log(rr);
 
             if(1 != eh)
             {
@@ -360,7 +386,7 @@ function roof_cross_gable_build(params)
     [
 	    0, 1, 0, 0, 1, 0, 1, 1,			
 	    1, 1, 1, 0, 0, 0, 0, 1,			
-	    0, 1, 1, 1, 1, 0, 0, 0,			
+	    0, 1, 1, 0, 1, 0, 0, 0,			
 	    0, 1, 0, 0, 1, 0, 1, 1,			
 	    1, 1, 1, 0, 0, 0, 0, 1,			
 	    0, 1, 0, 0, 1, 0, 1, 1,			
