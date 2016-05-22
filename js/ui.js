@@ -328,7 +328,7 @@ function ScenePick(){
                 console.log("ID: ", element.getID(), " partmode: ", partmode);
                 objectId = hit.nodeId;
 				pickObjId = objectId;
-				selectLayer();
+				//selectLayer();
                 pickNode = getNodeName(objectId);
                 var pickLayer = getNodeLayer(objectId);
                 if(pickNode == "window") { 
@@ -745,8 +745,11 @@ function addBase(){
     dirty = true;
 }
 
-function deleteBase(){
-    var layerNumber=getTopLayer();
+function deleteTopBase(){
+	var layerNumber=getTopLayer();
+	deleteBase(layerNumber);
+}
+function deleteBase(layerNumber){
     var nodes=scene.findNodes();
     if(layerNumber <=1){
         lastid =-1;
@@ -759,6 +762,9 @@ function deleteBase(){
             if(n.getLayer() == layerNumber){
                 housenode2flag(n).destroy();
             }
+			if(n.getLayer() > layerNumber){
+				n.setLayer(n.getLayer()-1);
+			}
         }
     }
     lastFloor =-1;
