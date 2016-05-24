@@ -79,7 +79,7 @@ SceneJS.Types.addType("roof/mansard",
         var nodes=scene.findNodes();
         
         //                                 material     name   matrix  texture  element
-        var mnmte = function(n) { return n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0]; }
+        var mnmte = function(n) { return n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0]; }
         
         for(var i = 0; i < nodes.length; i++)
         {

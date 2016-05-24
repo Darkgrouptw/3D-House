@@ -1440,10 +1440,10 @@ function convertToOneStl(inputNode){
 	//Looping all matrices of nodes
 	for(nodeI = 0;nodeI<nodesArr.length;nodeI++){
 
-		var tmpMat = nodesArr[nodeI].nodes[0].nodes[0].nodes[0].getModelMatrix();
+		var tmpMat = nodesArr[nodeI].nodes[0].nodes[0].nodes[0].nodes[0].getModelMatrix();
 		matList.push(tmpMat);
 
-		var curNode = nodesArr[nodeI].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
+		var curNode = nodesArr[nodeI].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
 		var tmpPos = curNode.getPositions();
 		var tmpNorm = curNode.getNormals();
 		var tmpFaces = curNode.getIndices();		
