@@ -300,16 +300,16 @@ function ScenePick(){
 				isLock = true;
                 dirty = true;
                 var material;
-                if(lastid>0){
+                /*if(lastid>0){
                     material=scene.findNode(lastid).parent.parent.parent.parent;
                     material.setColor({ r:1, g:1, b:1});
-                }
+                }*/
                 var id=hit.nodeId;
                 var element=scene.findNode(id).nodes[0].nodes[0].nodes[0];
                 //console.log(element.getID());
                 //這是我知道name被material包住，正常藥用id來找但現在id都還沒定
-                material=scene.findNode(id).parent;
-                material.setColor({r:0.7,g:0.7,b:0.3});
+                /*material=scene.findNode(id).parent;
+                material.setColor({r:0.7,g:0.7,b:0.3});*/
                 id=element.id;
                 lastid=id;
                 if(!element.getLayer){
@@ -371,10 +371,10 @@ function ScenePick(){
                 dirty = true;
 				watchmode = 1;
                 uiPanel.style.display='none';
-                if(lastid>0){
+                /*if(lastid>0){
                     material=scene.findNode(lastid).parent.parent.parent.parent;
                     material.setColor({ r:0.8, g:0.8, b:0.8});
-                }
+                }*/
                 lastid = -1;
                 lastFloor = -1;
 				pickObjId = null;

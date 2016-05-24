@@ -65,17 +65,24 @@ function selectLayer()
 	if (type == "base" ||type == "backWall") 
 	{
 		SelectId = node.getLayer();
-		selectTab(SelectId);
-		key.innerHTML = "X";
+		selectTab(SelectId,false);
+		if(TabAmount>1)
+		{
+			key.innerHTML = "X";	
+		}
+		else
+		{
+			key.innerHTML = "+";
+		}
 	}
-	else if(type == "roof")
+	else if(type == "roof")//roof can't be delete
 	{
 		SelectId = 0;
-		selectTab(SelectId);
-		key.innerHTML = "X";
+		selectTab(SelectId,false);
+		key.innerHTML = "+";
 	}
 }
-function selectTab(id){
+function selectTab(id,UIentrance){
 	var Selected = getElem(id);
 	var alltab = getSubElem(getElem("Tab"),"li");
 	for (var i = 0; i < alltab.length; i++){
@@ -85,10 +92,22 @@ function selectTab(id){
 	SelectId = parseInt(id);
 	lastFloor = SelectId;
 	var key = getElem("functionkey");
-	key.innerHTML = "X";
-	if (SelectId == -1)
+	if(TabAmount > 1)
+	{
+		key.innerHTML = "X";
+	}
+	else
+	{
+		key.innerHTML = "+";
+	}
+	if (SelectId == 0)//roof
 	{
 		lastFloor = TabAmount + 1;
+		key.innerHTML = "+";
+	}
+	if(UIentrance)
+	{
+		dirty = true;
 	}
 }
 
@@ -98,24 +117,23 @@ function addTab(){
 	var roof = getElem("0");
 	var liElem = createElem("li");
 	liElem.id = TabAmount.toString();
-	liElem.onclick = function(){selectTab(liElem.id)};
+	liElem.onclick = function(){selectTab(liElem.id,true)};
 	var text = createTextNode(TabAmount.toString() + "F");
 	liElem.appendChild(text);
 	ul.insertBefore(liElem, roof);
-	selectTab(liElem.id);
+	selectTab(liElem.id,true);
 	setFloorTab(PropertyFT,ValueFT);
 	addBase();
 }
 
 function deleteTab(){
 	var ul = getElem("Tab");
-	if (TabAmount > 1){ //只剩一層樓時不能刪除
-		if(SelectId > 0)//屋頂、wholeview不能刪除
+		if(SelectId != 0)//屋頂、wholeview不能刪除
 		{
 		ul.removeChild(getElem(SelectId.toString()));
 		if (SelectId == TabAmount){
 			TabAmount--;
-			selectTab(SelectId - 1);
+			selectTab(SelectId - 1, true);
 		}
 		else{
 			//resort
@@ -126,14 +144,11 @@ function deleteTab(){
 				tab.innerHTML = tab.id + "F"  ;
 			}
 			TabAmount--;
-			selectTab(SelectId);
+			selectTab(SelectId,true);
 		}
-		deleteBase();
+		deleteBase(SelectId);
 		lastFloor = SelectId;
-		}
-		
-	}
-	
+		}	
 }
 
 //For FuncBar

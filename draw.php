@@ -64,8 +64,8 @@
 <i id = "ScreenController" class="fa fa-arrows-alt" onclick = "ScreenControll()"></i>	
 <div id = "FLOORTAB">
 		<ul id = "Tab">
-			<li id = "1" onclick = "selectTab('1')">1F</li>
-			<li id = "0" onclick = "selectTab('0')">ROOF</li>
+			<li id = "1" onclick = "selectTab('1',true)">1F</li>
+			<li id = "0" onclick = "selectTab('0',true)">ROOF</li>
 			<li id = "functionkey" onclick = "functionkey()">+</li>
 		</ul>
 </div>
