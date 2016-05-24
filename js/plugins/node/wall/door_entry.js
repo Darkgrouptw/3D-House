@@ -208,7 +208,7 @@ SceneJS.Types.addType("wall/door_entry",
     },
     callBaseCalibration: function()
     {
-        var mnmte = function(n) { return n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0]; }
+        var mnmte = function(n) { return n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0]; }
 
         var backWall=-1;
         var rightWall=-1;

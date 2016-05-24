@@ -300,12 +300,13 @@ function ScenePick(){
 				isLock = true;
                 dirty = true;
                 var material;
-                /*if(lastid>0){
-                    material=scene.findNode(lastid).parent.parent.parent.parent;
+
+                if(lastid>0){
+                    material=scene.findNode(lastid).parent.parent.parent.parent.parent.parent;
                     material.setColor({ r:1, g:1, b:1});
-                }*/
+                }
                 var id=hit.nodeId;
-                var element=scene.findNode(id).nodes[0].nodes[0].nodes[0];
+                var element=scene.findNode(id).nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
                 //console.log(element.getID());
                 //這是我知道name被material包住，正常藥用id來找但現在id都還沒定
                 /*material=scene.findNode(id).parent;
@@ -326,6 +327,7 @@ function ScenePick(){
                 //console.log("getWallID ", getWallID);
                 //console.log("getWindowID ", getWindowID);
                 console.log("ID: ", element.getID(), " partmode: ", partmode);
+                console.log("objectId ", hit.nodeId);
                 objectId = hit.nodeId;
 				pickObjId = objectId;
 				selectLayer();
@@ -371,10 +373,11 @@ function ScenePick(){
                 dirty = true;
 				watchmode = 1;
                 uiPanel.style.display='none';
-                /*if(lastid>0){
-                    material=scene.findNode(lastid).parent.parent.parent.parent;
+
+                if(lastid>0){
+                    material=scene.findNode(lastid).parent.parent.parent.parent.parent.parent;
                     material.setColor({ r:0.8, g:0.8, b:0.8});
-                }*/
+                }
                 lastid = -1;
                 lastFloor = -1;
 				pickObjId = null;
@@ -428,14 +431,14 @@ function addInterWall(){
         if(n.getType()=="name"){
             if(n.getName()=="backWall"){
                 //         material  name     matrix  texture  element
-                backWall=n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
+                backWall=n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
             }
-            else if(n.getName()=="frontWall")frontWall=n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
-            else if(n.getName()=="leftWall")leftWall=n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
-            else if(n.getName()=="rightWall")rightWall=n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
-            else if(n.getName()=="roof")roof=n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
-            else if(n.getName()=="interWall" && n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].getLayer() == lastFloor )interWall.push(n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0]);
-            else if(n.getName()=="base")base=n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
+            else if(n.getName()=="frontWall")frontWall=n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
+            else if(n.getName()=="leftWall")leftWall=n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
+            else if(n.getName()=="rightWall")rightWall=n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
+            else if(n.getName()=="roof")roof=n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
+            else if(n.getName()=="interWall" && n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].getLayer() == lastFloor )interWall.push(n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0]);
+            else if(n.getName()=="base")base=n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
         }
     }
     var bigestID=0;
@@ -499,20 +502,34 @@ function addInterWall(){
                                 src: "images/GeometryTexture/wall.jpg",
                                 applyTo: "color",
     
-                                nodes:
+                                nodes: 
                                 [{
-                                    type: "wall/no_window",
-                                    layer: lastFloor,
-                                    height: 4,
-                                    width: 10,
-                                    thickness: 1,
-                                    direction: "vertical",
-                                    priority: bigestID,
-                                    percentX: 50,
-                                    percentY: 50,
-                                    scale: {x: 1, y: 1, z: 1},
-                                    rotate: {x: 0, y: 90, z: 0},
-                                    translate: {x: 0, y: 0, z: 0}
+                                    type: "texture",
+                                    src: "images/GeometryTexture/wallSpecularMap.png",
+                                    applyTo: "specular", // Apply to specularity
+
+                                    nodes: 
+                                    [{
+                                        type: "texture",
+                                        src: "images/GeometryTexture/wallNormalMap.png",
+                                        applyTo: "normals", // Apply to geometry normal vectors
+
+                                        nodes:
+                                        [{
+                                            type: "wall/no_window",
+                                            layer: lastFloor,
+                                            height: 4,
+                                            width: 10,
+                                            thickness: 1,
+                                            direction: "vertical",
+                                            priority: bigestID,
+                                            percentX: 50,
+                                            percentY: 50,
+                                            scale: {x: 1, y: 1, z: 1},
+                                            rotate: {x: 0, y: 90, z: 0},
+                                            translate: {x: 0, y: 0, z: 0}
+                                        }]
+                                    }]
                                 }]
                             }]
                         }]
@@ -531,7 +548,7 @@ function getTopLayer(){
     for(var i=0;i<nodes.length;i++){
         var n = nodes[i];
         if(n.getType()=="name"){
-            if(n.getName()=="base"){if(n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].getLayer()>layerNumber){layerNumber=n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].getLayer();}}
+            if(n.getName()=="base"){if(n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].getLayer()>layerNumber){layerNumber=n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].getLayer();}}
         }
     }
     return layerNumber;
@@ -572,16 +589,30 @@ function addBase(){
                                 src: "images/GeometryTexture/ground.jpg",
                                 applyTo: "color",
     
-                                nodes:
+                                nodes: 
                                 [{
-                                    type: "base/basic",
-                                    layer: layerNumber,
-                                    height: 8,
-                                    width: 18,
-                                    thickness: 1,
-                                    scale: {x: 1, y: 1, z: 1},
-                                    rotate: {x: 0, y: 0, z: 0},
-                                    translate: {x: 0, y: 0, z: 0}
+                                    type: "texture",
+                                    src: "images/GeometryTexture/groundSpecularMap.png",
+                                    applyTo: "specular", // Apply to specularity
+
+                                    nodes: 
+                                    [{
+                                        type: "texture",
+                                        src: "images/GeometryTexture/groundNormalMap.png",
+                                        applyTo: "normals", // Apply to geometry normal vectors
+
+                                        nodes:
+                                        [{
+                                            type: "base/basic",
+                                            layer: layerNumber,
+                                            height: 8,
+                                            width: 18,
+                                            thickness: 1,
+                                            scale: {x: 1, y: 1, z: 1},
+                                            rotate: {x: 0, y: 0, z: 0},
+                                            translate: {x: 0, y: 0, z: 0}
+                                        }]
+                                    }]
                                 }]
                             }]
                         }]
@@ -620,17 +651,31 @@ function addBase(){
                                 src: "images/GeometryTexture/wall.jpg",
                                 applyTo: "color",
     
-                                nodes:
+                                nodes: 
                                 [{
-                                    type: "wall/no_window",
-                                    layer: layerNumber,
-                                    height: 8,
-                                    width: 18,
-                                    thickness: 1,
-                                    scale: {x: 1, y: 1, z: 1},
-                                    rotate: {x: 0, y: 0, z: 0},
-                                    translate: {x: 0, y: 0, z: 0},
-                                    direction: "horizontal"
+                                    type: "texture",
+                                    src: "images/GeometryTexture/wallSpecularMap.png",
+                                    applyTo: "specular", // Apply to specularity
+
+                                    nodes: 
+                                    [{
+                                        type: "texture",
+                                        src: "images/GeometryTexture/wallNormalMap.png",
+                                        applyTo: "normals", // Apply to geometry normal vectors
+
+                                        nodes:
+                                        [{
+                                            type: "wall/no_window",
+                                            layer: layerNumber,
+                                            height: 8,
+                                            width: 18,
+                                            thickness: 1,
+                                            scale: {x: 1, y: 1, z: 1},
+                                            rotate: {x: 0, y: 0, z: 0},
+                                            translate: {x: 0, y: 0, z: 0},
+                                            direction: "horizontal"
+                                        }]
+                                    }]
                                 }]
                             }]
                         }]
@@ -672,17 +717,31 @@ function addBase(){
                                 src: "images/GeometryTexture/wall.jpg",
                                 applyTo: "color",
     
-                                nodes:
+                                nodes: 
                                 [{
-                                    type: "wall/no_window",
-                                    layer: layerNumber,
-                                    height: 8,
-                                    width: 7.5,
-                                    thickness: 1,
-                                    scale: {x: 1, y: 1, z: 1},
-                                    rotate: {x: 0, y: 90, z: 0},
-                                    translate: {x: 0, y: 0, z: 0},
-                                    direction: "vertical"
+                                    type: "texture",
+                                    src: "images/GeometryTexture/wallSpecularMap.png",
+                                    applyTo: "specular", // Apply to specularity
+
+                                    nodes: 
+                                    [{
+                                        type: "texture",
+                                        src: "images/GeometryTexture/wallNormalMap.png",
+                                        applyTo: "normals", // Apply to geometry normal vectors
+
+                                        nodes:
+                                        [{
+                                            type: "wall/no_window",
+                                            layer: layerNumber,
+                                            height: 8,
+                                            width: 7.5,
+                                            thickness: 1,
+                                            scale: {x: 1, y: 1, z: 1},
+                                            rotate: {x: 0, y: 90, z: 0},
+                                            translate: {x: 0, y: 0, z: 0},
+                                            direction: "vertical"
+                                        }]
+                                    }]
                                 }]
                             }]
                         }]
@@ -721,17 +780,31 @@ function addBase(){
                                 src: "images/GeometryTexture/wall.jpg",
                                 applyTo: "color",
     
-                                nodes:
+                                nodes: 
                                 [{
-                                    type: "wall/no_window",
-                                    layer: layerNumber,
-                                    height: 8,
-                                    width: 7.5,
-                                    thickness: 1,
-                                    scale: {x: 1, y: 1, z: 1},
-                                    rotate: {x: 0, y: 90, z: 0},
-                                    translate: {x: 0, y: 0, z: 0},
-                                    direction: "vertical"
+                                    type: "texture",
+                                    src: "images/GeometryTexture/wallSpecularMap.png",
+                                    applyTo: "specular", // Apply to specularity
+
+                                    nodes: 
+                                    [{
+                                        type: "texture",
+                                        src: "images/GeometryTexture/wallNormalMap.png",
+                                        applyTo: "normals", // Apply to geometry normal vectors
+
+                                        nodes:
+                                        [{
+                                            type: "wall/no_window",
+                                            layer: layerNumber,
+                                            height: 8,
+                                            width: 7.5,
+                                            thickness: 1,
+                                            scale: {x: 1, y: 1, z: 1},
+                                            rotate: {x: 0, y: 90, z: 0},
+                                            translate: {x: 0, y: 0, z: 0},
+                                            direction: "vertical"
+                                        }]
+                                    }]
                                 }]
                             }]
                         }]
@@ -783,7 +856,7 @@ function attachInput(pickId){
     console.log(nameNode.getName());
 
     //  matrix    texture   element
-    n = n.nodes[0].nodes[0].nodes[0];
+    n = n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
 
 
 
@@ -831,7 +904,7 @@ function attachInput(pickId){
 	}
 	
     //hight
-    if(n.getHeight && n.getParent().getParent().getParent().getParent().getParent().getName() != "interWall"){
+    if(n.getHeight && n.getParent().getParent().getParent().getParent().getParent().getParent().getParent().getName() != "interWall"){
         var heightismove=false;
         var div=document.createElement("div");
         inputarea.appendChild(div);
@@ -877,7 +950,7 @@ function attachInput(pickId){
     
 
     //width
-    if(n.getWidth && n.getParent().getParent().getParent().getParent().getParent().getName() != "interWall"){
+    if(n.getWidth && n.getParent().getParent().getParent().getParent().getParent().getParent().getParent().getName() != "interWall"){
         var widthismove=false;
         var div=document.createElement("div");
         inputarea.appendChild(div);
@@ -918,7 +991,7 @@ function attachInput(pickId){
     
 
     //percentX
-    if(n.getPercentX && n.getParent().getParent().getParent().getParent().getParent().getName() == "interWall"){
+    if(n.getPercentX && n.getParent().getParent().getParent().getParent().getParent().getParent().getParent().getName() == "interWall"){
         var percentXismove=false;
         var div = document.createElement("div");
         inputarea.appendChild(div);
@@ -957,7 +1030,7 @@ function attachInput(pickId){
     
 
     //percentY
-    if(n.getPercentY && n.getParent().getParent().getParent().getParent().getParent().getName() == "interWall"){
+    if(n.getPercentY && n.getParent().getParent().getParent().getParent().getParent().getParent().getParent().getName() == "interWall"){
         var percentYismove=false;
         var div = document.createElement("div");
         inputarea.appendChild(div);
@@ -995,7 +1068,7 @@ function attachInput(pickId){
     }
     
     //direction
-    if(n.getDirection && n.getParent().getParent().getParent().getParent().getParent().getName() == "interWall"){
+    if(n.getDirection && n.getParent().getParent().getParent().getParent().getParent().getParent().getParent().getName() == "interWall"){
         var div=document.createElement("div");
         inputarea.appendChild(div);
         //text
@@ -1021,7 +1094,7 @@ function attachInput(pickId){
     }
 
     //delete interWall
-    if(n.getDirection && n.getParent().getParent().getParent().getParent().getParent().getName() == "interWall"){
+    if(n.getDirection && n.getParent().getParent().getParent().getParent().getParent().getParent().getParent().getName() == "interWall"){
         var div=document.createElement("div");
         inputarea.appendChild(div);
         //text
@@ -1793,9 +1866,9 @@ function timeFuction(){
             for(var i=0;i<nodes.length;i++){
                 var node = nodes[i];
                 if(node.getType()=="name"){
-                   	if(node.getName()=="base" && node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].getLayer() == 1)base=node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
+                   	if(node.getName()=="base" && node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].getLayer() == 1)base=node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
 					if(node.getID() == lastid){
-						console.log(lasted);
+						console.log("lastid ", lastid, " node ", node);
 						select_node = node.parent.parent.parent.parent.getID();
 					}
                 }
@@ -1811,7 +1884,7 @@ function timeFuction(){
                     }
                 }
                 if(node.getType() == "material"){
-                    if(node.nodes[0].nodes[0].nodes[0].nodes[0].getID() == select_node){
+                    if(node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].getID() == select_node){
                         node.setColor({r:0.7,g:0.7,b:0.3});
                     }else{
                         node.setColor({r:1,g:1,b:1});
@@ -1835,10 +1908,10 @@ function timeFuction(){
 						the_number_of_window++;
 						Wall_id.push(node);
 
-                        //console.log("single_window ID ", node.parent.parent.parent.getID());
-                        if(getWallID.indexOf(node.parent.parent.parent.getID()) < 0)
+                        //console.log("single_window ID ", node.parent.parent.parent.parent.parent.getID());
+                        if(getWallID.indexOf(node.parent.parent.parent.parent.parent.getID()) < 0)
                         {
-                            getWallID.push(node.parent.parent.parent.getID());
+                            getWallID.push(node.parent.parent.parent.parent.parent.getID());
                         }
 					}
 				}else if(node.getType() == "wall/multi_window"){
@@ -1848,11 +1921,11 @@ function timeFuction(){
 						Wall_id.push(node);
 
                         var numberOfCenter = node.getWindowCenter().length / 2;
-                        if(getWallID.indexOf(node.parent.parent.parent.getID()) < 0)
+                        if(getWallID.indexOf(node.parent.parent.parent.parent.parent.getID()) < 0)
                         {
                             for(var num = 0; num < numberOfCenter; num++)
                             {
-                                getWallID.push(node.parent.parent.parent.getID());
+                                getWallID.push(node.parent.parent.parent.parent.parent.getID());
                             }
                         }
 					}
@@ -1887,10 +1960,10 @@ function timeFuction(){
 										 window_ratio_X:window_ratio_X,window_ratio_Y:window_ratio_Y,
 										 wall_width:wall_width,wall_height});
 
-						//console.log("next window ", flag2housenode(windows[next_window_used]).parent.parent.parent.getID());
-                        if(getWindowID.indexOf(flag2housenode(windows[next_window_used]).parent.parent.parent.getID()) < 0)
+						//console.log("next window ", windows[next_window_used].nodes[0].nodes[0].nodes[0].getID());
+                        if(getWindowID.indexOf(windows[next_window_used].nodes[0].nodes[0].nodes[0].getID()) == -1)
                         {
-                            getWindowID.push(flag2housenode(windows[next_window_used]).parent.parent.parent.getID());
+                            getWindowID.push(windows[next_window_used].nodes[0].nodes[0].nodes[0].getID());
 
                         }
 
@@ -1914,10 +1987,10 @@ function timeFuction(){
 										 window_ratio_X:window_ratio_X,window_ratio_Y:window_ratio_Y,
 										 wall_width:wall_width,wall_height});
                             
-                            //console.log("next window ", flag2housenode(windows[next_window_used]).parent.parent.parent.getID());
-                            if(getWindowID.indexOf(flag2housenode(windows[next_window_used]).parent.parent.parent.getID()) < 0)
+                            //console.log("next window ", windows[next_window_used].nodes[0].nodes[0].nodes[0].getID());
+                            if(getWindowID.indexOf(windows[next_window_used].nodes[0].nodes[0].nodes[0].getID()) == -1)
                             {
-                                getWindowID.push(flag2housenode(windows[next_window_used]).parent.parent.parent.getID());
+                                getWindowID.push(windows[next_window_used].nodes[0].nodes[0].nodes[0].getID());
 
                             }
 
@@ -1991,8 +2064,8 @@ function Calibration(){
     for(var i=0;i<nodes.length;i++){
         var node = nodes[i];
         if(node.getType()=="name"){
-            if(node.getName()=="base" && node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].getLayer() == 1){
-                base=node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
+            if(node.getName()=="base" && node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].getLayer() == 1){
+                base=node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
                 break;
             }
         }
@@ -2032,7 +2105,7 @@ function changeRoof(type){
         var node = nodes[i];
         if(node.getType()=="name"){
             if(node.getName()=="roof" ){
-                roof=node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
+                roof=node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
             }
         }
         if(node.getType() == "flags" && 
@@ -2280,10 +2353,10 @@ function create10Doors(){
 }
 
 function housenode2flag(node){
-	return node.getParent().getParent().getParent().getParent().getParent().getParent();
+	return node.getParent().getParent().getParent().getParent().getParent().getParent().getParent().getParent();
 }
 function flag2housenode(node){
-	return node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
+	return node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
 }
 
 function RedButtonClick(){
@@ -2328,19 +2401,33 @@ function getHipS(param){
                             src: "images/GeometryTexture/roof.jpg",
                             applyTo: "color",
 
-                            nodes:
+                            nodes: 
                             [{
-                                type: "roof/hip",
-                                layer: param.layerNumber,
-                                height: param.Height,
-                                width: param.Width,
-                                thickness: 2,
-                                depth: param.Depth,
-                                ratio: {a: 0.5 , b: 0.5 },
-                                toplen: 0,
-                                scale: {x: 1, y: 1, z: 1},
-                                rotate: {x: 0, y: 90, z: 0},
-                                translate: {x: 0, y: 0, z: 0}
+                                type: "texture",
+                                src: "images/GeometryTexture/roofSpecularMap.png",
+                                applyTo: "specular", // Apply to specularity
+
+                                nodes: 
+                                [{
+                                    type: "texture",
+                                    src: "images/GeometryTexture/roofNormalMap.png",
+                                    applyTo: "normals", // Apply to geometry normal vectors
+
+                                    nodes:
+                                    [{
+                                        type: "roof/hip",
+                                        layer: param.layerNumber,
+                                        height: param.Height,
+                                        width: param.Width,
+                                        thickness: 2,
+                                        depth: param.Depth,
+                                        ratio: {a: 0.5 , b: 0.5 },
+                                        toplen: 0,
+                                        scale: {x: 1, y: 1, z: 1},
+                                        rotate: {x: 0, y: 90, z: 0},
+                                        translate: {x: 0, y: 0, z: 0}
+                                    }]
+                                }]
                             }]
                         }]
                     }]
@@ -2381,18 +2468,32 @@ function getMansardS(param){
                             src: "images/GeometryTexture/roof.jpg",
                             applyTo: "color",
 
-                            nodes:
+                            nodes: 
                             [{
-                                type: "roof/mansard",
-                                layer: param.layerNumber,
-                                height: param.Height,
-                                width: param.Width,
-                                thickness: 1,
-                                depth: param.Depth,
-                                ratio: {a: 0.2 , b: 0.2},
-                                scale: {x: 1, y: 1, z: 1},
-                                rotate: {x: 0, y: 90, z: 0},
-                                translate: {x: 0, y: 0, z: 0}
+                                type: "texture",
+                                src: "images/GeometryTexture/roofSpecularMap.png",
+                                applyTo: "specular", // Apply to specularity
+
+                                nodes: 
+                                [{
+                                    type: "texture",
+                                    src: "images/GeometryTexture/roofNormalMap.png",
+                                    applyTo: "normals", // Apply to geometry normal vectors
+
+                                    nodes:
+                                    [{
+                                        type: "roof/mansard",
+                                        layer: param.layerNumber,
+                                        height: param.Height,
+                                        width: param.Width,
+                                        thickness: 1,
+                                        depth: param.Depth,
+                                        ratio: {a: 0.2 , b: 0.2},
+                                        scale: {x: 1, y: 1, z: 1},
+                                        rotate: {x: 0, y: 90, z: 0},
+                                        translate: {x: 0, y: 0, z: 0}
+                                    }]
+                                }]
                             }]
                         }]
                     }]
@@ -2434,18 +2535,32 @@ function getGableS(param){
                             src: "images/GeometryTexture/roof.jpg",
                             applyTo: "color",
 
-                            nodes:
+                            nodes: 
                             [{
-                                type: "roof/gable",
-                                layer: param.layerNumber,
-                                height: param.Height,
-                                width: param.Width,
-                                thickness: 1,
-                                depth: param.Depth,
-                                ratio: {a: 0.5 , b: 0.5},
-                                scale: {x: 1, y: 1, z: 1},
-                                rotate: {x: 0, y: 90, z: 0},
-                                translate: {x: 0, y: 0, z: 0}
+                                type: "texture",
+                                src: "images/GeometryTexture/roofSpecularMap.png",
+                                applyTo: "specular", // Apply to specularity
+
+                                nodes: 
+                                [{
+                                    type: "texture",
+                                    src: "images/GeometryTexture/roofNormalMap.png",
+                                    applyTo: "normals", // Apply to geometry normal vectors
+
+                                    nodes:
+                                    [{
+                                        type: "roof/gable",
+                                        layer: param.layerNumber,
+                                        height: param.Height,
+                                        width: param.Width,
+                                        thickness: 1,
+                                        depth: param.Depth,
+                                        ratio: {a: 0.5 , b: 0.5},
+                                        scale: {x: 1, y: 1, z: 1},
+                                        rotate: {x: 0, y: 90, z: 0},
+                                        translate: {x: 0, y: 0, z: 0}
+                                    }]
+                                }]
                             }]
                         }]
                     }]
@@ -2486,24 +2601,38 @@ function getCrossGableS(param){
                             src: "images/GeometryTexture/roof.jpg",
                             applyTo: "color",
 
-                            nodes:
+                            nodes: 
                             [{
-                                type: "roof/cross_gable",
-                                layer: param.layerNumber,
-                                height: param.Height,
-                                width: param.Width,
-								backside: "on",
-								back_grasp:4,
-								extrude_len:6,
-								extrude_pos:0.5,
-								extrude_bas:6,
-								extrude_hgt:0.7,
-                                thickness: 1,
-                                depth: param.Depth,
-                                ratio: {a: 0.5 , b: 0.5},
-                                scale: {x: 1, y: 1, z: 1},
-                                rotate: {x: 0, y: 180, z: 0},
-                                translate: {x: 0, y: 0, z: 0}
+                                type: "texture",
+                                src: "images/GeometryTexture/roofSpecularMap.png",
+                                applyTo: "specular", // Apply to specularity
+
+                                nodes: 
+                                [{
+                                    type: "texture",
+                                    src: "images/GeometryTexture/roofNormalMap.png",
+                                    applyTo: "normals", // Apply to geometry normal vectors
+
+                                    nodes:
+                                    [{
+                                        type: "roof/cross_gable",
+                                        layer: param.layerNumber,
+                                        height: param.Height,
+                                        width: param.Width,
+                                        backside: "on",
+                                        back_grasp:4,
+                                        extrude_len:6,
+                                        extrude_pos:0.5,
+                                        extrude_bas:6,
+                                        extrude_hgt:0.7,
+                                        thickness: 1,
+                                        depth: param.Depth,
+                                        ratio: {a: 0.5 , b: 0.5},
+                                        scale: {x: 1, y: 1, z: 1},
+                                        rotate: {x: 0, y: 180, z: 0},
+                                        translate: {x: 0, y: 0, z: 0}
+                                    }]
+                                }]
                             }]
                         }]
                     }]
@@ -2543,17 +2672,31 @@ function getTriangleS(param){
                             src: "images/GeometryTexture/wall.jpg",
                             applyTo: "color",
 
-                            nodes:
+                            nodes: 
                             [{
-                                type: "wall/triangle",
-                                layer: param.layerNumber,
-                                height: param.Height,
-                                width: param.Width,
-                                thickness: 1,
-                                ratio: {a: 0.5 , b: 0.5},
-                                scale: {x: 1, y: 1, z: 1},
-                                rotate: {x: 0, y: 90, z: 0},
-                                translate: {x: 0, y: 0, z: 0}
+                                type: "texture",
+                                src: "images/GeometryTexture/wallSpecularMap.png",
+                                applyTo: "specular", // Apply to specularity
+
+                                nodes: 
+                                [{
+                                    type: "texture",
+                                    src: "images/GeometryTexture/wallNormalMap.png",
+                                    applyTo: "normals", // Apply to geometry normal vectors
+
+                                    nodes:
+                                    [{
+                                        type: "wall/triangle",
+                                        layer: param.layerNumber,
+                                        height: param.Height,
+                                        width: param.Width,
+                                        thickness: 1,
+                                        ratio: {a: 0.5 , b: 0.5},
+                                        scale: {x: 1, y: 1, z: 1},
+                                        rotate: {x: 0, y: 90, z: 0},
+                                        translate: {x: 0, y: 0, z: 0}
+                                    }]
+                                }]
                             }]
                         }]
                     }]
@@ -2594,16 +2737,30 @@ function getWindow_fixed(param){
 							src: "images/GeometryTexture/iron.jpg",
 							applyTo: "color",
 							
-							nodes:
-							[{
-								type: "window/fixed",
-								extend: param.extend,
-								size: {a: param.sizeX, b: param.sizeY},
-								thickness: 1,
-								rotate: {x: 0, y: 0, z: 0},
-								translate: {x: 0, y: 0, z: 0},
-								scale: {x: 1, y: 1, z: 1}
-							}]
+							nodes: 
+                            [{
+                                type: "texture",
+                                src: "images/GeometryTexture/ironSpecularMap.png",
+                                applyTo: "specular", // Apply to specularity
+
+                                nodes: 
+                                [{
+                                    type: "texture",
+                                    src: "images/GeometryTexture/ironNormalMap.png",
+                                    applyTo: "normals", // Apply to geometry normal vectors
+
+                                    nodes:
+                                    [{
+                                        type: "window/fixed",
+                                        extend: param.extend,
+                                        size: {a: param.sizeX, b: param.sizeY},
+                                        thickness: 1,
+                                        rotate: {x: 0, y: 0, z: 0},
+                                        translate: {x: 0, y: 0, z: 0},
+                                        scale: {x: 1, y: 1, z: 1}
+                                    }]
+                                }]
+                            }]
 						}]
 					}]
 					
@@ -2644,20 +2801,34 @@ function getNormalWallS(param){
                             src: "images/GeometryTexture/wall.jpg",
                             applyTo: "color",
 
-                            nodes:
+                            nodes: 
                             [{
-                                type: "wall/no_window",
-                                layer: param.layer,
-                                height: param.height,
-                                width: param.width,
-                                thickness: param.thick,
-                                direction: param.dir,
-                                priority: param.pri,
-                                percentX: param.perX,
-                                percentY: param.perY,
-                                scale: {x: 1, y: 1, z: 1},
-                                rotate: {x: param.rotateX, y: param.rotateY, z: param.rotateZ},
-                                translate: {x: 0, y: 0, z: 0}
+                                type: "texture",
+                                src: "images/GeometryTexture/wallSpecularMap.png",
+                                applyTo: "specular", // Apply to specularity
+
+                                nodes: 
+                                [{
+                                    type: "texture",
+                                    src: "images/GeometryTexture/wallNormalMap.png",
+                                    applyTo: "normals", // Apply to geometry normal vectors
+
+                                    nodes:
+                                    [{
+                                        type: "wall/no_window",
+                                        layer: param.layer,
+                                        height: param.height,
+                                        width: param.width,
+                                        thickness: param.thick,
+                                        direction: param.dir,
+                                        priority: param.pri,
+                                        percentX: param.perX,
+                                        percentY: param.perY,
+                                        scale: {x: 1, y: 1, z: 1},
+                                        rotate: {x: param.rotateX, y: param.rotateY, z: param.rotateZ},
+                                        translate: {x: 0, y: 0, z: 0}
+                                    }]
+                                }]
                             }]
                         }]
                     }]
@@ -2697,23 +2868,37 @@ function getSingleWallS(param){
                             src: "images/GeometryTexture/wall.jpg",
                             applyTo: "color",
 
-                            nodes:
+                            nodes: 
                             [{
-                                type: "wall/single_window",
-                                layer: param.layer,
-                                height: param.height,
-                                width: param.width,
-                                thickness: param.thick,
-                                direction: param.dir,
-                                ratio: {a: 0.5,b: 0.5},
-                                windowW: 3,
-                                windowH: 3,
-                                priority: param.pri,
-                                percentX: param.perX,
-                                percentY: param.perY,
-                                scale: {x: 1, y: 1, z: 1},
-                                rotate: {x: param.rotateX, y: param.rotateY, z: param.rotateZ},
-                                translate: {x: 0, y: 0, z: 0}
+                                type: "texture",
+                                src: "images/GeometryTexture/wallSpecularMap.png",
+                                applyTo: "specular", // Apply to specularity
+
+                                nodes: 
+                                [{
+                                    type: "texture",
+                                    src: "images/GeometryTexture/wallNormalMap.png",
+                                    applyTo: "normals", // Apply to geometry normal vectors
+
+                                    nodes:
+                                    [{
+                                        type: "wall/single_window",
+                                        layer: param.layer,
+                                        height: param.height,
+                                        width: param.width,
+                                        thickness: param.thick,
+                                        direction: param.dir,
+                                        ratio: {a: 0.5,b: 0.5},
+                                        windowW: 3,
+                                        windowH: 3,
+                                        priority: param.pri,
+                                        percentX: param.perX,
+                                        percentY: param.perY,
+                                        scale: {x: 1, y: 1, z: 1},
+                                        rotate: {x: param.rotateX, y: param.rotateY, z: param.rotateZ},
+                                        translate: {x: 0, y: 0, z: 0}
+                                    }]
+                                }]
                             }]
                         }]
                     }]
@@ -2753,23 +2938,37 @@ function getDoorWallS(param){
                             src: "images/GeometryTexture/wall.jpg",
                             applyTo: "color",
 
-                            nodes:
+                            nodes: 
                             [{
-                                type: "wall/door_entry",
-                                layer: param.layer,
-                                height: param.height,
-                                width: param.width,
-                                thickness: param.thick,
-                                direction: param.dir,
-                                posratio: 0.5,
-                                doorW: 3,
-                                doorH: 6,
-                                priority: param.pri,
-                                percentX: param.perX,
-                                percentY: param.perY,
-                                scale: {x: 1, y: 1, z: 1},
-                                rotate: {x: param.rotateX, y: param.rotateY, z: param.rotateZ},
-                                translate: {x: 0, y: 0, z: 0}
+                                type: "texture",
+                                src: "images/GeometryTexture/wallSpecularMap.png",
+                                applyTo: "specular", // Apply to specularity
+
+                                nodes: 
+                                [{
+                                    type: "texture",
+                                    src: "images/GeometryTexture/wallNormalMap.png",
+                                    applyTo: "normals", // Apply to geometry normal vectors
+
+                                    nodes:
+                                    [{
+                                        type: "wall/door_entry",
+                                        layer: param.layer,
+                                        height: param.height,
+                                        width: param.width,
+                                        thickness: param.thick,
+                                        direction: param.dir,
+                                        posratio: 0.5,
+                                        doorW: 3,
+                                        doorH: 6,
+                                        priority: param.pri,
+                                        percentX: param.perX,
+                                        percentY: param.perY,
+                                        scale: {x: 1, y: 1, z: 1},
+                                        rotate: {x: param.rotateX, y: param.rotateY, z: param.rotateZ},
+                                        translate: {x: 0, y: 0, z: 0}
+                                    }]
+                                }]
                             }]
                         }]
                     }]
@@ -2790,7 +2989,7 @@ function changeWall(wall_id,wall_type){
 	
 	var root = scene.findNode(3);
 	var param = {
-				pos: n.getParent().getParent().getParent().getParent().getParent().getName(),
+				pos: n.getParent().getParent().getParent().getParent().getParent().getParent().getParent().getName(),
 				layer: n.getLayer(),
 				height: n.getHeight(),
 				width: n.getWidth(),
@@ -2816,7 +3015,7 @@ function changeWall(wall_id,wall_type){
 			root.addNode(door_wallS);
 	}
 	
-	n.getParent().getParent().getParent().getParent().getParent().getParent().destroy();
+	n.getParent().getParent().getParent().getParent().getParent().getParent().getParent().getParent().destroy();
     //remove input
     if(document.getElementById('inputarea')){
         document.getElementById('inputarea').remove();

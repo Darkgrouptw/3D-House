@@ -82,7 +82,7 @@ SceneJS.Types.addType("base/basic",
 		try {
 		//get all the element
 		
-		var mnmte = function(n) { return n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0]; }
+		var mnmte = function(n) { return n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0]; }
 
 		var backWall=-1;
 		var rightWall=-1;
@@ -359,7 +359,7 @@ SceneJS.Types.addType("base/basic",
 
 				if(time>20){
 					//no wall can be fit in
-					interWall[i].getParent().getParent().getParent().getParent().getParent().getParent().destroy();
+					interWall[i].getParent().getParent().getParent().getParent().getParent().getParent().getParent().getParent().destroy();
 				}
 				//find z x min,max
 				for(var j=0;j<i;j++){

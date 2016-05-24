@@ -39,6 +39,8 @@ class HouseXML
 				//拿出這些 XML
 				$typeNode = $elements->item($j)->getElementsByTagName('type');
 				$textureNode = $elements->item($j)->getElementsByTagName('texture');
+				$specularNode = $elements->item($j)->getElementsByTagName('specular');
+				$normalmapNode = $elements->item($j)->getElementsByTagName('normalmap');
 				$propertyNode = $elements->item($j)->getElementsByTagName('property');
 				$transformNode = $elements->item($j)->getElementsByTagName('transform');
 				$decorateNode = $elements->item($j)->getElementsByTagName('decorate');
@@ -53,6 +55,12 @@ class HouseXML
 				
 				if($textureNode->length != 0)
 					$this->TextureBind($nodeStr, $textureNode->item(0), $endStr);
+
+				if($specularNode->length != 0)
+					$this->SpecularBind($nodeStr, $specularNode->item(0), $endStr);
+
+				if($normalmapNode->length != 0)
+					$this->NormalmapBind($nodeStr, $normalmapNode->item(0), $endStr);
 				
 				if($typeNode->length != 0)
 				{
@@ -181,6 +189,28 @@ class HouseXML
 		$str = $str."							type: \"texture\",\n";
 		$str = $str."							src: \"images/GeometryTexture/".$texture->textContent."\",\n";
 		$str = $str."							applyTo: \"color\",\n\n";
+		$endStr = $endStr."}]\n";
+	}
+	///////////////////////////////////////////////////////////////////////////////
+	// 把 Specular 的東西，傳到string裡
+	///////////////////////////////////////////////////////////////////////////////
+	private function SpecularBind(&$str, $specular, &$endStr)
+	{
+		$str = $str."						nodes:\n						[{\n";
+		$str = $str."							type: \"texture\",\n";
+		$str = $str."							src: \"images/GeometryTexture/".$specular->textContent."\",\n";
+		$str = $str."							applyTo: \"specular\",\n\n";
+		$endStr = $endStr."}]\n";
+	}
+	///////////////////////////////////////////////////////////////////////////////
+	// 把 NormalMap 的東西，傳到string裡
+	///////////////////////////////////////////////////////////////////////////////
+	private function NormalmapBind(&$str, $normalmap, &$endStr)
+	{
+		$str = $str."						nodes:\n						[{\n";
+		$str = $str."							type: \"texture\",\n";
+		$str = $str."							src: \"images/GeometryTexture/".$normalmap->textContent."\",\n";
+		$str = $str."							applyTo: \"normals\",\n\n";
 		$endStr = $endStr."}]\n";
 	}
 	///////////////////////////////////////////////////////////////////////////////

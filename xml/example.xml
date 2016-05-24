@@ -9,6 +9,8 @@
         </transform>
 		
 		<texture>roof.jpg</texture>
+		<specular>roofSpecularMap.png</specular>
+		<normalmap>roofNormalMap.png</normalmap>
         <pos>roof</pos>
 		
         <property>
@@ -26,7 +28,8 @@
         </property>
 		
         <texture>roof.jpg</texture>
-		        
+		<specular>roofSpecularMap.png</specular>
+		<normalmap>roofNormalMap.png</normalmap>
     </element> 
     <element>
         <type>wall/triangle</type>
@@ -36,6 +39,8 @@
             <translate>17,22,0</translate>
         </transform>    
         <texture>wall.jpg</texture>
+		<specular>wallSpecularMap.png</specular>
+		<normalmap>wallNormalMap.png</normalmap>
         <pos>rightTriangle</pos>
         <property>
             <height>5</height>
@@ -53,6 +58,8 @@
             <translate>-17,22,0</translate>
         </transform>        
         <texture>wall.jpg</texture>
+		<specular>wallSpecularMap.png</specular>
+		<normalmap>wallNormalMap.png</normalmap>
         <pos>leftTriangle</pos>
         <property>
             <height>5</height>
@@ -70,6 +77,8 @@
 			<translate>0,0,0</translate>
 		</transform>		
 		<texture>ground.jpg</texture>
+		<specular>groundSpecularMap.png</specular>
+		<normalmap>groundNormalMap.png</normalmap>
         <pos>base</pos>
         <property>
             <layer>1</layer>
@@ -87,6 +96,8 @@
 			<translate>-17,9,1</translate>
 		</transform>
 		<texture>wall.jpg</texture>
+		<specular>wallSpecularMap.png</specular>
+		<normalmap>wallNormalMap.png</normalmap>
         <pos>rightWall</pos>
         <property>
             <layer>1</layer>
@@ -108,6 +119,8 @@
 			<translate>17,9,1</translate>
 		</transform>
 		<texture>wall.jpg</texture>
+		<specular>wallSpecularMap.png</specular>
+		<normalmap>wallNormalMap.png</normalmap>
         <pos>leftWall</pos>
         <property>
             <layer>1</layer>
@@ -129,6 +142,8 @@
 			<translate>0,9,-7</translate>
 		</transform>
 		<texture>wall.jpg</texture>
+		<specular>wallSpecularMap.png</specular>
+		<normalmap>wallNormalMap.png</normalmap>
         <pos>backWall</pos>
         <property>
             <layer>1</layer>
@@ -153,6 +168,8 @@
             <translate>0,9,-7</translate>
         </transform>
         <texture>wall.jpg</texture>
+		<specular>wallSpecularMap.png</specular>
+		<normalmap>wallNormalMap.png</normalmap>
         <pos>interWall</pos>
         <property>
             <layer>1</layer>

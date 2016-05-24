@@ -73,7 +73,7 @@ SceneJS.Types.addType("roof/gable",
         var nodes=scene.findNodes();
         
         //                                 material     name   matrix  texture  element
-        var mnmte = function(n) { return n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0]; }
+        var mnmte = function(n) { return n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0]; }
         
         for(var i = 0; i < nodes.length; i++)
         {
@@ -110,7 +110,7 @@ SceneJS.Types.addType("roof/gable",
         var nodes = scene.findNodes();
         
         //                                 material     name   matrix  texture  element
-        var mnmte = function(n) { return n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0]; }
+        var mnmte = function(n) { return n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0]; }
         
         for(var i = 0; i < nodes.length; i++)
         {
@@ -166,7 +166,7 @@ SceneJS.Types.addType("roof/gable",
         var nodes = scene.findNodes();
         
         //                                 material     name   matrix  texture  element
-        var mnmte = function(n) { return n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0]; }
+        var mnmte = function(n) { return n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0]; }
         
         for(var i = 0; i < nodes.length; i++)
         {
@@ -183,11 +183,11 @@ SceneJS.Types.addType("roof/gable",
         if(roof == -1) { console.log("ERROR"); return; }
         if(leftTriangle != -1)
         {
-            leftTriangle.getParent().getParent().getParent().getParent().getParent().getParent().destroy();
+            leftTriangle.getParent().getParent().getParent().getParent().getParent().getParent().getParent().getParent().destroy();
         }
         if(rightTriangle != -1)
         {
-            rightTriangle.getParent().getParent().getParent().getParent().getParent().getParent().destroy();
+            rightTriangle.getParent().getParent().getParent().getParent().getParent().getParent().getParent().getParent().destroy();
         }
     }
  });
