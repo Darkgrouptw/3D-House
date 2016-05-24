@@ -153,7 +153,10 @@ function deleteTab(){
 }
 
 //For FuncBar
-
+function PrintClick()
+{
+	window.open("print.html");
+}
 function ExportClick()
 {
 	Export_click_flag = !Export_click_flag;

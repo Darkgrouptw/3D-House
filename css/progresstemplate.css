@@ -1,0 +1,54 @@
+html,body
+{
+	height: 100%;
+	width: 100%;
+	overflow: hidden;
+}
+
+#PROGRESS_BAR
+{
+	position: absolute;
+	top: 0%;
+	right: 0%;
+	width: 35%;
+	height: 25%;
+}
+#PROGRESS_BAR .outer
+{
+	position: absolute;
+	top: 35%;
+	left: 5%;
+	width:90%;
+	height: 30%;
+	background-color:#555;
+	border-radius: 50px;
+	box-shadow: inset 0 -1px 1px rgba(255,255,255,0.3);
+}
+
+#PROGRESS_BAR  span
+{
+	position:absolute;
+	top:20%;
+	height:60%;
+	left:5%;
+	background: linear-gradient(to right, rgb(30,190,185), rgb(54,184,233));
+	border-radius: 50px;
+	display:none;
+}
+
+#PROGRESS_BAR .percentage
+{
+	color:rgb(255,255,255);
+	font-family:Lucida Console;
+	text-align:center;
+}
+
+#COLOR_BAR
+{
+	position:absolute;
+	top:20%;
+	height:60%;
+	left:10%;
+	width:2%;
+	background: linear-gradient(rgb(219,173,137), rgb(202,229,144), rgb(255,251,153), rgb(143,187,232));
+}
