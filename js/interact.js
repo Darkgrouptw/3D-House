@@ -134,6 +134,7 @@ function deleteTab(){
 		if (SelectId == TabAmount){
 			TabAmount--;
 			selectTab(SelectId - 1, true);
+			deleteTopBase();
 		}
 		else{
 			//resort
@@ -145,8 +146,8 @@ function deleteTab(){
 			}
 			TabAmount--;
 			selectTab(SelectId,true);
+			deleteBase(SelectId);
 		}
-		deleteBase(SelectId);
 		lastFloor = SelectId;
 		}	
 }
