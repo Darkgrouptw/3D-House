@@ -121,8 +121,10 @@ function addTab(){
 	var text = createTextNode(TabAmount.toString() + "F");
 	liElem.appendChild(text);
 	ul.insertBefore(liElem, roof);
-	selectTab(liElem.id,true);
+	//selectTab(liElem.id,true);
 	setFloorTab(PropertyFT,ValueFT);
+	lastid = -1;
+	lastFloor = -1;
 	addBase();
 }
 
