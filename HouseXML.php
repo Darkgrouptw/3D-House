@@ -13,7 +13,7 @@ class HouseXML
 		$this->xmlDoc = new DOMDocument();
 		$this->xmlDoc->load($loc);
 		
-		$this->RenderList = "		nodes:\n		[";
+        $this->RenderList = "		nodes:\n		[".$this->MeshGrid()."\n";
 		$this->ReadText();
 	}
 	
@@ -256,7 +256,40 @@ class HouseXML
 		}
 		$str = substr($str, 0, strlen($str) - 2);
 	}
-	
+    
+    ///////////////////////////////////////////////////////////////////////////////
+    // Mesh Grid
+    ///////////////////////////////////////////////////////////////////////////////
+    private function MeshGrid()
+    {
+        $context =  "{".
+                    "   type: \"lights\",".
+                    "   lights:".
+                    "   [{".
+                    "       mode:\"ambient\",".
+                    "       color: { r: 0.9, g: 0.9, b: 0.9 }".
+                    "   }],".
+                    "   nodes:".
+                    "   [{".
+                    "       type: \"material\",".
+                    //"       color: { r: 1.0, g: 0.5, b: 0.6},". 
+                    "       specularColor: { r: 1.0, g: 1.0, b: 1.0 },".
+                    "       specular: 1.0,".
+                    "       shine: 70.0,".
+                    "       emit: 0,".
+                    "       alpha: 1.0,".
+                    "       nodes: ".
+                    "       [{".
+                    "           type: \"geometry/grid\",".
+                    "           size: { x: 1000, z: 1000 },".
+                    "           xSegments: 100,".
+                    "           ySegments: 100".
+                    "       }]".
+                    "   }]".
+                    "},";
+        return $context;
+    }
+    
 	///////////////////////////////////////////////////////////////////////////////
 	// Matrix 的座標，從二維變到一維
 	///////////////////////////////////////////////////////////////////////////////

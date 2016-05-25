@@ -11,13 +11,13 @@
         <texture>wall.jpg</texture>
 
         <property>
-            <width>15</width>
-            <height>15</height>
+            <width>30</width>
+            <height>30</height>
             <thickness>1</thickness>
-            <windowSize>2.5, 2.5, 2.5, 2.5, 2.5, 2.5, 2.5, 2.5</windowSize>
+            <windowSize>2, 2, 2, 2, 2, 2, 2, 2</windowSize>
             <windowCenter>0.2, 0.2, 0.4, 0.4, 0.6, 0.6, 0.8, 0.8</windowCenter>
-            <gap>3</gap>
-            <doorSize>3, 4</doorSize>
+            <gap>1</gap>
+            <doorSize>5, 9</doorSize>
             <doorPosratio>0.8</doorPosratio>
         </property>
     </element>
