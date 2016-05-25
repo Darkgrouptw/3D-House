@@ -92,18 +92,26 @@ function selectTab(id,UIentrance){
 	SelectId = parseInt(id);
 	lastFloor = SelectId;
 	var key = getElem("functionkey");
-	if(TabAmount > 1)
+	if (SelectId != 0)
 	{
+		if(TabAmount > 1)
+		{
 		key.innerHTML = "X";
-	}
-	else
-	{
+		}
+		else
+		{
 		key.innerHTML = "+";
+		}
+		closePartBar("subPartBar");
+		closePartBar("mainPartBar");
 	}
+	
 	if (SelectId == 0)//roof
 	{
 		lastFloor = TabAmount + 1;
 		key.innerHTML = "+";
+		PartClick();
+		componentClick("Part2");
 	}
 	if(UIentrance)
 	{
@@ -180,7 +188,7 @@ function PartClick()
 	setInvisibleFuncBar();
 }
 //For PartBar
-var totalPart = [10, 10, 3];//0-window 1-door 2-roof
+var totalPart = [10, 10, 4];//0-window 1-door 2-roof
 var flag = [0, 0, 0];//0-window 1-door 2-roof
 function componentClick(id){
 	id = id.split("")[id.length-1];
@@ -214,7 +222,7 @@ function componentClick(id){
 	getStyle("subPartBar").display = "block";
 	
 }
-var rfcomponent = ["gable", "hip", "mansard"];
+var rfcomponent = ["gable", "hip", "mansard","cross_gable"];
 function subPartClick(id){
 	tmp = id.split("");
 	type = parseInt(tmp[0]);	index = parseInt(tmp[1]);

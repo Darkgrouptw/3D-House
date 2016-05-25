@@ -78,10 +78,10 @@
         <div id="uiarea">
         	<input type="checkbox" id = "powerEditMode" checked = true>要不要啟動強力編輯模式<br>
 			<input type="checkbox" id = "windowMode" checked = true onclick='dirty = true;'>要不要顯示配件<br>
-        	<input type="button" onclick="changeRoof('roof/gable')" value = "gable">
+        	<!--<input type="button" onclick="changeRoof('roof/gable')" value = "gable">
         	<input type="button" onclick="changeRoof('roof/hip')" value = "hip">
         	<input type="button" onclick="changeRoof('roof/mansard')" value = "mansard">
-			<input type="button" onclick="changeRoof('roof/cross_gable')" value="cross_gable"><br>
+			<input type="button" onclick="changeRoof('roof/cross_gable')" value="cross_gable"><br>-->
         </div>            
     </div>
 	
