@@ -124,7 +124,7 @@
 	<ul id = "mainPartBar" class = "fixed">
 		<li id = "Part0" onclick = "componentClick(this.id)"><img src = "./images/icon-window.png"></li>
 		<li id = "Part1" onclick = "componentClick(this.id)"><img src = "./images/icon-door.png"></li>
-		<li id = "Part2" onclick = "componentClick(this.id)"><img src = "./images/icon-roof.png"></li>
+		<!--<li id = "Part2" onclick = "componentClick(this.id)"><img src = "./images/icon-roof.png"></li>-->
 		<li onclick = "addInterWall()"><img src = "./images/icon-wall.png"></li>
 		<li onclick = "closePartBar('mainPartBar')"><img name = "ImgClose" src = "./images/icon-close.png" class = "fixed"></li>
 	</ul>

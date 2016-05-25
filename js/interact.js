@@ -204,9 +204,14 @@ function PartClick()
 	setInvisibleFuncBar();
 }
 //For PartBar
+
 var totalPart = [10, 10, 4];//0-window 1-door 2-roof
 var flag = [0, 0, 0];//0-window 1-door 2-roof
 function componentClick(id){
+	if (id == "Part0")//window
+	{
+		changeWall(lastid, "wall/single_window");
+	}
 	id = id.split("")[id.length-1];
 	var AddElem = function(id, Elemindex, MajorElem,BeforeElem){
 		partmode = parseInt(id);
