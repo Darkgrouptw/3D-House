@@ -331,6 +331,7 @@ function ScenePick(){
                 objectId = hit.nodeId;
 				pickObjId = objectId;
 				selectLayer();
+				modifyWall();
                 pickNode = getNodeName(objectId);
                 var pickLayer = getNodeLayer(objectId);
                 if(pickNode == "window") { 
@@ -381,6 +382,8 @@ function ScenePick(){
                 lastid = -1;
                 lastFloor = -1;
 				pickObjId = null;
+				closePartBar("subPartBar");
+				closePartBar("mainPartBar");
                 console.log('Nothing picked!');
                 isLock = false;
                 objectId = null;

@@ -39,7 +39,16 @@ function toggleFullScreen()
     }
     else { cancelFullScreen.call(doc);  }
 }
-
+function modifyWall()
+{
+	var n = getNodeType(pickObjId);
+	var type = n.getType();
+	type = type.split('/')[0];
+	if (type == "wall")
+	{
+		PartClick();
+	}
+}
 var TabAmount = 1;// 樓層數初始為一層 屋頂是第2層
 var SelectId = -1; // 選取的樓層初始為0
 function functionkey()
@@ -92,7 +101,7 @@ function selectTab(id,UIentrance){
 	SelectId = parseInt(id);
 	lastFloor = SelectId;
 	var key = getElem("functionkey");
-	if (SelectId != 0)
+	if (SelectId != 0)//not roof
 	{
 		if(TabAmount > 1)
 		{
@@ -133,6 +142,13 @@ function addTab(){
 	setFloorTab(PropertyFT,ValueFT);
 	lastid = -1;
 	lastFloor = -1;
+	SelectId = -1;
+	var alltab = getSubElem(getElem("Tab"),"li");
+	for (var i = 0; i < alltab.length; i++){
+		alltab[i].className = "General";
+	}
+	closePartBar("subPartBar");
+	closePartBar("mainPartBar");
 	addBase();
 }
 
