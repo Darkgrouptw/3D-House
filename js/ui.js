@@ -119,6 +119,16 @@ function ScenePick(){
 
             }, true);
 
+    canvas.addEventListener('mousemove',
+            function (event) {
+
+                if(pickNode == "window" && !Mobile)
+                {
+                    moveComponent();
+                }
+
+            }, true);
+
     canvas.addEventListener('touchstart',
             function (event) {
                 tmpNormal = null;
@@ -327,7 +337,7 @@ function ScenePick(){
                 //console.log("getWallID ", getWallID);
                 //console.log("getWindowID ", getWindowID);
                 console.log("ID: ", element.getID(), " partmode: ", partmode);
-                console.log("objectId ", hit.nodeId);
+                if(pickObjId != null) { delete scene.getNode(pickObjId)._topicSubs.rendered; } // delete render event from trackPosition
                 objectId = hit.nodeId;
 				pickObjId = objectId;
 				selectLayer();
@@ -357,10 +367,10 @@ function ScenePick(){
                     }
                 }
                 lastTime = now;
-				if (!Mobile && !isEmpty(hitPos))
+				/*if (!Mobile)
 				{
 					moveComponent();
-				}
+				}*/
                 attachInput(objectId);
             });
     scene.on("nopick",
@@ -390,7 +400,7 @@ function ScenePick(){
                 isRotation = true;
                 pickNode = null;
 				if (!Mobile)
-				moveComponent();
+				    moveComponent();
                 //for some ridiculurs reason i got to pick again!!
                 //scene.pick()
             });

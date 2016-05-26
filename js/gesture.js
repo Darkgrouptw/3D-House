@@ -52,17 +52,13 @@ function Sign(x)
 function trackPosition(id)
 {
     //var count = 0;
-    var tmpNode = scene.getNode(id);
-    tmpNode.on("rendered",
+    //var tmpNode = scene.getNode(id);
+    scene.getNode(id).on("rendered",
         function (event) {
             //count++;
-            //console.log("id ", id, "gesture position ", event.getCanvasPos(), " count ", count);
+            //console.log("id ", id, "gesture position ", event.getCanvasPos());
 
-            if(id == pickObjId)
-            {
-                //console.log("id ", id, "gesture position ", event.getCanvasPos(), " count ", count);
-                hitPos = event.getCanvasPos();
-            }
+            hitPos = event.getCanvasPos();
         });
 }
 
