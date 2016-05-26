@@ -312,11 +312,11 @@ function ScenePick(){
                 var material;
 
                 if(lastid>0){
-                    material=scene.findNode(lastid).parent.parent.parent.parent.parent.parent;
+                    material= housenode2Material(scene.findNode(lastid)); 
                     material.setColor({ r:1, g:1, b:1});
                 }
                 var id=hit.nodeId;
-                var element=scene.findNode(id).nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
+                var element=TextureName2housenode(scene.findNode(id)); 
                 //console.log(element.getID());
                 //這是我知道name被material包住，正常藥用id來找但現在id都還沒定
                 /*material=scene.findNode(id).parent;
@@ -386,7 +386,7 @@ function ScenePick(){
                 uiPanel.style.display='none';
 
                 if(lastid>0){
-                    material=scene.findNode(lastid).parent.parent.parent.parent.parent.parent;
+                    material= housenode2Material(scene.findNode(lastid)); 
                     material.setColor({ r:0.8, g:0.8, b:0.8});
                 }
                 lastid = -1;
@@ -414,12 +414,13 @@ function textureToggle(){
     console.log("textureToggle");
     var box=scene.findNodes();
     for(var i=0;i<box.length;i++){
-        if(box[i].getType()=="texture"){
+        if(box[i].getType()=="flags"){
             if(hasTexture){
-                box[i]._initTexture();
+                housenode2Texture(flag2housenode(box[i]))._initTexture();
             }else{
-                var src=box[i].getParent().getParent().getName();
-                box[i].setSrc("images/GeometryTexture/"+src+"");
+				
+                var src=housenode2TextureName(flag2housenode(box[i])).getName();
+                housenode2Texture(flag2housenode(box[i])).setSrc("images/GeometryTexture/"+src+"");
             }
         }
     }
@@ -444,14 +445,14 @@ function addInterWall(){
         if(n.getType()=="name"){
             if(n.getName()=="backWall"){
                 //         material  name     matrix  texture  element
-                backWall=n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
+                backWall=Pos2housenode(n);
             }
-            else if(n.getName()=="frontWall")frontWall=n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
-            else if(n.getName()=="leftWall")leftWall=n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
-            else if(n.getName()=="rightWall")rightWall=n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
-            else if(n.getName()=="roof")roof=n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
-            else if(n.getName()=="interWall" && n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].getLayer() == lastFloor )interWall.push(n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0]);
-            else if(n.getName()=="base")base=n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
+            else if(n.getName()=="frontWall")frontWall=Pos2housenode(n);
+            else if(n.getName()=="leftWall")leftWall=Pos2housenode(n);
+            else if(n.getName()=="rightWall")rightWall=Pos2housenode(n);
+            else if(n.getName()=="roof")roof=Pos2housenode(n);
+            else if(n.getName()=="interWall" && Pos2housenode(n).getLayer() == lastFloor )interWall.push(Pos2housenode(n));
+            else if(n.getName()=="base")base=Pos2housenode(n);
         }
     }
     var bigestID=0;
@@ -561,7 +562,7 @@ function getTopLayer(){
     for(var i=0;i<nodes.length;i++){
         var n = nodes[i];
         if(n.getType()=="name"){
-            if(n.getName()=="base"){if(n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].getLayer()>layerNumber){layerNumber=n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].getLayer();}}
+            if(n.getName()=="base"){if(Pos2housenode(n).getLayer()>layerNumber){layerNumber=Pos2housenode(n).getLayer();}}
         }
     }
     return layerNumber;
@@ -862,16 +863,11 @@ function deleteBase(layerNumber){
 
 function attachInput(pickId){
 	watchmode = 0;
-    var n = scene.findNode(pickId);
-
-    var nameNode= n.parent.parent;
+    var n = TextureName2housenode(scene.findNode(pickId));
+	
+    var nameNode= housenode2Pos(n);
 
     console.log(nameNode.getName());
-
-    //  matrix    texture   element
-    n = n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
-
-
 
     var uiarea=document.getElementById('uiarea');
     var domParser = new DOMParser();
@@ -917,7 +913,7 @@ function attachInput(pickId){
 	}
 	
     //hight
-    if(n.getHeight && n.getParent().getParent().getParent().getParent().getParent().getParent().getParent().getName() != "interWall"){
+    if(n.getHeight && housenode2Pos(n).getName() != "interWall"){
         var heightismove=false;
         var div=document.createElement("div");
         inputarea.appendChild(div);
@@ -963,7 +959,7 @@ function attachInput(pickId){
     
 
     //width
-    if(n.getWidth && n.getParent().getParent().getParent().getParent().getParent().getParent().getParent().getName() != "interWall"){
+    if(n.getWidth && housenode2Pos(n).getName() != "interWall"){
         var widthismove=false;
         var div=document.createElement("div");
         inputarea.appendChild(div);
@@ -1004,7 +1000,7 @@ function attachInput(pickId){
     
 
     //percentX
-    if(n.getPercentX && n.getParent().getParent().getParent().getParent().getParent().getParent().getParent().getName() == "interWall"){
+    if(n.getPercentX && housenode2Pos(n).getName() == "interWall"){
         var percentXismove=false;
         var div = document.createElement("div");
         inputarea.appendChild(div);
@@ -1043,7 +1039,7 @@ function attachInput(pickId){
     
 
     //percentY
-    if(n.getPercentY && n.getParent().getParent().getParent().getParent().getParent().getParent().getParent().getName() == "interWall"){
+    if(n.getPercentY && housenode2Pos(n).getName() == "interWall"){
         var percentYismove=false;
         var div = document.createElement("div");
         inputarea.appendChild(div);
@@ -1081,7 +1077,7 @@ function attachInput(pickId){
     }
     
     //direction
-    if(n.getDirection && n.getParent().getParent().getParent().getParent().getParent().getParent().getParent().getName() == "interWall"){
+    if(n.getDirection && housenode2Pos(n).getName() == "interWall"){
         var div=document.createElement("div");
         inputarea.appendChild(div);
         //text
@@ -1107,7 +1103,7 @@ function attachInput(pickId){
     }
 
     //delete interWall
-    if(n.getDirection && n.getParent().getParent().getParent().getParent().getParent().getParent().getParent().getName() == "interWall"){
+    if(n.getDirection && housenode2Pos(n).getName() == "interWall"){
         var div=document.createElement("div");
         inputarea.appendChild(div);
         //text
@@ -1879,10 +1875,10 @@ function timeFuction(){
             for(var i=0;i<nodes.length;i++){
                 var node = nodes[i];
                 if(node.getType()=="name"){
-                   	if(node.getName()=="base" && node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].getLayer() == 1)base=node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
+                   	if(node.getName()=="base" && Pos2housenode(node).getLayer() == 1)base=Pos2housenode(node);
 					if(node.getID() == lastid){
 						console.log("lastid ", lastid, " node ", node);
-						select_node = node.parent.parent.parent.parent.getID();
+						select_node = housenode2Material(node).getID();
 					}
                 }
                 if(node.getType()=="flags"){
@@ -1897,7 +1893,7 @@ function timeFuction(){
                     }
                 }
                 if(node.getType() == "material"){
-                    if(node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].getID() == select_node){
+                    if(Material2housenode(node).getID() == select_node){
                         node.setColor({r:0.7,g:0.7,b:0.3});
                     }else{
                         node.setColor({r:1,g:1,b:1});
@@ -1912,33 +1908,32 @@ function timeFuction(){
                 }
 				
 				if(node.getType() == "wall/door_entry"){
-					if(housenode2flag(node).nodes[0].getName() != "interWall"){
+					if(housenode2Pos(node).getName() != "interWall"){
 						//the_number_of_door++;
 						//Wall_id.push(i);
 					}
 				}else if(node.getType() == "wall/single_window"){
-					if(housenode2flag(node).nodes[0].getName() != "interWall"){
+					if(housenode2Pos(node).getName() != "interWall"){
 						the_number_of_window++;
 						Wall_id.push(node);
 
-                        //console.log("single_window ID ", node.parent.parent.parent.parent.parent.getID());
-                        if(getWallID.indexOf(node.parent.parent.parent.parent.parent.getID()) < 0)
+                        if(getWallID.indexOf(node.getID()) < 0)
                         {
-                            getWallID.push(node.parent.parent.parent.parent.parent.getID());
+                            getWallID.push(node.getID());
                         }
 					}
 				}else if(node.getType() == "wall/multi_window"){
-					if(housenode2flag(node).nodes[0].getName() != "interWall"){
+					if(housenode2Pos(node).getName() != "interWall"){
 						the_number_of_window += node.getWindowCenter().length/2;
 						the_number_of_door += node.getDoorPosratio().length;
 						Wall_id.push(node);
 
                         var numberOfCenter = node.getWindowCenter().length / 2;
-                        if(getWallID.indexOf(node.parent.parent.parent.parent.parent.getID()) < 0)
+                        if(getWallID.indexOf(node.getID()) < 0)
                         {
                             for(var num = 0; num < numberOfCenter; num++)
                             {
-                                getWallID.push(node.parent.parent.parent.parent.parent.getID());
+                                getWallID.push(node.getID());
                             }
                         }
 					}
@@ -1973,10 +1968,9 @@ function timeFuction(){
 										 window_ratio_X:window_ratio_X,window_ratio_Y:window_ratio_Y,
 										 wall_width:wall_width,wall_height});
 
-						//console.log("next window ", windows[next_window_used].nodes[0].nodes[0].nodes[0].getID());
-                        if(getWindowID.indexOf(windows[next_window_used].nodes[0].nodes[0].nodes[0].getID()) == -1)
+                        if(getWindowID.indexOf(windows[next_window_used].getID()) == -1)
                         {
-                            getWindowID.push(windows[next_window_used].nodes[0].nodes[0].nodes[0].getID());
+                            getWindowID.push(windows[next_window_used].getID());
 
                         }
 
@@ -2000,10 +1994,9 @@ function timeFuction(){
 										 window_ratio_X:window_ratio_X,window_ratio_Y:window_ratio_Y,
 										 wall_width:wall_width,wall_height});
                             
-                            //console.log("next window ", windows[next_window_used].nodes[0].nodes[0].nodes[0].getID());
-                            if(getWindowID.indexOf(windows[next_window_used].nodes[0].nodes[0].nodes[0].getID()) == -1)
+                            if(getWindowID.indexOf(windows[next_window_used].getID()) == -1)
                             {
-                                getWindowID.push(windows[next_window_used].nodes[0].nodes[0].nodes[0].getID());
+                                getWindowID.push(windows[next_window_used].getID());
 
                             }
 
@@ -2077,8 +2070,8 @@ function Calibration(){
     for(var i=0;i<nodes.length;i++){
         var node = nodes[i];
         if(node.getType()=="name"){
-            if(node.getName()=="base" && node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].getLayer() == 1){
-                base=node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
+            if(node.getName()=="base" && Pos2housenode(node).getLayer() == 1){
+                base=Pos2housenode(node);
                 break;
             }
         }
@@ -2118,13 +2111,13 @@ function changeRoof(type){
         var node = nodes[i];
         if(node.getType()=="name"){
             if(node.getName()=="roof" ){
-                roof=node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
+                roof=Pos2housenode(node);
             }
         }
         if(node.getType() == "flags" && 
-            node.nodes[0].getName() != "roof" &&
-            node.nodes[0].getName() != "rightTriangle" &&
-            node.nodes[0].getName() != "leftTriangle"){
+            housenode2Pos(flag2housenode(node)).getName() != "roof" &&
+            housenode2Pos(flag2housenode(node)).getName() != "rightTriangle" &&
+            housenode2Pos(flag2housenode(node)).getName() != "leftTriangle"){
             elements.push(node);
         }
     }
@@ -2249,13 +2242,13 @@ function getElementXML(n){
             }
         xml+='\t\t'+'</transform>'+'\n';
         xml+='\t\t'+'<texture>';
-        if(n.getParent().getParent().getParent().getName){
-            xml+=n.getParent().getParent().getParent().getName();
+        if(housenode2TextureName(n).getName){
+            xml+=housenode2TextureName(n).getName();
         }
         xml+='</texture>'+'\n';
         xml+='\t\t'+'<pos>';
-        if(n.getParent().getParent().getParent().getParent().getParent().getName){
-            xml+=n.getParent().getParent().getParent().getParent().getParent().getName();
+        if(housenode2Pos(n).getName){
+            xml+=housenode2Pos(n).getName();
         }
         xml+='</pos>'+'\n';
         xml+='\t\t'+'<property>'+'\n';
@@ -2365,13 +2358,54 @@ function create10Doors(){
 	
 }
 
-function housenode2flag(node){
-	return node.getParent().getParent().getParent().getParent().getParent().getParent().getParent().getParent();
+function normalTexture2housenode(node){
+	return node.nodes[0];
+}
+function SpecularTexture2housenode(node){
+	return normalTexture2housenode(node).nodes[0];
+}
+function Texture2housenode(node){
+	return SpecularTexture2housenode(node).nodes[0];
+}
+function Matrix2housenode(node){
+	return Texture2housenode(node).nodes[0];
+}
+function TextureName2housenode(node){
+	return Matrix2housenode(node).nodes[0];
+}
+function Material2housenode(node){
+	return TextureName2housenode(node).nodes[0];
+}
+function Pos2housenode(node){
+	return Material2housenode(node).nodes[0];
 }
 function flag2housenode(node){
-	return node.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0];
+	return Pos2housenode(node).nodes[0];
 }
-
+function housenode2normalTexture(node){
+	return node.getParent();
+}
+function housenode2SpecularTexture(node){
+	return housenode2normalTexture(node).getParent();
+}
+function housenode2Texture(node){
+	return housenode2SpecularTexture(node).getParent();
+}
+function housenode2Matrix(node){
+	return housenode2Texture(node).getParent();
+}
+function housenode2TextureName(node){
+	return housenode2Matrix(node).getParent();
+}
+function housenode2Material(node){
+	return housenode2TextureName(node).getParent();
+}
+function housenode2Pos(node){
+	return housenode2Material(node).getParent();
+}
+function housenode2flag(node){
+	return housenode2Pos(node).getParent();
+}
 function RedButtonClick(){
     superXReProduction(generateXML());
 }
@@ -3002,7 +3036,7 @@ function changeWall(wall_id,wall_type){
 	
 	var root = scene.findNode(3);
 	var param = {
-				pos: n.getParent().getParent().getParent().getParent().getParent().getParent().getParent().getName(),
+				pos: housenode2Pos(n).getName(),
 				layer: n.getLayer(),
 				height: n.getHeight(),
 				width: n.getWidth(),
@@ -3028,7 +3062,7 @@ function changeWall(wall_id,wall_type){
 			root.addNode(door_wallS);
 	}
 	
-	n.getParent().getParent().getParent().getParent().getParent().getParent().getParent().getParent().destroy();
+	housenode2flag(n).destroy();
     //remove input
     if(document.getElementById('inputarea')){
         document.getElementById('inputarea').remove();
@@ -3039,7 +3073,7 @@ function changeWall(wall_id,wall_type){
 }
 function deleteWall(wall_id){
 	var n = scene.findNode(wall_id);
-	if(n.getDirection && housenode2flag(n).nodes[0].getName() == "interWall")
+	if(n.getDirection && housenode2Pos(n).getName() == "interWall")
 	 housenode2flag(n).destroy();
      
      //remove input
