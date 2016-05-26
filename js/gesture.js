@@ -51,18 +51,64 @@ function Sign(x)
 
 function trackPosition(id)
 {
-    scene.getNode(id,
-        function (id) {
-            id.on("rendered",
-                function (event) {
-					hitPos = event.getCanvasPos();
-/*                    console.log("pos ", event.getCanvasPos());
-                     console.log("pro ", event.getProjPos());
-                    console.log("cam ", event.getCameraPos());
-                    console.log("view ", event.getViewPos());
-                    console.log("world ", event.getWorldPos()); */
-                });
+    //var count = 0;
+    var tmpNode = scene.getNode(id);
+    tmpNode.on("rendered",
+        function (event) {
+            //count++;
+            //console.log("id ", id, "gesture position ", event.getCanvasPos(), " count ", count);
+
+            if(id == pickObjId)
+            {
+                //console.log("id ", id, "gesture position ", event.getCanvasPos(), " count ", count);
+                hitPos = event.getCanvasPos();
+            }
         });
+}
+
+function getTopLeftCorner(id)
+{
+    var currentAxis = getAxis();
+    var camera = scene.getNode(3).getEye();
+    var corner = [];
+    var VertexX = [];
+    var VertexY = [];
+    var VertexZ = [];
+    var center = [];
+    var tmpNode = getNodeType(id);
+
+    var tmpT = {};
+    tmpT.rotate = tmpNode.getRotate();
+    tmpT.scale = tmpNode.getScale();
+    tmpT.translate = tmpNode.getTranslate();
+    var transMatrix = utility.transformMatrix(tmpT);
+
+    var getPos = tmpNode.nodes[0].getPositions();
+    for(var j = 0; j < getPos.length; j += 3)
+    {
+        var tmpP = [];
+        tmpP.push(getPos[j]);
+        tmpP.push(getPos[j + 1]);
+        tmpP.push(getPos[j + 2]);
+        tmpP.push(1);
+        var transPos = SceneJS_math_mulMat4v4(transMatrix, tmpP);
+        VertexX.push(transPos[0]);
+        VertexY.push(transPos[1]);
+        VertexZ.push(transPos[2]);
+    }
+    //console.log(VertexX);
+
+    var minX = Math.min(...VertexX);
+    var maxX = Math.max(...VertexX);
+    var minY = Math.min(...VertexY);
+    var maxY = Math.max(...VertexY);
+    var minZ = Math.min(...VertexZ);
+    var maxZ = Math.max(...VertexZ);
+    console.log("minX ", minX, " maxX ", maxX);
+    console.log("minY ", minY, " maxY ", maxY);
+    console.log("minZ ", minZ, " maxZ ", maxZ);
+
+
 }
 
 function multiWindowOffsetX(id, tmpLength, tmpAxis)
