@@ -21,7 +21,7 @@
             <back_grasp>2</back_grasp>
             <extrude_len>6</extrude_len>
             <extrude_pos>0.3</extrude_pos>
-            <extrude_hgt>0.5</extrude_hgt>
+            <extrude_hgt>0.4</extrude_hgt>
             <extrude_bas>6</extrude_bas>
             <extrude_tpl>0.7</extrude_tpl>
         </property>

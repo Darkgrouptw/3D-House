@@ -27,32 +27,54 @@ SceneJS.Types.addType("roof/cross_mansard",
             var ep = property.extrude_pos;
 
 	        var hmt = h - t; 
-            var hmtt = hmt - t;
-
-            var rg = 2 * w * (1 - (r.a + r.a));
-            var rsp = rg - ((eb + t) * 2);
-            var rct = (rsp * ep) - (rsp * 0.5);
-
-            var rsq = rg - (eb * 2);
-            var rot = (rsq * ep) - (rsq * 0.5);
-
-            var trl = eb * et;
-
-            var thl = hmtt * (1 - eh);
-            var ohl = hmt * (1 - eh);
-	
-	        var dNwr = 2 * -w * r.a, dPwr = 2 * w * r.a; 
+            
+            var dNwr = 2 * -w * r.a, dPwr = 2 * w * r.a; 
 	        var dNdr = 2 * -d * r.b, dPdr = 2 * d * r.b;
+            
+            var extrudef = function(padding)
+            {
+                if(padding == undefined) { padding = 0; }
+                var tmeb = eb - padding;
+                var tmph = ((2 * h) - t);
+                var fulh = ((2 * h) - padding);
+                var pack = {};
 
-            var dFdr = dPdr * (1 - ((thl + t) * 0.5 / h));
-            var dIdr = dPdr * (1 - ((ohl + t) * 0.5 / h));
+                // available range
+                pack.ar = 2 * w * (1 - (r.a * 2)) - (2 * padding);
+                
+                // movable range 
+                pack.mr = pack.ar - (2 * tmeb); 
+
+                // start base
+                pack.sb = ((pack.ar * -1) / 2) + (ep * pack.mr);
+
+                // indent lenght
+                pack.il = tmeb * (1 - et);
+
+                // height position
+                //pack.hp = (2 * (h - (1.5 * t)) * eh) + (2 * t);
+                
+                pack.hp = ((fulh - (3 * t) + padding) * eh) + (2 * t) - padding;
+                //pack.ihp = ((tmph - (3 * t)) * eh) + (2 * t); 
+
+                // depth add length
+                pack.dal = dPdr * (1 - (pack.hp / tmph));
+
+                pack.teb = 2 * tmeb;
+                pack.tebet = pack.teb * et;
+
+                return pack;
+            };
+
+            op = extrudef();
+            ip = extrudef(t);
 	
 	        var pset = 
             [
                 // outside 4 side
 		        -w - dNwr, h, d - dPdr, -w - dNwr, h, -d - dNdr, -w, -h, -d, -w, -h, d, 
 		        //w - dPwr, h, -d - dNdr, -w - dNwr, h, -d - dNdr, -w, -h, -d, w, -h, -d,
-		        w - dPwr, h, d - dPdr, w, -h, d, w, -h, -d, w - dPwr, h, -d - dNdr,
+		        ///w - dPwr, h, d - dPdr, w, -h, d, w, -h, -d, w - dPwr, h, -d - dNdr,
 		        //w - dPwr, h, d - dPdr, w, -h, d, -w, -h, d, -w - dNwr, h, d - dPdr, 
                
                 // outside top
@@ -64,43 +86,58 @@ SceneJS.Types.addType("roof/cross_mansard",
                 // inside 4 side
                 -w - dNwr + t, hmt, d - dPdr - t, -w + t, -h, d - t, -w + t, -h, -d + t, -w - dNwr + t, hmt, -d - dNdr + t, 
 		        //w - dPwr - t, hmt, -d - dNdr + t, w - t, -h, -d + t, -w + t, -h, -d + t, -w - dNwr + t, hmt, -d - dNdr + t, 
-		        w - dPwr - t, hmt, d - dPdr - t, w - dPwr - t, hmt, -d - dNdr + t, w - t, -h, -d + t,  w - t, -h, d - t, 
-               
-                // extrude part
-                w - dPwr - t, hmt, d - dPdr - t, 
-                w - t, -h, d - t, 
-                rct + eb, -h, d - t,
-                rct + trl, hmtt - thl, d - dFdr - t,
+		        ///w - dPwr - t, hmt, d - dPdr - t, w - dPwr - t, hmt, -d - dNdr + t, w - t, -h, -d + t,  w - t, -h, d - t, 
+                //
+              
+                // back side necessary part
 
-                w - dPwr - t, hmt, d - dPdr - t,
-                rct + trl, hmtt - thl, d - dFdr - t,
-                rct - trl, hmtt - thl, d - dFdr - t,
-                -w - dNwr + t, hmt, d - dPdr - t,
-
-                rct - trl, hmtt - thl, d - dFdr - t,
-                rct - eb, -h, d - t,
-                -w + t, -h, d - t,
-                -w - dNwr + t, hmt, d - dPdr - t,
-
-                w - dPwr, h, d - dPdr,
-                w, -h, d,
-                rot + eb, -h, d,
-                rot + trl, hmt - ohl, d - dIdr,
-
-                w - dPwr, h, d - dPdr,
-                rot + trl, hmt - ohl, d - dIdr,
-                rot - trl, hmt - ohl, d - dIdr,
+                // extrude part 
+                
+                // out [D', D, C, C']
+                op.sb + op.il, op.hp - h, d - dPdr + op.dal,
                 -w - dNwr, h, d - dPdr,
-
-                rot - trl, hmt - ohl, d - dIdr,
-                rot - eb, -h, d,
                 -w, -h, d,
-                -w - dNwr, h, d - dPdr,
+                op.sb, -h, d,
+               
+                // in [D', C', C, D]
+                ip.sb + ip.il, ip.hp - h, d - dPdr - t + ip.dal,
+                ip.sb, -h, d - t,
+                -w + t, -h, d - t,
+                -w - dNwr + t, hmt, d - dPdr -t,
 
+                // out [A, D, D', A']
+                w - dPwr, h, d - dPdr,
+                -w - dNwr, h, d - dPdr,
+                op.sb + op.il, op.hp - h, d - dPdr + op.dal,
+                op.sb + op.il + op.tebet, op.hp - h, d - dPdr + op.dal, 
+                
+                // in [A, A', D', D]
+                w - dPwr - t, hmt, d - dPdr - t,
+                ip.sb + ip.il + ip.tebet, ip.hp - h, d - dPdr - t + ip.dal,
+                ip.sb + ip.il, ip.hp - h, d - dPdr - t + ip.dal,
+                -w - dNwr + t, hmt, d - dPdr - t,
+
+                // out [A, A', B', B]
+                w - dPwr, h, d - dPdr,
+                op.sb + op.il + op.tebet, op.hp - h, d - dPdr + op.dal,
+                op.sb + op.teb, -h, d,
+                w, -h, d,
+                
+                // in [A, B, B', A']
+                w - dPwr -t, hmt, d - dPdr - t,
+                w - t, -h, d - t,
+                ip.sb + ip.teb, -h, d - t,
+                ip.sb + ip.il + ip.tebet, ip.hp - h, d - dPdr - t + ip.dal,
+                
                 //w - dPwr - t, hmt, d - dPdr - t,
                 //w - t, -h, d - t,
                 //-w + t, -h, d - t, 
                 //-w - dNwr + t, hmt, d - dPdr - t, 
+                
+                //w - dPwr, h, d - dPdr,
+                //w, -h, d,
+                //-w, -h, d,
+                //-w - dNwr, h, d - dPdr,
 		        
                 // inside top 
                 //w - dPwr - t, hmt, d - dPdr - t, 
@@ -109,9 +146,9 @@ SceneJS.Types.addType("roof/cross_mansard",
                 //w - dPwr - t, hmt, -d - dNdr + t, 
 		       
                 // 4 side bottom
-                -w + t, -h, d - t, -w, -h, d, -w, -h, -d, -w + t, -h, -d + t,
+                ///-w + t, -h, d - t, -w, -h, d, -w, -h, -d, -w + t, -h, -d + t,
 		        //w - t, -h, -d + t, w, -h, -d, -w, -h, -d, -w + t, -h, -d + t,
-		        w - t, -h, d - t, w - t, -h, -d + t, w, -h, -d, w, -h, d,	
+		        ///w - t, -h, d - t, w - t, -h, -d + t, w, -h, -d, w, -h, d,	
 		        //w - t, -h, d - t, -w + t, -h, d - t, -w, -h, d, w, -h, d, 
 	        ];
 	        
