@@ -16,7 +16,63 @@ function initial()
 	}
 	setLayout();
 }
-
+var imgPart0 = ["./images/Part0/00.png", "./images/Part0/01.png", "./images/Part0/02.png", "./images/Part0/03.png", "./images/Part0/04.png", "./images/Part0/05.png", "./images/Part0/06.png", "./images/Part0/07.png", "./images/Part0/08.png", "./images/Part0/09.png", "./images/Part0/10.png"];
+var imgPart1 = ["./images/Part1/00.png", "./images/Part1/01.png", "./images/Part1/02.png", "./images/Part1/03.png", "./images/Part1/04.png", "./images/Part1/05.png", "./images/Part1/06.png", "./images/Part1/07.png", "./images/Part1/08.png", "./images/Part1/09.png", "./images/Part1/10.png"];
+var imgPart2 = ["./images/Part2/00.png", "./images/Part2/01.png", "./images/Part2/02.png", "./images/Part2/03.png", "./images/Part2/04.png"];
+function loadsrc()
+{
+	//loadimg("Part0", imgPart0);
+	//loadimg("Part1", imgPart1);
+	//loadimg("Part2", imgPart2);
+	var subPart0 = getElem("SubPart0");
+	var subPart1 = getElem("SubPart1");
+	var subPart2 = getElem("SubPart2");
+	//var liElem; 
+	//var imgcontent;
+	for (var i = 0; i<3; i++)
+	{
+		var tmpfolder = eval("imgPart" + i.toString());
+		var tmptarget = eval("subPart" + i.toString());
+		for (var j = 0; j < tmpfolder.length; j++)
+		{
+			var liElem = createElem("li");
+			var imgcontent = createElem("img");
+			liElem.id = "subPart_" + i.toString() + "_" + j.toString();
+			liElem.onclick = function(){subPartClick(this.id);};
+			imgcontent.src = tmpfolder[j];
+			liElem.appendChild(imgcontent);
+			if(j==0)
+			{
+				tmptarget.getElementsByClassName("main")[0].insertBefore(liElem, tmptarget.getElementsByClassName("SubClose")[0]);
+			}
+			else
+			{
+				tmptarget.getElementsByClassName("content")[0].appendChild(liElem);
+			}
+		}
+	}
+}
+function loadimg(folder, array)
+{
+	var dir = "./images/" + folder + "/";
+	var fileextension = ".png";
+	
+		$.ajax({
+		//This will retrieve the contents of the folder if the folder is configured as 'browsable'
+			url: dir,
+			success: function (data) {
+				//List all .png file names in the page
+				$(data).find("a:contains(" + fileextension + ")").each(function () {
+					var link = this.href;
+					var sublink = link.split('/');
+					var filename = sublink[sublink.length-1];
+					//var filename = this.href.replace(window.location.host, "").replace("http:///loadimg/", "");
+					//eval("img"+folder + ".push(" + dir + filename + ")");
+					array.push(dir + filename);
+				});
+			}
+		});	
+}
 function setLayout()//This function will run while onload and onresize
 {
 	Width = window.innerWidth;
@@ -49,7 +105,7 @@ function setComponent()
 		PropertyPBul = "marginLeft";
 		ValuePBli = "block";
 		PropertyPBimgclose = ["bottom", "left", "width", "height"];
-		PropertyPBContent = ["maxHeight", "top", "overflowX"];
+		PropertyPBContent = ["position", "maxHeight", "top", "overflowX"];
 		Propertycloseli = "paddingTop";
 		Valuecloseli = Height - 0.07*Width;
 	}
@@ -68,7 +124,7 @@ function setComponent()
 		PropertyPBul = "marginTop";
 		ValuePBli = "inline-block";
 		PropertyPBimgclose = ["top", "right", "width", "height"];
-		PropertyPBContent = ["maxWidth", "left", "overflowY"];
+		PropertyPBContent = ["position","maxWidth", "left", "overflowY"];
 		Propertycloseli = "paddingLeft";
 		Valuecloseli = Width - 0.07*Height;
 	}
@@ -90,17 +146,15 @@ function setFloorTab(Property,Value)
 function setPartBar(RefSize, PropertyPBul, ValuePBli, PropertyPBimgclose, PropertyPBContent,Propertycloseli,Valuecloseli)
 {
 	rmvStyle(getElemByName("ImgClose"));
-	getElem("content").removeAttribute("style");
-	getElem("SubClose").removeAttribute("style");
+	rmvStyle(getElemByClass("content"));
+	rmvStyle(getElemByClass("SubClose"));
 	setMultiStyle(getSubElem(PartBar,"img"),["width","height"],[0.07*RefSize + "px", 0.07*RefSize + "px"]);
 	setMultiStyle(getSubElem(PartBar,"ul"), PropertyPBul, 0.01*RefSize + "px");
 	setMultiStyle(getSubElem(PartBar,"li"), "display", ValuePBli);
 	setMultiStyle(getElemByName("ImgClose"),PropertyPBimgclose,["0%", "0%", 0.032*RefSize, 0.032*RefSize]);
-	getElem("content").style.position = "absolute";
-	getElem("content").style[PropertyPBContent[0]] = 5*0.07*RefSize + "px";
-	getElem("content").style[PropertyPBContent[1]] = 0.07*RefSize + "px";
-	getElem("content").style[PropertyPBContent[2]]= "hidden";
-	getElem("SubClose").style[Propertycloseli] = Valuecloseli + "px";
+	setMultiStyle(getElemByClass("content"),PropertyPBContent,["absolute", 5*0.07*RefSize + "px", 0.07*RefSize + "px", "hidden"]);
+	setMultiStyle(getElemByClass("SubClose"),Propertycloseli, Valuecloseli + "px");
+	
 	
 }
 function setExportMenu()

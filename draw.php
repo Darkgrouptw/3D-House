@@ -59,7 +59,7 @@
 	//exit;
 ?>
 </head>
-<body onresize = "setLayout()" onload = "initial()" onclick = "showstate()" ondblclick = "showstate()">
+<body onresize = "setLayout()" onload = "initial();loadsrc()" onclick = "showstate()" ondblclick = "showstate()">
 <i id = "Mode" class="fa fa-eye"></i>
 <i id = "ScreenController" class="fa fa-arrows-alt" onclick = "ScreenControll()"></i>	
 <div id = "FLOORTAB">
@@ -130,12 +130,34 @@
 	</ul>
 	
 	<ul id = "subPartBar" class = "fixed invisible" style = "background-color:rgb(247, 202, 24);">
-		<div id = "fixed" class = "fixed">
-		<li id = "SubClose" onclick = "closePartBar('subPartBar')"><img name = "ImgClose" src = "./images/icon-close.png" class = "fixed"></li>
+	
+		<div id = "SubPart0" style = "display:none;">
+			<div class = "main fixed">
+				<li class = "SubClose" onclick = "closePartBar('subPartBar')"><img name = "ImgClose" src = "./images/icon-close.png" class = "fixed"></li>
+			</div>
+		
+			<div class = " content fixed">
+			</div>
 		</div>
 		
-		<div id = "content" class = "fixed">
+		<div id = "SubPart1" style = "display:none;">
+			<div  class = "main fixed">
+				<li class = "SubClose" onclick = "closePartBar('subPartBar')"><img name = "ImgClose" src = "./images/icon-close.png" class = "fixed"></li>
+			</div>
+		
+			<div class = " content fixed">
+			</div>
 		</div>
+		
+		<div id = "SubPart2" style = "display:none;">
+			<div  class = "main fixed">
+				<li class = "SubClose" onclick = "closePartBar('subPartBar')"><img name = "ImgClose" src = "./images/icon-close.png" class = "fixed"></li>
+			</div>
+		
+			<div class = " content fixed">
+			</div>
+		</div>
+		
 	</ul>
 </div>
 

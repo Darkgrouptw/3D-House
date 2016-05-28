@@ -208,45 +208,17 @@ function PartClick()
 var totalPart = [10, 10, 4];//0-window 1-door 2-roof
 var flag = [0, 0, 0];//0-window 1-door 2-roof
 function componentClick(id){
-	if (id == "Part0")//window
-	{
-		changeWall(lastid, "wall/single_window");
-	}
-	id = id.split("")[id.length-1];
-	var AddElem = function(id, Elemindex, MajorElem,BeforeElem){
-		partmode = parseInt(id);
-		var liElem = createElem("li");
-		liElem.id = id + Elemindex.toString();
-		liElem.onclick = function(){subPartClick(liElem.id)};
-		var content = createElem("img");
-		content.src = "./images/Part" +id+"/"+Elemindex.toString()+".png";
-		liElem.appendChild(content);
-		if(!BeforeElem){
-		MajorElem.appendChild(liElem);
-		}
-		else{
-		MajorElem.insertBefore(liElem, BeforeElem);
-		}
-		
-	}
-	if(!flag[id]){
-		var fixed = getElem("fixed");
-		var content = getElem("content");
-		var BeforeElem = getElem("SubClose");
-		AddElem(id, 0, fixed, BeforeElem);
-		for(var i = 1;i <= totalPart[id]; i++){
-			AddElem(id, i, content, 0);
-		}
-		flag[id] = false;
-	}
+	var subPart = getElem("Sub" + id);
+	subPart.style.display = "block";
+	setMultiStyle(subPart.getElementsByTagName("div"),"display","block");
 	setPartBar(Math.max(Width,Height), PropertyPBul, ValuePBli, PropertyPBimgclose, PropertyPBContent,Propertycloseli,Valuecloseli)	
 	getStyle("subPartBar").display = "block";
 	
 }
 var rfcomponent = ["gable", "hip", "mansard","cross_gable"];
 function subPartClick(id){
-	tmp = id.split("");
-	type = parseInt(tmp[0]);	index = parseInt(tmp[1]);
+	tmp = id.split("_");
+	type = parseInt(tmp[1]);	index = parseInt(tmp[2]);
 	if(type ==2)//roof
 	{
 		changeRoof("roof/" + rfcomponent[index-1]);
@@ -257,14 +229,17 @@ function closePartBar(id){
 	var Bar = getStyle(id);
 	Bar.display = "none";
 	//clear subPartBar
-	var fixed = getElem("fixed");
+	var subPartBar = getElem("subPartBar").getElementsByTagName("div");
+	setMultiStyle(subPartBar,"display","none");
+	
+	/*var fixed = getElem("fixed");
 	while(fixed.childElementCount > 1){
 		fixed.removeChild(fixed.firstElementChild);
 	}	
 	var content = getElem("content");
 	while(content.hasChildNodes()){
 		content.removeChild(content.lastChild);
-	}
+	}*/
 	//show FuncBar
 	if(id == "mainPartBar"){
 		setInvisiblePartBar();
