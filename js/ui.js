@@ -19,6 +19,9 @@ var doors = [];
 var getWallID = [];
 var getWindowID = [];
 
+none_select_material_color = {r:1,g:1,b:1}
+select_material_color = {r:0.7,g:0.7,b:0.3}
+
 function UIinit(boolFlag)
 {
     console.log('what did you done');
@@ -313,7 +316,7 @@ function ScenePick(){
 
                 if(lastid>0){
                     material= housenode2Material(scene.findNode(lastid)); 
-                    material.setColor({ r:1, g:1, b:1});
+                    material.setColor(none_select_material_color);
                 }
                 var id=hit.nodeId;
                 var element=TextureName2housenode(scene.findNode(id)); 
@@ -498,7 +501,7 @@ function addInterWall(){
                 nodes:
                 [{
                     type: "material",
-                    color:{ r:0.8, g:0.8, b:0.8 },
+                    color:none_select_material_color,
                     alpha:0.2,
                     nodes:
                     [{
@@ -585,7 +588,7 @@ function addBase(){
                 nodes:
                 [{
                     type: "material",
-                    color:{ r:0.8, g:0.8, b:0.8 },
+                    color:none_select_material_color,
                     alpha:0.2,
                     nodes:
                     [{
@@ -647,7 +650,7 @@ function addBase(){
                 nodes:
                 [{
                     type: "material",
-                    color:{ r:0.8, g:0.8, b:0.8 },
+                    color:none_select_material_color,
                     alpha:0.2,
                     nodes:
                     [{
@@ -713,7 +716,7 @@ function addBase(){
                 nodes:
                 [{
                     type: "material",
-                    color:{ r:0.8, g:0.8, b:0.8 },
+                    color:none_select_material_color,
                     alpha:0.2,
                     nodes:
                     [{
@@ -776,7 +779,7 @@ function addBase(){
                 nodes:
                 [{
                     type: "material",
-                    color:{ r:0.8, g:0.8, b:0.8 },
+                    color:none_select_material_color,
                     alpha:0.2,
                     nodes:
                     [{
@@ -1894,9 +1897,9 @@ function timeFuction(){
                 }
                 if(node.getType() == "material"){
                     if(Material2housenode(node).getID() == select_node){
-                        node.setColor({r:0.7,g:0.7,b:0.3});
+                        node.setColor(select_material_color);
                     }else{
-                        node.setColor({r:1,g:1,b:1});
+                        node.setColor(none_select_material_color);
                     }
                 }
                 if(node.getType() == "texture"){
@@ -2430,7 +2433,7 @@ function getHipS(param){
             nodes:
             [{
                 type: "material",
-                color:{ r:0.8, g:0.8, b:0.8 },
+                color:none_select_material_color,
                 alpha:0.2,
                 nodes:
                 [{
@@ -2497,7 +2500,7 @@ function getMansardS(param){
             nodes:
             [{
                 type: "material",
-                color:{ r:0.8, g:0.8, b:0.8 },
+                color:none_select_material_color,
                 alpha:0.2,
                 nodes:
                 [{
@@ -2564,7 +2567,7 @@ function getGableS(param){
             nodes:
             [{
                 type: "material",
-                color:{ r:0.8, g:0.8, b:0.8 },
+                color:none_select_material_color,
                 alpha:0.2,
                 nodes:
                 [{
@@ -2630,7 +2633,7 @@ function getCrossGableS(param){
             nodes:
             [{
                 type: "material",
-                color:{ r:0.8, g:0.8, b:0.8 },
+                color:none_select_material_color,
                 alpha:0.2,
                 nodes:
                 [{
@@ -2701,7 +2704,7 @@ function getTriangleS(param){
             nodes:
             [{
                 type: "material",
-                color:{ r:0.8, g:0.8, b:0.8 },
+                color:none_select_material_color,
                 alpha:0.2,
                 nodes:
                 [{
@@ -2765,7 +2768,7 @@ function getWindow_fixed(param){
 			nodes:
 			[{
 				type: "material",
-				color:{ r:0.8, g:0.8, b:0.8 },
+				color:none_select_material_color,
                 alpha:0.2,
 				
 				nodes:
@@ -2830,7 +2833,7 @@ function getNormalWallS(param){
             nodes:
             [{
                 type: "material",
-                color:{ r:0.8, g:0.8, b:0.8 },
+                color:none_select_material_color,
                 alpha:0.2,
                 nodes:
                 [{
@@ -2897,7 +2900,7 @@ function getSingleWallS(param){
             nodes:
             [{
                 type: "material",
-                color:{ r:0.8, g:0.8, b:0.8 },
+                color:none_select_material_color,
                 alpha:0.2,
                 nodes:
                 [{
@@ -2967,7 +2970,7 @@ function getDoorWallS(param){
             nodes:
             [{
                 type: "material",
-                color:{ r:0.8, g:0.8, b:0.8 },
+                color:none_select_material_color,
                 alpha:0.2,
                 nodes:
                 [{
