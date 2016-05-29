@@ -340,7 +340,7 @@ function ScenePick(){
                 //console.log("getWallID ", getWallID);
                 //console.log("getWindowID ", getWindowID);
                 console.log("ID: ", element.getID(), " partmode: ", partmode);
-                if(pickObjId != null) { delete scene.getNode(pickObjId)._topicSubs.rendered; } // delete render event from trackPosition
+                if(pickObjId != null && scene.getNode(pickObjId) != null) { delete scene.getNode(pickObjId)._topicSubs.rendered; } // delete render event from trackPosition
                 objectId = hit.nodeId;
 				pickObjId = objectId;
 				selectLayer();
@@ -948,6 +948,7 @@ function attachInput(pickId){
                 heightpropertyValue.textContent=heightinput.value;
                 n.callBaseCalibration();
                 dirty = true;
+				console.log(n.getTranslate()[1]);
             }
         });
         //heightinput.addEventListener('change',function(event){
@@ -1180,6 +1181,22 @@ function attachInput(pickId){
 			changeWall(n.getID(),"wall/no_window");
         });
     }
+	//mutil wall
+	if(n.getDirection){
+		var div = document.createElement("div");
+		inputarea.appendChild(div);
+		//text
+		var multi_propertyName = document.createElement("lable");
+			multi_propertyName.textContent = "multi";
+			div.appendChild(multi_propertyName);
+		var multi_input = document.createElement("input");
+			multi_input.value = "multi";
+			multi_input.type = "button";
+			div.appendChild(multi_input);
+		multi_input.addEventListener('click',function(event){
+			changeWall(n.getID(),"wall/multi_window");
+		});
+	}
     //depth
     if(n.getDepth){
         var depthismove=false;
@@ -1995,8 +2012,9 @@ function timeFuction(){
 							var wall_height = node.getHeight();
 							var result=callculateWindow({rotate:rotate,translate:traslate,
 										 window_ratio_X:window_ratio_X,window_ratio_Y:window_ratio_Y,
-										 wall_width:wall_width,wall_height});
-                            
+										 wall_width:wall_width,wall_height: wall_height});
+                            var centers = node.getExactlyWindowCenter();
+							
                             if(getWindowID.indexOf(windows[next_window_used].getID()) == -1)
                             {
                                 getWindowID.push(windows[next_window_used].getID());
@@ -2004,7 +2022,8 @@ function timeFuction(){
                             }
 
 							var target = flag2housenode(windows[next_window_used]);
-							target.setTranslate([result.x,result.y,result.z]);
+							//target.setTranslate([result.x,result.y,result.z]);
+							target.setTranslate([centers[2*j],centers[2*j+1]+node.getHeight(),result.z]);
 							target.setRotate([result.rx,result.ry,result.rz]);
 							target.setSize({a:window_size_X,b:window_size_Y});
 							next_window_used++;
@@ -2029,21 +2048,22 @@ function callculateWindow(param){
 	var traslate = param.translate;
 	var window_ratio_X = param.window_ratio_X;
 	var window_ratio_Y = param.window_ratio_Y;
+	
 	var wall_width = param.wall_width;
 	var wall_height = param.wall_height;
 	var x=0,y=0,z=0,rx=0,ry=0,rz=0;
 	rx=rotate[0];ry=rotate[1];rz=rotate[2];
 	if(rotate[1] == 270){
 		x = traslate[0];
-		y = traslate[1] - wall_height/2 + wall_height * (2*window_ratio_Y -0.5) ;
-		z = traslate[2] - wall_width/2 + wall_width * (2*window_ratio_X -0.5);
+		y = traslate[1] - wall_height/2 + wall_height * (2*window_ratio_Y-0.5) ;
+		z = traslate[2] - wall_width/2 + wall_width * (2*window_ratio_X-0.5);
 	}else if(rotate[1] == 90){
 		x = traslate[0];
 		y = traslate[1] - wall_height/2 + wall_height * (2*window_ratio_Y -0.5) ;
 		z = traslate[2] + wall_width/2 - wall_width * (2*window_ratio_X -0.5);
 	}else{
 		x = traslate[0] - wall_width/2 + wall_width * (2*window_ratio_X -0.5);
-		y = traslate[1] - wall_height/2 + wall_height * (2*window_ratio_Y -0.5);
+		y = traslate[1] - wall_height/2 + wall_height * (2*window_ratio_Y-0.5) ;
 		z = traslate[2];
 	}
 	if(ry == 90 && traslate[0] < 0){
@@ -3028,12 +3048,84 @@ function getDoorWallS(param){
 	};
 	return door_wall;
 }
+function getMultiWallS(param){
+	var multi_wall = {
+		type: "flags",
+        flags:{transparent:false},
+        nodes:
+        [{
+            type: "name",
+            name: param.pos,
 
+            nodes:
+            [{
+                type: "material",
+                color:none_select_material_color,
+                alpha:0.2,
+                nodes:
+                [{
+                    type: "name",
+                    name: "Wall.jpg",
+
+                    nodes:
+                    [{
+                        type: "matrix",
+                        elements:[0,0,1,0,1,0,0,0,0,1,0,0,9,8.5,0,1],
+
+                        nodes:
+                        [{
+                            type: "texture",
+                            src: "images/GeometryTexture/wall.jpg",
+                            applyTo: "color",
+
+                            nodes: 
+                            [{
+                                type: "texture",
+                                src: "images/GeometryTexture/wallSpecularMap.png",
+                                applyTo: "specular", // Apply to specularity
+
+                                nodes: 
+                                [{
+                                    type: "texture",
+                                    src: "images/GeometryTexture/wallNormalMap.png",
+                                    applyTo: "normals", // Apply to geometry normal vectors
+
+                                    nodes:
+                                    [{
+                                        type: "wall/multi_window",
+                                        layer: param.layer,
+                                        height: param.height,
+                                        width: param.width,
+                                        thickness: param.thick,
+                                        direction: param.dir,
+                                        priority: param.pri,
+                                        percentX: param.perX,
+                                        percentY: param.perY,
+										windowSize: [],
+										windowCenter: [],
+										doorSize:{a:3,b:6},
+										doorPosratio: 0.5,
+										gap: 2,
+                                        scale: {x: 1, y: 1, z: 1},
+                                        rotate: {x: param.rotateX, y: param.rotateY, z: param.rotateZ},
+                                        translate: {x: 0, y: 0, z: 0}
+                                    }]
+                                }]
+                            }]
+                        }]
+                    }]
+                }]
+            }]
+        }]
+	};
+	return multi_wall;
+}
 function changeWall(wall_id,wall_type){
 	var n = scene.findNode(wall_id);
 	if(n.getType() !="wall/no_window" &&
 	  n.getType() !="wall/single_window" &&
-	  n.getType() !="wall/door_entry" ){
+	  n.getType() !="wall/door_entry" &&
+	  n.getType() !="wall/multi_window"){
 		return;
 	}
 	
@@ -3063,6 +3155,9 @@ function changeWall(wall_id,wall_type){
 	}else if(wall_type == "wall/door_entry"){
 		var door_wallS = getDoorWallS(param);
 			root.addNode(door_wallS);
+	}else if(wall_type == "wall/multi_window"){
+		var multi_wallS =getMultiWallS(param);
+			root.addNode(multi_wallS);
 	}
 	
 	housenode2flag(n).destroy();
