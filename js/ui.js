@@ -931,7 +931,12 @@ function attachInput(pickId){
             heightinput.max="50";
             heightinput.step="0.1";
             heightinput.value=n.getHeight();
-            if(n.getRealHeight)heightinput.value=n.getRealHeight();
+			if(n.getLayer && n.getLayer() == 1){
+				
+			}else{
+				if(n.getRealHeight)heightinput.value=n.getRealHeight();
+			}
+            
             div.appendChild(heightinput);
     
         var heightpropertyValue=document.createElement("lable");
@@ -944,7 +949,11 @@ function attachInput(pickId){
         heightinput.addEventListener('mousemove',function(event){
             if (heightismove) {
                 n.setHeight(Number(heightinput.value*1.0));
-                if(n.setRealHeight){n.setRealHeight(Number(heightinput.value*1.0));}
+				if(n.getLayer && n.getLayer() == 1){
+					
+				}else{
+					if(n.setRealHeight){n.setRealHeight(Number(heightinput.value*1.0));}
+				}
                 heightpropertyValue.textContent=heightinput.value;
                 n.callBaseCalibration();
                 dirty = true;
@@ -978,7 +987,11 @@ function attachInput(pickId){
             widthinput.max="50";
             widthinput.step="0.1";
             widthinput.value=n.getWidth();
-            if(n.getRealWidth)widthinput.value=n.getRealWidth();
+			if(n.getLayer && n.getLayer() == 1){
+				
+			}else{
+				if(n.getRealWidth)widthinput.value=n.getRealWidth();
+			}
             div.appendChild(widthinput);
     
         var widthpropertyValue=document.createElement("lable");
@@ -991,7 +1004,11 @@ function attachInput(pickId){
         widthinput.addEventListener('mousemove',function(event){
             if (widthismove) {
                 n.setWidth(Number(widthinput.value*1.0));
-                if(n.setRealWidth){n.setRealWidth(Number(widthinput.value*1.0));}
+				if(n.getLayer && n.getLayer() == 1){
+					
+				}else{
+					if(n.setRealWidth){n.setRealWidth(Number(widthinput.value*1.0));}
+				}
                 widthpropertyValue.textContent=widthinput.value;
                 n.callBaseCalibration();
                 dirty = true;
@@ -999,10 +1016,84 @@ function attachInput(pickId){
         });
         widthinput.addEventListener('mouseup',function(event){
             widthismove=false;
+			
         });
     }
     
-
+	//basicRealWidth
+	if(n.getRealWidth && housenode2Pos(n).getName() == "base" && n.getLayer && n.getLayer() == 1){
+		var realWidthismove = false;
+		var div = document.createElement("div");
+		inputarea.appendChild(div);
+		//text
+		var realWidth_propertyName = document.createElement("lable");
+		realWidth_propertyName.textContent = "realWidth";
+		div.appendChild(realWidth_propertyName);
+		//input
+		var realWidth_input = document.createElement("input");
+			realWidth_input.type="range";
+            realWidth_input.min="1";
+            realWidth_input.max="50";
+            realWidth_input.step="0.1";
+            realWidth_input.value=n.getRealWidth();
+			div.appendChild(realWidth_input);
+		
+		var realWidth_propertyValue = document.createElement("lable");
+		realWidth_propertyValue.textContent = realWidth_input.value;
+		div.appendChild(realWidth_propertyValue);
+		realWidth_input.addEventListener('mousedown',function(event){
+            realWidthismove=true;
+        });
+        realWidth_input.addEventListener('mousemove',function(event){
+            if (realWidthismove) {
+                n.setRealWidth(Number(realWidth_input.value*1.0));
+                realWidth_propertyValue.textContent=realWidth_input.value;
+                n.callBaseCalibration();
+                dirty = true;
+            }
+        });
+        realWidth_input.addEventListener('mouseup',function(event){
+			realWidthismove=false;
+        });
+	}
+	
+	//basicRealHeight
+	if(n.getRealHeight && housenode2Pos(n).getName() == "base" && n.getLayer && n.getLayer() == 1){
+		var realHeightismove = false;
+		var div = document.createElement("div");
+		inputarea.appendChild(div);
+		//text
+		var realHeight_propertyName = document.createElement("lable");
+		realHeight_propertyName.textContent = "realHeight";
+		div.appendChild(realHeight_propertyName);
+		//input
+		var realHeight_input = document.createElement("input");
+			realHeight_input.type="range";
+            realHeight_input.min="1";
+            realHeight_input.max="50";
+            realHeight_input.step="0.1";
+            realHeight_input.value=n.getRealHeight();
+			div.appendChild(realHeight_input);
+		
+		var realHeight_propertyValue = document.createElement("lable");
+		realHeight_propertyValue.textContent = realHeight_input.value;
+		div.appendChild(realHeight_propertyValue);
+		realHeight_input.addEventListener('mousedown',function(event){
+            realHeightismove=true;
+        });
+        realHeight_input.addEventListener('mousemove',function(event){
+            if (realHeightismove) {
+                n.setRealHeight(Number(realHeight_input.value*1.0));
+                realHeight_propertyValue.textContent=realHeight_input.value;
+                n.callBaseCalibration();
+                dirty = true;
+            }
+        });
+        realHeight_input.addEventListener('mouseup',function(event){
+			realHeightismove=false;
+        });
+	}
+	
     //percentX
     if(n.getPercentX && housenode2Pos(n).getName() == "interWall"){
         var percentXismove=false;

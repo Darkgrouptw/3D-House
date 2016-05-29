@@ -127,17 +127,26 @@ SceneJS.Types.addType("base/basic",
 				}
 			}
 		}
-		//get the orign w and h
-		this.setWidth(this.getRealWidth());
-		this.setHeight(this.getRealHeight());
+		
+		
 
 		//change self to fit down base
 		if(downBase !=-1){
+			//get the orign w and h
+			this.setWidth(this.getRealWidth());
+			this.setHeight(this.getRealHeight());
 			if(this.getRealWidth() < downBase.getRealWidth()){
 				this.setWidth(downBase.getRealWidth());
 			}
 			if(this.getRealHeight() < downBase.getRealHeight()){
 				this.setHeight(downBase.getRealHeight());
+			}
+		}else{
+			if(this.getRealWidth() >= this.getWidth()){
+				this.setRealWidth(this.getWidth());
+			}
+			if(this.getRealHeight() >= this.getHeight()){
+				this.setRealHeight(this.getHeight());
 			}
 		}
 		//set four walls position
@@ -164,8 +173,10 @@ SceneJS.Types.addType("base/basic",
 			this.setOffsetX(baseCenterX - (downBase.getTranslate()[0] + downBase.getOffsetX()));
 			this.setOffsetY(baseCenterZ - (downBase.getTranslate()[2] + downBase.getOffsetY()));
 		}else{
-			this.setOffsetX(0);
-			this.setOffsetY(0);
+			this.setOffsetX(baseCenterX - (0));
+			this.setOffsetY(baseCenterZ - (0));
+			//this.setOffsetX(0);
+			//this.setOffsetY(0);
 		}
 		if(frontWall!=-1){
 			havefrontWall = true;
