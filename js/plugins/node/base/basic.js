@@ -10,7 +10,7 @@ SceneJS.Types.addType("base/basic",
 		this._offsetY;
 		this._paramana = new ParameterManager(params, function(property)
 		{
-			var w = property.width, h = property.height, t = property.thickness; 
+			var w = property.width *1, h = property.height *1, t = property.thickness; 
 			var pset = 
             [
 				w, t, h, -w, t, h, -w, -t, h, w, -t, h,
@@ -79,7 +79,7 @@ SceneJS.Types.addType("base/basic",
 	callBaseCalibration: function(high)
 	{
 		
-		try {
+		//try {
 		//get all the element
 		
 		var mnmte = function(n) { return n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0]; }
@@ -472,11 +472,11 @@ SceneJS.Types.addType("base/basic",
 			}
 		}
 		//dirty = false;
-		}
-		catch(err) {
-		    //console.log(err.message);
-		    dirty = true;
-		}
+		//}
+		//catch(err) {
+		//    //console.log(err.message);
+		//    dirty = true;
+		//}
 		 
 	}
 });

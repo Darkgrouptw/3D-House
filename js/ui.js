@@ -2338,6 +2338,8 @@ function getgableInfo(){
     return '<element><type>roof/gable</type><transform><scale>1,1,1</scale><rotate>0,90,0</rotate><translate>0,21.5,0</translate></transform><texture>roof.jpg</texture><pos>roof</pos><property><height>5</height><width>8</width><thickness>1</thickness><depth>18</depth><ratio>0.5,0.5</ratio></property></element><element><type>wall/triangle</type><transform><scale>1,1,1</scale><rotate>0,90,0</rotate><translate>17,22,0</translate></transform>    <texture>wall.jpg</texture><pos>rightTriangle</pos><property><height>5</height><width>8</width><thickness>1</thickness><ratio>0.5,0.5</ratio></property></element><element><type>wall/triangle</type><transform><scale>1,1,1</scale><rotate>0,-90,0</rotate><translate>-17,22,0</translate></transform>        <texture>wall.jpg</texture><pos>leftTriangle</pos><property><height>5</height><width>8</width><thickness>1</thickness><ratio>0.5,0.5</ratio></property></element>';
 }
 function getElementXML(n){
+	var cut_string = "images/GeometryTexture/";
+	var cut_length = cut_string.length;
     var xml='';
     xml+='\t'+'<element>'+'\n';
         if(n.getType)xml+='\t\t'+'<type>'+n.getType()+'</type>'+'\n';
@@ -2360,6 +2362,18 @@ function getElementXML(n){
             xml+=housenode2TextureName(n).getName();
         }
         xml+='</texture>'+'\n';
+		xml+='\t\t'+'<specular>';
+        if(housenode2TextureName(n).getName){
+			var s =housenode2SpecularTexture(n)._core.src ;
+            xml+= s.substring(cut_length,s.length);
+        }
+        xml+='</specular>'+'\n';
+		xml+='\t\t'+'<normalmap>';
+        if(housenode2TextureName(n).getName){
+            var s =housenode2normalTexture(n)._core.src ;
+            xml+= s.substring(cut_length,s.length);
+        }
+        xml+='</normalmap>'+'\n';
         xml+='\t\t'+'<pos>';
         if(housenode2Pos(n).getName){
             xml+=housenode2Pos(n).getName();
@@ -2367,10 +2381,10 @@ function getElementXML(n){
         xml+='</pos>'+'\n';
         xml+='\t\t'+'<property>'+'\n';
             if(n.getLayer)xml+='\t\t\t'+'<layer>'+n.getLayer()+'</layer>'+'\n';
-            if(n.getRealHeight)xml+='\t\t\t'+'<height>'+n.getRealHeight()+'</height>'+'\n';
-            else if(n.getHeight)xml+='\t\t\t'+'<height>'+n.getHeight()+'</height>'+'\n';
-            if(n.getRealWidth)xml+='\t\t\t'+'<width>'+n.getRealWidth()+'</width>'+'\n';
-            else if(n.getWidth)xml+='\t\t\t'+'<width>'+n.getWidth()+'</width>'+'\n';
+			if(n.getRealHeight)xml+='\t\t\t'+'<realheight>'+n.getRealHeight()+'</realheight>'+'\n';
+            if(n.getHeight)xml+='\t\t\t'+'<height>'+n.getHeight()+'</height>'+'\n';
+            if(n.getRealWidth)xml+='\t\t\t'+'<realwidth>'+n.getRealWidth()+'</realwidth>'+'\n';
+            if(n.getWidth)xml+='\t\t\t'+'<width>'+n.getWidth()+'</width>'+'\n';
             if(n.getThickness)xml+='\t\t\t'+'<thickness>'+n.getThickness()+'</thickness>'+'\n';
             if(n.getDepth)xml+='\t\t\t'+'<depth>'+n.getDepth()+'</depth>'+'\n';
             if(n.getRatio){
@@ -2434,6 +2448,7 @@ function getElementXML(n){
 			if(n.getExtrudeBas && n.getExtrudeBas())xml+='\t\t\t'+'<extrude_bas>'+n.getExtrudeBas()+'</extrude_bas>'+'\n';
 			if(n.getBackGrasp && n.getBackGrasp())xml+='\t\t\t'+'<back_grasp>'+n.getBackGrasp()+'</back_grasp>'+'\n';
 			if(n.getBackSide && n.getBackSide())xml+='\t\t\t'+'<backside>'+n.getBackSide()+'</backside>'+'\n';
+			if(n.getGap && n.getGap())xml+='\t\t\t'+'<gap>'+n.getGap()+'</gap>'+'\n';
         xml+='\t\t'+'</property>'+'\n';
     xml+='\t'+'</element>'+'\n';
     return xml;
