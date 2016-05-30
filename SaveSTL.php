@@ -472,7 +472,7 @@
 
                     for($i = 0;$i<count($vArr);$i++){
                         for($modelNo = 0;$modelNo<5;$modelNo++){
-                            if($mVIndex[$modelNo].indexOf($i) > -1){
+                            if(array_search($i, $mVIndex[$modelNo]) !== false){
                                 $vStr[$modelNo] .= $vArr[$i];
                                 $vnStr[$modelNo] .= $vnArr[$i];
                             }
@@ -510,9 +510,11 @@
                         }
                     }
 
+                    file_put_contents("debug.txt", serialize($vArr));
+
                     for($i = 0;$i<count($vArr);$i++){
                         for($modelNo = 0;$modelNo<4;$modelNo++){
-                            if($mVIndex[$modelNo].indexOf($i) > -1){
+                            if(array_search($i, $mVIndex[$modelNo]) !== false){
                                 $vStr[$modelNo] .= $vArr[$i];
                                 $vnStr[$modelNo] .= $vnArr[$i];
                             }
@@ -1467,6 +1469,7 @@
                 $node->makePoints();
             }
             $objtext = convertToMultiObj($nodes);
+
             for($i = 0;$i<count($objtext);$i++){
                 file_put_contents($i.".obj", $objtext[$i]);
             }
@@ -1654,6 +1657,228 @@
                 $wr, $h, -$d, $wr, $h, $d, -$w, -$h, $d, -$w, -$h, -$d,
                 $wr, $h, -$d, $wr, $h, $d, $w, -$h, $d, $w, -$h, -$d
             );
+            $this->points = [];
+            for($i = 0;$i < count($pset);$i+=3){
+                array_push($this->points, [$pset[$i], $pset[$i+1], $pset[$i+2]]);
+            }
+            $this->defaultIndices(count($this->points));
+        }
+
+        public function cross_gable_ratio_boundary($val){
+            $reval = $val;
+            switch($reval)
+            {
+                case ($reval < 0):
+                    $reval = 0; break;
+                case ($reval > 1):
+                    $reval = 1; break;
+            }
+            return $reval;
+        }
+
+        public function pushArrayElements(&$target, &$arr){
+            for($i = 0;$i < count($arr);$i++){
+                array_push($target, $arr[$i]);
+            }
+        }
+
+        public function makePoints_roof_cross_gable(){
+            global $debugArDiuNei;
+            $bs = $this->myElement->property->back_side == "on" ? true: false;
+
+            $this->properties = array_map("floatval", (array)$this->myElement->property);
+            $w = floatval($this->properties["width"]);
+            $d = floatval($this->properties["depth"]);
+            $h = floatval($this->properties["height"]);
+            $t = floatval($this->properties["thickness"]); 
+
+            $r = array_map("floatval", (array)explode(",", $this->myElement->property->ratio));
+            $r[0] = $this->cross_gable_ratio_boundary($r[0]);
+            $r[1] = $this->cross_gable_ratio_boundary($r[1]);
+
+            $el = floatval($this->properties["extrude_len"]) * 2.0;
+            $eb = floatval($this->properties["extrude_bas"]) * 2.0;
+
+            $eh = floatval($this->properties["extrude_hgt"]);
+            $eh = $this->cross_gable_ratio_boundary($eh);
+
+            $ep = floatval($this->properties["extrude_pos"]);
+            $ep = $this->cross_gable_ratio_boundary($ep);
+
+            $td = $d - (3.0 * $t);
+            if($eb > (2.0 * $td)) { $eb = 2.0 * $td; }
+
+            $wr = ($w * $r[0] + -$w * $r[1]) / 2.0;
+            $db = ($d - ($eb * 0.5)) - (3.0 * $t);
+            $dr = (2.0 * $db) * (1.0 - $ep);
+            $dl = (2.0 * $db) * $ep;
+            $ldb = $db * 2.0 * $ep;
+            $rdb = $db * 2.0 * (1.0 - $ep);
+            
+            $base_len = $w + (2.0 * $t);
+            if($base_len < ($wr + $el)) { $base_len = $wr + $el; }
+
+            $dt = $t;
+            $st = (2.0 * $h / ( $w * $r[0] + $w * $r[1])) * $dt;
+            $sh = $h * $eh;
+            $whr = ($w / 2.0) * (1.0 - $eh);
+
+            $hrate = $st / ($sh + $h);
+            $dtt = $eb * 0.5 * $hrate;
+
+            $gs = floatval($this->properties["back_grasp"]) * 0.7;
+            $gsr = floatval($this->properties["back_grasp"]) / sqrt((pow((2.0 * $h),2.0) + pow((2.0 * $w), 2.0)));
+            $mh = ($gsr * $h * 2.0);
+            $mw = ($gsr * $w);
+    
+                //front bottom
+            $fbtm =
+            [
+                -$td + $ldb - $dtt, -$h, $w + $dt, -$d, -$h, $w + $dt, -$d, -$h, $w, -$td + $ldb, -$h, $w,
+                $d, -$h, $w + $dt, $td - $rdb + $dtt, -$h,$w + $dt, $td - $rdb, -$h, $w, $d, -$h, $w,
+            ];
+
+                // backside: nesseary part, L M R
+            $bside = 
+            [
+                -$d, $h, $wr, -$d, -$h, -$w, -$d + $gs, -$h, -$w, -$d + $gs, $h - $mh, $wr - $mw,
+                -$d, $h, $wr, -$d + $gs, $h - $mh, $wr - $mw, $d - $gs, $h - $mh, $wr - $mw, $d, $h, $wr,
+                $d - $gs, $h - $mh, $wr - $mw, $d - $gs, -$h, -$w, $d, -$h, -$w, $d, $h, $wr,
+
+                -$d, $h + $st, $wr, -$d + $gs, $h - $mh + $st, $wr - $mw, -$d + $gs, -$h, -$w - $dt, -$d, -$h, -$w - $dt,
+                -$d, $h + $st, $wr, $d, $h + $st, $wr, $d - $gs, $h - $mh + $st, $wr - $mw, -$d + $gs, $h - $mh + $st, $wr - $mw,
+                $d - $gs, $h - $mh + $st, $wr - $mw, $d, $h + $st, $wr, $d, -$h, -$w - $dt, $d - $gs, -$h, -$w - $dt,
+            ];
+
+                // extrude
+            $exd =
+            [
+                //-db + dl, sh, wr + el, -td + ldb, -h, base_len, -td + ldb, -h, w, -db + dl, sh, wr + whr,
+                //-db + dl, sh + st, wr + el, -db + dl, sh + st, wr + whr, -td + ldb - dtt, -h, w + dt, -td + ldb - dtt, -h, base_len,
+
+                //-db + dl, sh, wr + whr, td - rdb, -h, w, td - rdb, -h, base_len, -db + dl, sh, wr + el,
+                //db - dr, sh + st, wr + whr, -db + dl, sh + st, wr + el, td - rdb + dtt, -h, base_len, td - rdb + dtt, -h, w + dt,
+
+                -$db + $dl, $sh, $base_len, -$td + $ldb, -$h, $base_len, -$td + $ldb, -$h, $w, -$db + $dl, $sh, $wr + $whr,
+                -$db + $dl, $sh + $st, $base_len, -$db + $dl, $sh + $st, $wr + $whr, -$td + $ldb - $dtt, -$h, $w + $dt, -$td + $ldb - $dtt, -$h, $base_len,
+
+                -$db + $dl, $sh, $wr + $whr, $td - $rdb, -$h, $w, $td - $rdb, -$h, $base_len, -$db + $dl, $sh, $base_len,
+                $db -$dr, $sh + $st, $wr + $whr, -$db + $dl, $sh + $st, $base_len, $td - $rdb + $dtt, -$h, $base_len, $td - $rdb + $dtt, -$h, $w + $dt,
+
+            ];
+
+                // extrude bottom 
+            $ebtm = 
+            [
+                -$td + $ldb, -$h, $base_len, -$td + $ldb - $dtt, -$h, $base_len, -$td + $ldb - $dtt, -$h, $w + $dt, -$td + $ldb, -$h, $w, 
+                $td - $rdb, -$h, $w, $td - $rdb + $dtt, -$h, $w + $dt, $td - $rdb + $dtt, -$h, $base_len, $td - $rdb, -$h, $base_len,
+            ];
+
+                // extrude side
+            $eside =
+            [
+                -$db + $dl, $sh, $base_len, -$db + $dl, $sh + $st, $base_len, -$td + $ldb - $dtt, -$h, $base_len, -$td + $ldb, -$h, $base_len, 
+                -$db + $dl, $sh + $st, $base_len, -$db + $dl, $sh, $base_len, $td - $rdb, -$h, $base_len, $td - $rdb + $dtt, -$h, $base_len, 
+            ];
+
+                // backside bottom 
+            $bbtm = 
+            [
+                $d - $gs, -$h, -$w - $dt, $d, -$h, -$w - $dt, $d, -$h, -$w, $d - $gs, -$h, -$w,
+                -$d, -$h, -$w - $dt, -$d + $gs, -$h, -$w - $dt, -$d + $gs, -$h, -$w, -$d, -$h, -$w,
+            ];
+
+                // side 
+            $oside = 
+            [
+                -$d, $h, $wr, -$d, $h + $st, $wr, -$d, -$h, -$w - $dt, -$d, -$h, -$w,
+                -$d, $h + $st, $wr, -$d, $h, $wr, -$d, -$h, $w, -$d, -$h, $w + $dt, 
+                $d, $h, $wr, $d, $h + $st, $wr, $d, -$h, $w + $dt, $d, -$h, $w,
+                $d, $h + $st, $wr, $d, $h, $wr, $d, -$h, -$w, $d, -$h, -$w - $dt
+            ]; 
+
+            $bspet = [];
+            if(!$bs)
+            {
+                $bspet = 
+                [
+                    -$d + $gs, $h -$mh + $st, $wr - $mw, $d - $gs, $h - $mh + $st, $wr - $mw, 
+                    $d - $gs, $h - $mh, $wr - $mw, -$d + $gs, $h - $mh, $wr - $mw, 
+
+                    -$d + $gs, $h - $mh + $st, $wr - $mw, -$d + $gs, $h - $mh, $wr - $mw,
+                    -$d + $gs, -$h, -$w, -$d + $gs, -$h, -$w - $dt,
+
+                    $d - $gs, $h - $mh, $wr - $mw, $d - $gs, $h -$mh + $st, $wr - $mw,
+                    $d - $gs, -$h, -$w - $dt, $d - $gs, -$h, -$w,
+                ];
+            }
+            else
+            {
+                $bspet = 
+                [
+                    // full backside
+                    -$d + $gs, $h - $mh, $wr - $mw, -$d + $gs, -$h, -$w, $d - $gs, -$h, -$w, $d - $gs, $h - $mh, $wr - $mw,
+                    -$d + $gs, $h - $mh + $st, $wr - $mw, $d - $gs, $h - $mh + $st, $wr - $mw, $d - $gs, -$h, -$w - $dt, -$d + $gs, -$h, -$w - $dt,
+
+                    // bottom
+                    -$d + $gs, -$h, -$w - $dt, $d - $gs, -$h, -$w - $dt, $d - $gs, -$h, -$w, -$d + $gs, -$h, -$w
+                ];
+            }
+            
+            // if seperate below two part, the normals will not consistence
+            $fcont =
+            [
+                // frontside
+                -$db + $dl, $sh, $wr + $whr, -$td + $ldb, -$h, $w, -$d, -$h, $w, -$d, $h, $wr, 
+                
+                //-db + dl, sh + st, wr + whr, -d, h + st, wr, -d, -h, w + dt, -td + ldb - dt, -h, w + dt,
+                -$db + $dl, $sh + $st, $wr + $whr, -$d, $h + $st, $wr, -$d, -$h, $w + $dt, -$td + $ldb -$dtt, -$h, $w + $dt,
+
+                $d, $h, $wr, $d, -$h, $w,$td - $rdb, -$h, $w, $db - $dr, $sh, $wr + $whr,
+                $d, $h + $st, $wr, $db - $dr, $sh + $st, $wr + $whr, $td - $rdb + $dtt, -$h, $w + $dt, $d, -$h, $w + $dt,
+            ];
+
+            /*var ap = [-db + dl, sh + st, wr + whr];
+            var bp = [-td + ldb - dtt, -h, w + dt];
+            var cp = [-td + ldb, -h, w];
+            var dp = [-db + dl, sh, wr + whr];
+
+            var a = [], b = [], c = [];
+            SceneJS_math_subVec3(ap, dp, a);
+            SceneJS_math_subVec3(bp, cp, b);
+            SceneJS_math_subVec3(cp, dp, c);
+
+            console.log(a);
+            console.log(b);
+            console.log(c);
+
+            var tmpr = [];
+            SceneJS_math_cross3Vec3(b,c,tmpr);
+            var rr = SceneJS_math_dotVec3(a, tmpr);
+            console.log(rr);*/
+
+            $apet = [];
+            if(1.0 != $eh)
+            {
+                $apet = 
+                [
+                    -$d, $h, $wr, -$d, $h, $wr, $d, $h, $wr, -$db + $dl, $sh, $wr + $whr,
+                    -$d, $h + $st, $wr, -$db + $dl, $sh + $st, $wr + $whr, $d, $h + $st, $wr, -$d, $h + $st, $wr
+                ];
+            }
+            else { $apet = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]; }
+
+            $pset = [];
+            $this->pushArrayElements($pset, $fbtm);
+            $this->pushArrayElements($pset, $bside);
+            $this->pushArrayElements($pset, $exd);
+            $this->pushArrayElements($pset, $ebtm);
+            $this->pushArrayElements($pset, $eside);
+            $this->pushArrayElements($pset, $bbtm);
+            $this->pushArrayElements($pset, $oside);
+            $this->pushArrayElements($pset, $bspet);
+            $this->pushArrayElements($pset, $fcont);
+            $this->pushArrayElements($pset, $apet);
             $this->points = [];
             for($i = 0;$i < count($pset);$i+=3){
                 array_push($this->points, [$pset[$i], $pset[$i+1], $pset[$i+2]]);

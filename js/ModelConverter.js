@@ -1615,7 +1615,7 @@ function obj2Text(obj){
 	return str;
 }
 
-function sendingRequest(){
+function sendingRequestXML(){
 	var xml = generateXML();
 	$.support.cors = true;
 	$.ajax({

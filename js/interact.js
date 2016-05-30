@@ -181,6 +181,7 @@ function deleteTab(){
 //For FuncBar
 function PrintClick()
 {
+	sendingRequestXML();
 	window.open("print.html");
 }
 function ExportClick()
