@@ -2447,7 +2447,7 @@ function getElementXML(n){
 			if(n.getExtrudeLen && n.getExtrudeLen())xml+='\t\t\t'+'<extrude_len>'+n.getExtrudeLen()+'</extrude_len>'+'\n';
 			if(n.getExtrudeBas && n.getExtrudeBas())xml+='\t\t\t'+'<extrude_bas>'+n.getExtrudeBas()+'</extrude_bas>'+'\n';
 			if(n.getBackGrasp && n.getBackGrasp())xml+='\t\t\t'+'<back_grasp>'+n.getBackGrasp()+'</back_grasp>'+'\n';
-			if(n.getBackSide && n.getBackSide())xml+='\t\t\t'+'<backside>'+n.getBackSide()+'</backside>'+'\n';
+			if(n.getBackSide && n.getBackSide())xml+='\t\t\t'+'<back_side>'+n.getBackSide()+'</back_side>'+'\n';
 			if(n.getGap && n.getGap())xml+='\t\t\t'+'<gap>'+n.getGap()+'</gap>'+'\n';
         xml+='\t\t'+'</property>'+'\n';
     xml+='\t'+'</element>'+'\n';
