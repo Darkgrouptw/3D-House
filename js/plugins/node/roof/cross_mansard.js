@@ -6,7 +6,6 @@ SceneJS.Types.addType("roof/cross_mansard",
         this._layer;
         this._paramana = new ParameterManager(params, function(property)
 	    {
-
             var ratio_check = function(r) 
             {
                 if(r.a > 0.5) { r.a = 0.5; } if(r.b > 0.5) { r.b = 0.5; }
@@ -25,7 +24,7 @@ SceneJS.Types.addType("roof/cross_mansard",
             var el = property.extrude_len;
             var eh = property.extrude_hgt;
             var ep = property.extrude_pos;
-
+			
 	        var hmt = h - t; 
             
             var dNwr = 2 * -w * r.a, dPwr = 2 * w * r.a; 
@@ -68,27 +67,33 @@ SceneJS.Types.addType("roof/cross_mansard",
 
             op = extrudef();
             ip = extrudef(t);
+			
+			var extdbs = d - dPdr;
+			var addl = el * 2;;
+			if(addl < (dPdr + op.dal)) { addl = dPdr + op.dal; }
 	
 	        var pset = 
             [
-                // outside 4 side
+                // outside 2 side
 		        -w - dNwr, h, d - dPdr, -w - dNwr, h, -d - dNdr, -w, -h, -d, -w, -h, d, 
-		        //w - dPwr, h, -d - dNdr, -w - dNwr, h, -d - dNdr, -w, -h, -d, w, -h, -d,
-		        ///w - dPwr, h, d - dPdr, w, -h, d, w, -h, -d, w - dPwr, h, -d - dNdr,
-		        //w - dPwr, h, d - dPdr, w, -h, d, -w, -h, d, -w - dNwr, h, d - dPdr, 
+		        w - dPwr, h, d - dPdr, w, -h, d, w, -h, -d, w - dPwr, h, -d - dNdr,
+				
+				// inside 2 side
+                -w - dNwr + t, hmt, d - dPdr - t, -w + t, -h, d - t, -w + t, -h, -d + t, -w - dNwr + t, hmt, -d - dNdr + t, 
+		        w - dPwr - t, hmt, d - dPdr - t, w - dPwr - t, hmt, -d - dNdr + t, w - t, -h, -d + t,  w - t, -h, d - t, 
                
                 // outside top
                 //-w - dNwr, h, -d - dNdr, 
                 //-w - dNwr, h, d - dPdr, 
                 //w - dPwr, h, d - dPdr, 
                 //w - dPwr, h, -d - dNdr, 
-               
-                // inside 4 side
-                -w - dNwr + t, hmt, d - dPdr - t, -w + t, -h, d - t, -w + t, -h, -d + t, -w - dNwr + t, hmt, -d - dNdr + t, 
-		        //w - dPwr - t, hmt, -d - dNdr + t, w - t, -h, -d + t, -w + t, -h, -d + t, -w - dNwr + t, hmt, -d - dNdr + t, 
-		        ///w - dPwr - t, hmt, d - dPdr - t, w - dPwr - t, hmt, -d - dNdr + t, w - t, -h, -d + t,  w - t, -h, d - t, 
-                //
-              
+				
+				// inside top 
+                //w - dPwr - t, hmt, d - dPdr - t, 
+                //-w - dNwr + t, hmt, d - dPdr - t,
+                //-w - dNwr + t, hmt, -d - dNdr + t, 
+                //w - dPwr - t, hmt, -d - dNdr + t, 
+
                 // back side necessary part
 
                 // extrude part 
@@ -129,27 +134,93 @@ SceneJS.Types.addType("roof/cross_mansard",
                 ip.sb + ip.teb, -h, d - t,
                 ip.sb + ip.il + ip.tebet, ip.hp - h, d - dPdr - t + ip.dal,
                 
-                //w - dPwr - t, hmt, d - dPdr - t,
-                //w - t, -h, d - t,
-                //-w + t, -h, d - t, 
-                //-w - dNwr + t, hmt, d - dPdr - t, 
+				// extrude length
+				
+				// out [D'', D', C', C'']
+				op.sb + op.il, op.hp - h, extdbs + addl,
+                op.sb + op.il, op.hp - h, d - dPdr + op.dal,
+                op.sb, -h, d,
+				op.sb, -h, extdbs + addl,
+				
+				// in [D'', C'', C', D']
+                ip.sb + ip.il, ip.hp - h, extdbs + addl,
+				ip.sb, -h, extdbs + addl,
+                ip.sb, -h, d - t,
+				ip.sb + ip.il, ip.hp - h, d - dPdr - t + ip.dal,
+
+				// out [A', D', D'', A'']
+                op.sb + op.il + op.tebet, op.hp - h, d - dPdr + op.dal, 
+				op.sb + op.il, op.hp - h, d - dPdr + op.dal,
+				op.sb + op.il, op.hp - h, extdbs + addl,
+				op.sb + op.il + op.tebet, op.hp - h, extdbs + addl, 
+				
+				// in [A', A'', D'', D']
+                ip.sb + ip.il + ip.tebet, ip.hp - h, d - dPdr - t + ip.dal,
+				ip.sb + ip.il + ip.tebet, ip.hp - h, extdbs + addl,
+				ip.sb + ip.il, ip.hp - h, extdbs + addl,
+                ip.sb + ip.il, ip.hp - h, d - dPdr - t + ip.dal,
+				
+				// out [A', A'', B'', B']
+				op.sb + op.il + op.tebet, op.hp - h, d - dPdr + op.dal,
+				op.sb + op.il + op.tebet, op.hp - h, extdbs + addl,
+				op.sb + op.teb, -h, extdbs + addl,
+				op.sb + op.teb, -h, d,
+				
+				// in [A', B', B'', A'']
+				ip.sb + ip.il + ip.tebet, ip.hp - h, d - dPdr - t + ip.dal,
+                ip.sb + ip.teb, -h, d - t,
+                ip.sb + ip.teb, -h, extdbs + addl,
+				ip.sb + ip.il + ip.tebet, ip.hp - h, extdbs + addl,
+
+                // 2 side bottom
+                -w + t, -h, d - t, -w, -h, d, -w, -h, -d, -w + t, -h, -d + t,
+		        w - t, -h, d - t, w - t, -h, -d + t, w, -h, -d, w, -h, d,	
+				
+				// extrude bottom
+				
+				// [iC', oC', oC, iC]
+				ip.sb, -h, d - t,
+				op.sb, -h, d,
+				-w, -h, d,
+				-w + t, -h, d - t,
+				
+				// [iC', iC'', oC'', oC']
+				ip.sb, -h, d - t,
+				ip.sb, -h, extdbs + addl,
+				op.sb, -h, extdbs + addl,
+				op.sb, -h, d,
                 
-                //w - dPwr, h, d - dPdr,
-                //w, -h, d,
-                //-w, -h, d,
-                //-w - dNwr, h, d - dPdr,
-		        
-                // inside top 
-                //w - dPwr - t, hmt, d - dPdr - t, 
-                //-w - dNwr + t, hmt, d - dPdr - t,
-                //-w - dNwr + t, hmt, -d - dNdr + t, 
-                //w - dPwr - t, hmt, -d - dNdr + t, 
-		       
-                // 4 side bottom
-                ///-w + t, -h, d - t, -w, -h, d, -w, -h, -d, -w + t, -h, -d + t,
-		        //w - t, -h, -d + t, w, -h, -d, -w, -h, -d, -w + t, -h, -d + t,
-		        ///w - t, -h, d - t, w - t, -h, -d + t, w, -h, -d, w, -h, d,	
-		        //w - t, -h, d - t, -w + t, -h, d - t, -w, -h, d, w, -h, d, 
+				// [oB', oB'', iB'', iB']
+				op.sb + op.teb, -h, d,
+				op.sb + op.teb, -h, extdbs + addl,
+				ip.sb + ip.teb, -h, extdbs + addl,
+				ip.sb + ip.teb, -h, d - t,
+                
+				// [iB, oB, oB', iB']
+				w - t, -h, d - t,
+				w, -h, d,
+				op.sb + op.teb, -h, d,
+				ip.sb + ip.teb, -h, d - t,
+				
+				// front cover
+				
+				// [iD'', oD'', oC'', iC'']
+				ip.sb + ip.il, ip.hp - h, extdbs + addl,
+				op.sb + op.il, op.hp - h, extdbs + addl,
+				op.sb, -h, extdbs + addl,
+				ip.sb, -h, extdbs + addl,
+				
+				// [oA'', oD'', iD'', iA'']
+				op.sb + op.il + op.tebet, op.hp - h, extdbs + addl, 
+				op.sb + op.il, op.hp - h, extdbs + addl,
+				ip.sb + ip.il, ip.hp - h, extdbs + addl,
+				ip.sb + ip.il + ip.tebet, ip.hp - h, extdbs + addl,
+				
+				// [oA'', iA'', iB'', oB'']
+				op.sb + op.il + op.tebet, op.hp - h, extdbs + addl,
+				ip.sb + ip.il + ip.tebet, ip.hp - h, extdbs + addl,
+				ip.sb + ip.teb, -h, extdbs + addl,
+				op.sb + op.teb, -h, extdbs + addl,
 	        ];
 	        
 	        return pset;
@@ -199,7 +270,6 @@ SceneJS.Types.addType("roof/cross_mansard",
     getExtrudeTpl: function() { return this._paramana.get('extrude_tpl'); },
     setExtrudeTpl: function(et) { this._paramana.set('extrude_tpl', et); this._paramana.updateGeometryNode(this); },
 
-    // Warning: limitation is 0.5
 	getRatio: function() { return this._paramana.get('ratio'); },
 	setRatio: function(r) { return this._paramana.set('ratio', r); this._paramana.updateGeometryNode(this); },
 	
@@ -257,22 +327,49 @@ function roof_cross_mansard_build(params)
     var indiceSet = utility.makeIndices(0, (positionSet.length / 3) - 1);
 	var uvSet = 
     [
-		0, 1, 0, 0, 1, 0, 1, 1,			// Front West
-		1, 1, 1, 0, 0, 0, 0, 1,			// Front Sourth
-		0, 1, 1, 1, 1, 0, 0, 0,			// Front East
-		0, 1, 0, 0, 1, 0, 1, 1,			// Front North
-		1, 1, 1, 0, 0, 0, 0, 1,			// Front Center
+		0, 1, 0, 0, 1, 0, 1, 1,
+		1, 1, 1, 0, 0, 0, 0, 1,
+		0, 1, 1, 1, 1, 0, 0, 0,
+		0, 1, 0, 0, 1, 0, 1, 1,
+		1, 1, 1, 0, 0, 0, 0, 1,	
 		
-		0, 1, 0, 0, 1, 0, 1, 1,			// Back West
-		1, 1, 0, 1, 0, 0, 1, 1,			// Back Sourth
-		1, 0, 0, 0, 0, 1, 1, 1,			// Back East
-		1, 1, 0, 1, 0, 0, 1, 0,			// Back North
-		0, 1, 1, 1, 1, 0, 0, 0,			// Back Center
+		0, 1, 0, 0, 1, 0, 1, 1,
+		1, 1, 0, 1, 0, 0, 1, 1,
+		1, 0, 0, 0, 0, 1, 1, 1,
+		1, 1, 0, 1, 0, 0, 1, 0,
+		0, 1, 1, 1, 1, 0, 0, 0,	
 		
-		0, 1, 0, 0, 1, 0, 1, 1,			// Side West
-		1, 1, 0, 1, 0, 0, 1, 1,			// Side Sourth
-		1, 0, 0, 0, 0, 1, 1, 1,			// Side East
-		1, 1, 0, 1, 0, 0, 1, 0,			// Side North
+		0, 1, 0, 0, 1, 0, 1, 1,
+		1, 1, 0, 1, 0, 0, 1, 1,
+		1, 0, 0, 0, 0, 1, 1, 1,
+		1, 1, 0, 1, 0, 0, 1, 0,
+		
+		0, 1, 0, 0, 1, 0, 1, 1,
+		1, 1, 0, 1, 0, 0, 1, 1,
+		1, 0, 0, 0, 0, 1, 1, 1,
+		1, 1, 0, 1, 0, 0, 1, 0,
+		0, 1, 1, 1, 1, 0, 0, 0,	
+		
+		0, 1, 0, 0, 1, 0, 1, 1,
+		1, 1, 0, 1, 0, 0, 1, 1,
+		1, 0, 0, 0, 0, 1, 1, 1,
+		1, 1, 0, 1, 0, 0, 1, 0,
+		
+		0, 1, 0, 0, 1, 0, 1, 1,
+		1, 1, 0, 1, 0, 0, 1, 1,
+		1, 0, 0, 0, 0, 1, 1, 1,
+		1, 1, 0, 1, 0, 0, 1, 0,
+		
+		0, 1, 0, 0, 1, 0, 1, 1,
+		1, 1, 0, 1, 0, 0, 1, 1,
+		1, 0, 0, 0, 0, 1, 1, 1,
+		1, 1, 0, 1, 0, 0, 1, 0,
+		0, 1, 1, 1, 1, 0, 0, 0,	
+		
+		0, 1, 0, 0, 1, 0, 1, 1,
+		1, 1, 0, 1, 0, 0, 1, 1,
+		1, 0, 0, 0, 0, 1, 1, 1,
+		1, 1, 0, 1, 0, 0, 1, 0,
 	];
 
     var geometry = 
