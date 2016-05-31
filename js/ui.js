@@ -340,6 +340,7 @@ function ScenePick(){
                 //console.log("getWallID ", getWallID);
                 //console.log("getWindowID ", getWindowID);
                 console.log("ID: ", element.getID(), " partmode: ", partmode);
+                console.log("id: ", hit.nodeId);
                 if(pickObjId != null && scene.getNode(pickObjId) != null) { delete scene.getNode(pickObjId)._topicSubs.rendered; } // delete render event from trackPosition
                 objectId = hit.nodeId;
 				pickObjId = objectId;
@@ -2028,9 +2029,10 @@ function timeFuction(){
 						the_number_of_window++;
 						Wall_id.push(node);
 
-                        if(getWallID.indexOf(node.getID()) < 0)
+                        //console.log("single_window ID ", node.parent.parent.parent.parent.parent.getID());
+                        if(getWallID.indexOf(node.parent.parent.parent.parent.parent.getID()) < 0)
                         {
-                            getWallID.push(node.getID());
+                            getWallID.push(node.parent.parent.parent.parent.parent.getID());
                         }
 					}
 				}else if(node.getType() == "wall/multi_window"){
@@ -2040,11 +2042,11 @@ function timeFuction(){
 						Wall_id.push(node);
 
                         var numberOfCenter = node.getWindowCenter().length / 2;
-                        if(getWallID.indexOf(node.getID()) < 0)
+                        if(getWallID.indexOf(node.parent.parent.parent.parent.parent.getID()) < 0)
                         {
                             for(var num = 0; num < numberOfCenter; num++)
                             {
-                                getWallID.push(node.getID());
+                                getWallID.push(node.parent.parent.parent.parent.parent.getID());
                             }
                         }
 					}
@@ -2079,9 +2081,10 @@ function timeFuction(){
 										 window_ratio_X:window_ratio_X,window_ratio_Y:window_ratio_Y,
 										 wall_width:wall_width,wall_height});
 
-                        if(getWindowID.indexOf(windows[next_window_used].getID()) == -1)
+                        //console.log("next window ", windows[next_window_used].nodes[0].nodes[0].nodes[0].getID());
+                        if(getWindowID.indexOf(windows[next_window_used].nodes[0].nodes[0].nodes[0].getID()) == -1)
                         {
-                            getWindowID.push(windows[next_window_used].getID());
+                            getWindowID.push(windows[next_window_used].nodes[0].nodes[0].nodes[0].getID());
 
                         }
 
@@ -2106,10 +2109,10 @@ function timeFuction(){
 										 wall_width:wall_width,wall_height: wall_height});
                             var centers = node.getExactlyWindowCenter();
 							
-                            if(getWindowID.indexOf(windows[next_window_used].getID()) == -1)
+                            //console.log("next window ", windows[next_window_used].nodes[0].nodes[0].nodes[0].getID());
+                            if(getWindowID.indexOf(windows[next_window_used].nodes[0].nodes[0].nodes[0].getID()) == -1)
                             {
-                                getWindowID.push(windows[next_window_used].getID());
-
+                                getWindowID.push(windows[next_window_used].nodes[0].nodes[0].nodes[0].getID());
                             }
 
 							var target = flag2housenode(windows[next_window_used]);
