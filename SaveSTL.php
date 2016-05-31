@@ -20,6 +20,8 @@
     $nonConnector_No;  //Storing the corresponding model index
     //STL Strings
     $stlText;
+    //Storing the angles and vectors for rotation, with each models
+    $angle = []; $vec = [];
     //Printing info.txt??
     $infoPrint = false;
     function traverse($curNode, $target){
@@ -32,9 +34,8 @@
         }
         return $curNode;
     }
-    function stringReturn(){
-        return "hi man!!";
-    }
+
+
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //Here are the exporting functions
@@ -60,12 +61,15 @@
     }
 
     function exportMultiStl($inputNode){
+        global $angle, $vec, $connector, $connector_No, $nonConnector, $nonConnector_No, $debugArDiuNei;
+
         $stlText = [];
 
         $objs = convertToMultiObj($inputNode);
 
-        //Parsing roof part number
-        $parseRoof = 0;
+        $debugArDiuNei .= serialize($objs)."\n";
+
+
         //Using the faceArray in connector and nonConnector to construct the stl models
         //Only normals in objs are needed
         for($modelNo = 0;$modelNo<count($objs);$modelNo++){
@@ -83,119 +87,10 @@
             $sum = [0, 0];
             $minZ = 99999999;
 
-            //Storing the vec and angle of current rotation
-            $angle = [];
-            $vec = [];
-            //Rotating
-            switch($posArray[$modelNo]){
-                case "roof":
-                    switch($typeArray[$modelNo]){
-                        case "roof/gable":
-                            if($parseRoof == 0){
-                                $angle = [-39.5];
-                                $vec = [0];
-                            }else{
-                                $angle = [219.5];
-                                $vec = [0];
-                            }
-                            break;
-                        case "roof/hip":
-                            switch($parseRoof){
-                                case 0:
-                                    $angle = [-90, 41.58];
-                                    $vec = [0, 1];
-                                    break;
-                                case 1:
-                                    $vec = [0];
-                                    $angle = [-17.5];
-                                    break;
-                                case 2:
-                                    $angle = [90, 221.58];
-                                    $vec = [0, 1];
-                                    break;
-                                case 3:
-                                    $vec = [0];
-                                    $angle = [-162.5];
-                                    break;
-                                default:
-                                    $angle = [0];
-                                    $vec = [0];
-                                    break;
-                            }
-                            break;
-                        case "roof/mansard":
-                            switch($parseRoof){
-                                case 0:
-                                    $vec = [0];
-                                    $angle = [10];
-                                    break;
-                                case 1:
-                                    $vec = [1, 0];
-                                    $angle = [270, 158];
-                                    break;
-                                case 2:
-                                    $vec = [0];
-                                    $angle = [170];
-                                    break;
-                                case 3:
-                                    $vec = [1, 0];
-                                    $angle = [90, 158];
-                                    break;
-                                case 4:
-                                    $vec = [0];
-                                    $angle = [90];
-                                    break;
-                                default:
-                                    $vec = [0];
-                                    $angle = [0];
-                                    break;
-                            }
-                            break;
-                        case "roof/cross_gable":
-                            break;
-                        default:
-                            $angle = [0];
-                            $vec = [0];
-                            break;
-                    }
-                    $parseRoof++;
-                    break;
-                case "leftTriangle":
-                    $vec = [1];
-                    $angle = [90];
-                    break;
-                case "rightTriangle":
-                    $vec = [1];
-                    $angle = [90];
-                    break;
-                case "base":
-                    $angle = [90];
-                    $vec = [0];
-                    break;
-                case "interWall":
-                    $angle = [90];
-                    $vec = [1];
-                    break;
-                case "backWall":
-                    $angle = [-90, -90];
-                    $vec = [2, 2];
-                    break;
-                case "leftWall":
-                    $angle = [90];
-                    $vec = [1];
-                    break;
-                case "rightWall":
-                    $angle = [90];
-                    $vec = [1];
-                    break;
-                default:
-                    $angle = [0];
-                    $vec = [0];
-                    break;
-            }
+            $curObj = rotateOneAxis($curObj, $angle[$modelNo], $vec[$modelNo]);
+            $faceArr = rotateOneAxis_faceArr($faceArr, $angle[$modelNo], $vec[$modelNo]);
 
-            $curObj = rotateOneAxis($curObj, $angle, $vec);
-            $faceArr = rotateOneAxis_faceArr($faceArr, $angle, $vec);
+
             //Finding sum and min to align
             for($nv = 0;$nv<count($curObj->vertices);$nv++){
                 for($nd = 0;$nd<2;$nd++){
@@ -211,12 +106,14 @@
             $norms = [];
             for($i = 0;$i<count($faceArr);$i++){
                 //finding corresponding normal
-                $curNorm = [0, 0, 0];
-                for($pointI = 0;$pointI < 3;$pointI++){
-                    for($dimen = 0;$dimen < 3;$dimen++){
-                        $curNorm[$dimen] += floatval($curObj->normals[$curObj->faces[$i][$pointI] - 1][$dimen]);
-                    }
-                }
+                $curNorm = [1, 0, 0];
+                /////////////////////////////////////////////////////
+                //No normal!!!!!
+                // for($pointI = 0;$pointI < 3;$pointI++){
+                //     for($dimen = 0;$dimen < 3;$dimen++){
+                //         $curNorm[$dimen] += floatval($curObj->normals[$curObj->faces[$i][$pointI] - 1][$dimen]);
+                //     }
+                // }
                 normalize($curNorm);
                 array_push($norms, $curNorm);
             }
@@ -258,7 +155,7 @@
     //Function used for converting the model in multiple .obj (NO DOWNLOADING)
     function convertToMultiObj($inputNode){
         //You need to add the fucking global keyword when using global variables!!!
-        global $debugArDiuNei, $modelExactLatchArea, $treePrior, $treePriorMap, $maxPrior, $outNodeIndex, $infoStr, $posArray, $typeArray, $layerArray, $connector, $nonConnector, $connector_No, $nonConnector_No, $stlText, $infoPrint;
+        global $modelExactLatchArea, $treePrior, $treePriorMap, $maxPrior, $outNodeIndex, $infoStr, $posArray, $typeArray, $layerArray, $connector, $nonConnector, $connector_No, $nonConnector_No, $stlText, $infoPrint;
         //Return object of .objs (strings)
         $objs = [];
 
@@ -509,8 +406,6 @@
                             $fStr[$i] .= "f " . $mVFacesI[$i][$j] . "//" . $mVFacesI[$i][$j] . " " . $mVFacesI[$i][$j+1] . "//" . $mVFacesI[$i][$j+1] . " " . $mVFacesI[$i][$j+2] . "//" . $mVFacesI[$i][$j+2] . "\n";
                         }
                     }
-
-                    file_put_contents("debug.txt", serialize($vArr));
 
                     for($i = 0;$i<count($vArr);$i++){
                         for($modelNo = 0;$modelNo<4;$modelNo++){
@@ -930,7 +825,7 @@
             
             for($i = 0;$i<count($obj->vertices);$i++){
                 $obj->vertices[$i] = mulMat($matrices[$vec[$main]], $obj->vertices[$i]);
-                $obj->normals[$i] = mulMat($matrices[$vec[$main]], $obj->normals[$i]);
+                // $obj->normals[$i] = mulMat($matrices[$vec[$main]], $obj->normals[$i]);
             }
         }
         
@@ -939,23 +834,12 @@
 
     //Dealing with array
     function rotateOneAxis_faceArr($faceArr, $angle, $vec){
-        for($main = 0;$main<$angle.length;$main++){
+        for($main = 0;$main<count($angle);$main++){
             $radAngle = degToRad($angle[$main]);
             $matrices = [];
             array_push($matrices, [[1.0, 0.0, 0.0], [0.0, cos($radAngle), -sin($radAngle)], [0.0, sin($radAngle), cos($radAngle)]]);
             array_push($matrices, [[cos($radAngle), 0.0, sin($radAngle)], [0.0, 1.0, 0.0], [-sin($radAngle), 0.0, cos($radAngle)]]);
             array_push($matrices, [[cos($radAngle), -sin($radAngle), 0.0], [sin($radAngle), cos($radAngle), 0.0], [0, 0, 1]]);
-            function mulMat($mat, $point){
-                $vecOut = [0.0, 0.0, 0.0];
-                for($i = 0;$i<3;$i++){
-                    $cur = 0.0;
-                    for($j = 0;$j<3;$j++){
-                        $cur += $mat[$i][$j] * $point[$j];
-                    }
-                    $vecOut[$i] = $cur;
-                }
-                return $vecOut;
-            }
             for($i = 0;$i<count($faceArr);$i++){
                 for($j = 0;$j<3;$j++){
                     $faceArr[$i][$j] = mulMat($matrices[$vec[$main]], $faceArr[$i][$j]);
@@ -988,6 +872,7 @@
     }
 
     function isConnector($nodeNum){
+        global $typeArray;
         if(substr($typeArray[$nodeNum], 0, 4) == "wall"){
             return true;
         }
@@ -1261,12 +1146,18 @@
     function exploreLine($line){
         $elements = explode(" ", $line);
         array_shift($elements);
-        return $elements;
+        return array_map("floatval", $elements);
     }
 
     function exploreFace($face){
-        $outputFace  = explode("//", $face);
-        return $outputFace[0];
+        $outFaces = [];
+        $elements = explode(" ", $face);
+        array_shift($elements);
+        for($i = 0;$i<3;$i++){
+            $outputFace = explode("//", $elements[$i]);
+            array_push($outFaces, intval($outputFace[0]));
+        }
+        return $outFaces;
     }
 
     //Just parsing the text storing .obj and return {<vertices>, <normals>, <faces>}
@@ -1275,7 +1166,10 @@
         $obj = new ModelObject;   //The elements inside are string
         $vertexMatches = []; $normalMatches = []; $faceMatches = [];
         for($i = 0;$i<count($objText);$i++){
-            if($objText[$i][0] == "v" && $objText[$i][1] == " "){
+            if(strlen($objText[$i]) < 4){
+                continue;
+            }
+            else if($objText[$i][0] == "v" && $objText[$i][1] == " "){
                 array_push($vertexMatches, $objText[$i]);
             }
             else if($objText[$i][0] == "v" && $objText[$i][1] == "n"){
@@ -1295,19 +1189,14 @@
         }
         if ($faceMatches)
         {
-            $obj->faces = array_map("exploreLine", $faceMatches);
-            $outFaces = [];
-            
-            for($i = 0;$i<count($obj->faces);$i++){
-                array_push($outFaces, array_map("exploreFace", $obj->faces[$i]));
-            }
-            $obj->faces = $outFaces;
+            $obj->faces = array_map("exploreFace", $faceMatches);
         }
         return $obj;
     }
 
     //Used for dealing with latch faces and vertices' data storing in connector[]
     function parseObj_withStoring($text, $isConnector){
+        global $connector, $connector_No, $nonConnector, $nonConnector_No, $outNodeIndex;
         $objText = explode("\n", $text);
         $obj = parseObj($text);   //The elements inside are string
         $f = [];
@@ -1465,18 +1354,24 @@
             
             $xml = new SimpleXMLElement($dataPOST);
             $nodes = makeNode($xml);
+
             foreach($nodes as $node){
                 $node->makePoints();
             }
-            $objtext = convertToMultiObj($nodes);
+
+            // file_put_contents("debug.txt", serialize($angle)."\n".serialize($vec));
+
+
+            $objtext = exportMultiStl($nodes);
+
+            // file_put_contents("debug.txt", $debugArDiuNei);
 
             for($i = 0;$i<count($objtext);$i++){
-                file_put_contents($i.".obj", $objtext[$i]);
+                file_put_contents($i.".stl", $objtext[$i]);
             }
             // file_put_contents("3.obj", $objtext[4]);
 
 
-            // file_put_contents("debug.txt", $debugArDiuNei);
         }
         else
            echo "No post params";
@@ -1531,7 +1426,9 @@
         $elements = $xml->element;
         foreach($elements as $element){
             $tmpNode = new node($element);
-            array_push($nodes, $tmpNode);
+            if($tmpNode->type != "wall/multi_window"){
+                array_push($nodes, $tmpNode);                
+            }
             $tmpNode = new node;
         }
         return $nodes;
@@ -1544,6 +1441,7 @@
         }
         return NULL;
     }
+
     class node{
         public $myElement;
         public $type;
@@ -1563,8 +1461,31 @@
         // }
 
         function __construct($element){
+            global $typeArray, $posArray;
             $this->type = (string)$element->type;
             $this->pos = (string)$element->pos;
+            $dup = 1;
+            switch ($this->type) {
+                case "roof/mansard":
+                    $dup = 5;
+                    break;
+                case "roof/gable":
+                    $dup = 2;
+                    break;
+                case "roof/hip":
+                    $dup = 4;
+                    break;
+                case "roof/cross_gable":
+                    $dup = 4;
+                    break;
+                default:
+                    $dup = 1;
+                    break;
+            }
+            for($i = 0;$i<$dup;$i++){
+                array_push($typeArray, $this->type);
+                array_push($posArray, $this->pos);
+            }
             $this->myElement = $element;
             $this->transform = array("scale" => array_map("floatval", (array)explode(",", $element->transform->scale)), "rotate" => array_map("floatval", (array)explode(",", $element->transform->rotate)), "translate" => array_map("floatval", (array)explode(",", $element->transform->translate)));
             // $this->transform = (array)$element->transform->scale;
@@ -1602,12 +1523,149 @@
         }
 
         public function makePoints(){
+            global $angle, $vec, $debugArDiuNei;
             $func = $this->type;
             $func = str_replace("/", "_", $func);
             $func = "makePoints_".$func;
             call_user_func(array($this, $func));
             call_user_func(array($this, "makeTransMat"));
             call_user_func(array($this, "transform"));
+
+            //Rotating
+            $this->properties = array_map("floatval", (array)$this->myElement->property);
+            $w = floatval($this->properties["width"]);
+            $h = floatval($this->properties["height"]);
+            $d = floatval($this->properties["depth"]);
+
+            switch($this->pos){
+                case "roof":
+                    switch($this->type){
+                        case "roof/gable":
+                            array_push($angle, [270.0+rad2deg(atan($h*2.0/$w))]);
+                            array_push($angle, [270.0-rad2deg(atan($h*2.0/$w))]);
+
+                            array_push($vec, [0]);
+                            array_push($vec, [0]);
+
+                            // if($parseRoof == 0){
+                            //     $angle = [-39.5];
+                            //     $vec = [0];
+                            // }else{
+                            //     $angle = [219.5];
+                            //     $vec = [0];
+                            // }
+                            break;
+                        case "roof/hip":
+                            array_push($angle, [-90.0, rad2deg(atan($h*2.0/$w))]);
+                            array_push($angle, [rad2deg(atan($h*2.0/$d))]);
+                            array_push($angle, [90.0, 180.0 +rad2deg(atan($h*2.0/$w))]);
+                            array_push($angle, [rad2deg(atan($h*2.0/$d))+180.0]);
+                            array_push($vec, [0, 1]);
+                            array_push($vec, [0]);
+                            array_push($vec, [0, 1]);
+                            array_push($vec, [0]);
+                            // switch($parseRoof){
+                            //     case 0:
+                            //         $angle = [-90, 41.58];
+                            //         $vec = [0, 1];
+                            //         break;
+                            //     case 1:
+                            //         $vec = [0];
+                            //         $angle = [-17.5];
+                            //         break;
+                            //     case 2:
+                            //         $angle = [90, 221.58];
+                            //         $vec = [0, 1];
+                            //         break;
+                            //     case 3:
+                            //         $vec = [0];
+                            //         $angle = [-162.5];
+                            //         break;
+                            //     default:
+                            //         $angle = [0];
+                            //         $vec = [0];
+                            //         break;
+                            // }
+                            break;
+                        case "roof/mansard":
+                            // array_push($angle, [-90.0, atan($h*2.0/$w)]);
+                            // array_push($angle, [atan($h*2.0/$d)]);
+                            // array_push($angle, [90.0, 180.0 + atan($h*2.0/$w)]);
+                            // array_push($angle, [atan($h*2.0/$d)+180.0]);
+                            // array_push($vec, [0]);
+                            // array_push($vec, [1, 0]);
+                            // array_push($vec, [0]);
+                            // array_push($vec, [1, 0]);
+                            // array_push($vec, [0]);
+                            // switch($parseRoof){
+                            //     case 0:
+                            //         $vec = [0];
+                            //         $angle = [10];
+                            //         break;
+                            //     case 1:
+                            //         $vec = [1, 0];
+                            //         $angle = [270, 158];
+                            //         break;
+                            //     case 2:
+                            //         $vec = [0];  
+                            //         $angle = [170];
+                            //         break;
+                            //     case 3:
+                            //         $vec = [1, 0];
+                            //         $angle = [90, 158];
+                            //         break;
+                            //     case 4:
+                            //         $vec = [0];
+                            //         $angle = [90];
+                            //         break;
+                            //     default:
+                            //         $vec = [0];
+                            //         $angle = [0];
+                            //         break;
+                            // }
+                            break;
+                        case "roof/cross_gable":
+
+                            break;
+                        default:
+                            array_push($angle, [0]);
+                            array_push($vec, [0]);
+                            break;
+                    }
+                    break;
+                case "leftTriangle":
+                    array_push($vec, [1]);
+                    array_push($angle, [90]);
+                    break;
+                case "rightTriangle":
+                    array_push($vec, [1]);
+                    array_push($angle, [90]);
+                    break;
+                case "base":
+                    array_push($angle,  [90]);
+                    array_push($vec, [0]);
+                    break;
+                case "interWall":
+                    array_push($angle, [90]);
+                    array_push($vec, [1]);
+                    break;
+                case "backWall":
+                    array_push($angle, [-90, -90]);
+                    array_push($vec, [2, 2]);
+                    break;
+                case "leftWall":
+                    array_push($angle, [90]);
+                    array_push($vec, [1]);
+                    break;
+                case "rightWall":
+                    array_push($angle, [90]);
+                    array_push($vec, [1]);
+                    break;
+                default:
+                    array_push($angle, [0]);
+                    array_push($vec, [0]);
+                    break;
+            }
         }
 
         public function makePoints_base_basic(){
@@ -1683,7 +1741,6 @@
         }
 
         public function makePoints_roof_cross_gable(){
-            global $debugArDiuNei;
             $bs = $this->myElement->property->back_side == "on" ? true: false;
 
             $this->properties = array_map("floatval", (array)$this->myElement->property);
@@ -1838,25 +1895,6 @@
                 $d, $h + $st, $wr, $db - $dr, $sh + $st, $wr + $whr, $td - $rdb + $dtt, -$h, $w + $dt, $d, -$h, $w + $dt,
             ];
 
-            /*var ap = [-db + dl, sh + st, wr + whr];
-            var bp = [-td + ldb - dtt, -h, w + dt];
-            var cp = [-td + ldb, -h, w];
-            var dp = [-db + dl, sh, wr + whr];
-
-            var a = [], b = [], c = [];
-            SceneJS_math_subVec3(ap, dp, a);
-            SceneJS_math_subVec3(bp, cp, b);
-            SceneJS_math_subVec3(cp, dp, c);
-
-            console.log(a);
-            console.log(b);
-            console.log(c);
-
-            var tmpr = [];
-            SceneJS_math_cross3Vec3(b,c,tmpr);
-            var rr = SceneJS_math_dotVec3(a, tmpr);
-            console.log(rr);*/
-
             $apet = [];
             if(1.0 != $eh)
             {
@@ -1879,6 +1917,629 @@
             $this->pushArrayElements($pset, $bspet);
             $this->pushArrayElements($pset, $fcont);
             $this->pushArrayElements($pset, $apet);
+            $this->points = [];
+            for($i = 0;$i < count($pset);$i+=3){
+                array_push($this->points, [$pset[$i], $pset[$i+1], $pset[$i+2]]);
+            }
+            $this->defaultIndices(count($this->points));
+        }
+
+        public function makePoints_roof_hip(){
+            $this->properties = array_map("floatval", (array)$this->myElement->property);
+            $w = floatval($this->properties["width"]);
+            $d = floatval($this->properties["depth"]);
+            $h = floatval($this->properties["height"]);
+            $t = floatval($this->properties["thickness"]); 
+
+            $r = array_map("floatval", (array)explode(",", $this->myElement->property->ratio));
+            $tl = 0;
+            if(isset($this->properties["toplen"])){
+                $tl = $this->properties["toplen"];
+            }
+    
+            $pA; $pB; $pset = []; $pctD = -$d + (2.0 * $d * $r[1]);
+            
+            if ($tl == 0) 
+            { 
+                $pctW = -$w + (2.0 * $w * $r[0]);
+                $pA = [$pctW, $h, $pctD]; $pB = [$pctW, $h, $pctD];
+            }
+            else 
+            {
+                $rl = ($w * 2.0) - $tl;
+                $pA = [-$w + ($rl * $r[0]), $h, $pctD]; $pB = [$w - ($rl * (1.0 - $r[0])), $h, $pctD];
+            }
+
+            // Maybe we have very small height
+            if($pA[0] > $pB[0]) { $pA[0] = 0; $pB[0] = 0; } 
+
+            $pset = [
+                $pB[0], $pB[1], $pB[2], $w, -$h, -$d, $pA[0], $pA[1], $pA[2], -$w, -$h, $d,
+                $pA[0], $pA[1] - $t, $pA[2], $w - $t, -$h, -$d + $t, $pB[0], $pB[1] - $t, $pB[2], -$w + $t, -$h, $d - $t,
+                $pA[0], $pA[1], $pA[2], $w, -$h, -$d, -$w, -$h, -$d, -$w, -$h, $d, 
+                $pB[0], $pB[1], $pB[2], -$w, -$h, $d, $w, -$h, $d, $w, -$h, -$d, 
+                $pA[0], $pA[1] - $t, $pA[2], -$w + $t, -$h, $d - $t, -$w + $t, -$h, -$d + $t, $w - $t, -$h, -$d + $t,
+                $pB[0], $pB[1] - $t, $pB[2], $w - $t, -$h, -$d + $t, $w - $t, -$h, $d - $t, -$w + $t, -$h, $d - $t,
+                -$w + $t, -$h,$d - $t, -$w + $t, -$h, -$d + $t, -$w, -$h, -$d, -$w, -$h, $d,
+                -$w + $t, -$h, -$d + $t, $w - $t, -$h, -$d + $t, $w, -$h, -$d, -$w, -$h, -$d,
+                $w - $t, -$h, $d - $t, $w, -$h,$d, $w, -$h, -$d, $w - $t, -$h, -$d + $t,
+                -$w + $t, -$h, $d - $t, -$w, -$h, $d, $w, -$h, $d, $w - $t, -$h, $d - $t
+            ];
+            $this->points = [];
+            for($i = 0;$i < count($pset);$i+=3){
+                array_push($this->points, [$pset[$i], $pset[$i+1], $pset[$i+2]]);
+            }
+            $this->defaultIndices(count($this->points));
+        }
+
+        public function makePoints_roof_mansard(){
+            $this->properties = array_map("floatval", (array)$this->myElement->property);
+            $w = floatval($this->properties["width"]);
+            $d = floatval($this->properties["depth"]);
+            $h = floatval($this->properties["height"]);
+            $t = floatval($this->properties["thickness"]); 
+
+            $r = array_map("floatval", (array)explode(",", $this->myElement->property->ratio));
+    
+            $hmt = $h - $t; 
+    
+            $dNwr = 2.0 * -$w * $r[0]; $dPwr = 2.0 * $w * $r[0]; 
+            $dNdr = 2.0 * -$d * $r[1]; $dPdr = 2.0 * $d * $r[1];        
+    
+            $pset = 
+            [
+                -$w - $dNwr, $h, $d - $dPdr, -$w, -$h, $d, -$w, -$h, -$d, -$w - $dNwr, $h, -$d - $dNdr,
+                $w - $dPwr, $h, -$d - $dNdr, -$w - $dNwr, $h, -$d - $dNdr, -$w, -$h, -$d, $w, -$h, -$d,
+                $w - $dPwr, $h, $d - $dPdr, $w - $dPwr, $h, -$d - $dNdr, $w, -$h, -$d, $w, -$h, $d, 
+                $w - $dPwr, $h, $d - $dPdr, $w, -$h, $d, -$w, -$h, $d, -$w - $dNwr, $h, $d - $dPdr, 
+                -$w - $dNwr, $h, -$d - $dNdr, $w - $dPwr, $h, -$d - $dNdr, $w - $dPwr, $h, $d - $dPdr, -$w - $dNwr, $h, $d - $dPdr, 
+                -$w - $dNwr + $t, $hmt, $d - $dPdr - $t, -$w - $dNwr + $t, $hmt, -$d - $dNdr + $t, -$w + $t, -$h, -$d + $t, -$w + $t, -$h, $d - $t,
+                $w - $dPwr - $t, $hmt, -$d - $dNdr + $t, $w - $t, -$h, -$d + $t, -$w + $t, -$h, -$d + $t, -$w - $dNwr + $t, $hmt, -$d - $dNdr + $t, 
+                $w - $dPwr - $t, $hmt, $d - $dPdr - $t, $w - $t, -$h, $d - $t, $w - $t, -$h, -$d + $t, $w - $dPwr - $t, $hmt, -$d - $dNdr + $t, 
+                $w - $dPwr - $t, $hmt, $d - $dPdr - $t, -$w - $dNwr + $t, $hmt, $d - $dPdr - $t, -$w + $t, -$h, $d - $t, $w - $t, -$h, $d - $t, 
+                $w - $dPwr - $t, $hmt, $d - $dPdr - $t, $w - $dPwr - $t,$hmt, -$d - $dNdr + $t, -$w - $dNwr + $t, $hmt, -$d - $dNdr + $t, -$w - $dNwr + $t, $hmt, $d - $dPdr - $t,
+                -$w + $t, -$h, $d - $t, -$w + $t, -$h, -$d + $t, -$w, -$h, -$d, -$w, -$h, $d,
+                $w - $t, -$h, -$d + $t, $w, -$h, -$d, -$w, -$h, -$d, -$w + $t, -$h, -$d + $t,
+                $w - $t, -$h, $d - $t, $w, -$h, $d, $w, -$h, -$d, $w - $t, -$h, -$d + $t,   
+                $w - $t, -$h, $d - $t, -$w + $t, -$h, $d - $t, -$w, -$h, $d, $w, -$h, $d, 
+            ];
+            $this->points = [];
+            for($i = 0;$i < count($pset);$i+=3){
+                array_push($this->points, [$pset[$i], $pset[$i+1], $pset[$i+2]]);
+            }
+            $this->defaultIndices(count($this->points));
+        }
+
+        public function single_window_moveTo($p, $t){
+            $r = [];
+            for($i = 0; $i < count($p); $i = $i + 3)
+            { $r[$i] = $p[$i] + $t.x; $r[$i + 1] = $p[$i + 1] + $t.y; $r[$i + 2] = $p [$i + 2] + $t.z; }
+            return $r;
+        }
+        public function single_window_makePositive($l, $i){
+            $nl = [];
+            array_push($nl, $l[0]); array_push($nl, $l[1]); array_push($nl, $l[2]);
+            $nl[$i] = abs($nl[$i]); 
+            return $nl;
+        }
+
+        public function makePoints_wall_single_window(){
+            $this->properties = array_map("floatval", (array)$this->myElement->property);
+            $w = floatval($this->properties["width"]);
+            $h = floatval($this->properties["height"]);
+            $t = floatval($this->properties["thickness"]);
+            $r = array_map("floatval", (array)explode(",", $this->myElement->property->ratio));
+            
+            $wds = new stdClass();
+            $wds->c = (object)['x' => -$w + ($r[0] * 2.0 * $w), 'y' => -$h + ($r[1] * 2.0 * $h), 'z' => 0];
+            $wds->h = floatval($this->properties["windowH"]);
+            $wds->w = floatval($this->properties["windowW"]);
+            
+            // Make sure window size always greater than the {a: 1, b: 1}
+            if(!isset($wds->w) || $wds->w < 1) { $wds->w = 1.0; }
+            if(!isset($wds->h) || $wds->h < 1) { $wds->h = 1.0; }
+            
+            $inter = [];
+            array_push($inter, $this->single_window_moveTo([-$wds->w, $wds->h, -$t], $wds->c));
+            array_push($inter, $this->single_window_moveTo([-$wds->w, -$wds->h, -$t], $wds->c));
+            array_push($inter, $this->single_window_moveTo([$wds->w, -$wds->h, -$t], $wds->c));
+            array_push($inter, $this->single_window_moveTo([$wds->w, $wds->h, -$t], $wds->c));
+            
+            $exter = [[-$w, $h, -$t], [-$w, -$h, -$t], [$w, -$h, -$t], [$w, $h, -$t]];
+            $pset = [];
+            
+            for($idxr = 0; $idxr < 4; $idxr++)
+            {
+                $tmprb = ($idxr + 1) % 4;
+                $tmpra = $idxr;
+
+                $this->pushArrayElements($pset, $exter[$tmprb]);
+                $this->pushArrayElements($pset, $exter[$tmpra]);
+                $this->pushArrayElements($pset, $inter[$tmpra]);
+                $this->pushArrayElements($pset, $inter[$tmprb]);
+
+                $this->pushArrayElements($pset, $this->single_window_makePositive($inter[$tmprb], 2));
+                $this->pushArrayElements($pset, $this->single_window_makePositive($inter[$tmpra], 2));
+                $this->pushArrayElements($pset, $this->single_window_makePositive($exter[$tmpra], 2));
+                $this->pushArrayElements($pset, $this->single_window_makePositive($exter[$tmprb], 2));
+
+                $this->pushArrayElements($pset, $this->single_window_makePositive($exter[$tmprb], 2));
+                $this->pushArrayElements($pset, $this->single_window_makePositive($exter[$tmpra], 2));
+                $this->pushArrayElements($pset, $exter[$tmpra]);
+                $this->pushArrayElements($pset, $exter[$tmprb]);
+
+                $this->pushArrayElements($pset, $inter[$tmprb]);
+                $this->pushArrayElements($pset, $inter[$tmpra]);
+                $this->pushArrayElements($pset, $this->single_window_makePositive($inter[$tmpra], 2));
+                $this->pushArrayElements($pset, $this->single_window_makePositive($inter[$tmprb], 2));
+            }
+            $this->points = [];
+            for($i = 0;$i < count($pset);$i+=3){
+                array_push($this->points, [$pset[$i], $pset[$i+1], $pset[$i+2]]);
+            }
+            $this->defaultIndices(count($this->points));
+        }
+
+/////////////////////////////////////////////////////////////////////////////
+        //For delaunay2D
+        public function superTriangle($v)
+        {
+            $x = (object)[ 'min'=> INF, 'max'=> -INF, 'mid'=> 0.0 ];
+            $y = (object)[ 'min'=> INF, 'max'=> -INF, 'mid'=> 0.0 ];
+
+            for($i = 0;$i<count($v);$i++) 
+            {
+                if($v[$i][0] < $x->min) $x->min = $v[$i][0];
+                if($v[$i][0] > $x->max) $x->max = $v[$i][0];
+                if($v[$i][1] < $y->min) $y->min = $v[$i][1];
+                if($v[$i][1] > $y->max) $y->max = $v[$i][1];
+            }
+            // file_put_contents("debug.txt",serialize($x->max) . serialize($x->min) );
+            $dx = $x->max - $x->min;
+            $dy = $y->max - $y->min;
+            $dmax = max($dx, $dy);
+            $x->mid = $x->min + $dx * 0.5;
+            $y->mid = $y->min + $dy * 0.5;
+
+            return [
+                [$x->mid - 20.0 * $dmax, $y->mid -      $dmax],
+                [$x->mid            , $y->mid + 20.0 * $dmax],
+                [$x->mid + 20.0 * $dmax, $y->mid -      $dmax]
+            ];
+        }
+
+        public function circumcircle($v, $i, $j, $k) 
+        {
+            $x1 = $v[$i][0]; $y1 = $v[$i][1]; $x2 = $v[$j][0];
+                $y2 = $v[$j][1]; $x3 = $v[$k][0]; $y3 = $v[$k][1];
+                $fabsy1y2 = abs($y1 - $y2);
+                $fabsy2y3 = abs($y2 - $y3);
+                $xc; $yc; $m1; $m2; $mx1; $mx2; $my1; $my2; $dx; $dy;
+
+            $EPSILON = 1.0 / 1048576.0;
+
+            if($fabsy1y2 < $EPSILON) 
+            {
+                $m2  = -(($x3 - $x2) / ($y3 - $y2));
+                $mx2 = ($x2 + $x3) / 2.0;
+                $my2 = ($y2 + $y3) / 2.0;
+                $xc  = ($x2 + $x1) / 2.0;
+                $yc  = $m2 * ($xc - $mx2) + $my2;
+            }
+            else 
+            {
+                if($fabsy2y3 < $EPSILON) 
+                {
+                    $m1  = -(($x2 - $x1) / ($y2 - $y1));
+                    $mx1 = ($x1 + $x2) / 2.0;
+                    $my1 = ($y1 + $y2) / 2.0;
+                    $xc  = ($x3 + $x2) / 2.0;
+                    $yc  = $m1 * ($xc - $mx1) + $my1;
+                }
+                else 
+                {
+                    $m1  = -(($x2 - $x1) / ($y2 - $y1));
+                    $m2  = -(($x3 - $x2) / ($y3 - $y2));
+                    $mx1 = ($x1 + $x2) / 2.0;
+                    $mx2 = ($x2 + $x3) / 2.0;
+                    $my1 = ($y1 + $y2) / 2.0;
+                    $my2 = ($y2 + $y3) / 2.0;
+                    $xc  = ($m1 * $mx1 - $m2 * $mx2 + $my2 - $my1) / ($m1 - $m2);
+                    $yc  = ($fabsy1y2 > $fabsy2y3) ?
+                    $m1 * ($xc - $mx1) + $my1 :
+                    $m2 * ($xc - $mx2) + $my2;
+                }
+            }
+            $dx = $x2 - $xc;
+            $dy = $y2 - $yc;
+            return (object)['i'=> $i, 'j'=> $j, 'k'=> $k, 'x'=> $xc, 'y'=> $yc, 'r'=> $dx * $dx + $dy * $dy];
+        }
+
+        public function dedup($edges){
+            $a; $b; $m; $n;
+
+            for($j = count($edges); $j > 0; ) 
+            {
+                $b = $edges[--$j];
+                $a = $edges[--$j];
+
+                for($i = $j; $i > 0; ) 
+                {
+                    $n = $edges[--$i];
+                    $m = $edges[--$i];
+
+                    if(($a === $m && $b === $n) || ($a === $n && $b === $m)) 
+                    {
+                        array_splice($edges, $j, 2);
+                        array_splice($edges, $i, 2);
+                        break;
+                    }
+                }
+            }
+        }
+
+        // Triangulation only for 2-D
+        public function delaunay2D($positions)
+        {
+            global $delaunay2D_positions;
+            $EPSILON = 1.0 / 1048576.0;
+            $n = count($positions); $i; $j; $indices; $st; $open; $closed; $edges; $dx; $dy; $a; $b; $c;
+
+            // Fail if there aren't enough vertices to form any triangles.
+            if($n < 3) { return []; }
+
+            // Slice out the actual vertices from the passed objects. (Duplicate the
+            // array even if we don't, though, since we need to make a supertriangle
+            // later on!)
+            $positions = array_slice($positions, 0);
+            // if(isset($key)) for($i = 0; $i < n; $i++) $positions[$i] = $positions[$i][$key];
+
+            // Make an array of indices into the vertex array, sorted by the
+            // vertices' x-position.
+            $indices = [];
+            for($i = 0; $i < $n; $i++) { $indices[$i] = $i; }
+            $delaunay2D_positions = $positions;
+            file_put_contents("debug.txt", serialize($delaunay2D_positions));
+            usort($indices, function($i, $j) {
+                global $delaunay2D_positions;
+                if($delaunay2D_positions[$j][0] - $delaunay2D_positions[$i][0] > 0){
+                    return 1;
+                }else if($delaunay2D_positions[$j][0] - $delaunay2D_positions[$i][0] < 0){
+                    return -1;
+                }
+                return 0; 
+            });
+
+            // Next, find the vertices of the supertriangle (which contains all other
+            // triangles), and append them onto the end of a (copy of) the vertex
+            // array.
+            $st = $this->superTriangle($positions);
+
+            array_push($positions, $st[0], $st[1], $st[2]);
+
+            // Initialize the open list (containing the supertriangle and nothing
+            // else) and the closed list (which is empty since we havn't processed
+            // any triangles yet).
+            $open = [$this->circumcircle($positions, $n + 0, $n + 1, $n + 2)];
+
+            $closed = [];
+
+            // Incrementally add each vertex to the mesh.
+            for($i = count($indices); $i-- > 0; ) 
+            {
+                $edges = [];
+                $c = $indices[$i];
+
+                // For each open triangle, check to see if the current point is
+                // inside it's circumcircle. If it is, remove the triangle and add
+                // it's edges to an edge list.
+                for($j = count($open); $j-- > 0; ) 
+                {
+                    // If this point is to the right of this triangle's circumcircle,
+                    // then this triangle should never get checked again. Remove it
+                    // from the open list, add it to the closed list, and skip.
+                    $dx = $positions[$c][0] - $open[$j]->x;
+                    if($dx > 0.0 && $dx * $dx > $open[$j]->r) 
+                    {
+                        array_push($closed, $open[$j]);
+                        array_slice($open, $j, 1);
+                        continue;
+                    }
+
+                    // If we're outside the circumcircle, skip this triangle.
+                    $dy = $positions[$c][1] - $open[$j]->y;
+                    if($dx * $dx + $dy * $dy - $open[$j]->r > $EPSILON) continue;
+
+                    // Remove the triangle and add it's edges to the edge list.
+                    array_push($edges, $open[$j]->i, $open[$j]->j, $open[$j]->j, $open[$j]->k, $open[$j]->k, $open[$j]->i);
+                    array_slice($open, $j, 1);
+                }
+
+                // Remove any doubled edges.
+                $this->dedup($edges);
+
+                // Add a new triangle for each edge.
+                for($j = count($edges); $j; ) 
+                {
+                    $b = $edges[--$j]; $a = $edges[--$j];
+                    array_push($open, $this->circumcircle($positions, $a, $b, $c));
+                }
+            }
+
+
+
+            // Copy any remaining open triangles to the closed list, and then
+            // remove any triangles that share a vertex with the supertriangle,
+            // building a list of triplets that represent triangles.
+            for($i = count($open); $i-- > 0; ) { array_push($closed, $open[$i]); }
+            $open = [];
+
+            for($i = count($closed); $i-- > 0; )
+            {
+                if($closed[$i]->i < $n && $closed[$i]->j < $n && $closed[$i]->k < $n)
+                { array_push($open, $closed[$i]->i, $closed[$i]->j, $closed[$i]->k); }
+            }
+            return $open;
+        } // End of delaunay2D
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+        public function hasDoor($p){
+            return (isset($p->doorSize) && isset($p->doorPosratio));
+        }
+        public function hasWindow($p){
+            return (isset($p->windowSize) && isset($p->windowCenter));
+        }
+        public function checkPoint($pl, $bind){
+            $flag = true;
+            for($i = 0; $i < count($pl); $i++)
+            {
+                //Check the point
+                $local = false;
+                for($k = 0; $k < count($bind->points); $k++)
+                {
+                    if($bind->points[$k][0] == $pl[$i][0] && $bind->points[$k][1] == $pl[$i][1]) 
+                    { $local = true; break; }
+                }
+                $flag = $flag && $local;
+            }
+            return $flag;
+        }
+        public function sideIndices($t, $bind){
+            $sidepoints = [];
+            for($v = 0; $v < $bind->side; $v++)
+            {
+                $w = ($v + 1) % 4;
+
+                // First
+                $sidepoints = array_merge($sidepoints, [$bind->points[$v][0], $bind->points[$v][1], $t]);
+                $sidepoints = array_merge($sidepoints, [$bind->points[$v][0], $bind->points[$v][1], -$t]);
+                $sidepoints = array_merge($sidepoints, [$bind->points[$w][0], $bind->points[$w][1], $t]);
+                
+                // Second
+                $sidepoints = array_merge($sidepoints, [$bind->points[$v][0], $bind->points[$v][1], -$t]);
+                $sidepoints = array_merge($sidepoints, [$bind->points[$w][0], $bind->points[$w][1], -$t]);
+                $sidepoints = array_merge($sidepoints, [$bind->points[$w][0], $bind->points[$w][1], $t]);
+            }
+            return $sidepoints;
+        }
+        public function thicknessAppend($plist, $tvalue){
+            $finalset = [];
+            foreach ($plist as $elem) {
+                $finalset = array_merge($finalset, [$elem[0], $elem[1], $tvalue]);
+            }
+            return $finalset;
+        }
+        
+        public function makePoints_wall_multi_window(){
+            $this->properties = array_map("floatval", (array)$this->myElement->property);
+            $w = floatval($this->properties["width"]);
+            $h = floatval($this->properties["height"]);
+            $t = floatval($this->properties["thickness"]);
+            
+            $wallpos = [];
+            array_push($wallpos, [-$w, -$h]);
+            array_push($wallpos, [-$w, $h]);
+            array_push($wallpos, [$w, $h]);
+            array_push($wallpos, [$w, -$h]);
+            
+            //////////////////////////////////////////////////////////////////////////////////
+            //Objectization
+            $p = $this->properties;
+            $resobj = new stdClass(); $resobj->windows = []; $resobj->doors = [];
+            $ws = array_map("floatval", (array)explode(",", $this->myElement->property->windowSize)); $wc = array_map("floatval", (array)explode(",", $this->myElement->property->windowCenter));
+            $ds = array_map("floatval", (array)explode(",", $this->myElement->property->doorSize)); $dp = array_map("floatval", (array)explode(",", $this->myElement->property->doorPosratio));
+
+            // For door, only consider one door now.
+            if($this->hasDoor($this->myElement->property))
+            {
+                for($i = 0; $i < count($dp); $i++)
+                {
+                    $door = new stdClass(); $init = new stdClass(); $full = new stdClass(); 
+                    $init->x = (($w - $ds[$i]) * 2.0 * $dp[$i]) - $w; $init->y = -$h;
+                    $full->w = 2.0 * $ds[$i]; $full->h = 2.0 * $ds[$i + 1]; 
+                    
+                    // Candidate property: texture, center
+                    $door->id = $i; $door->points = []; $door->side = 3;
+                    array_push($door->points, [$init->x, $init->y]);
+                    array_push($door->points, [$init->x, $init->y + $full->h]);
+                    array_push($door->points, [$init->x + $full->w, $init->y + $full->h]);
+                    array_push($door->points, [$init->x + $full->w, $init->y]);
+                    array_push($resobj->doors, $door);
+                }
+            }
+            
+            // For window
+            if($this->hasWindow($this->myElement->property))
+            {
+                for($j = 0; $j < count($wc); $j = $j + 2)
+                {
+                    $window = new stdClass(); $c = new stdClass(); $half = new stdClass();
+                    $bound = 2.0 * $t;
+                    $rwt = ((2.0 * $w) - $bound) - ($ws[$j] * 2.0);
+                    $hrwt = $rwt / 2.0;
+
+                    $rht = ((2.0 * $h) - $bound) - ($ws[$j + 1] * 2.0);
+                    $hrht = $rht / 2.0;
+
+                    $c->x = ($rwt * $wc[$j]) - $hrwt; 
+                    $c->y = ($rht * $wc[$j + 1]) - $hrht;
+                    $half->w = $ws[$j]; 
+                    $half->h = $ws[$j + 1];
+                    
+                    $window->id = $j; $window->points = []; $window->side = 4;
+                    array_push($window->points, [$c->x - $half->w, $c->y - $half->h]);
+                    array_push($window->points, [$c->x - $half->w, $c->y + $half->h]);
+                    array_push($window->points, [$c->x + $half->w, $c->y + $half->h]);
+                    array_push($window->points, [$c->x + $half->w, $c->y - $half->h]);
+
+                    array_push($resobj->windows, $window);
+                }
+            }
+
+            //////////////////////////////////////////////////////////////////////////////////
+            $decorate = $resobj;
+
+            $ap = []; $ap = array_merge($ap, $wallpos);
+
+            if($this->hasDoor($this->myElement->property)) { 
+                foreach($decorate->doors as $td){
+                    foreach($td->points as $p){
+                        $ap = array_merge($ap, [$p]);
+                    }
+                }
+            }
+            if($this->hasWindow($this->myElement->property)) { 
+                foreach($decorate->windows as $tw){
+                    foreach($tw->points as $p){
+                        $ap = array_merge($ap, [$p]);
+                    }
+                }
+            }
+
+            $ind = $this->delaunay2D($ap);
+            // file_put_contents("debug.txt", serialize($ind));
+            $back = []; $front = [];
+
+            // Find out the overlap in the window or door
+            for($hv = 0; $hv < count($ind); $hv = $hv + 3)
+            {
+                $fs = [$ap[$ind[$hv]], $ap[$ind[$hv + 1]], $ap[$ind[$hv + 2]]];
+                $bs = [$ap[$ind[$hv + 2]], $ap[$ind[$hv + 1]], $ap[$ind[$hv]]];
+                $flag = false;
+                
+                if(hasDoor($this->myElement->property)) {
+                    foreach ($decorate->doors as $td) {
+                        $flag = $flag || $this->checkPoint($fs, $td); 
+                    }
+                }
+                if(hasWindow($this->myElement->property)) {
+                    foreach ($decorate->doors as $tw) {
+                        $flag = $flag || $this->checkPoint($bs, $tw); 
+                    }
+                }
+                if(!$flag) {
+                    $back = array_merge($back, $bs);
+                    $front = array_merge($front, $fs);
+                }
+            }
+
+            $backside = $this->thicknessAppend($back, $t);
+            $frontside = $this->thicknessAppend($front, -$t);
+           
+            $inner = [];
+
+            $wallside = 4; $doorL = []; $doorR = [];
+            if($this->hasDoor($this->myElement->property))
+            {
+                // Here only consdier one door, not for multiple door
+                $doorL = $this->sideIndices($t, (object)[ 'points'=> [$wallpos[0], $decorate->doors[0]->points[0]], 'side'=> 1 ]);
+                $doorR = $this->sideIndices($t, (object)[ 'points'=> [$decorate->doors[0]->points[3], $wallpos[3]], 'side'=> 1 ]);
+                foreach ($decorate->doors as $elem) {
+                    $inner = array_merge($inner, $this->sideIndices($t, $elem));
+                }
+                $wallside = 3;
+            }
+
+            $outter = $this->sideIndices(-$t, (object)[ 'points'=> $wallpos, 'side'=> $wallside ]);
+             
+            if($this->hasWindow($this->myElement->property))
+            { 
+                foreach ($decorate->windows as $elem) {
+                    $inner = array_merge($inner, $this->sideIndices($t, $elem));
+                }
+            }
+
+            // file_put_contents("debug.txt", $ind);
+        
+            return array_merge($backside, $frontside, $outter, $inner, $doorL, $doorR);
+            // return null;
+        }
+
+        public function door_entry_attachToLast($p, $v){
+            $r = []; $r[0] = $p[0]; $r[1] = $p[1]; $r[2] = $v;
+            return $r;
+        }
+
+        public function makePoints_wall_door_entry(){
+            $this->properties = array_map("floatval", (array)$this->myElement->property);
+            $w = floatval($this->properties["width"]);
+            $h = floatval($this->properties["height"]);
+            $t = floatval($this->properties["thickness"]); 
+            $pr = floatval($this->properties["posratio"]); 
+            $dw = floatval($this->properties["doorW"]); 
+            $dh = floatval($this->properties["doorH"]); 
+            
+            $init = [];
+            array_push($init, (($w - $dw) * 2.0 * $pr) - $w);
+            array_push($init, -$h);
+
+            $inter = [];
+            array_push($inter, $init);
+            array_push($inter, [$init[0], $init[1] + (2.0 * $dh)]);
+            array_push($inter, [$init[0] + (2.0 * $dw), $init[1] + (2.0 * $dh)]);
+            array_push($inter, [$init[0] + (2.0 * $dw), $init[1]]);
+
+            $exter = [];
+            array_push($exter, [-$w, -$h]);
+            array_push($exter, [-$w, $h]);
+            array_push($exter, [$w, $h]);
+            array_push($exter, [$w, -$h]);
+            
+            $pset = [];
+
+            for($idxr = 0; $idxr < 3; $idxr++)
+            {
+                $tmprb = ($idxr + 1) % 4;
+                $tmpra = $idxr;
+                
+                $this->pushArrayElements($pset, $this->door_entry_attachToLast($exter[$tmpra], $t));
+                $this->pushArrayElements($pset, $this->door_entry_attachToLast($inter[$tmpra], $t));
+                $this->pushArrayElements($pset, $this->door_entry_attachToLast($inter[$tmprb], $t));
+                $this->pushArrayElements($pset, $this->door_entry_attachToLast($exter[$tmprb], $t));
+
+                $this->pushArrayElements($pset, $this->door_entry_attachToLast($inter[$tmpra], -$t));
+                $this->pushArrayElements($pset, $this->door_entry_attachToLast($exter[$tmpra], -$t));
+                $this->pushArrayElements($pset, $this->door_entry_attachToLast($exter[$tmprb], -$t));
+                $this->pushArrayElements($pset, $this->door_entry_attachToLast($inter[$tmprb], -$t));
+
+                $this->pushArrayElements($pset, $this->door_entry_attachToLast($exter[$tmpra], -$t));
+                $this->pushArrayElements($pset, $this->door_entry_attachToLast($exter[$tmpra], $t));
+                $this->pushArrayElements($pset, $this->door_entry_attachToLast($exter[$tmprb], $t));
+                $this->pushArrayElements($pset, $this->door_entry_attachToLast($exter[$tmprb], -$t));
+
+                $this->pushArrayElements($pset, $this->door_entry_attachToLast($inter[$tmprb], -$t));
+                $this->pushArrayElements($pset, $this->door_entry_attachToLast($inter[$tmprb], $t));
+                $this->pushArrayElements($pset, $this->door_entry_attachToLast($inter[$tmpra], $t));
+                $this->pushArrayElements($pset, $this->door_entry_attachToLast($inter[$tmpra], -$t));
+            }
+
+            for($y = 0; $y <= 3; $y = $y + 3)
+            {
+                $this->pushArrayElements($pset, $this->door_entry_attachToLast($inter[0], -$t));
+                $this->pushArrayElements($pset, $this->door_entry_attachToLast($inter[0], $t));
+                $this->pushArrayElements($pset, $this->door_entry_attachToLast($exter[0], $t));
+                $this->pushArrayElements($pset, $this->door_entry_attachToLast($exter[0], -$t));
+            }
+
             $this->points = [];
             for($i = 0;$i < count($pset);$i+=3){
                 array_push($this->points, [$pset[$i], $pset[$i+1], $pset[$i+2]]);
@@ -1956,6 +2617,15 @@
             $scale = $this->transform["scale"];
             $rotate = $this->transform["rotate"];
             $translate = $this->transform["translate"];
+
+            // if($this->type == "wall/door_entry"){
+            //     $str = "";
+            //     $str .= serialize($scale) . "\n";
+            //     $str .= serialize($rotate) . "\n";
+            //     $str .= serialize($translate) . "\n";
+            //     $str .= serialize($this->points) . "\n";
+            //     file_put_contents("debug.txt", $str);
+            // }
             
             $smat = array(array($scale[0], 0, 0, 0), array(0, $scale[1], 0, 0), array(0, 0, $scale[2], 0), array(0, 0, 0, 1));
             $this->mat4x4ToFloat($smat);
