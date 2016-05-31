@@ -8,6 +8,8 @@ SceneJS.Types.addType("base/basic",
 		this._layer;
 		this._offsetX;
 		this._offsetY;
+		this._leftback_X=0;
+		this._leftback_Y=0;
 		this._paramana = new ParameterManager(params, function(property)
 		{
 			var w = property.width *1, h = property.height *1, t = property.thickness; 
@@ -31,6 +33,12 @@ SceneJS.Types.addType("base/basic",
 		if(params.OffsetX)this._offsetX = params.OffsetX;
 		if(params.OffsetY)this._offsetY = params.OffsetY;
 	},
+	
+	getLeftBackX:function(){return this._leftback_X;},
+	setLeftBackX:function(x){this._leftback_X = x},
+	
+	getLeftBackY:function(){return this._leftback_Y;},
+	setLeftBackY:function(y){this._leftback_Y = y},
 	
 	getOffsetX:function(){return this._offsetX;},
 	setOffsetX:function(x){this._offsetX = x;},
@@ -93,6 +101,8 @@ SceneJS.Types.addType("base/basic",
 		var roof=-1;
 		var interWall=[];
 		var base=-1;
+		var leftback_vertical_wall=-1;
+		var leftback_horizontal_wall=-1;
 		var nodes=scene.findNodes();
 		for(var i=0;i<nodes.length;i++){
 			var n = nodes[i];
@@ -108,6 +118,9 @@ SceneJS.Types.addType("base/basic",
 				else if(n.getName()=="interWall" && mnmte(n).getLayer()==this.getLayer())interWall.push(mnmte(n));
 				else if(n.getName()=="base"      && mnmte(n).getLayer()==this.getLayer() - 1)downBase=mnmte(n);
 				else if(n.getName()=="backWall"  && mnmte(n).getLayer()==this.getLayer() - 1)downWall=mnmte(n);
+				else if(n.getName()=="leftback_vertical_wall"	&& mnmte(n).getLayer()==this.getLayer()){leftback_vertical_wall=mnmte(n);}
+				else if(n.getName()=="leftback_horizontal_wall"	&& mnmte(n).getLayer()==this.getLayer()){leftback_horizontal_wall=mnmte(n);}
+				
 			}   
 		}
 
@@ -149,6 +162,7 @@ SceneJS.Types.addType("base/basic",
 				this.setRealHeight(this.getHeight());
 			}
 		}
+		var float
 		//set four walls position
 		var havefrontWall = false;
 		var havebackWall = false;
@@ -178,6 +192,79 @@ SceneJS.Types.addType("base/basic",
 			//this.setOffsetX(0);
 			//this.setOffsetY(0);
 		}
+		
+		var left_back_cornor = {x: baseCenterX-this.getRealWidth(),y: baseCenterZ-this.getRealHeight() };
+		var left_front_cornor = {x: baseCenterX -this.getRealWidth(),y:baseCenterZ+this.getRealHeight() };
+		var right_back_cornor = {x: baseCenterX +this.getRealWidth(),y:baseCenterZ-this.getRealHeight()};
+		var right_front_cornor = {x: baseCenterX +this.getRealWidth(),y:baseCenterZ+this.getRealHeight()}
+		var left_back_x = this.getLeftBackX();
+		var left_back_y = this.getLeftBackY();
+		if(left_back_x > this.getThickness() * 2 && left_back_y > this.getThickness() * 2){
+			var root = scene.findNode(3);
+			if(leftback_vertical_wall ==-1){
+				var param = {
+				pos: "leftback_vertical_wall",
+				layer: this.getLayer(),
+				height: backWall.getHeight(),
+				width: (left_back_y),
+				thick: this.getThickness(),
+				dir: "vertical",
+				rotateX: 0,
+				rotateY: 90,
+				rotateZ: 0
+				}
+				var normal_WallS = getNormalWallS(param);
+				leftback_vertical_wall=root.addNode(normal_WallS);
+				leftback_vertical_wall = flag2housenode(leftback_vertical_wall);
+			}else{
+				//console.log(leftback_vertical_wall);
+				leftback_vertical_wall.setWidth(left_back_y/2);
+			}
+			leftback_vertical_wall.setTranslateX(left_back_cornor.x + left_back_x + (this.getThickness()));
+			leftback_vertical_wall.setTranslateY(backWall.getTranslate()[1]);
+			leftback_vertical_wall.setTranslateZ(left_back_cornor.y+(left_back_y/2));
+			//console.log(leftback_vertical_wall.getTranslate())
+			if(leftback_horizontal_wall == -1){
+				var param = {
+				pos: "leftback_horizontal_wall",
+				layer: this.getLayer(),
+				height: backWall.getHeight(),
+				width: ((left_back_x+this.getThickness()*2)/2),
+				thick: this.getThickness(),
+				dir: "horizontal",
+				rotateX: 0,
+				rotateY: 0,
+				rotateZ: 0
+				}
+				var normal_WallS = getNormalWallS(param);
+				leftback_horizontal_wall=root.addNode(normal_WallS);
+				leftback_horizontal_wall = flag2housenode(leftback_horizontal_wall);
+			}else{
+				//console.log(leftback_horizontal_wall);
+				leftback_horizontal_wall.setWidth((left_back_x+this.getThickness()*2)/2);
+			}
+			leftback_horizontal_wall.setTranslateX(left_back_cornor.x + (left_back_x/2)+(this.getThickness()));
+			leftback_horizontal_wall.setTranslateY(backWall.getTranslate()[1]);
+			leftback_horizontal_wall.setTranslateZ(left_back_cornor.y +(left_back_y + (this.getThickness())
+																	   ));
+			//console.log(leftback_horizontal_wall.getTranslate());
+			//console.log(leftback_horizontal_wall.getWidth());
+			//console.log(leftback_horizontal_wall.getHeight());
+			//console.log(leftback_horizontal_wall.getThickness());
+		}else{
+			if(leftback_vertical_wall){
+				
+			}
+			if(leftback_horizontal_wall){
+				
+			}
+			left_back_x = 0;
+			left_back_y = 0;
+		}
+		
+		
+		//console.log("x:"+left_back_cornor.x+" y:"+left_back_cornor.y);
+		var BackLeftWall
 		if(frontWall!=-1){
 			havefrontWall = true;
 			frontWall.setWidth(this.getRealWidth());
@@ -190,26 +277,51 @@ SceneJS.Types.addType("base/basic",
 		}
 		if(backWall!=-1){
 			havebackWall = true;
-			backWall.setWidth(this.getRealWidth());
-			if(high)backWall.setHeight(high*1);
-			backWall.setTranslateX(baseCenterX);
-			backWall.setTranslateY(baseCenterY+this.getThickness()+backWall.getHeight());
-			backWall.setTranslateZ(baseCenterZ-this.getRealHeight()+backWall.getThickness());
-			if(backWall.getHeight() > defaulthigh)defaulthigh=backWall.getHeight();
-			if(backWall.adjustChildren)backWall.adjustChildren();
+			
+			if(leftback_horizontal_wall != -1){
+				var left_edge = left_back_cornor.x + left_back_x + this.getThickness()*2;
+				backWall.setWidth((right_back_cornor.x - left_edge)/2);
+				if(high)backWall.setHeight(high*1);
+				backWall.setTranslateX((right_back_cornor.x + left_edge)/2);
+				backWall.setTranslateY(baseCenterY+this.getThickness()+backWall.getHeight());
+				backWall.setTranslateZ(baseCenterZ-this.getRealHeight()+backWall.getThickness());
+				if(backWall.getHeight() > defaulthigh)defaulthigh=backWall.getHeight();
+				if(backWall.adjustChildren)backWall.adjustChildren();
+			}else{
+				backWall.setWidth(this.getRealWidth());
+				if(high)backWall.setHeight(high*1);
+				backWall.setTranslateX(baseCenterX);
+				backWall.setTranslateY(baseCenterY+this.getThickness()+backWall.getHeight());
+				backWall.setTranslateZ(baseCenterZ-this.getRealHeight()+backWall.getThickness());
+				if(backWall.getHeight() > defaulthigh)defaulthigh=backWall.getHeight();
+				if(backWall.adjustChildren)backWall.adjustChildren();
+			}
+			
 		}
 		if(leftWall!=-1){
 			if(havebackWall && havefrontWall){
 			}
 			else if(havefrontWall){
 			}else if(havebackWall){
-				leftWall.setWidth(this.getRealHeight()-backWall.getThickness());
-				if(high)leftWall.setHeight(high*1);
-				leftWall.setTranslateX(baseCenterX-this.getRealWidth()+leftWall.getThickness());
-				leftWall.setTranslateY(baseCenterY+this.getThickness()+leftWall.getHeight());
-				leftWall.setTranslateZ(baseCenterZ+backWall.getThickness());
-				if(leftWall.getHeight() > defaulthigh)defaulthigh=leftWall.getHeight();
-				if(leftWall.adjustChildren)leftWall.adjustChildren();
+				if(leftback_horizontal_wall != -1){
+					var eage = (left_back_cornor.y+left_back_y+this.getThickness()*2)
+					leftWall.setWidth((left_front_cornor.y-eage)/2);
+					if(high)leftWall.setHeight(high*1);
+					leftWall.setTranslateX(baseCenterX-this.getRealWidth()+leftWall.getThickness());
+					leftWall.setTranslateY(baseCenterY+this.getThickness()+leftWall.getHeight());
+					leftWall.setTranslateZ((eage+left_front_cornor.y)/2);
+					if(leftWall.getHeight() > defaulthigh)defaulthigh=leftWall.getHeight();
+					if(leftWall.adjustChildren)leftWall.adjustChildren();
+				}else{
+					leftWall.setWidth(this.getRealHeight()-backWall.getThickness());
+					if(high)leftWall.setHeight(high*1);
+					leftWall.setTranslateX(baseCenterX-this.getRealWidth()+leftWall.getThickness());
+					leftWall.setTranslateY(baseCenterY+this.getThickness()+leftWall.getHeight());
+					leftWall.setTranslateZ(baseCenterZ+backWall.getThickness());
+					if(leftWall.getHeight() > defaulthigh)defaulthigh=leftWall.getHeight();
+					if(leftWall.adjustChildren)leftWall.adjustChildren();
+				}
+				
 			}else{
 			}
 		}
@@ -313,6 +425,44 @@ SceneJS.Types.addType("base/basic",
 							interWall[i].setTranslateX(rightWall.getTranslate()[0]-rightWall.getThickness()-interWall[i].getThickness());
 							center=interWall[i].getTranslate();
 							check=true;
+						}
+					}
+					if(leftback_vertical_wall!=-1){
+						var range=Math.sqrt(Math.pow(center[0] - leftback_vertical_wall.getTranslate()[0],2)+
+							Math.pow(center[1] - leftback_vertical_wall.getTranslate()[1],2)+
+							Math.pow(center[2] - leftback_vertical_wall.getTranslate()[2],2));
+						if(range < interWall[i].getThickness() + leftback_vertical_wall.getThickness() ||
+							leftback_vertical_wall.isInside(center)){
+							interWall[i].setTranslateX(leftback_vertical_wall.getTranslate()[0]-leftback_vertical_wall.getThickness()-interWall[i].getThickness());
+							center=interWall[i].getTranslate();
+							check=true;
+						}
+					}
+					if(leftback_horizontal_wall!=-1){
+						var wall = leftback_horizontal_wall;
+						var range=Math.sqrt(Math.pow(center[0] - wall.getTranslate()[0],2)+
+							Math.pow(center[1] - wall.getTranslate()[1],2)+
+							Math.pow(center[2] - wall.getTranslate()[2],2));
+						if(range < interWall[i].getThickness() + wall.getThickness() ||
+							wall.isInside(center)){
+							console.log("wo");
+							check=true;
+							if(wall.getDirection()=="horizontal"){
+								if(wall.getTranslate()[2] < center[2]){
+									interWall[i].setTranslateZ(wall.getTranslate()[2]+wall.getThickness()+interWall[i].getThickness());
+								}else{
+									interWall[i].setTranslateZ(wall.getTranslate()[2]-wall.getThickness()-interWall[i].getThickness());
+								}
+								
+							}else{
+								if(wall.getTranslate()[0] < center[0]){
+									interWall[i].setTranslateX(wall.getTranslate()[0]+wall.getThickness()+interWall[i].getThickness());
+								}else{
+									interWall[i].setTranslateX(wall.getTranslate()[0]-wall.getThickness()-interWall[i].getThickness());
+								}
+								
+							}
+							center=interWall[i].getTranslate();
 						}
 					}
 					for (var j = 0; j < i; j++){

@@ -970,7 +970,6 @@ function attachInput(pickId){
             heightismove=false;
         });
     }
-    
 
     //width
     if(n.getWidth && housenode2Pos(n).getName() != "interWall"){
@@ -1092,6 +1091,79 @@ function attachInput(pickId){
         });
         realHeight_input.addEventListener('mouseup',function(event){
 			realHeightismove=false;
+        });
+	}
+	
+	//basicleftbackX
+	if(n.getLeftBackX){
+		var leftback_xismove = false;
+		var div = document.createElement("div");
+		inputarea.appendChild(div);
+		//text
+		var leftback_x_propertyName = document.createElement("lable");
+		leftback_x_propertyName.textContent = "leftback_x";
+		div.appendChild(leftback_x_propertyName);
+		//input
+		var leftback_x_input = document.createElement("input");
+			leftback_x_input.type="range";
+            leftback_x_input.min="0";
+            leftback_x_input.max="50";
+            leftback_x_input.step="0.1";
+            leftback_x_input.value=n.getLeftBackX();
+			div.appendChild(leftback_x_input);
+		
+		var leftback_x_propertyValue = document.createElement("lable");
+		leftback_x_propertyValue.textContent = leftback_x_input.value;
+		div.appendChild(leftback_x_propertyValue);
+		leftback_x_input.addEventListener('mousedown',function(event){
+            leftback_xismove=true;
+        });
+        leftback_x_input.addEventListener('mousemove',function(event){
+            if (leftback_xismove) {
+                n.setLeftBackX(Number(leftback_x_input.value*1.0));
+                leftback_x_propertyValue.textContent=leftback_x_input.value;
+                n.callBaseCalibration();
+                dirty = true;
+            }
+        });
+        leftback_x_input.addEventListener('mouseup',function(event){
+			leftback_xismove=false;
+        });
+	}
+	
+	if(n.getLeftBackY){
+		var leftback_yismove = false;
+		var div = document.createElement("div");
+		inputarea.appendChild(div);
+		//text
+		var leftback_y_propertyName = document.createElement("lable");
+		leftback_y_propertyName.textContent = "leftback_y";
+		div.appendChild(leftback_y_propertyName);
+		//input
+		var leftback_y_input = document.createElement("input");
+			leftback_y_input.type="range";
+            leftback_y_input.min="0";
+            leftback_y_input.max="50";
+            leftback_y_input.step="0.1";
+            leftback_y_input.value=n.getLeftBackY();
+			div.appendChild(leftback_y_input);
+		
+		var leftback_y_propertyValue = document.createElement("lable");
+		leftback_y_propertyValue.textContent = leftback_y_input.value;
+		div.appendChild(leftback_y_propertyValue);
+		leftback_y_input.addEventListener('mousedown',function(event){
+            leftback_yismove=true;
+        });
+        leftback_y_input.addEventListener('mousemove',function(event){
+            if (leftback_yismove) {
+                n.setLeftBackY(Number(leftback_y_input.value*1.0));
+                leftback_y_propertyValue.textContent=leftback_y_input.value;
+                n.callBaseCalibration();
+                dirty = true;
+            }
+        });
+        leftback_y_input.addEventListener('mouseup',function(event){
+			leftback_yismove=false;
         });
 	}
 	
@@ -3255,7 +3327,7 @@ function changeWall(wall_id,wall_type){
 			}
 	if(wall_type == "wall/no_window"){
 		var normal_WallS = getNormalWallS(param);
-		root.addNode(normal_WallS);
+		console.log(root.addNode(normal_WallS));
 			
             
 	}else if(wall_type == "wall/single_window"){
