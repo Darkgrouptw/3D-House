@@ -18,7 +18,7 @@
             <thickness>1</thickness>
             <ratio>0.1,0.1</ratio>
             <back_side>on</back_side>
-            <back_grasp>2</back_grasp>
+            <back_grasp>1</back_grasp>
 			<front_cover>off</front_cover>
             <extrude_len>6</extrude_len>
             <extrude_pos>0.3</extrude_pos>

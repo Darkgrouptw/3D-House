@@ -24,6 +24,8 @@ SceneJS.Types.addType("roof/cross_mansard",
             var el = property.extrude_len;
             var eh = property.extrude_hgt;
             var ep = property.extrude_pos;
+
+            var bgp = property.back_grasp;
 			
 	        var hmt = h - t; 
             
@@ -71,6 +73,10 @@ SceneJS.Types.addType("roof/cross_mansard",
 			var extdbs = d - dPdr;
 			var addl = el * 2;;
 			if(addl < (dPdr + op.dal)) { addl = dPdr + op.dal; }
+
+            var idpd = dPdr * (1 - (bgp / (hmt + h)));
+            var odpd = dPdr * (1 - ((bgp + t) / (2 * h)));
+            var wpd = dPwr * (1 - (bgp / (hmt + h)));
 	
 	        var pset = 
             [
@@ -83,19 +89,81 @@ SceneJS.Types.addType("roof/cross_mansard",
 		        w - dPwr - t, hmt, d - dPdr - t, w - dPwr - t, hmt, -d - dNdr + t, w - t, -h, -d + t,  w - t, -h, d - t, 
                
                 // outside top
-                //-w - dNwr, h, -d - dNdr, 
-                //-w - dNwr, h, d - dPdr, 
-                //w - dPwr, h, d - dPdr, 
-                //w - dPwr, h, -d - dNdr, 
+                -w - dNwr, h, -d - dNdr, 
+                -w - dNwr, h, d - dPdr, 
+                w - dPwr, h, d - dPdr, 
+                w - dPwr, h, -d - dNdr, 
 				
 				// inside top 
-                //w - dPwr - t, hmt, d - dPdr - t, 
-                //-w - dNwr + t, hmt, d - dPdr - t,
-                //-w - dNwr + t, hmt, -d - dNdr + t, 
-                //w - dPwr - t, hmt, -d - dNdr + t, 
+                w - dPwr - t, hmt, d - dPdr - t, 
+                -w - dNwr + t, hmt, d - dPdr - t,
+                -w - dNwr + t, hmt, -d - dNdr + t, 
+                w - dPwr - t, hmt, -d - dNdr + t, 
 
                 // back side necessary part
+                w, -h, -d, w - t, -h, -d + t, w - t - bgp, -h, -d + t, w - t - bgp, -h, -d,
+                -w + t, -h, -d + t, -w, -h, -d, -w + t + bgp, -h, -d, -w + t + bgp, -h, -d + t, 
 
+                // left side 
+                w - wpd - t - bgp, hmt - bgp, -d + t + idpd,
+                w - wpd - t - bgp, hmt - bgp, -d + odpd,
+                w - t - bgp, -h, -d,
+                w - t - bgp, -h, -d + t,
+
+                // right side
+                -w + wpd + t + bgp, hmt - bgp, -d + odpd, 
+                -w + wpd + t + bgp, hmt - bgp, -d + t + idpd,
+                -w + t + bgp, -h, -d + t,
+                -w + t + bgp, -h , -d,
+
+                // center side
+                -w + wpd + t + bgp, hmt - bgp, -d + t + idpd,
+                -w + wpd + t + bgp, hmt - bgp, -d + odpd, 
+                w - wpd - t - bgp, hmt - bgp, -d + odpd,
+                w - wpd - t - bgp, hmt - bgp, -d + t + idpd,
+
+                // left out grasp
+                w - wpd - t - bgp, hmt - bgp, -d + odpd,
+                w - dPwr, h, -d - dNdr,
+                w, -h, -d,
+                w - t - bgp, -h, -d,
+
+                // right out grasp
+                -w - dNwr, h, -d - dNdr,
+                -w + wpd + t + bgp, hmt - bgp, -d + odpd,
+                -w + t + bgp, -h, -d,
+                -w, -h, -d,
+
+                // center out grasp
+                w - dPwr, h, -d - dNdr,
+                w - wpd - t - bgp, hmt - bgp, -d + odpd,
+                -w + wpd + t + bgp, hmt - bgp, -d + odpd,
+                -w - dNwr, h, -d - dNdr,
+
+                // left in grasp
+                w - dPwr - t, hmt, -d - dNdr + t,
+                w - wpd - t - bgp, hmt - bgp, -d + t + idpd,
+                w - t - bgp, -h, -d + t,
+                w - t, -h, -d + t,
+
+                // right in grasp
+                -w + wpd + t + bgp, hmt - bgp, -d + t + idpd,
+                -w - dNwr + t, hmt, -d - dNdr + t,
+                -w + t, -h, -d + t,
+                -w + t + bgp, -h, -d + t,
+
+                // center in grasp 
+                -w - dNwr + t, hmt, -d - dNdr + t,
+                -w + wpd + t + bgp, hmt - bgp, -d + t + idpd,
+                w - wpd - t - bgp, hmt - bgp, -d + t + idpd,
+                w - dPwr - t, hmt, -d - dNdr + t,
+
+                // debug
+                //w, -h, -d,
+                //-w, -h, -d,
+                //-w - dNwr, h, -d - dNdr,
+                //w - dPwr, h, -d - dNdr,
+                
                 // extrude part 
                 
                 // out [D', D, C, C']
@@ -370,6 +438,18 @@ function roof_cross_mansard_build(params)
 		1, 1, 0, 1, 0, 0, 1, 1,
 		1, 0, 0, 0, 0, 1, 1, 1,
 		1, 1, 0, 1, 0, 0, 1, 0,
+
+        0, 1, 0, 0, 1, 0, 1, 1,
+		1, 1, 0, 1, 0, 0, 1, 1,
+		1, 0, 0, 0, 0, 1, 1, 1,
+		1, 1, 0, 1, 0, 0, 1, 0,
+		0, 1, 1, 1, 1, 0, 0, 0,	
+		
+		0, 1, 0, 0, 1, 0, 1, 1,
+		1, 1, 0, 1, 0, 0, 1, 1,
+		1, 0, 0, 0, 0, 1, 1, 1,
+		1, 1, 0, 1, 0, 0, 1, 0,
+
 	];
 
     var geometry = 
