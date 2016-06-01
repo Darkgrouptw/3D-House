@@ -575,7 +575,15 @@ function getTopLayer(){
 function addBase(){
     var nodes=scene.findNodes();
     var layerNumber=getTopLayer()+1;
+	var top_base;
     console.log(layerNumber);
+	for(var i=0;i<nodes.length;i++){
+		if(nodes[i].getType() == "base/basic"){
+			if(nodes[i].getLayer() == layerNumber -1){
+				top_base = nodes[i];
+			}
+		}
+	}
     var root = scene.findNode(3);
     //base
     root.addNode({
@@ -623,9 +631,9 @@ function addBase(){
                                         [{
                                             type: "base/basic",
                                             layer: layerNumber,
-                                            height: 8,
-                                            width: 18,
-                                            thickness: 1,
+                                            height: top_base.getRealHeight(),
+                                            width: top_base.getRealWidth(),
+                                            thickness: top_base.getThickness(),
                                             scale: {x: 1, y: 1, z: 1},
                                             rotate: {x: 0, y: 0, z: 0},
                                             translate: {x: 0, y: 0, z: 0}
