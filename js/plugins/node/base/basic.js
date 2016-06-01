@@ -25,8 +25,14 @@ SceneJS.Types.addType("base/basic",
 			];
 			return pset;
 		});
-		this._paramana.addAttribute('_leftback_X', params.LeftBackX);
-		this._paramana.addAttribute('_leftback_Y', params.LeftBackY);
+		this._paramana.addAttribute('_leftback_X', 0);
+		this._paramana.addAttribute('_leftback_Y', 0);
+		if(params.LeftBackX)this._paramana.set("_leftback_X",params.LeftBackX);
+		if(params.LeftBackY)this._paramana.set("_leftback_Y",params.LeftBackY);
+		this._paramana.addAttribute('_rightback_X', 0);
+		this._paramana.addAttribute('_rightback_Y', 0);
+		if(params.RightBackX)this._paramana.set("_rightback_X",params.RightBackX);
+		if(params.RightBackY)this._paramana.set("_rightback_Y",params.RightBackY);
 		this._offsetX = 0;
 		this._offsetY = 0;
 		this.addNode(base_basic_build.call(this, params)); 
@@ -35,6 +41,7 @@ SceneJS.Types.addType("base/basic",
 		this.readH = params.height;
 		if(params.OffsetX)this._offsetX = params.OffsetX;
 		if(params.OffsetY)this._offsetY = params.OffsetY;
+		console.log(this._paramana.get("_leftback_Y"));
 	},
 	
 	getLeftBackX:function(){return this._paramana.get("_leftback_X");},
@@ -42,6 +49,12 @@ SceneJS.Types.addType("base/basic",
 	
 	getLeftBackY:function(){return this._paramana.get("_leftback_Y");},
 	setLeftBackY:function(y){this._paramana.set("_leftback_Y",y);},
+	
+	getRightBackX:function(){return this._paramana.get("_rightback_X");},
+	setRightBackX:function(x){this._paramana.set("_rightback_X",x);},
+	
+	getRightBackY:function(){return this._paramana.get("_rightback_Y");},
+	setRightBackY:function(y){this._paramana.set("_rightback_Y",y);},
 	
 	getOffsetX:function(){return this._offsetX;},
 	setOffsetX:function(x){this._offsetX = x;},
@@ -106,6 +119,8 @@ SceneJS.Types.addType("base/basic",
 		var base=-1;
 		var leftback_vertical_wall=-1;
 		var leftback_horizontal_wall=-1;
+		var rightback_vertical_wall=-1;
+		var rightback_horizontal_wall=-1;
 		var nodes=scene.findNodes();
 		for(var i=0;i<nodes.length;i++){
 			var n = nodes[i];
@@ -123,6 +138,8 @@ SceneJS.Types.addType("base/basic",
 				else if(n.getName()=="backWall"  && mnmte(n).getLayer()==this.getLayer() - 1)downWall=mnmte(n);
 				else if(n.getName()=="leftback_vertical_wall"	&& mnmte(n).getLayer()==this.getLayer()){leftback_vertical_wall=mnmte(n);}
 				else if(n.getName()=="leftback_horizontal_wall"	&& mnmte(n).getLayer()==this.getLayer()){leftback_horizontal_wall=mnmte(n);}
+				else if(n.getName()=="rightback_vertical_wall"	&& mnmte(n).getLayer()==this.getLayer()){rightback_vertical_wall=mnmte(n);}
+				else if(n.getName()=="rightback_horizontal_wall"	&& mnmte(n).getLayer()==this.getLayer()){rightback_horizontal_wall=mnmte(n);}
 				
 			}   
 		}
@@ -202,6 +219,8 @@ SceneJS.Types.addType("base/basic",
 		var right_front_cornor = {x: baseCenterX +this.getRealWidth(),y:baseCenterZ+this.getRealHeight()}
 		var left_back_x = this.getLeftBackX();
 		var left_back_y = this.getLeftBackY();
+		var right_back_x = this.getRightBackX();
+		var right_back_y = this.getRightBackY();
 		if(left_back_x > this.getThickness() * 2 && left_back_y > this.getThickness() * 2){
 			var root = scene.findNode(3);
 			if(leftback_vertical_wall ==-1){
@@ -209,7 +228,7 @@ SceneJS.Types.addType("base/basic",
 				pos: "leftback_vertical_wall",
 				layer: this.getLayer(),
 				height: backWall.getHeight(),
-				width: (left_back_y),
+				width: (left_back_y/2),
 				thick: this.getThickness(),
 				dir: "vertical",
 				rotateX: 0,
@@ -248,12 +267,7 @@ SceneJS.Types.addType("base/basic",
 			}
 			leftback_horizontal_wall.setTranslateX(left_back_cornor.x + (left_back_x/2)+(this.getThickness()));
 			leftback_horizontal_wall.setTranslateY(backWall.getTranslate()[1]);
-			leftback_horizontal_wall.setTranslateZ(left_back_cornor.y +(left_back_y + (this.getThickness())
-																	   ));
-			//console.log(leftback_horizontal_wall.getTranslate());
-			//console.log(leftback_horizontal_wall.getWidth());
-			//console.log(leftback_horizontal_wall.getHeight());
-			//console.log(leftback_horizontal_wall.getThickness());
+			leftback_horizontal_wall.setTranslateZ(left_back_cornor.y +(left_back_y + (this.getThickness())));
 		}else{
 			if(leftback_vertical_wall){
 				
@@ -265,9 +279,65 @@ SceneJS.Types.addType("base/basic",
 			left_back_y = 0;
 		}
 		
+		if(right_back_x > this.getThickness() * 2 && right_back_y > this.getThickness() * 2){
+			var root = scene.findNode(3);
+			if(rightback_vertical_wall ==-1){
+				var param = {
+				pos: "rightback_vertical_wall",
+				layer: this.getLayer(),
+				height: backWall.getHeight(),
+				width: (right_back_y/2),
+				thick: this.getThickness(),
+				dir: "vertical",
+				rotateX: 0,
+				rotateY: 90,
+				rotateZ: 0
+				}
+				var normal_WallS = getNormalWallS(param);
+				rightback_vertical_wall=root.addNode(normal_WallS);
+				rightback_vertical_wall = flag2housenode(rightback_vertical_wall);
+			}else{
+				//console.log(rightback_vertical_wall);
+				rightback_vertical_wall.setWidth(right_back_y/2);
+			}
+			rightback_vertical_wall.setTranslateX(right_back_cornor.x - right_back_x - (this.getThickness()));
+			rightback_vertical_wall.setTranslateY(backWall.getTranslate()[1]);
+			rightback_vertical_wall.setTranslateZ(right_back_cornor.y+(right_back_y/2));
+			//console.log(rightback_vertical_wall.getTranslate())
+			if(rightback_horizontal_wall == -1){
+				var param = {
+				pos: "rightback_horizontal_wall",
+				layer: this.getLayer(),
+				height: backWall.getHeight(),
+				width: ((right_back_x+this.getThickness()*2)/2),
+				thick: this.getThickness(),
+				dir: "horizontal",
+				rotateX: 0,
+				rotateY: 0,
+				rotateZ: 0
+				}
+				var normal_WallS = getNormalWallS(param);
+				rightback_horizontal_wall=root.addNode(normal_WallS);
+				rightback_horizontal_wall = flag2housenode(rightback_horizontal_wall);
+			}else{
+				//console.log(rightback_horizontal_wall);
+				rightback_horizontal_wall.setWidth((right_back_x+this.getThickness()*2)/2);
+			}
+			rightback_horizontal_wall.setTranslateX(right_back_cornor.x - (right_back_x/2)-(this.getThickness()));
+			rightback_horizontal_wall.setTranslateY(backWall.getTranslate()[1]);
+			rightback_horizontal_wall.setTranslateZ(right_back_cornor.y +(right_back_y + (this.getThickness())));
+		}else{
+			if(rightback_vertical_wall){
+				
+			}
+			if(rightback_horizontal_wall){
+				
+			}
+			right_back_x = 0;
+			right_back_y = 0;
+		}
 		
 		//console.log("x:"+left_back_cornor.x+" y:"+left_back_cornor.y);
-		var BackLeftWall
 		if(frontWall!=-1){
 			havefrontWall = true;
 			frontWall.setWidth(this.getRealWidth());
@@ -280,12 +350,19 @@ SceneJS.Types.addType("base/basic",
 		}
 		if(backWall!=-1){
 			havebackWall = true;
-			
-			if(leftback_horizontal_wall != -1){
-				var left_edge = left_back_cornor.x + left_back_x + this.getThickness()*2;
-				backWall.setWidth((right_back_cornor.x - left_edge)/2);
+			var left_edge = left_back_cornor.x;
+			var right_edge = right_back_cornor.x
+			if(leftback_horizontal_wall !=-1 && left_back_x > this.getThickness()*2 && left_back_y > this.getThickness()*2){
+				left_edge = left_back_cornor.x + left_back_x + this.getThickness()*2;
+			}
+			if(rightback_horizontal_wall != -1 && right_back_x > this.getThickness() * 2 && right_back_y > this.getThickness() * 2 ){
+				right_edge = right_back_cornor.x - right_back_x - this.getThickness() * 2;
+			}
+			if(true){
+				//var left_edge = left_back_cornor.x + left_back_x + this.getThickness()*2;
+				backWall.setWidth((right_edge - left_edge)/2);
 				if(high)backWall.setHeight(high*1);
-				backWall.setTranslateX((right_back_cornor.x + left_edge)/2);
+				backWall.setTranslateX((right_edge + left_edge)/2);
 				backWall.setTranslateY(baseCenterY+this.getThickness()+backWall.getHeight());
 				backWall.setTranslateZ(baseCenterZ-this.getRealHeight()+backWall.getThickness());
 				if(backWall.getHeight() > defaulthigh)defaulthigh=backWall.getHeight();
@@ -333,13 +410,25 @@ SceneJS.Types.addType("base/basic",
 			}
 			else if(havefrontWall){
 			}else if(havebackWall){
-				rightWall.setWidth(this.getRealHeight()-backWall.getThickness());
-				if(high)rightWall.setHeight(high*1);
-				rightWall.setTranslateX(baseCenterX+this.getRealWidth()-rightWall.getThickness());
-				rightWall.setTranslateY(baseCenterY+this.getThickness()+rightWall.getHeight());
-				rightWall.setTranslateZ(baseCenterZ+backWall.getThickness());
-				if(rightWall.getHeight() > defaulthigh)defaulthigh=rightWall.getHeight();
-				if(rightWall.adjustChildren)rightWall.adjustChildren();
+				if(rightback_horizontal_wall != -1){
+					var edge = (right_back_cornor.y+right_back_y+this.getThickness()*2);
+					rightWall.setWidth((right_front_cornor.y-edge)/2);
+					if(high)rightWall.setHeight(high*1);
+					rightWall.setTranslateX(baseCenterX+this.getRealWidth()-rightWall.getThickness());
+					rightWall.setTranslateY(baseCenterY+this.getThickness()+rightWall.getHeight());
+					rightWall.setTranslateZ((right_front_cornor.y+edge)/2);
+					if(rightWall.getHeight() > defaulthigh)defaulthigh=rightWall.getHeight();
+					if(rightWall.adjustChildren)rightWall.adjustChildren();
+				}else{
+					rightWall.setWidth(this.getRealHeight()-backWall.getThickness());
+					if(high)rightWall.setHeight(high*1);
+					rightWall.setTranslateX(baseCenterX+this.getRealWidth()-rightWall.getThickness());
+					rightWall.setTranslateY(baseCenterY+this.getThickness()+rightWall.getHeight());
+					rightWall.setTranslateZ(baseCenterZ+backWall.getThickness());
+					if(rightWall.getHeight() > defaulthigh)defaulthigh=rightWall.getHeight();
+					if(rightWall.adjustChildren)rightWall.adjustChildren();
+				}
+				
 			}else{
 			}
 			

@@ -1175,6 +1175,78 @@ function attachInput(pickId){
         });
 	}
 	
+	if(n.getRightBackX){
+		var rightback_xismove = false;
+		var div = document.createElement("div");
+		inputarea.appendChild(div);
+		//text
+		var rightback_x_propertyName = document.createElement("lable");
+		rightback_x_propertyName.textContent = "rightback_x";
+		div.appendChild(rightback_x_propertyName);
+		//input
+		var rightback_x_input = document.createElement("input");
+			rightback_x_input.type="range";
+            rightback_x_input.min="0";
+            rightback_x_input.max="50";
+            rightback_x_input.step="0.1";
+            rightback_x_input.value=n.getRightBackX();
+			div.appendChild(rightback_x_input);
+		
+		var rightback_x_propertyValue = document.createElement("lable");
+		rightback_x_propertyValue.textContent = rightback_x_input.value;
+		div.appendChild(rightback_x_propertyValue);
+		rightback_x_input.addEventListener('mousedown',function(event){
+            rightback_xismove=true;
+        });
+        rightback_x_input.addEventListener('mousemove',function(event){
+            if (rightback_xismove) {
+                n.setRightBackX(Number(rightback_x_input.value*1.0));
+                rightback_x_propertyValue.textContent=rightback_x_input.value;
+                n.callBaseCalibration();
+                dirty = true;
+            }
+        });
+        rightback_x_input.addEventListener('mouseup',function(event){
+			rightback_xismove=false;
+        });
+	}
+	//basicrightBackXY
+	if(n.getRightBackY){
+		var rightback_yismove = false;
+		var div = document.createElement("div");
+		inputarea.appendChild(div);
+		//text
+		var rightback_y_propertyName = document.createElement("lable");
+		rightback_y_propertyName.textContent = "rightback_y";
+		div.appendChild(rightback_y_propertyName);
+		//input
+		var rightback_y_input = document.createElement("input");
+			rightback_y_input.type="range";
+            rightback_y_input.min="0";
+            rightback_y_input.max="50";
+            rightback_y_input.step="0.1";
+            rightback_y_input.value=n.getRightBackY();
+			div.appendChild(rightback_y_input);
+		
+		var rightback_y_propertyValue = document.createElement("lable");
+		rightback_y_propertyValue.textContent = rightback_y_input.value;
+		div.appendChild(rightback_y_propertyValue);
+		rightback_y_input.addEventListener('mousedown',function(event){
+            rightback_yismove=true;
+        });
+        rightback_y_input.addEventListener('mousemove',function(event){
+            if (rightback_yismove) {
+                n.setRightBackY(Number(rightback_y_input.value*1.0));
+                rightback_y_propertyValue.textContent=rightback_y_input.value;
+                n.callBaseCalibration();
+                dirty = true;
+            }
+        });
+        rightback_y_input.addEventListener('mouseup',function(event){
+			rightback_yismove=false;
+        });
+	}
+	
     //percentX
     if(n.getPercentX && housenode2Pos(n).getName() == "interWall"){
         var percentXismove=false;
@@ -2476,6 +2548,8 @@ function getElementXML(n){
             }
 			if(n.getLeftBackX)xml+='\t\t\t'+'<LeftBackX>'+n.getLeftBackX()+'</LeftBackX>'+'\n';
 			if(n.getLeftBackY)xml+='\t\t\t'+'<LeftBackY>'+n.getLeftBackY()+'</LeftBackY>'+'\n';
+			if(n.getRightBackX)xml+='\t\t\t'+'<RightBackX>'+n.getRightBackX()+'</RightBackX>'+'\n';
+			if(n.getRightBackY)xml+='\t\t\t'+'<RightBackY>'+n.getRightBackY()+'</RightBackY>'+'\n';
             if(n.getPercentX && n.getPercentX())xml+='\t\t\t'+'<percentX>'+n.getPercentX()+'</percentX>'+'\n';
             if(n.getPercentY && n.getPercentY())xml+='\t\t\t'+'<percentY>'+n.getPercentY()+'</percentY>'+'\n';
             if(n.getPriority && n.getPriority())xml+='\t\t\t'+'<priority>'+n.getPriority()+'</priority>'+'\n';
