@@ -1,0 +1,22 @@
+<layer>
+    <element>
+        <type>wall/trapezoid</type>
+        
+        <transform>
+            <scale>1,1,1</scale> 
+            <rotate>0,0,0</rotate>
+            <translate>0,0,0</translate>
+        </transform>
+        
+		<texture>wall.jpg</texture>
+        
+        <property>
+            <width>10</width>
+            <height>10</height>
+            <thickness>1</thickness>
+            <ratio>0.7,1</ratio>
+        </property>
+        
+    </element>
+
+</layer>  
