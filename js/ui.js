@@ -2466,10 +2466,12 @@ function getElementXML(n){
                 var ratio = n.getRatio();
                 xml+='\t\t\t'+'<ratio>'+ratio.a+','+ratio.b+'</ratio>'+'\n';
             }
+			if(n.getLeftBackX)xml+='\t\t\t'+'<LeftBackX>'+n.getLeftBackX()+'</LeftBackX>'+'\n';
+			if(n.getLeftBackY)xml+='\t\t\t'+'<LeftBackY>'+n.getLeftBackY()+'</LeftBackY>'+'\n';
             if(n.getPercentX && n.getPercentX())xml+='\t\t\t'+'<percentX>'+n.getPercentX()+'</percentX>'+'\n';
             if(n.getPercentY && n.getPercentY())xml+='\t\t\t'+'<percentY>'+n.getPercentY()+'</percentY>'+'\n';
             if(n.getPriority && n.getPriority())xml+='\t\t\t'+'<priority>'+n.getPriority()+'</priority>'+'\n';
-            if(n.getToplen && n.getToplen())xml+='\t\t\t'+'<toplen>'+n.getToplen()+'</toplen>'+'\n';
+            if(n.getToplen)xml+='\t\t\t'+'<toplen>'+n.getToplen()+'</toplen>'+'\n';
             if(n.getDirection)xml+='\t\t\t'+'<direction>'+n.getDirection()+'</direction>'+'\n';
             if(n.getOffsetX && n.getOffsetX())xml += '\t\t\t'+'<OffsetX>'+n.getOffsetX()+'</OffsetX>'+'\n';
             if(n.getOffsetY && n.getOffsetY())xml += '\t\t\t'+'<OffsetY>'+n.getOffsetY()+'</OffsetY>'+'\n';
@@ -2523,7 +2525,7 @@ function getElementXML(n){
 			if(n.getExtrudeBas && n.getExtrudeBas())xml+='\t\t\t'+'<extrude_bas>'+n.getExtrudeBas()+'</extrude_bas>'+'\n';
 			if(n.getBackGrasp && n.getBackGrasp())xml+='\t\t\t'+'<back_grasp>'+n.getBackGrasp()+'</back_grasp>'+'\n';
 			if(n.getBackSide && n.getBackSide())xml+='\t\t\t'+'<back_side>'+n.getBackSide()+'</back_side>'+'\n';
-			if(n.getGap && n.getGap())xml+='\t\t\t'+'<gap>'+n.getGap()+'</gap>'+'\n';
+			if(n.getGap)xml+='\t\t\t'+'<gap>'+n.getGap()+'</gap>'+'\n';
         xml+='\t\t'+'</property>'+'\n';
     xml+='\t'+'</element>'+'\n';
     return xml;
