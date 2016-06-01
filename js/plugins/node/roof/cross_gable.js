@@ -175,12 +175,12 @@ SceneJS.Types.addType("roof/cross_gable",
             [
                 // frontside
                 -db + dl, sh, wr + whr, -td + ldb, -h, w, -d, -h, w, -d, h, wr, 
-                
+                d, h, wr, d, -h, w, td - rdb, -h, w, db - dr, sh, wr + whr,
+               
+                d, h + st, wr, db - dr, sh + st, wr + whr, td - rdb + dtt, -h, w + dt, d, -h, w + dt,
                 //-db + dl, sh + st, wr + whr, -d, h + st, wr, -d, -h, w + dt, -td + ldb - dt, -h, w + dt,
                 -db + dl, sh + st, wr + whr, -d, h + st, wr, -d, -h, w + dt, -td + ldb - dtt, -h, w + dt,
 
-                d, h, wr, d, -h, w, td - rdb, -h, w, db - dr, sh, wr + whr,
-                d, h + st, wr, db - dr, sh + st, wr + whr, td - rdb + dtt, -h, w + dt, d, -h, w + dt,
             ];
             property.shared.front.content = fcont;
 
@@ -208,8 +208,14 @@ SceneJS.Types.addType("roof/cross_gable",
             {
                 apet = 
                 [
-                    -d, h, wr, -d, h, wr, d, h, wr, -db + dl, sh, wr + whr,
-                    -d, h + st, wr, -db + dl, sh + st, wr + whr, d, h + st, wr, -d, h + st, wr
+                    //-d, h + st, wr, 
+                    -db + dl, sh + st, wr + whr, 
+                    d, h + st, wr,
+                    0, h + st, wr,
+                    -d, h + st, wr,
+                    //-d, h + st, wr,
+
+                    -d, h, wr, -d, h, wr, d, h, wr, -db + dl, sh, wr + whr
                 ];
             }
             else { apet = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; }
@@ -242,7 +248,7 @@ SceneJS.Types.addType("roof/cross_gable",
             var fd = property.depth * 2;
             var fh = property.height * 2;
             var efw = property.shared.extrude.paraW;
-            var efh = property.shared.extrude.paraH;
+            //var efh = property.shared.extrude.paraH;
             var eminw = property.shared.extrude.minW;
             var eminh = property.shared.extrude.minH;
 
@@ -275,7 +281,7 @@ SceneJS.Types.addType("roof/cross_gable",
                 var tmpcat = [];
                 for(var i = 0; i < points.length; i = i + 3)
                 {
-                    tmpcat = tmpcat.concat([(points[i + 2] - eminw) / efw, (points[i + 1] - eminh) / efh]);
+                    tmpcat = tmpcat.concat([(points[i + 2] - eminw) / efw, (points[i + 1] - eminh) / fh]);
                 }
                 return tmpcat;
             };

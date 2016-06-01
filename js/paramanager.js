@@ -518,8 +518,9 @@ ParameterManager.prototype.updateIndicesValue = function(that)
 
 ParameterManager.prototype.updateNormalDirect = function(that)
 {
-    // Recompute normals
     var geometry = that.findNodesByType('geometry')[0];
+
+    // Recompute normals
     var prevNormal = geometry.getNormals();
 
     var positions = geometry._core.arrays.positions;
@@ -538,9 +539,9 @@ ParameterManager.prototype.updateNormalDirect = function(that)
         j1 = indices[i + 1];
         j2 = indices[i + 2];
 
-        v1 = [positions[j0 * 3 + 0], positions[j0 * 3 + 1], positions[j0 * 3 + 2]];
-        v2 = [positions[j1 * 3 + 0], positions[j1 * 3 + 1], positions[j1 * 3 + 2]];
-        v3 = [positions[j2 * 3 + 0], positions[j2 * 3 + 1], positions[j2 * 3 + 2]];
+        v1 = [positions[j0 * 3 + 0], positions[j0 * 3 + 1], positions[j0 * 3 + 2], 0];
+        v2 = [positions[j1 * 3 + 0], positions[j1 * 3 + 1], positions[j1 * 3 + 2], 0];
+        v3 = [positions[j2 * 3 + 0], positions[j2 * 3 + 1], positions[j2 * 3 + 2], 0];
 
         v2 = SceneJS_math_subVec4(v2, v1, [0, 0, 0, 0]);
         v3 = SceneJS_math_subVec4(v3, v1, [0, 0, 0, 0]);

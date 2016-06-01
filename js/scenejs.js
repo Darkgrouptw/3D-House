@@ -3225,6 +3225,8 @@ SceneJS.log = new (function() {
             dest = v;
         }
 
+        if(s == Infinity) { s = 0; }
+
         dest[0] = v[0] * s;
         dest[1] = v[1] * s;
         dest[2] = v[2] * s;
@@ -9744,9 +9746,9 @@ new (function () {
             j1 = indices[i + 1];
             j2 = indices[i + 2];
 
-            v1 = [positions[j0 * 3 + 0], positions[j0 * 3 + 1], positions[j0 * 3 + 2]];
-            v2 = [positions[j1 * 3 + 0], positions[j1 * 3 + 1], positions[j1 * 3 + 2]];
-            v3 = [positions[j2 * 3 + 0], positions[j2 * 3 + 1], positions[j2 * 3 + 2]];
+            v1 = [positions[j0 * 3 + 0], positions[j0 * 3 + 1], positions[j0 * 3 + 2], 0];
+            v2 = [positions[j1 * 3 + 0], positions[j1 * 3 + 1], positions[j1 * 3 + 2], 0];
+            v3 = [positions[j2 * 3 + 0], positions[j2 * 3 + 1], positions[j2 * 3 + 2], 0];
 
             v2 = SceneJS_math_subVec4(v2, v1, [0, 0, 0, 0]);
             v3 = SceneJS_math_subVec4(v3, v1, [0, 0, 0, 0]);
@@ -9779,9 +9781,16 @@ new (function () {
                 y += nvec[j][1];
                 z += nvec[j][2];
             }
+
+            if(isNaN((x / count)) || isNaN((y / count)) || isNaN((z / count)))
+            {
+                console.log('WARNING!! Not a number.');
+            }
+
             normals[i * 3 + 0] = (x / count);
             normals[i * 3 + 1] = (y / count);
             normals[i * 3 + 2] = (z / count);
+
         }
 
         data.normals = normals;
