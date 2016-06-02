@@ -72,6 +72,7 @@ SceneJS.Types.addType("roof/cross_mansard",
 			var extdbs = d - dPdr;
 			var addl = el * 2;;
 			if(addl < (dPdr + op.dal)) { addl = dPdr + op.dal; }
+            property.exactlyExtrudeLen = addl;
 
             var idpd = dPdr * (1 - (bgp / (hmt + h)));
             var odpd = dPdr * (1 - ((bgp + t) / (2 * h)));
@@ -366,6 +367,7 @@ SceneJS.Types.addType("roof/cross_mansard",
         this._paramana.addAttribute('back_grasp', params.back_grasp);
 
         this._paramana.addAttribute('shared', {});
+        this._paramana.addAttribute('exactlyExtrudeLen', undefined);
 
         this._paramana.addFunction('texture', function(property)
         {
@@ -446,6 +448,8 @@ SceneJS.Types.addType("roof/cross_mansard",
 	
 	getDepth: function() { return this._paramana.get('depth'); },
 	setDepth: function(d) { this._paramana.set('depth', d); this.update(); },
+
+    getExactlyExtrudeLen: function() { return this._paramana.get('exactlyExtrudeLen'); },
 
     getBackSide: function() { return this._paramana.get('back_side'); },
     setBackSide: function() { this._paramana.set('back_side', bs); this.update(); },

@@ -50,6 +50,7 @@ SceneJS.Types.addType("roof/cross_gable",
             
             var base_len = w + (2 * t);
             if(base_len < (wr + el)) { base_len = wr + el; }
+            property.exactlyExtrudeLen = base_len - (0.5 * t);
 
             var dt = t;
             var st = (2 * h / ( w * r.a + w * r.b)) * dt, sh = h * eh;
@@ -243,6 +244,8 @@ SceneJS.Types.addType("roof/cross_gable",
         // for texture
         this._paramana.addAttribute('shared', {});
 
+        this._paramana.addAttribute('exactlyExtrudeLen', undefined);
+
         this._paramana.addFunction('texture', function(property)
         {
             var tmpUV = [[0, 0], [1, 0], [0, 1], [1, 1]];
@@ -330,6 +333,8 @@ SceneJS.Types.addType("roof/cross_gable",
 	
 	getThickness: function() { return this._paramana.get('thickness'); },
 	setThickness: function(t) { this._paramana.set('thickness', t); this.update(); },
+
+    getExactlyExtrudeLen: function() { return this._paramana.get('exactlyExtrudeLen'); },
 
     getExtrudePos: function() { return this._paramana.get('extrude_pos'); },
     setExtrudePos: function(ep) { this._paramana.set('extrude_pos', ep); this.update(); },
