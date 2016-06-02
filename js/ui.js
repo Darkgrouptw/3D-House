@@ -3016,6 +3016,7 @@ function getCrossMansardS(param){
                                         width: param.Width,
                                         thickness: 1,
                                         depth: param.Depth,
+
 										back_side: "on",
 										extrude_len: 1,
 										extrude_pos: 0.5,
@@ -3023,6 +3024,8 @@ function getCrossMansardS(param){
 										extrude_bas: 20,
 										extrude_tpl: 0.2, 
 										back_grasp: 1,
+                                        front_cover: "off",
+                                        
                                         ratio: {a: 0.2 , b: 0.2},
                                         scale: {x: 1, y: 1, z: 1},
                                         rotate: {x: 0, y: 180, z: 0},
