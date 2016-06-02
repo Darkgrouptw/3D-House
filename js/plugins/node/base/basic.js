@@ -269,11 +269,13 @@ SceneJS.Types.addType("base/basic",
 			leftback_horizontal_wall.setTranslateY(backWall.getTranslate()[1]);
 			leftback_horizontal_wall.setTranslateZ(left_back_cornor.y +(left_back_y + (this.getThickness())));
 		}else{
-			if(leftback_vertical_wall){
-				
+			if(leftback_vertical_wall != -1){
+				housenode2flag(leftback_vertical_wall).destroy();
+				leftback_vertical_wall = -1;
 			}
-			if(leftback_horizontal_wall){
-				
+			if(leftback_horizontal_wall != -1){
+				housenode2flag(leftback_horizontal_wall).destroy();
+				leftback_horizontal_wall = -1;
 			}
 			left_back_x = 0;
 			left_back_y = 0;
@@ -327,11 +329,13 @@ SceneJS.Types.addType("base/basic",
 			rightback_horizontal_wall.setTranslateY(backWall.getTranslate()[1]);
 			rightback_horizontal_wall.setTranslateZ(right_back_cornor.y +(right_back_y + (this.getThickness())));
 		}else{
-			if(rightback_vertical_wall){
-				
+			if(rightback_vertical_wall != -1){
+				housenode2flag(rightback_vertical_wall).destroy();
+				rightback_vertical_wall = -1;
 			}
-			if(rightback_horizontal_wall){
-				
+			if(rightback_horizontal_wall != -1){
+				housenode2flag(rightback_horizontal_wall).destroy();
+				rightback_horizontal_wall = -1;
 			}
 			right_back_x = 0;
 			right_back_y = 0;
@@ -537,6 +541,7 @@ SceneJS.Types.addType("base/basic",
 						}
 					}
 					if(leftback_vertical_wall!=-1){
+						
 					}
 					if(leftback_horizontal_wall!=-1){
 					}
