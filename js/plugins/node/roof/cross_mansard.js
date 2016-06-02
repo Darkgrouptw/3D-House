@@ -36,7 +36,6 @@ SceneJS.Types.addType("roof/cross_mansard",
             {
                 if(padding == undefined) { padding = 0; }
                 var tmeb = eb - padding;
-                var tmph = ((2 * h) - t);
                 var fulh = ((2 * h) - padding);
                 var pack = {};
 
@@ -59,7 +58,7 @@ SceneJS.Types.addType("roof/cross_mansard",
                 //pack.ihp = ((tmph - (3 * t)) * eh) + (2 * t); 
 
                 // depth add length
-                pack.dal = dPdr * (1 - (pack.hp / tmph));
+                pack.dal = dPdr * (1 - (pack.hp / fulh));
 
                 pack.teb = 2 * tmeb;
                 pack.tebet = pack.teb * et;
@@ -78,33 +77,56 @@ SceneJS.Types.addType("roof/cross_mansard",
             var odpd = dPdr * (1 - ((bgp + t) / (2 * h)));
             var wpd = dPwr * (1 - (bgp / (hmt + h)));
 	
-	        var pset = 
-            [
+	        var pset = [];
+                
                 // outside 2 side
+            var outside = 
+            [
 		        -w - dNwr, h, d - dPdr, -w - dNwr, h, -d - dNdr, -w, -h, -d, -w, -h, d, 
 		        w - dPwr, h, d - dPdr, w, -h, d, w, -h, -d, w - dPwr, h, -d - dNdr,
+			];
+            pset = pset.concat(outside);
+            property.shared.outside = outside;
 				
-				// inside 2 side
+                // inside 2 side
+            var inside = 
+            [
                 -w - dNwr + t, hmt, d - dPdr - t, -w + t, -h, d - t, -w + t, -h, -d + t, -w - dNwr + t, hmt, -d - dNdr + t, 
 		        w - dPwr - t, hmt, d - dPdr - t, w - dPwr - t, hmt, -d - dNdr + t, w - t, -h, -d + t,  w - t, -h, d - t, 
-               
+            ];
+            pset = pset.concat(inside);
+            property.shared.inside = inside;
+                
                 // outside top
+            var topside = 
+            [
                 -w - dNwr, h, -d - dNdr, 
                 -w - dNwr, h, d - dPdr, 
                 w - dPwr, h, d - dPdr, 
                 w - dPwr, h, -d - dNdr, 
-				
-				// inside top 
+		
                 w - dPwr - t, hmt, d - dPdr - t, 
                 -w - dNwr + t, hmt, d - dPdr - t,
                 -w - dNwr + t, hmt, -d - dNdr + t, 
-                w - dPwr - t, hmt, -d - dNdr + t, 
+                w - dPwr - t, hmt, -d - dNdr + t,  
+            ];
+            pset = pset.concat(topside);
+            property.shared.topside = topside;
 
                 // back side necessary part
+                
+            var back_bottom =
+            [
                 w, -h, -d, w - t, -h, -d + t, w - t - bgp, -h, -d + t, w - t - bgp, -h, -d,
                 -w + t, -h, -d + t, -w, -h, -d, -w + t + bgp, -h, -d, -w + t + bgp, -h, -d + t, 
+            ];
+            pset = pset.concat(back_bottom);
+            property.shared.back_bottom = back_bottom;
 
-                // left side 
+                // side 
+            var side =
+            [
+                // left side
                 w - wpd - t - bgp, hmt - bgp, -d + t + idpd,
                 w - wpd - t - bgp, hmt - bgp, -d + odpd,
                 w - t - bgp, -h, -d,
@@ -120,8 +142,14 @@ SceneJS.Types.addType("roof/cross_mansard",
                 -w + wpd + t + bgp, hmt - bgp, -d + t + idpd,
                 -w + wpd + t + bgp, hmt - bgp, -d + odpd, 
                 w - wpd - t - bgp, hmt - bgp, -d + odpd,
-                w - wpd - t - bgp, hmt - bgp, -d + t + idpd,
+                w - wpd - t - bgp, hmt - bgp, -d + t + idpd, 
+            ];
+            pset = pset.concat(side);
+            property.shared.side = side;
 
+                // grasps
+            var grasps = 
+            [
                 // left out grasp
                 w - wpd - t - bgp, hmt - bgp, -d + odpd,
                 w - dPwr, h, -d - dNdr,
@@ -156,8 +184,11 @@ SceneJS.Types.addType("roof/cross_mansard",
                 -w - dNwr + t, hmt, -d - dNdr + t,
                 -w + wpd + t + bgp, hmt - bgp, -d + t + idpd,
                 w - wpd - t - bgp, hmt - bgp, -d + t + idpd,
-                w - dPwr - t, hmt, -d - dNdr + t,
-
+                w - dPwr - t, hmt, -d - dNdr + t, 
+            ];
+            pset = pset.concat(grasps);
+            property.shared.grasps = grasps; 
+                
                 // debug
                 //w, -h, -d,
                 //-w, -h, -d,
@@ -165,13 +196,20 @@ SceneJS.Types.addType("roof/cross_mansard",
                 //w - dPwr, h, -d - dNdr,
                 
                 // extrude part 
-                
+            var front_extrude =
+            [
+                // debug [D, C, B, A]     
+                //-w - dNwr, h, d - dPdr,
+                //-w, -h, d,
+                //w, -h, d,
+                //w - dPwr, h, d - dPdr,
+
                 // out [D', D, C, C']
-                op.sb + op.il, op.hp - h, d - dPdr + op.dal,
                 -w - dNwr, h, d - dPdr,
                 -w, -h, d,
                 op.sb, -h, d,
-               
+                op.sb + op.il, op.hp - h, d - dPdr + op.dal,
+
                 // in [D', C', C, D]
                 ip.sb + ip.il, ip.hp - h, d - dPdr - t + ip.dal,
                 ip.sb, -h, d - t,
@@ -201,9 +239,13 @@ SceneJS.Types.addType("roof/cross_mansard",
                 w - t, -h, d - t,
                 ip.sb + ip.teb, -h, d - t,
                 ip.sb + ip.il + ip.tebet, ip.hp - h, d - dPdr - t + ip.dal,
-                
+            ];
+            pset = pset.concat(front_extrude);
+            property.shared.front_extrude = front_extrude;
+
 				// extrude length
-				
+		    var extrude_length = 
+            [
 				// out [D'', D', C', C'']
 				op.sb + op.il, op.hp - h, extdbs + addl,
                 op.sb + op.il, op.hp - h, d - dPdr + op.dal,
@@ -216,18 +258,6 @@ SceneJS.Types.addType("roof/cross_mansard",
                 ip.sb, -h, d - t,
 				ip.sb + ip.il, ip.hp - h, d - dPdr - t + ip.dal,
 
-				// out [A', D', D'', A'']
-                op.sb + op.il + op.tebet, op.hp - h, d - dPdr + op.dal, 
-				op.sb + op.il, op.hp - h, d - dPdr + op.dal,
-				op.sb + op.il, op.hp - h, extdbs + addl,
-				op.sb + op.il + op.tebet, op.hp - h, extdbs + addl, 
-				
-				// in [A', A'', D'', D']
-                ip.sb + ip.il + ip.tebet, ip.hp - h, d - dPdr - t + ip.dal,
-				ip.sb + ip.il + ip.tebet, ip.hp - h, extdbs + addl,
-				ip.sb + ip.il, ip.hp - h, extdbs + addl,
-                ip.sb + ip.il, ip.hp - h, d - dPdr - t + ip.dal,
-				
 				// out [A', A'', B'', B']
 				op.sb + op.il + op.tebet, op.hp - h, d - dPdr + op.dal,
 				op.sb + op.il + op.tebet, op.hp - h, extdbs + addl,
@@ -239,14 +269,41 @@ SceneJS.Types.addType("roof/cross_mansard",
                 ip.sb + ip.teb, -h, d - t,
                 ip.sb + ip.teb, -h, extdbs + addl,
 				ip.sb + ip.il + ip.tebet, ip.hp - h, extdbs + addl,
+            ];
+            pset = pset.concat(extrude_length);
+            property.shared.extrude_length = extrude_length;
+
+                // extrude top
+            var extrude_top = 
+            [
+                // out [A', D', D'', A'']
+                op.sb + op.il + op.tebet, op.hp - h, d - dPdr + op.dal, 
+				op.sb + op.il, op.hp - h, d - dPdr + op.dal,
+				op.sb + op.il, op.hp - h, extdbs + addl,
+				op.sb + op.il + op.tebet, op.hp - h, extdbs + addl, 
+				
+				// in [A', A'', D'', D']
+                ip.sb + ip.il + ip.tebet, ip.hp - h, d - dPdr - t + ip.dal,
+				ip.sb + ip.il + ip.tebet, ip.hp - h, extdbs + addl,
+				ip.sb + ip.il, ip.hp - h, extdbs + addl,
+                ip.sb + ip.il, ip.hp - h, d - dPdr - t + ip.dal,
+            ];
+            pset = pset.concat(extrude_top);
+            property.shared.extrude_top = extrude_top;
 
                 // 2 side bottom
+            var side_bottom = 
+            [
                 -w + t, -h, d - t, -w, -h, d, -w, -h, -d, -w + t, -h, -d + t,
-		        w - t, -h, d - t, w - t, -h, -d + t, w, -h, -d, w, -h, d,	
+		        w - t, -h, d - t, w - t, -h, -d + t, w, -h, -d, w, -h, d,
+            ];
+            pset = pset.concat(side_bottom);
+            property.shared.side_bottom = side_bottom;
 				
 				// extrude bottom
-				
-				// [iC', oC', oC, iC]
+		    var extrude_bottom =
+            [
+                // [iC', oC', oC, iC]
 				ip.sb, -h, d - t,
 				op.sb, -h, d,
 				-w, -h, d,
@@ -268,10 +325,14 @@ SceneJS.Types.addType("roof/cross_mansard",
 				w - t, -h, d - t,
 				w, -h, d,
 				op.sb + op.teb, -h, d,
-				ip.sb + ip.teb, -h, d - t,
-				
+				ip.sb + ip.teb, -h, d - t, 
+		    ];
+            pset = pset.concat(extrude_bottom);
+            property.shared.extrude_bottom = extrude_bottom;
+
 				// front cover
-				
+            var front_cover = 
+            [
 				// [iD'', oD'', oC'', iC'']
 				ip.sb + ip.il, ip.hp - h, extdbs + addl,
 				op.sb + op.il, op.hp - h, extdbs + addl,
@@ -290,6 +351,8 @@ SceneJS.Types.addType("roof/cross_mansard",
 				ip.sb + ip.teb, -h, extdbs + addl,
 				op.sb + op.teb, -h, extdbs + addl,
 	        ];
+            pset = pset.concat(front_cover);
+            property.shared.front_cover = front_cover;
 	        
 	        return pset;
 	    });
@@ -302,47 +365,114 @@ SceneJS.Types.addType("roof/cross_mansard",
         this._paramana.addAttribute('back_side', params.back_side);
         this._paramana.addAttribute('back_grasp', params.back_grasp);
 
+        this._paramana.addAttribute('shared', {});
+
+        this._paramana.addFunction('texture', function(property)
+        {
+            var tmpUV = [[0, 0], [1, 0], [0, 1], [1, 1]];
+            var uvs = [];
+
+            var share = property.shared;
+
+            var h = property.height, dh = 2 * h;
+            var w = property.width, dw = 2 * w;
+            var d = property.depth, dd = 2 * d;
+    
+            var sideTexture = function(points)
+            {
+                var tmpcat = [];
+                for(var i = 0; i < points.length; i = i + 3) { tmpcat = tmpcat.concat(tmpUV[0]); }
+                return tmpcat;
+            };
+        
+            var randomTexture = function(points)
+            {
+                var tmpcat = [];
+                for(var i = 0; i < points.length; i = i + 3) { tmpcat = tmpcat.concat(tmpUV[Math.floor(Math.random() * 3)]); }
+                return tmpcat;
+            };
+
+            var depthHeightTexture = function(points)
+            {
+                var tmpcat = [];
+                for(var i = 0; i < points.length; i = i + 3)
+                {
+                   tmpcat = tmpcat.concat([(points[i] - d) / dd, (points[i + 1] - h) / dh]); 
+                }
+                return tmpcat;
+            };
+
+            var widthHeightTexture = function(points)
+            {
+                var tmpcat = [];
+                for(var i = 0; i < points.length; i = i + 3)
+                {
+                    tmpcat = tmpcat.concat([(points[i + 2] - w) / dw, (points[i + 1] - h) / dh]);
+                }
+                return tmpcat;
+            };
+
+            return uvs.concat(depthHeightTexture(share.outside))
+                    .concat(depthHeightTexture(share.inside))
+                    .concat(sideTexture(share.topside))
+                    .concat(sideTexture(share.back_bottom))
+                    .concat(depthHeightTexture(share.side))
+                    .concat(widthHeightTexture(share.grasps))
+                    .concat(widthHeightTexture(share.front_extrude))
+                    .concat(depthHeightTexture(share.extrude_length))
+                    .concat(sideTexture(share.extrude_top))
+                    .concat(sideTexture(share.side_bottom))
+                    .concat(sideTexture(share.extrude_bottom))
+                    .concat(sideTexture(share.front_cover));
+        });
+
         this.addNode(roof_cross_mansard_build.call(this, params)); 
     },
     
-    getLayer: function(){ return this._layer; },
-    setLayer: function(l){ this._layer = l; },
+    getLayer: function() { return this._layer; },
+    setLayer: function(l) { this._layer = l; },
+
+    update: function() 
+    {
+        this._paramana.updateGeometryNode(this);;
+        this._paramana.updateTextureCoord(this);
+    },
 
     getWidth: function() { return this._paramana.get('width'); },
-	setWidth: function(w) { this._paramana.set('width', w); this._paramana.updateGeometryNode(this); },
+	setWidth: function(w) { this._paramana.set('width', w); this.update(); },
 	
 	getHeight: function() { return this._paramana.get('height'); },
-	setHeight: function(h) { this._paramana.set('height', h); this._paramana.updateGeometryNode(this); },
+	setHeight: function(h) { this._paramana.set('height', h); this.update(); },
 	
 	getDepth: function() { return this._paramana.get('depth'); },
-	setDepth: function(d) { this._paramana.set('depth', d); this._paramana.updateGeometryNode(this); },
+	setDepth: function(d) { this._paramana.set('depth', d); this.update(); },
 
     getBackSide: function() { return this._paramana.get('back_side'); },
-    setBackSide: function() { this._paramana.set('back_side', bs); this._paramana.updateGeometryNode(this); },
+    setBackSide: function() { this._paramana.set('back_side', bs); this.update(); },
 
     getBackGrasp: function() { return this._paramana.get('back_grasp'); },
-    setBackGrasp: function() { this._paramana.set('back_grasp', bg); this._paramana.updateGeometryNode(this); },
+    setBackGrasp: function() { this._paramana.set('back_grasp', bg); this.update(); },
 
     getExtrudePos: function() { return this._paramana.get('extrude_pos'); },
-    setExtrudePos: function(ep) { this._paramana.set('extrude_pos', ep); this._paramana.updateGeometryNode(this); },
+    setExtrudePos: function(ep) { this._paramana.set('extrude_pos', ep); this.update(); },
 
     getExtrudeHgt: function() { return this._paramana.get('extrude_hgt'); },
-    setExtrudeHgt: function(eh) { this._paramana.set('extrude_hgt', eh); this._paramana.updateGeometryNode(this); },
+    setExtrudeHgt: function(eh) { this._paramana.set('extrude_hgt', eh); this.update(); },
 
     getExtrudeLen: function() { return this._paramana.get('extrude_len'); },
-    setExtrudeLen: function(el) { this._paramana.set('extrude_len', el); this._paramana.updateGeometryNode(this); },
+    setExtrudeLen: function(el) { this._paramana.set('extrude_len', el); this.update(); },
 
     getExtrudeBas: function() { return this._paramana.get('extrude_bas'); },
-    setExtrudeBas: function(eb) { this._paramana.set('extrude_bas', eb); this._paramana.updateGeometryNode(this); },
+    setExtrudeBas: function(eb) { this._paramana.set('extrude_bas', eb); this.update(); },
 
     getExtrudeTpl: function() { return this._paramana.get('extrude_tpl'); },
-    setExtrudeTpl: function(et) { this._paramana.set('extrude_tpl', et); this._paramana.updateGeometryNode(this); },
+    setExtrudeTpl: function(et) { this._paramana.set('extrude_tpl', et); this.update(); },
 
 	getRatio: function() { return this._paramana.get('ratio'); },
-	setRatio: function(r) { return this._paramana.set('ratio', r); this._paramana.updateGeometryNode(this); },
+	setRatio: function(r) { return this._paramana.set('ratio', r); this.update(); },
 	
 	getThickness: function() { return this._paramana.get('thickness'); },
-	setThickness: function(t) { this._paramana.set('thickness', t); this._paramana.updateGeometryNode(this); },
+	setThickness: function(t) { this._paramana.set('thickness', t); this.update(); },
 
 	getScale: function() { return this._paramana.get('scale'); },
 	setScale: function(svec) { this._paramana.set('scale', svec); this._paramana.updateMatirxNode(this); },
@@ -393,65 +523,8 @@ function roof_cross_mansard_build(params)
 {
     var positionSet = this._paramana.createPositions();
     var indiceSet = utility.makeIndices(0, (positionSet.length / 3) - 1);
-	var uvSet = 
-    [
-		0, 1, 0, 0, 1, 0, 1, 1,
-		1, 1, 1, 0, 0, 0, 0, 1,
-		0, 1, 1, 1, 1, 0, 0, 0,
-		0, 1, 0, 0, 1, 0, 1, 1,
-		1, 1, 1, 0, 0, 0, 0, 1,	
-		
-		0, 1, 0, 0, 1, 0, 1, 1,
-		1, 1, 0, 1, 0, 0, 1, 1,
-		1, 0, 0, 0, 0, 1, 1, 1,
-		1, 1, 0, 1, 0, 0, 1, 0,
-		0, 1, 1, 1, 1, 0, 0, 0,	
-		
-		0, 1, 0, 0, 1, 0, 1, 1,
-		1, 1, 0, 1, 0, 0, 1, 1,
-		1, 0, 0, 0, 0, 1, 1, 1,
-		1, 1, 0, 1, 0, 0, 1, 0,
-		
-		0, 1, 0, 0, 1, 0, 1, 1,
-		1, 1, 0, 1, 0, 0, 1, 1,
-		1, 0, 0, 0, 0, 1, 1, 1,
-		1, 1, 0, 1, 0, 0, 1, 0,
-		0, 1, 1, 1, 1, 0, 0, 0,	
-		
-		0, 1, 0, 0, 1, 0, 1, 1,
-		1, 1, 0, 1, 0, 0, 1, 1,
-		1, 0, 0, 0, 0, 1, 1, 1,
-		1, 1, 0, 1, 0, 0, 1, 0,
-		
-		0, 1, 0, 0, 1, 0, 1, 1,
-		1, 1, 0, 1, 0, 0, 1, 1,
-		1, 0, 0, 0, 0, 1, 1, 1,
-		1, 1, 0, 1, 0, 0, 1, 0,
-		
-		0, 1, 0, 0, 1, 0, 1, 1,
-		1, 1, 0, 1, 0, 0, 1, 1,
-		1, 0, 0, 0, 0, 1, 1, 1,
-		1, 1, 0, 1, 0, 0, 1, 0,
-		0, 1, 1, 1, 1, 0, 0, 0,	
-		
-		0, 1, 0, 0, 1, 0, 1, 1,
-		1, 1, 0, 1, 0, 0, 1, 1,
-		1, 0, 0, 0, 0, 1, 1, 1,
-		1, 1, 0, 1, 0, 0, 1, 0,
-
-        0, 1, 0, 0, 1, 0, 1, 1,
-		1, 1, 0, 1, 0, 0, 1, 1,
-		1, 0, 0, 0, 0, 1, 1, 1,
-		1, 1, 0, 1, 0, 0, 1, 0,
-		0, 1, 1, 1, 1, 0, 0, 0,	
-		
-		0, 1, 0, 0, 1, 0, 1, 1,
-		1, 1, 0, 1, 0, 0, 1, 1,
-		1, 0, 0, 0, 0, 1, 1, 1,
-		1, 1, 0, 1, 0, 0, 1, 0,
-
-	];
-
+	var uvSet = this._paramana.createTextures();
+    
     var geometry = 
 	{
         type: "geometry",
