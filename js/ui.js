@@ -2289,7 +2289,7 @@ function timeFuction(){
 										 window_ratio_X:window_ratio_X,window_ratio_Y:window_ratio_Y,
 										 wall_width:wall_width,wall_height: wall_height});
                             var centers = node.getExactlyWindowCenter();
-							
+							var c = node.getTranslate();
                             //console.log("next window ", windows[next_window_used].nodes[0].nodes[0].nodes[0].getID());
                             if(getWindowID.indexOf(windows[next_window_used].nodes[0].nodes[0].nodes[0].getID()) == -1)
                             {
@@ -2298,7 +2298,7 @@ function timeFuction(){
 
 							var target = flag2housenode(windows[next_window_used]);
 							//target.setTranslate([result.x,result.y,result.z]);
-							target.setTranslate([centers[2*j],centers[2*j+1]+node.getHeight(),result.z]);
+							target.setTranslate([centers[2*j],centers[2*j+1]+node.getHeight() + c[1] - node.getHeight(),result.z]);
 							target.setRotate([result.rx,result.ry,result.rz]);
 							target.setSize({a:window_size_X,b:window_size_Y});
 							next_window_used++;
