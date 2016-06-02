@@ -122,7 +122,7 @@ function ScenePick(){
 
             }, true);
 
-    canvas.addEventListener('mousemove',
+/*    canvas.addEventListener('mousemove',
             function (event) {
 
                 if(pickNode == "window" && !Mobile)
@@ -130,7 +130,7 @@ function ScenePick(){
                     moveComponent();
                 }
 
-            }, true);
+            }, true);*/
 
     canvas.addEventListener('touchstart',
             function (event) {
@@ -351,8 +351,7 @@ function ScenePick(){
                 if(pickNode == "window") { 
                     isRotation = false; 
                     var changeId = getWallID[getWindowID.indexOf(objectId)];
-                    changeViewpoint(getNodeName(changeId));
-                    trackPosition(objectId);
+                    changeViewpoint(getNodeName(changeId)); 
                 } 
                 else if(pickNode == "base" && pickLayer != 1) { isRotation = false; }
                 else if(pickNode == "interWall") { isRotation = false; }
@@ -371,11 +370,9 @@ function ScenePick(){
                     }
                 }
                 lastTime = now;
-				/*if (!Mobile)
-				{
-					moveComponent();
-				}*/
+
                 attachInput(objectId);
+				trackPosition(objectId);
             });
     scene.on("nopick",
             function (hit) {
@@ -403,8 +400,8 @@ function ScenePick(){
                 objectId = null;
                 isRotation = true;
                 pickNode = null;
-				if (!Mobile)
-				    moveComponent();
+				if(!Mobile)
+				disableAllController();
                 //for some ridiculurs reason i got to pick again!!
                 //scene.pick()
             });
@@ -2231,6 +2228,12 @@ function timeFuction(){
 					
 				}
             }
+			if(pickObjId != null && time ==0 && !Mobile)
+			{
+				console.log('hitPos',hitPos);
+				ModifyComponent();
+			}
+				
             if(base != -1){
                 base.callBaseCalibration();
             }

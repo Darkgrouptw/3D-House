@@ -1,84 +1,73 @@
-function moveComponent()
+function ModifyComponent()
 {
-	//pick check
-	//picksomething
-	if(pickObjId)
+	//check what is picked
+	var pickObj = getNodeName(pickObjId);
+	if (pickObj== "window" || pickObj == "door" || pickObj == "interWall")//the pickObj can do translate modification
 	{
-		var componentType = getNodeName(pickObjId);
-		if(componentType == "window")//pick what
-		{
-			
-			var windowCenter = getNodeCenter(pickObjId);
-			var X = windowCenter[0];
-			var Y = windowCenter[1];
-			var W = 4;
-			var H = 4;
-			var leftPoint = [hitPos.x-W, hitPos.y-H];
-			console.log(leftPoint);
-			/* document.getElementsByTagName("body")[0].addEventListener('mousedown',function(event)
-			{
-				console.log(event.clientX);
-				console.log(event.clientY);
-			}); */
-			DragController(leftPoint);			
-		}
-		else
-		{
-			DragController(null); 
-		}		
+		moveComponent(pickObj);
 	}
-	else
+	else //the pickObj can do resize modification
 	{
-		DragController(null);
+		
 	}
 	
-	
+}
+
+function moveComponent(pickObj)
+{
+	var W;	var H;
+	if (pickObj == "window")
+	{
+		W = 4;
+		H = 4;
+	}
+	var leftPoint = [hitPos.x-W, hitPos.y-H];
+	DragController(leftPoint);			
 }
 function DragController(point)
 {
 	dragControll = getElem("DRAGCONTROLL");
-	if(point)
+
+	var target = null;
+	var elementRect = null;
+	var body = document.getElementsByTagName("body");
+	dragControll.style.left = point[0] + "px";
+	dragControll.style.top = point[1] + "px";
+	dragControll.style.display = "block";
+	dragControll.addEventListener('mousedown', function(event)
 	{
-		var target = null;
-		var elementRect = null;
-		var body = document.getElementsByTagName("body");
-		dragControll.style.left = point[0] + "px";
-		dragControll.style.top = point[1] + "px";
-		dragControll.style.display = "block";
-		dragControll.addEventListener('mousedown', function(event)
+		isDraggEnabled = this.dataset.draggable;
+		if(isDraggEnabled)
 		{
-			isDraggEnabled = this.dataset.draggable;
-			if(isDraggEnabled)
-			{
-				lastX = event.clientX;
-				lastY = event.clientY;
-				
-				elementRect = dragControll.getBoundingClientRect();
-				target = dragControll;
-			};
-		});
-		body[0].addEventListener('mouseup',function(event)
-		{
-			target = null;
-			elementRect = null;
-		});
-    
-		body[0].addEventListener('mousemove',function(event)
-		{
-			if (target) 
-			{
-				target.style.left = (elementRect.left + event.clientX - lastX) + "px";
-				target.style.top = (elementRect.top + event.clientY - lastY) + "px";
-			};     
-		});
-	}
-	else
+			lastX = event.clientX;
+			lastY = event.clientY;
+			
+			elementRect = dragControll.getBoundingClientRect();
+			target = dragControll;
+		};
+	});
+	body[0].addEventListener('mouseup',function(event)
 	{
-		dragControll.style.left = "";
-		dragControll.style.top = "";
-		dragControll.style.display = "none";
-	}
-	
+		target = null;
+		elementRect = null;
+	});
+
+	body[0].addEventListener('mousemove',function(event)
+	{
+		if (target) 
+		{
+			target.style.left = (elementRect.left + event.clientX - lastX) + "px";
+			target.style.top = (elementRect.top + event.clientY - lastY) + "px";
+		};     
+	});
+}
+
+function disableAllController()
+{
+	var dragger = getElem("DRAGCONTROLL");
+	dragger.style.left = "";
+	dragger.style.top = "";
+	dragger.style.display = "none";
 }
 function findRelativeWall(Id)
 {
