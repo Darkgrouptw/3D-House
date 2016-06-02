@@ -408,7 +408,7 @@ SceneJS.Types.addType("roof/cross_gable",
 
     	var leftTriangle = -1, rightTriangle = -1, roof = -1, base = -1;
         var nodes = scene.findNodes();
-        
+        var frontTriangle = -1;
         //                                 material     name   matrix  texture  element
         var mnmte = function(n) { return n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0]; }
         
@@ -421,6 +421,7 @@ SceneJS.Types.addType("roof/cross_gable",
                 else if(n.getName() == "leftTriangle") { leftTriangle = mnmte(n); }
                 else if(n.getName() == "rightTriangle") { rightTriangle = mnmte(n); }
                 else if(n.getName() == "base") { base = mnmte(n); }
+				else if(n.getName() == "frontTriangle"){frontTriangle = mnmte(n);}
             }
         }
         
@@ -453,6 +454,17 @@ SceneJS.Types.addType("roof/cross_gable",
 
             rightTriangle.setLayer(this.getLayer());
         }
+		if(frontTriangle != -1){
+			frontTriangle.setHeight(this.getHeight() * (0.5 + 0.5 * this.getExtrudeHgt()));
+            frontTriangle.setWidth(this.getExtrudeBas());
+            var translateV = [];
+            translateV.push(baseCenterX);
+            translateV.push(baseCenterY - this.getHeight() + frontTriangle.getHeight());
+            translateV.push(-this.getExactlyExtrudeLen() + this.getThickness());
+
+            frontTriangle.setTranslate(translateV);
+            frontTriangle.setLayer(this.getLayer());
+		}
     },
     KillChildren: function(){
 
@@ -464,7 +476,7 @@ SceneJS.Types.addType("roof/cross_gable",
 
         var leftTriangle = -1, rightTriangle = -1, roof = -1, base = -1;
         var nodes = scene.findNodes();
-        
+        var frontTriangle = -1;
         //                                 material     name   matrix  texture  element
         var mnmte = function(n) { return n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0]; }
         
@@ -477,6 +489,7 @@ SceneJS.Types.addType("roof/cross_gable",
                 else if(n.getName() == "leftTriangle") { leftTriangle = mnmte(n); }
                 else if(n.getName() == "rightTriangle") { rightTriangle = mnmte(n); }
                 else if(n.getName() == "base") { base = mnmte(n); }
+                else if(n.getName() == "frontTriangle"){frontTriangle = mnmte(n);}
             }
         }
         
@@ -488,6 +501,10 @@ SceneJS.Types.addType("roof/cross_gable",
         if(rightTriangle != -1)
         {
             rightTriangle.getParent().getParent().getParent().getParent().getParent().getParent().getParent().getParent().destroy();
+        }
+        if(frontTriangle != -1)
+        {
+            housenode2flag(frontTriangle).destroy();
         }
     }
  });
