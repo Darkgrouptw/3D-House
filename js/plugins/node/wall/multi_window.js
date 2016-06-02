@@ -115,7 +115,9 @@ SceneJS.Types.addType("wall/multi_window",
 						window.points.push([c.x + half.w, c.y - half.h]);
 
                         property.exactlyWindowCenter.push(c.x);
-                        property.exactlyWindowCenter.push(c.y);
+
+                        // match the window
+                        property.exactlyWindowCenter.push(c.y + t);
 
 						window.check = checkPoint.bind(window);
 						window.foreach = each.bind(window);
@@ -184,6 +186,8 @@ SceneJS.Types.addType("wall/multi_window",
         this._paramana.addAttribute('windowCenter', utility.vectorForm(params.windowCenter));
 		this._paramana.addAttribute('doorSize', utility.vectorForm(params.doorSize));
         this._paramana.addAttribute('doorPosratio', utility.vectorForm(params.doorPosratio));
+
+        this._paramana.addAttribute('forceApply', false);
         
         this._paramana.addAttribute('gap', params.gap);
         this._paramana.addAttribute('exactlyWindowCenter', []);
@@ -259,8 +263,14 @@ SceneJS.Types.addType("wall/multi_window",
 	
 	getDoorPosratio: function() { return this._paramana.get('doorPosratio'); },
 	setDoorPosratio: function(dp) { this._paramana.set('doorPosratio', dp); this.update(); },
-	setDoorPosratioByPush: function(v) { var tmp = this.getDoorPosratio(); this.setDoorPosratio(tmp.push(v)); },
-	setDoorPosratioByIndex: function(v, i)
+	
+    setDoorPosratioByPush: function(v) 
+    { 
+        var tmp = this.getDoorPosratio(); 
+        this.setDoorPosratio(tmp.push(v)); 
+    },
+	
+    setDoorPosratioByIndex: function(v, i)
 	{
 		var tmp = this.getDoorPosratio();
 		if(i < 0 || i > tmp.length) { console.log('Warning: Index is not allowed'); return; }
@@ -270,8 +280,14 @@ SceneJS.Types.addType("wall/multi_window",
 	
 	getDoorSize: function() { return this._paramana.get('doorSize'); },
 	setDoorSize: function(ds) { this._paramana.set('doorSize', ds); this.update(); },
-	setDoorSizeByPush: function(v) { var tmp = this.getDoorSize(); this.setDoorSize(tmp.push(v)); },
-	setDoorSizeByIndex: function(v, i)
+	
+    setDoorSizeByPush: function(v) 
+    { 
+        var tmp = this.getDoorSize(); 
+        this.setDoorSize(tmp.push(v)); 
+    },
+	
+    setDoorSizeByIndex: function(v, i)
 	{
 		var tmp = this.getDoorSize();
 		if(i < 0 || i > tmp.length) { console.log('Warning: Index is not allowed'); return; }
@@ -282,9 +298,12 @@ SceneJS.Types.addType("wall/multi_window",
 	getWindowCenter: function() { return this._paramana.get('windowCenter'); },
     getExactlyWindowCenter: function() { return this._paramana.get('exactlyWindowCenter'); },
 
-	setWindowCenter: function(wc) 
+    getForceApply: function() { return this._paramana.get('forceApply'); },
+    setForceApply: function(fa) { this._paramana.set('forceApply'); },
+
+    safeBoundaryCheck: function(wc)
     {
-        var wrap = function(l)
+	    var wrap = function(l)
         {
             var t = [];
             for(var i = 0; i < l.length; i = i + 2) { t.push([l[i], l[i + 1]]); }
@@ -312,7 +331,15 @@ SceneJS.Types.addType("wall/multi_window",
         apw.forEach(checkspace);
 
         // if any two window center are so close, setting is blocked.
-        if(flag)
+        // flag be true if no collision
+        if(this.getForceApply()) { flag = true; }
+
+        return flag;
+    },
+    
+    setWindowCenter: function(wc) 
+    {
+        if(this.safeBoundaryCheck(wc))
         {
             this._paramana.set('windowCenter', wc); 
             this.update(); 
@@ -354,15 +381,18 @@ SceneJS.Types.addType("wall/multi_window",
 	setTranslateX: function(x) { var t = this.getTranslate(); this.setTranslate([x, t[1], t[2]]); },
     setTranslateY: function(y) { var t = this.getTranslate(); this.setTranslate([t[0], y, t[2]]); },
     setTranslateZ: function(z) { var t = this.getTranslate(); this.setTranslate([t[0], t[1], z]); },
-    isInside:function(params){
-        var center=this.getTranslate();
-        var range=Math.sqrt(Math.pow(center[0] - params[0],2)+
+    
+    isInside: function(params)
+    {
+        var center = this.getTranslate();
+        var range = Math.sqrt(Math.pow(center[0] - params[0],2)+
                             Math.pow(center[1] - params[1],2)+
                             Math.pow(center[2] - params[2],2));
         //if(range < this.getThickness()/2){
         //    return true;
         //}
-        if(this.direction=="vertical"){
+        if(this.direction == "vertical")
+        {
             //if(this.getPriority()==2){
             //    console.log("meow");
             //    console.log(params);
@@ -374,33 +404,28 @@ SceneJS.Types.addType("wall/multi_window",
             //        console.log(params[2] <= center[2] + this.getWidth()/2);
             //        console.log(params[2] >= center[2] - this.getWidth()/2);
             //    }
-            if(params[0] <= center[0] + this.getThickness() &&
-                params[0] >= center[0] - this.getThickness() &&
-                params[1] <= center[1] + this.getHeight() &&
-                params[1] >= center[1] - this.getHeight() &&
-                params[2] <= center[2] + this.getWidth() &&
-                params[2] >= center[2] - this.getWidth()){
-                return true
-            }
-            else{
-                return false
-            }
+            if(params[0] <= center[0] + this.getThickness() && params[0] >= center[0] - this.getThickness() &&
+                params[1] <= center[1] + this.getHeight() && params[1] >= center[1] - this.getHeight() &&
+                params[2] <= center[2] + this.getWidth() && params[2] >= center[2] - this.getWidth()) 
+            { return true; }
+            else { return false; }
         }
-        else{
-            if(params[0] <= center[0] + this.getWidth() &&
-                params[0] >= center[0] - this.getWidth() &&
-                params[1] <= center[1] + this.getHeight() &&
-                params[1] >= center[1] - this.getHeight() &&
-                params[2] <= center[2] + this.getThickness() &&
-                params[2] >= center[2] - this.getThickness()){
-                return true
-            }
-            else{
-                return false
-            }
+        else
+        {
+            if(params[0] <= center[0] + this.getWidth() && params[0] >= center[0] - this.getWidth() &&
+                params[1] <= center[1] + this.getHeight() && params[1] >= center[1] - this.getHeight() &&
+                params[2] <= center[2] + this.getThickness() && params[2] >= center[2] - this.getThickness())
+            { return true; }
+            else{ return false; }
         }
     },
-    adjustChildren: function(){
+
+    adjustChildren: function()
+    {
+        // In multi_window which already provide a safeBoundaryCheck function.
+        // If window centers are in safe range, the function will return true, otherwise false.
+        // safeBoundaryCheck only work for window center.
+        
         var baseCenter = this.getTranslate();
         var baseCenterX = baseCenter[0];
         var baseCenterY = baseCenter[1];
@@ -409,123 +434,131 @@ SceneJS.Types.addType("wall/multi_window",
         var WindowCenter = this.getWindowCenter();
         var DoorSize = this.getDoorSize();
         var DoorPosratio = this.getDoorPosratio();
-        if(WindowCenter.length % 2 == 1){
-			//debugger.log("something is wroung");
+        
+        if(WindowCenter.length % 2 == 1)
+        { //debugger.log("something is wroung");
 		}
+
         var number_of_window = (WindowCenter.length / 2);
         // if(DoorSize.length % 2 == 1)debugger.log("something woung here");
         var number_of_door = (DoorSize.length / 2);
         //it is a hard work
 		
-        for(var i = 0;i<number_of_door;i+=2){
+        for(var i = 0; i < number_of_door; i+=2)
+        {
             var door_widhth = DoorSize[i];
-            var door_height = DoorSize[i+1];
+            var door_height = DoorSize[i + 1];
             var door_ratio = DoorPosratio[i/2];
-            if(door_widhth > this.getWidth() - 1){
-                door_widhth = this.getWidth() -1;
-            }
-            if(door_height > this.getHeight() - 1){
-                door_height = this.getHeight() - 1;
-            }
-            if((baseCenterX - this.getWidth())+(door_ratio*2*this.getWidth())+door_widhth > baseCenterX + this.getWidth() - 1 ){
+            
+            if(door_widhth > this.getWidth() - 1) { door_widhth = this.getWidth() -1; }
+            
+            if(door_height > this.getHeight() - 1) { door_height = this.getHeight() - 1; }
+
+            if((baseCenterX - this.getWidth())+(door_ratio*2*this.getWidth())+door_widhth > baseCenterX + this.getWidth() - 1 )
+            {
                 door_ratio = (baseCenterX + this.getWidth() +1 + door_widhth) - baseCenterX + this.getWidth();
                 door_ratio = door_ratio/(2*this.getWidth);
             }
-            if((baseCenterX - this.getWidth())+(door_ratio*2*this.getWidth())-door_widhth < baseCenterX -this.getWidth() + 1){
+
+            if((baseCenterX - this.getWidth())+(door_ratio*2*this.getWidth())-door_widhth < baseCenterX -this.getWidth() + 1)
+            {
             	door_ratio = (baseCenterX -this.getWidth() + 1 + door_widhth) -baseCenterX + this.getWidth();
                 door_ratio = door_ratio/(2*this.getWidth());
             }
 			
 			//check other door
-			for(var j=0;j<i;j+=2){
+			for(var j = 0; j < i; j += 2)
+            {
 				var other_door_width = DoorSize[j];
-				var other_door_height = DoorSize[j+1];
-				var other_door_ratio = DoorSize[j/2];
-				var other_door_minx = this.getWidth() * other_door_ratio - other_door_width/2;
-				var other_door_maxx = this.getWidth() * other_door_ratio + other_door_width/2;
+				var other_door_height = DoorSize[j + 1];
+				var other_door_ratio = DoorSize[j / 2];
+				var other_door_minx = this.getWidth() * other_door_ratio - other_door_width / 2;
+				var other_door_maxx = this.getWidth() * other_door_ratio + other_door_width / 2;
 				var other_door_center = this.getWidth() * other_door_ratio;
-				var door_minx = this.getWidth() * door_ratio - door_widhth/2;
-				var door_maxx = this.getWidth() * door_ratio + door_widhth/2;
+				var door_minx = this.getWidth() * door_ratio - door_widhth / 2;
+				var door_maxx = this.getWidth() * door_ratio + door_widhth / 2;
 				var door_center = this.getWidth() * door_ratio;
-				if(Math.abs(door_center-other_door_center) <= other_door_width + other_door_height){
+				
+                if(Math.abs(door_center-other_door_center) <= other_door_width + other_door_height)
+                {
 					//we get trouble
-					if(other_door_center > door_center){
-						
-					}else{
-						
-					}
+					if(other_door_center > door_center) { } else { }
 				}
 			}
-            this.setDoorSizeByIndex(door_widhth,i);
-            this.setDoorSizeByIndex(door_height,i+1);
-            this.setDoorPosratioByIndex(i/2,door_ratio);
+
+            this.setDoorSizeByIndex(door_widhth, i);
+            this.setDoorSizeByIndex(door_height, i+1);
+            this.setDoorPosratioByIndex(i / 2, door_ratio);
         }
 		
-        for(var i = 0;i<number_of_window;i+=2){
+        /*for(var i = 0; i < number_of_window; i += 2)
+        {
             var window_width = WindowSize[i];
-            var window_height = WindowSize[i+1];
+            var window_height = WindowSize[i + 1];
             var window_posX = WindowCenter[i];
-            var window_posY = WindowCenter[i+1];
+            var window_posY = WindowCenter[i + 1];
+
 			//check with wall
-            if(window_width > this.getWidth() -1){
-                window_width = this.getWidth()-1;
-            }
-            if(window_height > this.getHeight() -1){
-                window_height = this.getHeight() -1;
-            }
+            if(window_width > this.getWidth() -1) { window_width = this.getWidth()-1; }
+            if(window_height > this.getHeight() -1) { window_height = this.getHeight() -1; }
+
             if((baseCenterX - this.getWidth())+(window_posX*2*this.getWidth())+window_width > baseCenterX + this.getWidth() -1){
                 window_posX = (baseCenterX + this.getWidth() - 1 - window_width) - baseCenterX + this.getWidth();
                 window_posX = window_posX / (2*this.getWidth);
             }
+
             if((baseCenterX - this.getWidth())+(window_posX*2*this.getWidth())-door_widhth < baseCenterX -this.getWidth() + 1){
                 window_posX = (baseCenterX -this.getWidth() + 1 + door_widhth) -baseCenterX + this.getWidth();
                 window_posX = window_posX/(2*this.getWidth());
             }
+
 			if((baseCenterZ - this.getHeight()) + (window_posY*2*this.getHeight()) + window_height > baseCenterZ + this.getHeight() -1){
 				window_posY = (baseCenterZ + this.getHeight() - 1 - window_height) - baseCenterZ + this.getHeight();
 				window_posY = window_posY/(2*this.getHeight());
 			}
+
 			if((baseCenterZ - this.getHeight())+(window_posY*2*this.getHeight()) - window_height < baseCenterZ - this.getHeight() +1){
 				window_posY = (baseCenterZ - this.getHeight() + 1 + window_height)-baseCenterZ + this.getHeight();
 				window_posY = window_posY/(2*this.getHeight());
 			}
 			
 			//check with other doors
-			for(var j =0 ; j<number_of_door;j+=2){
+			for(var j =0 ; j < number_of_door; j += 2)
+            {
 			}
 			this.setWindowSizeByIndex(window_width,i);
-			this.setWindowSizeByIndex(window_height,i+1);
-			this.setWindowCenterByIndex(window_posX,i);
-			this.setWindowCenterByIndex(window_posY,i+1);
-        }
-        
+			this.setWindowSizeByIndex(window_height, i+1);
+			this.setWindowCenterByIndex(window_posX, i);
+			this.setWindowCenterByIndex(window_posY, i+1);
+        }*/
     },
-    callBaseCalibration: function(){
+
+    callBaseCalibration: function()
+    {
         var mnmte = function(n) { return n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0]; }
 
-        var backWall=-1;
-        var rightWall=-1;
-        var leftWall=-1;
-        var frontWall=-1;
-        var downBase=-1;
-        var downWall=-1;
-        var roof=-1;
-        var base=-1;
+        var backWall = -1;
+        var rightWall = -1;
+        var leftWall = -1;
+        var frontWall = -1;
+        var downBase = -1;
+        var downWall = -1;
+        var roof = -1;
+        var base = -1;
         var nodes = scene.findNodes();
-        for(var i=0;i<nodes.length;i++){
+        for(var i = 0; i < nodes.length; i++)
+        {
             var n = nodes[i];
-            if(n.getType()=="name"){
-                if(n.getName()=="backWall" && mnmte(n).getLayer()==this.getLayer()){
-                    //         material  name     matrix  texture  element
-                    backWall=mnmte(n);
-                }
-                else if(n.getName()=="frontWall" && mnmte(n).getLayer()==this.getLayer())frontWall=mnmte(n);
-                else if(n.getName()=="leftWall"  && mnmte(n).getLayer()==this.getLayer())leftWall=mnmte(n);
-                else if(n.getName()=="rightWall" && mnmte(n).getLayer()==this.getLayer())rightWall=mnmte(n);
-                else if(n.getName()=="roof"                                             )roof=mnmte(n);
-                else if(n.getName()=="base" && mnmte(n).getLayer()==this.getLayer())base=mnmte(n);
-                else if(n.getName()=="base"      && mnmte(n).getLayer()==this.getLayer() - 1)downBase=mnmte(n);
-                else if(n.getName()=="backWall"  && mnmte(n).getLayer()==this.getLayer() - 1)downWall=mnmte(n);
+            if(n.getType() == "name")
+            {
+                if(n.getName() == "backWall"          && mnmte(n).getLayer() == this.getLayer()) { backWall = mnmte(n); }
+                else if(n.getName() == "frontWall"    && mnmte(n).getLayer() == this.getLayer()) { frontWall = mnmte(n); }
+                else if(n.getName() == "leftWall"     && mnmte(n).getLayer() == this.getLayer()) { leftWall = mnmte(n); }
+                else if(n.getName() == "rightWall"    && mnmte(n).getLayer() == this.getLayer()) { rightWall = mnmte(n); }
+                else if(n.getName() == "roof"                                                  ) { roof = mnmte(n); }
+                else if(n.getName() == "base"         && mnmte(n).getLayer() == this.getLayer()) { base = mnmte(n); } 
+                else if(n.getName() == "base"     && mnmte(n).getLayer() == this.getLayer() - 1) { downBase = mnmte(n); } 
+                else if(n.getName() == "backWall" && mnmte(n).getLayer() == this.getLayer() - 1) { downWall = mnmte(n); }
             }   
         }
         
@@ -538,31 +571,27 @@ SceneJS.Types.addType("wall/multi_window",
         }
         else if(leftWall!= -1 && leftWall.getID() == this.getID())
         {
-            if(backWall != -1 && frontWall != -1) {}
-            else if(frontWall != -1) {}
+            if(backWall != -1 && frontWall != -1) { }
+            else if(frontWall != -1) { }
             else if(backWall != -1)
             {
                 base.setRealHeight(this.getWidth() + backWall.getThickness());
                 base.callBaseCalibration(this.getHeight());
             }
-            else {}
+            //else {}
         }
         else if(rightWall != -1 && rightWall.getID() == this.getID())
         {
-            if(backWall != -1 && frontWall != -1) {}
-            else if(frontWall != -1) {}
+            if(backWall != -1 && frontWall != -1) { }
+            else if(frontWall != -1) { }
             else if(backWall != -1)
             {
                 base.setRealHeight(this.getWidth() + backWall.getThickness());
                 base.callBaseCalibration(this.getHeight());
             }
-            else {
-                
-            }
+            //else { }
         }
-        else{
-            base.callBaseCalibration();
-        }
+        else { base.callBaseCalibration(); }
     }
 });
 

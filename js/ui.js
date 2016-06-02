@@ -1425,7 +1425,7 @@ function attachInput(pickId){
 			changeWall(n.getID(),"wall/no_window");
         });
     }
-	//mutil wall
+	//multi wall
 	if(n.getDirection){
 		var div = document.createElement("div");
 		inputarea.appendChild(div);
@@ -1731,7 +1731,7 @@ function attachInput(pickId){
             WindowHismove=false;
         });
     }
-    //porsration
+    //posratio
     if(n.getPosratio){
         var Posratioismove=false;
         var div=document.createElement("div");
@@ -1841,7 +1841,7 @@ function attachInput(pickId){
         });
     }
 	
-	//mutil wall
+	//multi wall
 	if(n.getDoorPosratio){
 		var DoorPosratio_is_move = false;
 		var div=document.createElement("div");
@@ -1885,92 +1885,119 @@ function attachInput(pickId){
 		}
 	}
 	
-	if(n.getWindowCenter){
+	if(n.getWindowCenter)
+    {
 		var windowCenter_is_move = [];
 		var div = document.createElement("div");
 		inputarea.appendChild(div);
 		var windows_Center = n.getWindowCenter();
-		var windowCenter_property_name=[];
+		var windowCenter_property_name = [];
 		var windowCenter_input = [];
 		var windowCenter_value =[];
 		
-		for(var i=0;i<windows_Center.length;i+=2){
-			//texr
+		for(var i = 0;i < windows_Center.length; i += 2)
+        {
+			
+            //texr
 			windowCenter_property_name.push(document.createElement("lable"));
-			windowCenter_property_name[i].textContent = "  Number "+i/2+" windowX";
+			windowCenter_property_name[i].textContent = "  Number " + (i / 2) + " windowX";
 			div.appendChild(windowCenter_property_name[i]);
-			//index
+			
+            //index
 			var windowIndex = i;
-			//input
+			
+            //input
 			windowCenter_input.push(document.createElement("input"));
 			windowCenter_input[i].type = "range";
-			windowCenter_input[i].min="0";
-			windowCenter_input[i].max="1";
-			windowCenter_input[i].step="0.01";
+			windowCenter_input[i].min = "0";
+			windowCenter_input[i].max = "1";
+			windowCenter_input[i].step = "0.01";
 			windowCenter_input[i].value = windows_Center[i];
 			windowCenter_input[i].name = i;
 			div.appendChild(windowCenter_input[i]);
-			//lable
+			
+            //lable
 			windowCenter_value.push(document.createElement("lable"));
 			windowCenter_value[i].textContent = windowCenter_input[i].value;
 			div.appendChild(windowCenter_value[i]);
+
 			//event
 			windowCenter_is_move.push(false);
-			windowCenter_input[i].addEventListener('mousedown',function(event){
+			
+            windowCenter_input[i].addEventListener('mousedown', function(event)
+            {
 				windowCenter_is_move[Number(this.name)] = true;
 			});
-			windowCenter_input[i].addEventListener('mousemove',function(event){
+			
+            windowCenter_input[i].addEventListener('mousemove', function(event)
+            {
                 var tn = Number(this.name);
                 var wctn = Number(windowCenter_input[tn].value);
-				if(windowCenter_is_move[tn]){
+			
+                if(windowCenter_is_move[tn])
+                {
 					n.setWindowCenterByIndex(wctn, tn);
 					windowCenter_value[tn].textContent = windowCenter_input[tn].value;
 					n.callBaseCalibration();
 					dirty = true;
 				}
 			});
-			windowCenter_input[i].addEventListener('mouseup',function(event){
+			
+            windowCenter_input[i].addEventListener('mouseup', function(event)
+            {
 				windowCenter_is_move[Number(this.name)] = false;
 			});
 			
 			
-			//texr
+			//text
 			windowCenter_property_name.push(document.createElement("lable"));
-			windowCenter_property_name[i+1].textContent = "  Number "+i/2+" windowY";
-			div.appendChild(windowCenter_property_name[i+1]);
+			windowCenter_property_name[i+1].textContent = "  Number " + (i / 2) + " windowY";
+			div.appendChild(windowCenter_property_name[i + 1]);
+
 			//index
-			var windowIndex = i+1;
+			var windowIndex = i + 1;
+
 			//input
 			windowCenter_input.push(document.createElement("input"));
 			windowCenter_input[i+1].type = "range";
-			windowCenter_input[i+1].min="0";
-			windowCenter_input[i+1].max="1";
-			windowCenter_input[i+1].step="0.01";
-			windowCenter_input[i+1].value = windows_Center[i+1];
-			windowCenter_input[i+1].name = i+1;
-			div.appendChild(windowCenter_input[i+1]);
+			windowCenter_input[i+1].min = "0";
+			windowCenter_input[i+1].max = "1";
+			windowCenter_input[i+1].step = "0.01";
+			windowCenter_input[i+1].value = windows_Center[i + 1];
+			windowCenter_input[i+1].name = i + 1;
+			div.appendChild(windowCenter_input[i + 1]);
+
 			//lable
 			windowCenter_value.push(document.createElement("lable"));
-			windowCenter_value[i+1].textContent = windowCenter_input[i+1].value;
-			div.appendChild(windowCenter_value[i+1]);
+			windowCenter_value[i+1].textContent = windowCenter_input[i + 1].value;
+			div.appendChild(windowCenter_value[i + 1]);
+
 			//event
 			windowCenter_is_move.push(false);
-			windowCenter_input[i+1].addEventListener('mousedown',function(event){
+			
+            windowCenter_input[i+1].addEventListener('mousedown', function(event)
+            {
 				windowCenter_is_move[Number(this.name)] = true;
 			});
-			windowCenter_input[i+1].addEventListener('mousemove',function(event){
+
+			windowCenter_input[i+1].addEventListener('mousemove', function(event)
+            {
                 var tn = Number(this.name);
                 var wctn = Number(windowCenter_input[tn].value);
-				if(windowCenter_is_move[tn]){
+				if(windowCenter_is_move[tn])
+                {
 					n.setWindowCenterByIndex(wctn, tn);
 					windowCenter_value[tn].textContent = windowCenter_input[tn].value;
 					n.callBaseCalibration();
 					dirty = true;
 				}
 			});
-			windowCenter_input[i+1].addEventListener('mouseup',function(event){
+			
+            windowCenter_input[i+1].addEventListener('mouseup', function(event)
+            {
 				windowCenter_is_move[Number(this.name)] = false;
 			});
+
 			div.appendChild(document.createElement("br"));
 		}
 	}

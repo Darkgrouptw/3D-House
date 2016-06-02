@@ -417,7 +417,11 @@ ParameterManager.prototype.get = function(attribute)
 	{
 		// Consider transform
 		if(!utility.checkIsUndefined(this.transform[attribute])) { return utility.deepCopy(this.transform[attribute]); }
-		else { console.log('Error: No ' + attribute + ' attribute in parameter manager.'); return []; }
+		else 
+        { 
+            //console.log('Warning: No ' + attribute + ' attribute in parameter manager.'); 
+            return [];
+        }
 	}
 }
 

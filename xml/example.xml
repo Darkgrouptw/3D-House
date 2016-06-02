@@ -152,9 +152,7 @@
             <thickness>1</thickness>
             <windowSize>4, 4, 4, 4</windowSize>
             <windowCenter>0.2, 0.5,0.8, 0.5</windowCenter>
-            <doorSize>5, 9</doorSize>
-            <doorPosratio>0.5</doorPosratio>
-            <gap>2</gap>
+            <gap>3.5</gap>
             <direction>horizontal</direction>
         </property>
     </element>
