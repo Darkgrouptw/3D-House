@@ -520,6 +520,72 @@ SceneJS.Types.addType("roof/cross_mansard",
             if(base.setRealHeight)base.setRealHeight(this.getWidth());
         	base.callBaseCalibration();
         }
+    },
+	adjustChildren: function()
+    {
+    	var baseCenter = this.getTranslate();
+        var baseCenterX = baseCenter[0];
+        var baseCenterY = baseCenter[1];
+        var baseCenterZ = baseCenter[2];
+    	var frontTrapezoid = -1,roof = -1, base = -1;
+        var nodes = scene.findNodes();
+        //                                 material     name   matrix  texture  element
+        var mnmte = function(n) { return n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0]; }
+        
+        for(var i = 0; i < nodes.length; i++)
+        {
+            var n = nodes[i];
+            if(n.getType() == "name")
+            {
+                if(n.getName() =="roof") { roof = mnmte(n); }
+                else if(n.getName() == "base") { base = mnmte(n); }
+				else if(n.getName() == "frontTrapezoid"){frontTrapezoid = mnmte(n);}
+            }
+        }
+        
+        if(roof == -1) { console.log("ERROR"); return; }
+		if(frontTrapezoid != -1){
+
+			frontTrapezoid.setHeight(this.getHeight()-this.getThickness());
+            frontTrapezoid.setWidth(this.getExtrudeBas()*2.4);
+            var translateV = [];
+            translateV.push(baseCenterX);
+            translateV.push(baseCenterY - this.getHeight() + frontTrapezoid.getHeight());
+            translateV.push(baseCenterZ - base.getHeight() + this.getThickness());
+
+            frontTrapezoid.setTranslate(translateV);
+            frontTrapezoid.setLayer(this.getLayer());
+		}
+    },
+    KillChildren: function(){
+
+
+        var baseCenter = this.getTranslate();
+        var baseCenterX = baseCenter[0];
+        var baseCenterY = baseCenter[1];
+        var baseCenterZ = baseCenter[2];
+
+        var frontTrapezoid = -1, roof = -1, base = -1;
+        var nodes = scene.findNodes();
+        //                                 material     name   matrix  texture  element
+        var mnmte = function(n) { return n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0]; }
+        
+        for(var i = 0; i < nodes.length; i++)
+        {
+            var n = nodes[i];
+            if(n.getType() == "name")
+            {
+                if(n.getName() =="roof") { roof = mnmte(n); }
+                else if(n.getName() == "base") { base = mnmte(n); }
+                else if(n.getName() == "frontTrapezoid"){frontTrapezoid = mnmte(n);}
+            }
+        }
+        
+        if(roof == -1) { console.log("ERROR"); return; }
+        if(frontTrapezoid != -1)
+        {
+            housenode2flag(frontTrapezoid).destroy();
+        }
     }
 });
 

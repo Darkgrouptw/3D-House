@@ -2538,6 +2538,15 @@ function changeRoof(type){
                 Ratioa: roof.getRatio().a,
                 Ratiob: roof.getRatio().b
             });
+            var t_w =  getTrapezoidS({layerNumber: layerNumber,
+                Height: roof.getHeight(),
+                Width: roof.getWidth(),
+                Depth: roof.getDepth(),
+                Ratioa: roof.getRatio().a,
+                Ratiob: roof.getRatio().b,
+                pos: "frontTrapezoid"
+            });
+            root.addNode(t_w);
 			root.addNode(cross_mansardS);
 			housenode2flag(roof).destroy();
 		}
@@ -3179,7 +3188,7 @@ function getTriangleS(param){
     };
     return TriangleS;
 }
-function getTrapezoid(param){
+function getTrapezoidS(param){
 	var TrapezoidS = {
         type: "flags",
         flags:{transparent:false},
@@ -3223,12 +3232,12 @@ function getTrapezoid(param){
 
                                     nodes:
                                     [{
-                                        type: "wall/triangle",
+                                        type: "wall/trapezoid",
                                         layer: param.layerNumber,
                                         height: param.Height,
                                         width: param.Width,
                                         thickness: 1,
-                                        ratio: {a: param.Ratioa , b: param.Ratiob},
+                                        ratio: {a: 0.2 , b: 0.8},
                                         scale: {x: 1, y: 1, z: 1},
                                         rotate: {x: 0, y: 0, z: 0},
                                         translate: {x: 0, y: 0, z: 0}
@@ -3568,10 +3577,8 @@ function getMultiWallS(param){
                                         priority: param.pri,
                                         percentX: param.perX,
                                         percentY: param.perY,
-										windowSize: [3,3,3,3],
-										windowCenter: [0.8,0.5,0.2,0.5],
-										doorSize:{a:3,b:6},
-										doorPosratio: 0.5,
+										windowSize: [3,3,3,3,3,3],
+										windowCenter: [0.9,0.5,0.1,0.5,0.5,0.5],
 										gap: 2,
                                         scale: {x: 1, y: 1, z: 1},
                                         rotate: {x: param.rotateX, y: param.rotateY, z: param.rotateZ},

@@ -441,7 +441,7 @@ SceneJS.Types.addType("base/basic",
 			if(high && roof.setTranslateY)roof.setTranslateY(baseCenterY+this.getThickness()+high*2+roof.getHeight());
 			else if(roof.setTranslateY)roof.setTranslateY(baseCenterY+this.getThickness()+defaulthigh*2+roof.getHeight());
 			if(roof.setTranslateZ)roof.setTranslateZ(baseCenterZ);
-			if(roof.adjustChildren)roof.adjustChildren();
+			if(roof.adjustChildren){roof.adjustChildren();};
 			if(roof.getType() == "roof/hip"){
 				if(roof.getToplen() > roof.getDepth() * 2){
 					roof.setToplen(roof.getDepth() * 2);
