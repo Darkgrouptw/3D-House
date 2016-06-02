@@ -3019,14 +3019,19 @@ function getCrossMansardS(param){
                                         width: param.Width,
                                         thickness: 1,
                                         depth: param.Depth,
-										extrude_len: 6,
-										extrude_pos: 0.3,
-										extrude_hgt: 0.4,
-										extrude_bas: 6,
-										extrude_tpl: 0.7, 
+
+										back_side: "on",
+										extrude_len: 1,
+										extrude_pos: 0.5,
+										extrude_hgt: 1,
+										extrude_bas: 20,
+										extrude_tpl: 0.2, 
+										back_grasp: 1,
+                                        front_cover: "off",
+                                        
                                         ratio: {a: 0.2 , b: 0.2},
                                         scale: {x: 1, y: 1, z: 1},
-                                        rotate: {x: 0, y: 0, z: 0},
+                                        rotate: {x: 0, y: 180, z: 0},
                                         translate: {x: 0, y: 0, z: 0}
                                     }]
                                 }]
@@ -3087,7 +3092,7 @@ function getCrossGableS(param){
                                         layer: param.layerNumber,
                                         height: param.Height,
                                         width: param.Width,
-                                        backside: "on",
+                                        back_side: "off",
                                         back_grasp:4,
                                         extrude_len:6,
                                         extrude_pos:0.5,
