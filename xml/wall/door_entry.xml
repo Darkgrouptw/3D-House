@@ -1,6 +1,8 @@
 <layer>
+    
     <element>
         <type>wall/door_entry</type>
+
         <transform>
             <scale>1,1,1</scale>
             <rotate>0,0,0</rotate>
@@ -14,8 +16,27 @@
             <height>10</height>
             <thickness>1</thickness>
             <posratio>0.5</posratio>
-            <doorW>3</doorW>
-            <doorH>3</doorH>
+            <doorW>5</doorW>
+            <doorH>9</doorH>
         </property>
     </element>
+    
+    <element>
+        <type>door/panel</type>
+        
+        <transform>
+            <scale>1,1,1</scale>
+            <rotate>0,0,0</rotate>
+            <translate>0,-1,0</translate>
+        </transform>
+        
+        <texture>door.jpg</texture>
+        
+        <property>
+            <extend>1</extend>
+            <size>5, 9</size>
+            <thickness>1</thickness>
+        </property>
+    </element>
+
 </layer>

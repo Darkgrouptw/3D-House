@@ -24,6 +24,7 @@ SceneJS.Types.addType("roof/cross_gable",
             var w = property.width;
             var d = property.depth;
             var h = property.height;
+
             var t = property.thickness;
 
 	        var r = property.ratio;
@@ -214,8 +215,11 @@ SceneJS.Types.addType("roof/cross_gable",
                     0, h + st, wr,
                     -d, h + st, wr,
                     //-d, h + st, wr,
-
-                    -d, h, wr, -d, h, wr, d, h, wr, -db + dl, sh, wr + whr
+                    
+                    -db + dl, sh, wr + whr,
+                    -d, h, wr,
+                    0, h, wr,
+                    d, h, wr
                 ];
             }
             else { apet = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; }

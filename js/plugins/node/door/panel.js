@@ -5,7 +5,7 @@ SceneJS.Types.addType("door/panel",
     {
         this._paramana = new ParameterManager(params, function(property)
         {
-            var x = property.size.a, y = property.size.b, z = property.thickness;
+            var x = property.size.a, y = property.size.b, z = property.thickness / 2;
            
             var pset = 
             [
@@ -50,6 +50,12 @@ function door_panel_build(params)
     var indiceSet = utility.makeIndices(0, (positionSet.length / 3) - 1);
     var uvSet = 
     [ 
+        1, 1, 0, 1, 0, 0, 1, 0,
+        0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0,
+        1, 0, 0, 0, 0, 1, 1, 1
     ];
 
     var geometry = 
@@ -58,7 +64,7 @@ function door_panel_build(params)
         primitive: "triangles",
         positions: positionSet,
         indices: indiceSet,
-        //uv: uvSet,
+        uv: uvSet,
         normals: "auto"
     };
 
