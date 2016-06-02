@@ -72,7 +72,7 @@ SceneJS.Types.addType("roof/cross_mansard",
 			var extdbs = d - dPdr;
 			var addl = el * 2;;
 			if(addl < (dPdr + op.dal)) { addl = dPdr + op.dal; }
-            property.exactlyExtrudeLen = addl;
+            property.exactlyExtrudeLen = addl - (0.5 * t);
 
             var idpd = dPdr * (1 - (bgp / (hmt + h)));
             var odpd = dPdr * (1 - ((bgp + t) / (2 * h)));

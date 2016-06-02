@@ -18,7 +18,7 @@ function initial()
 }
 var imgPart0 = ["./images/Part0/00.png", "./images/Part0/01.png", "./images/Part0/02.png", "./images/Part0/03.png", "./images/Part0/04.png", "./images/Part0/05.png", "./images/Part0/06.png", "./images/Part0/07.png", "./images/Part0/08.png", "./images/Part0/09.png", "./images/Part0/10.png"];
 var imgPart1 = ["./images/Part1/00.png", "./images/Part1/01.png", "./images/Part1/02.png", "./images/Part1/03.png", "./images/Part1/04.png", "./images/Part1/05.png", "./images/Part1/06.png", "./images/Part1/07.png", "./images/Part1/08.png", "./images/Part1/09.png", "./images/Part1/10.png"];
-var imgPart2 = ["./images/Part2/00.png", "./images/Part2/01.png", "./images/Part2/02.png", "./images/Part2/03.png", "./images/Part2/04.png"];
+var imgPart2 = ["./images/Part2/00.png", "./images/Part2/01.png", "./images/Part2/02.png", "./images/Part2/03.png", "./images/Part2/04.png", "./images/Part2/05.png"];
 function loadsrc()
 {
 	//loadimg("Part0", imgPart0);

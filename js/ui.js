@@ -966,7 +966,6 @@ function attachInput(pickId){
                 heightpropertyValue.textContent=heightinput.value;
                 n.callBaseCalibration();
                 dirty = true;
-				console.log(n.getTranslate()[1]);
             }
         });
         //heightinput.addEventListener('change',function(event){
@@ -2427,7 +2426,10 @@ function changeRoof(type){
                 Depth: roof.getDepth(),
                 Ratioa: roof.getRatio().a,
                 Ratiob: roof.getRatio().b,
-                pos: "rightTriangle"
+				rotateX: 0,
+				rotateY: 90,
+				rotateZ: 0,
+				pos: "rightTriangle"
             });
 
             var leftTriangleS = getTriangleS({layerNumber: layerNumber,
@@ -2436,6 +2438,9 @@ function changeRoof(type){
                 Depth: roof.getDepth(),
                 Ratioa: roof.getRatio().a,
                 Ratiob: roof.getRatio().b,
+				rotateX: 0,
+				rotateY: 90,
+				rotateZ: 0,
                 pos: "leftTriangle"
             });
             var gableS = getGableS({layerNumber: layerNumber,
@@ -2457,6 +2462,9 @@ function changeRoof(type){
                 Depth: roof.getDepth(),
                 Ratioa: roof.getRatio().a,
                 Ratiob: roof.getRatio().b,
+				rotateX: 0,
+				rotateY: 90,
+				rotateZ: 0,
                 pos: "rightTriangle"
             });
 
@@ -2466,7 +2474,21 @@ function changeRoof(type){
                 Depth: roof.getDepth(),
                 Ratioa: roof.getRatio().a,
                 Ratiob: roof.getRatio().b,
+				rotateX: 0,
+				rotateY: 90,
+				rotateZ: 0,
                 pos: "leftTriangle"
+            });
+			var frontTriangleS = getTriangleS({layerNumber: layerNumber,
+                Height: roof.getHeight(),
+                Width: roof.getWidth(),
+                Depth: roof.getDepth(),
+                Ratioa: roof.getRatio().a,
+                Ratiob: roof.getRatio().b,
+				rotateX: 0,
+				rotateY: 0,
+				rotateZ: 0,
+                pos: "frontTriangle"
             });
 			var cross_gableS = getCrossGableS({layerNumber: layerNumber,
                 Height: roof.getHeight(),
@@ -2475,6 +2497,7 @@ function changeRoof(type){
                 Ratioa: roof.getRatio().a,
                 Ratiob: roof.getRatio().b
             });
+			root.addNode(frontTriangleS);
 			root.addNode(leftTriangleS);
             root.addNode(rightTriangleS);
 			root.addNode(cross_gableS);
@@ -2503,7 +2526,18 @@ function changeRoof(type){
             });
             root.addNode(mansardS);
             housenode2flag(roof).destroy();
-        }
+        }else if(type == "roof/cross_mansard"){
+			console.log("change to cross_mansard");
+			var cross_mansardS = getCrossMansardS({layerNumber: layerNumber,
+                Height: roof.getHeight(),
+                Width: roof.getWidth(),
+                Depth: roof.getDepth(),
+                Ratioa: roof.getRatio().a,
+                Ratiob: roof.getRatio().b
+            });
+			root.addNode(cross_mansardS);
+			housenode2flag(roof).destroy();
+		}
         
     }
     lastFloor =-1;
@@ -2932,7 +2966,79 @@ function getGableS(param){
     };
     return gableS;
 }
+function getCrossMansardS(param){
+	var corss_mansardS = {
+        type: "flags",
+        flags:{transparent:false},
+        nodes:
+        [{
+            type: "name",
+            name: "roof",
 
+            nodes:
+            [{
+                type: "material",
+                color:none_select_material_color,
+                alpha:0.2,
+                nodes:
+                [{
+                    type: "name",
+                    name: "roof.jpg",
+
+                    nodes:
+                    [{
+                        type: "matrix",
+                        elements:[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],
+
+                        nodes:
+                        [{
+                            type: "texture",
+                            src: "images/GeometryTexture/roof.jpg",
+                            applyTo: "color",
+
+                            nodes: 
+                            [{
+                                type: "texture",
+                                src: "images/GeometryTexture/roofSpecularMap.png",
+                                applyTo: "specular", // Apply to specularity
+
+                                nodes: 
+                                [{
+                                    type: "texture",
+                                    src: "images/GeometryTexture/roofNormalMap.png",
+                                    applyTo: "normals", // Apply to geometry normal vectors
+
+                                    nodes:
+                                    [{
+                                        type: "roof/cross_mansard",
+                                        layer: param.layerNumber,
+                                        height: param.Height,
+                                        width: param.Width,
+                                        thickness: 1,
+                                        depth: param.Depth,
+										extrude_len: 6,
+										extrude_pos: 0.3,
+										extrude_hgt: 0.4,
+										extrude_bas: 6,
+										extrude_tpl: 0.7,
+                                        front_cover: "off",
+                                        back_side: "on",
+                                        back_grasp: 1,
+                                        ratio: {a: 0.2 , b: 0.2},
+                                        scale: {x: 1, y: 1, z: 1},
+                                        rotate: {x: 0, y: 180, z: 0},
+                                        translate: {x: 0, y: 0, z: 0}
+                                    }]
+                                }]
+                            }]
+                        }]
+                    }]
+                }]
+            }]
+        }] 
+    };
+	return corss_mansardS;
+}
 function getCrossGableS(param){
 	var cross_gableS={
 		type: "flags",
@@ -3055,7 +3161,7 @@ function getTriangleS(param){
                                         thickness: 1,
                                         ratio: {a: 0.5 , b: 0.5},
                                         scale: {x: 1, y: 1, z: 1},
-                                        rotate: {x: 0, y: 90, z: 0},
+                                        rotate: {x: param.rotateX, y: param.rotateY, z: param.rotateZ},
                                         translate: {x: 0, y: 0, z: 0}
                                     }]
                                 }]
@@ -3067,6 +3173,70 @@ function getTriangleS(param){
         }] 
     };
     return TriangleS;
+}
+function getTrapezoid(param){
+	var TrapezoidS = {
+        type: "flags",
+        flags:{transparent:false},
+        nodes:
+        [{
+            type: "name",
+            name: param.pos,
+
+            nodes:
+            [{
+                type: "material",
+                color:none_select_material_color,
+                alpha:0.2,
+                nodes:
+                [{
+                    type: "name",
+                    name: "wall.jpg",
+
+                    nodes:
+                    [{
+                        type: "matrix",
+                        elements:[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],
+
+                        nodes:
+                        [{
+                            type: "texture",
+                            src: "images/GeometryTexture/wall.jpg",
+                            applyTo: "color",
+
+                            nodes: 
+                            [{
+                                type: "texture",
+                                src: "images/GeometryTexture/wallSpecularMap.png",
+                                applyTo: "specular", // Apply to specularity
+
+                                nodes: 
+                                [{
+                                    type: "texture",
+                                    src: "images/GeometryTexture/wallNormalMap.png",
+                                    applyTo: "normals", // Apply to geometry normal vectors
+
+                                    nodes:
+                                    [{
+                                        type: "wall/triangle",
+                                        layer: param.layerNumber,
+                                        height: param.Height,
+                                        width: param.Width,
+                                        thickness: 1,
+                                        ratio: {a: param.Ratioa , b: param.Ratiob},
+                                        scale: {x: 1, y: 1, z: 1},
+                                        rotate: {x: 0, y: 0, z: 0},
+                                        translate: {x: 0, y: 0, z: 0}
+                                    }]
+                                }]
+                            }]
+                        }]
+                    }]
+                }]
+            }]
+        }] 
+    };
+    return TrapezoidS;
 }
 function getWindow_fixed(param){
 	var window_fixed = {
