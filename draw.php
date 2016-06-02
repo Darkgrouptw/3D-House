@@ -85,6 +85,11 @@
         </div>            
     </div>
 	
+	<div id = "SCALECONTROLL">
+		<div id = "scaleHControll" class = "H" data-draggable="true"></div>
+		<div id = "scaleVControll" class = "V" data-draggable="true"></div>
+	</div>
+	
 	<div id="DRAGCONTROLL" data-draggable="true">
 		<i class="fa fa-arrows" aria-hidden="true"></i>
 	</div>
