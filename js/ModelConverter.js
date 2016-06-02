@@ -1,7 +1,7 @@
 var HOST_IP = "140.118.175.76:8098";
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Wouldn't be changed stuff
-var typeDefined = ["roof", "base", "wall", "wind"];
+var typeDefined = ["roof", "base", "wall", "wind", "ligh"];
 var modelExactLatchArea = ["base"];	//Storing the models which latch faces output with exact area
 
 //Storing the priority of the dependency used for puzzling
@@ -36,7 +36,9 @@ function traverse(curNode, target){
 	if(newArr.length == 1){
 		for(;newArr.indexOf(curNode.type) == -1;curNode = curNode.nodes[0]);
 	}else{
-		for(;curNode.type && newArr.indexOf(String(curNode.type).substring(0, 4)) == -1;curNode = curNode.nodes[0]);
+		for(;typeof curNode.type !== 'undefined' && newArr.indexOf(String(curNode.type).substring(0, 4)) == -1;curNode = curNode.nodes[0]){
+			console.log(curNode.type);
+		}
 	}
 	return curNode;
 }
@@ -49,7 +51,8 @@ function exportMultiObj(inputNode){
 
 function deleteWindows(nodes){
 	for(var i = 0;i<nodes.length;i++){
-		if(String(traverse(nodes[i], typeDefined).type).substring(0, 6) == "window"){
+		var type = String(traverse(nodes[i], typeDefined).type).substring(0, 6)
+		if(type == "window" || type == "lights"){
 			nodes.splice(i, 1);
 			i--;
 		}

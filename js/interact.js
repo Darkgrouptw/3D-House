@@ -216,7 +216,7 @@ function componentClick(id){
 	getStyle("subPartBar").display = "block";
 	
 }
-var rfcomponent = ["gable", "hip", "mansard","cross_gable"];
+var rfcomponent = ["gable", "hip", "mansard","cross_gable","cross_mansard"];
 function subPartClick(id){
 	tmp = id.split("_");
 	type = parseInt(tmp[1]);	index = parseInt(tmp[2]);
