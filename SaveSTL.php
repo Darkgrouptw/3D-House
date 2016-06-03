@@ -34,7 +34,10 @@
         }
         return $curNode;
     }
-
+    $circumcircle_v;
+    $circumcircle_i;
+    $circumcircle_j;
+    $circumcircle_k;
 
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1426,9 +1429,9 @@
         $elements = $xml->element;
         foreach($elements as $element){
             $tmpNode = new node($element);
-            if($tmpNode->type != "wall/multi_window"){
+            // if($tmpNode->type != "wall/multi_window"){
                 array_push($nodes, $tmpNode);                
-            }
+            // }
             $tmpNode = new node;
         }
         return $nodes;
@@ -2110,6 +2113,15 @@
 
         public function circumcircle($v, $i, $j, $k) 
         {
+            global $debugArDiuNei, $circumcircle_v, $circumcircle_i, $circumcircle_j, $circumcircle_k;
+            $v = $circumcircle_v;
+            $i = $circumcircle_i;
+            $j = $circumcircle_j;
+            $k = $circumcircle_k;
+
+            // $debugArDiuNei .= $i."\n".$j."\n".$k."\n";
+            // file_put_contents("debug.txt", " ".$circumcircle_i." ");
+
             $x1 = $v[$i][0]; $y1 = $v[$i][1]; $x2 = $v[$j][0];
                 $y2 = $v[$j][1]; $x3 = $v[$k][0]; $y3 = $v[$k][1];
                 $fabsy1y2 = abs($y1 - $y2);
@@ -2155,7 +2167,7 @@
             return (object)['i'=> $i, 'j'=> $j, 'k'=> $k, 'x'=> $xc, 'y'=> $yc, 'r'=> $dx * $dx + $dy * $dy];
         }
 
-        public function dedup($edges){
+        public function dedup(&$edges){
             $a; $b; $m; $n;
 
             for($j = count($edges); $j > 0; ) 
@@ -2179,9 +2191,9 @@
         }
 
         // Triangulation only for 2-D
-        public function delaunay2D($positions)
+        public function delaunay2D(&$positions)
         {
-            global $delaunay2D_positions;
+            global $delaunay2D_positions, $debugArDiuNei, $circumcircle_v, $circumcircle_i, $circumcircle_j, $circumcircle_k;
             $EPSILON = 1.0 / 1048576.0;
             $n = count($positions); $i; $j; $indices; $st; $open; $closed; $edges; $dx; $dy; $a; $b; $c;
 
@@ -2197,9 +2209,8 @@
             // Make an array of indices into the vertex array, sorted by the
             // vertices' x-position.
             $indices = [];
-            for($i = 0; $i < $n; $i++) { $indices[$i] = $i; }
+            for($i = $n; $i-- > 0; ) { $indices[$i] = $i; }
             $delaunay2D_positions = $positions;
-            file_put_contents("debug.txt", serialize($delaunay2D_positions));
             usort($indices, function($i, $j) {
                 global $delaunay2D_positions;
                 if($delaunay2D_positions[$j][0] - $delaunay2D_positions[$i][0] > 0){
@@ -2210,19 +2221,28 @@
                 return 0; 
             });
 
+
             // Next, find the vertices of the supertriangle (which contains all other
             // triangles), and append them onto the end of a (copy of) the vertex
             // array.
             $st = $this->superTriangle($positions);
-
+            
             array_push($positions, $st[0], $st[1], $st[2]);
+
 
             // Initialize the open list (containing the supertriangle and nothing
             // else) and the closed list (which is empty since we havn't processed
             // any triangles yet).
-            $open = [$this->circumcircle($positions, $n + 0, $n + 1, $n + 2)];
+            $circumcircle_v = $positions;
+            $circumcircle_i = intval($n + 0);
+            $circumcircle_j = intval($n + 1);
+            $circumcircle_k = intval($n + 2);
+
+            $open = [$this->circumcircle($positions, intval($n + 0), intval($n + 1), intval($n + 2))];
 
             $closed = [];
+
+            // file_put_contents("debug.txt", $debugArDiuNei);
 
             // Incrementally add each vertex to the mesh.
             for($i = count($indices); $i-- > 0; ) 
@@ -2252,16 +2272,21 @@
 
                     // Remove the triangle and add it's edges to the edge list.
                     array_push($edges, $open[$j]->i, $open[$j]->j, $open[$j]->j, $open[$j]->k, $open[$j]->k, $open[$j]->i);
-                    array_slice($open, $j, 1);
+                    array_splice($open, $j, 1);
                 }
 
                 // Remove any doubled edges.
                 $this->dedup($edges);
 
+
                 // Add a new triangle for each edge.
-                for($j = count($edges); $j; ) 
+                for($j = count($edges); $j>0; ) 
                 {
                     $b = $edges[--$j]; $a = $edges[--$j];
+                    $circumcircle_v = $positions;
+                    $circumcircle_i = intval($a);
+                    $circumcircle_j = intval($b);
+                    $circumcircle_k = intval($c);
                     array_push($open, $this->circumcircle($positions, $a, $b, $c));
                 }
             }
@@ -2416,7 +2441,7 @@
             }
 
             $ind = $this->delaunay2D($ap);
-            // file_put_contents("debug.txt", serialize($ind));
+            file_put_contents("debug.txt", serialize($ind));
             $back = []; $front = [];
 
             // Find out the overlap in the window or door
@@ -2426,12 +2451,12 @@
                 $bs = [$ap[$ind[$hv + 2]], $ap[$ind[$hv + 1]], $ap[$ind[$hv]]];
                 $flag = false;
                 
-                if(hasDoor($this->myElement->property)) {
+                if($this->hasDoor($this->myElement->property)) {
                     foreach ($decorate->doors as $td) {
                         $flag = $flag || $this->checkPoint($fs, $td); 
                     }
                 }
-                if(hasWindow($this->myElement->property)) {
+                if($this->hasWindow($this->myElement->property)) {
                     foreach ($decorate->doors as $tw) {
                         $flag = $flag || $this->checkPoint($bs, $tw); 
                     }
@@ -2441,8 +2466,8 @@
                     $front = array_merge($front, $fs);
                 }
             }
-
             $backside = $this->thicknessAppend($back, $t);
+
             $frontside = $this->thicknessAppend($front, -$t);
            
             $inner = [];
@@ -2468,10 +2493,18 @@
                 }
             }
 
+
             // file_put_contents("debug.txt", $ind);
         
-            return array_merge($backside, $frontside, $outter, $inner, $doorL, $doorR);
-            // return null;
+            $pset = array_merge($backside, $frontside, $outter, $inner, $doorL, $doorR);
+            $this->points = [];
+            for($i = 0;$i < count($pset);$i+=3){
+                array_push($this->points, [$pset[$i], $pset[$i+1], $pset[$i+2]]);
+            }
+            $this->defaultIndices(count($this->points));
+
+            // file_put_contents("debug.txt", serialize($this->points));
+
         }
 
         public function door_entry_attachToLast($p, $v){
