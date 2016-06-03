@@ -401,7 +401,12 @@ function ScenePick(){
                 isRotation = true;
                 pickNode = null;
 				if(!Mobile)
-				disableAllController();
+				{
+					disableController(getElem("DRAGCONTROLL"));
+					disableController(getElem("SCALECONTROLL"));
+				}
+				
+				
                 //for some ridiculurs reason i got to pick again!!
                 //scene.pick()
             });

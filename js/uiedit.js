@@ -1,3 +1,19 @@
+function loadinitialComponent()
+{
+	var nodes = scene.findNodes();
+	var n;
+	for (var i = 0;i < nodes.length; i++)
+	{
+		n = nodes[i].getType();
+		n = n.split('/');
+		if(n == "wall" || n == "roof" || n == "base")
+		{
+			
+		}
+		
+	}
+}
+
 function ModifyComponent()
 {
 	//check what is picked
@@ -5,10 +21,12 @@ function ModifyComponent()
 	if (pickObj== "window" || pickObj == "door" || pickObj == "interWall")//the pickObj can do translate modification
 	{
 		moveComponent(pickObj);
+		disableController(getElem("SCALECONTROLL"));
 	}
 	else //the pickObj can do resize modification
 	{
 		resizeComponent();
+		disableController(getElem("DRAGCONTROLL"));
 	}
 	
 }
@@ -19,26 +37,21 @@ function resizeComponent()
 	var h = node.getHeight()*30;
 	var leftPoint = [hitPos.x-(w/2), hitPos.y-(h/2)];
 	var scale = getElem("SCALECONTROLL");
-	scale.style.width = w + "px";
-	scale.style.height = h + "px";
-	scale.style.left = leftPoint[0] + "px";
-	scale.style.top = leftPoint[1] + "px";
-	scale.style.display = "block";
+	setStyle(scale,["width", "height", "left", "top", "display"],[pixel(w), pixel(h), pixel(leftPoint[0]), pixel(leftPoint[1]), "block"]);
+
 	var scaleH = getElem("scaleHControll");
 	var scaleV = getElem("scaleVControll");
 	scaleH.style.width = scaleH.style.height =scaleV.style.width = scaleV.style.height = w/30 + "px";
-	scaleH.style.top = h/2 +"px";
-	scaleH.style.left = w-5 +"px";
-	scaleV.style.top = -(w/20)-5+ "px";
-	scaleV.style.left = w/2 + "px";
+
+	
 	scaleH.style.display = "block";
 	scaleV.style.display = "block";
-	scaleController();
+	scaleController(node);
 }
 
 
 
-function scaleController()
+function scaleController(node)
 {
 	var scaleH = getElem("scaleHControll");
 	var scaleV = getElem("scaleVControll");
@@ -46,7 +59,6 @@ function scaleController()
 	var targetH = null;	var targetV = null;
 	var elemRectH = null;	var elemRectV = null;
 	
-	var pixel = function(v) { return v + "px"; };
 	
 	// events
 	var MouseDownEvent = function(event)
@@ -94,49 +106,35 @@ function scaleController()
 			targetV.style.top = pixel(parseFloat(targetV.style.top));
 			scale.style.top = pixel(parseFloat(scale.style.top) + shift);
 			scale.style.height = pixel(parseFloat(scale.style.height) - shift);
+			console.log(node.getHeight() - shift);
+			//setObjectHeight(node,(node.getHeight() - shift),10);
 			lastY = event.clientY;
+			
+			node.setHeight(node.getHeight() - shift);
+			if(node.getLayer && node.getLayer() == 1){
+				
+			}else{
+				if(node.setRealHeight){node.setRealHeight(node.getHeight() - shift);}
+			}
+			//heightpropertyValue.textContent=heightinput.value;
+			//console.log('realHeight:',node.getRealHeight());
+			console.log('getHeight:',node.getHeight())
+			node.callBaseCalibration();
+			dirty = true;
+				
 		}
 	}
 	
 	var body = document.getElementsByTagName("body");
 	scaleV.addEventListener('mousedown', MouseDownEvent);
-	scaleH.addEventListener('mousedown', MouseDownEvent); /*function(event)
-	{
-		isDraggEnabled = this.dataset.draggable;
-		if(isDraggEnabled)
-		{
-			lastX = event.clientX//-parseFloat(scale.style.left);
-			lastY = event.clientY//-parseFloat(scale.style.left);
-			
-			//console.log('lastX',lastX);
-			//lastY = event.clientY;
-			//scaleH.style.left = lastX;
-			elemRectH = scaleH.getBoundingClientRect();
-			targetH = scaleH;
-		};
-	});*/
-	body[0].addEventListener('mouseup', MouseUpEvent);/*function(event)
-	{
-		targetH = null;
-		elemRectH = null;
-	});*/
+	scaleH.addEventListener('mousedown', MouseDownEvent); 
+	body[0].addEventListener('mouseup', MouseUpEvent);
+	body[0].addEventListener('mousemove', MouseMoveEvent);
+}
 
-	body[0].addEventListener('mousemove', MouseMoveEvent);/*function(event)
-	{
-		if (targetH) 
-		{
-			//console.log('elemRectH',elemRectH.left,'clientX',event.clientX,'lastX',lastX);
-			//targetH.style.left = (elemRectH.left + event.clientX - lastX) + "px";
-			targetH.style.left = (event.clientX - lastX) + (parseFloat(scale.style.width) - 5) + "px";
-			
-			//targetH.style.top = (elemRectH.top + event.clientY - lastY) + "px";
-		};
-
-		if (targetV)
-		{
-			targetV.style.top = (event.clientY - lastY) + (parseFloat(scale.style.height) - 5) + "px";
-		}
-	});*/
+function heightChange(node)
+{
+	
 }
 function moveComponent(pickObj)
 {
@@ -193,17 +191,12 @@ function DragController(point)
 	});
 }
 
-function disableAllController()
+function disableController(controller)
 {
-	var dragger = getElem("DRAGCONTROLL");
-	dragger.style.left = "";
-	dragger.style.top = "";
-	dragger.style.display = "none";
-	
-	var scale = getElem("SCALECONTROLL");
-	scale.style.left = "";
-	scale.style.top = "";
-	scale.style.display = "none";
+	controller.style.left = "";
+	controller.style.top = "";
+	controller.style.display = "none";
+
 }
 function findRelativeWall(Id)
 {

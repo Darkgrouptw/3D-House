@@ -31,6 +31,7 @@ function createTextNode(Content)
 {
 	return document.createTextNode(Content);
 }
+
 function isEmpty(myObject) {
     for(var key in myObject) {
         if (myObject.hasOwnProperty(key)) {
@@ -40,6 +41,57 @@ function isEmpty(myObject) {
 
     return true;
 }
+function setStyle(Elem, Property, Value)
+{
+	for (var i = 0; i< Property.length; i++)
+	{
+		Elem.style[Property[i]] = Value[i];
+	}
+}
+function setMultiStyle(Elem,Property,Value)
+{
+
+	if(typeof Property == "object")
+	{
+		for (var i = 0;i < Elem.length;i++)
+		{
+			for (var j = 0;j < Property.length;j++)
+			{
+			Elem[i].style[Property[j]] = Value[j];
+			}
+		}
+	}
+	else
+	{
+		for(var i = 0;i < Elem.length;i++)
+		{
+			Elem[i].style[Property] = Value;
+		}
+		
+	}
+}
+
+function rmvStyle(Elem)
+{
+	for(var i = 0;i < Elem.length;i++)
+	{
+		Elem[i].removeAttribute("style");
+	}
+}
+
+function changeSize(Elem, W, H)
+{
+	if(W != -1)
+	{
+		Elem.style.width = W + "px";
+	}
+	if(H != -1)
+	{
+		Elem.style.height = H + "px";
+	}
+}
+
+function pixel(v) { return v + "px"; };
 //Component
 var FloorTab, FuncBar, PartBar, TrashCan, Modal, ExportMenu, ScreenController, Mode;
 var PropertyFT, ValueFT, PropertyPBul, ValuePBli, PropertyPBimgclose, PropertyPBContent, Propertycloseli,Valuecloseli,RefSize;

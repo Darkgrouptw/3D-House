@@ -220,7 +220,17 @@ var rfcomponent = ["gable", "hip", "mansard","cross_gable","cross_mansard"];
 function subPartClick(id){
 	tmp = id.split("_");
 	type = parseInt(tmp[1]);	index = parseInt(tmp[2]);
-	if(type ==2)//roof
+	console.log(type);
+	var myid = lastid;
+	if(type == 0)//window
+	{
+		changeWall(myid,"wall/single_window");
+	}
+	if(type == 1)
+	{
+		changeWall(myid,"wall/door_entry");
+	}
+	if(type == 2)//roof
 	{
 		changeRoof("roof/" + rfcomponent[index-1]);
 	}

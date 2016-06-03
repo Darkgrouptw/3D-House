@@ -52,3 +52,13 @@ html,body
 	width:2%;
 	background: linear-gradient(rgb(219,173,137), rgb(202,229,144), rgb(255,251,153), rgb(143,187,232));
 }
+#DETAIL
+{
+	position:absolute;
+	top: 20%;
+	left:30%;
+	width: 50%;
+	height:60%;
+	font-family:Lucida Console;
+	border: 1px solid black;
+}

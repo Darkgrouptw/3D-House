@@ -73,9 +73,12 @@ html, body
 {
 	background-color: rgb(22, 160, 133);
 	cursor:col-resize;
-	position:relative;
+	position:absolute;
 	display:none;
 	z-index: 200;
+	margin: auto;
+	top: 0px;
+	bottom: 0px;
 }
 #SCALECONTROLL .V
 {
@@ -84,6 +87,8 @@ html, body
 	position:relative;
 	display:none;
 	z-index: 200;
+	margin: auto;
+	
 }
 /*canvas
 {

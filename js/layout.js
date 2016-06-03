@@ -170,47 +170,7 @@ function setTrashCan()
 	setMultiStyle(getSubElem(TrashCan,"i"),["font-size"], [0.05*Height + "px"]);
 }
 
-function setMultiStyle(Elem,Property,Value)
-{
 
-	if(typeof Property == "object")
-	{
-		for (var i = 0;i < Elem.length;i++)
-		{
-			for (var j = 0;j < Property.length;j++)
-			{
-			Elem[i].style[Property[j]] = Value[j];
-			}
-		}
-	}
-	else
-	{
-		for(var i = 0;i < Elem.length;i++)
-		{
-			Elem[i].style[Property] = Value;
-		}
-		
-	}
-}
-function rmvStyle(Elem)
-{
-	for(var i = 0;i < Elem.length;i++)
-	{
-		Elem[i].removeAttribute("style");
-	}
-}
-
-function changeSize(Elem, W, H)
-{
-	if(W != -1)
-	{
-		Elem.style.width = W + "px";
-	}
-	if(H != -1)
-	{
-		Elem.style.height = H + "px";
-	}
-}
 
 function setInvisibleFuncBar()
 {
