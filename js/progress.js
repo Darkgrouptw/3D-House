@@ -6,8 +6,8 @@ function setLayout()
 	var Height = window.innerHeight;
 	percentage = document.getElementById("percentage");
 	percentage.style.fontSize = 0.05*Height + "px";
-	setInterval(sendingRequest, 3*1000);
-	setInterval(sendingDetailRequest, 3*1000);
+	//setInterval(sendingRequest, 3*1000);
+	setInterval(sendingDetailRequest, 1*1000);
 	table = getElem("DETAIL");
 	table.style.fontSize = 0.05*Height + "px";
 }
@@ -39,6 +39,8 @@ function sendingRequest()
 
 var detailResult = null;
 var detailurl;
+var all =[];
+var done =[];
 var ComponentV = [];
 function sendingDetailRequest()
 {
@@ -46,6 +48,7 @@ function sendingDetailRequest()
 	{
 		progressListener(i);
 	}
+	showProgress(percentage);
 	showDetailProgress();
 }
 
@@ -62,18 +65,29 @@ function progressListener(i) {
 		detailResult = detailResult.substr(2, detailResult.length);
 		detail = JSON.parse(detailResult);
 		value = detail["done_of_slices_and_black"]/detail["num_of_slices_and_black"];
-		ComponentV[i] = (value*100).toFixed(2);	
-		
+		ComponentV[i] = parseFloat((value*100).toFixed(2));
+		done[i] = parseInt(detail["done_of_slices_and_black"]);
+		all[i] = parseInt(detail["num_of_slices_and_black"]);
 		}
 	};
 	xmlHttpDetail.open("GET",detailurl,true);
 	xmlHttpDetail.send(null);
 }
 
-function showProgress(elem, value)
+function showProgress(elem)
 {
-	setStyle(elem,["width","display"], [value + "%", "block"]);
-	elem.innerHTML = value + "%";
+	var sumdone=0; var sumall=0; var value = 0;
+	if(done.length > 0 && all.length > 0)
+	{
+		for(var i = 0; i <done.length; i++)
+		{
+			sumdone += done[i];
+			sumall += all[i];
+		}
+		value = ((sumdone/sumall)*100).toFixed(2);
+		setStyle(elem,["width","display"], [value + "%", "block"]);
+		elem.innerHTML = value + "%";
+	}
 }
 function showDetailProgress()
 {
