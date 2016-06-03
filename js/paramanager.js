@@ -73,8 +73,21 @@ utility.makeIndices = function(start, end, group)
 	}
 };
 
+utility.indicesReverse = function(list)
+{
+    var result_list = [];
+    for(var i = 0; i < list.length; i = i + 3)
+    {
+        result_list.push(list[i + 2]);
+        result_list.push(list[i + 1]);
+        result_list.push(list[i]);
+    }
+
+    return result_list;
+};
+
 // Normal vector repeater
-utility.makeNormals = function (repeat, vector) 
+utility.makeNormals = function(repeat, vector) 
 { 
 	var nset = [];
 	for(var i = 0; i < repeat; i++) { nset = nset.concat(vector); }

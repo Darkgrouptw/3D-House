@@ -10,10 +10,10 @@ SceneJS.Types.addType("wall/triangle",
 			var topw = (w * r.a + -w * r.b) / 2;
 			var pset = 
             [
-				-w, -h, -t, w, -h, -t, topw, h, -t,
+				-w, -h, -t, topw, h, -t, w, -h, -t, 
 				-w, -h, t, w, -h, t, topw, h, t,
 				w, -h, -t, topw, h, -t, topw, h, t, w, -h, t,
-				-w, -h, -t, topw, h, -t, topw, h, t, -w, -h, t,
+				-w, -h, -t, -w, -h, t, topw, h, t, topw, h, -t, 
 				-w, -h, -t, w, -h, -t, w, -h, t, -w, -h, t
 			];
 			

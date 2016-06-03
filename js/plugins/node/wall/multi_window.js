@@ -115,9 +115,7 @@ SceneJS.Types.addType("wall/multi_window",
 						window.points.push([c.x + half.w, c.y - half.h]);
 
                         property.exactlyWindowCenter.push(c.x);
-
-                        // match the window
-                        property.exactlyWindowCenter.push(c.y + t);
+                        property.exactlyWindowCenter.push(c.y);
 
 						window.check = checkPoint.bind(window);
 						window.foreach = each.bind(window);

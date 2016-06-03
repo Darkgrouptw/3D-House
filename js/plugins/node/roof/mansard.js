@@ -24,12 +24,14 @@ SceneJS.Types.addType("roof/mansard",
 		        w - dPwr, h, d - dPdr, w - dPwr, h, -d - dNdr, w, -h, -d, w, -h, d, 
 		        w - dPwr, h, d - dPdr, w, -h, d, -w, -h, d, -w - dNwr, h, d - dPdr, 
 		        -w - dNwr, h, -d - dNdr, w - dPwr, h, -d - dNdr, w - dPwr, h, d - dPdr, -w - dNwr, h, d - dPdr, 
+                
                 -w - dNwr + t, hmt, d - dPdr - t, -w - dNwr + t, hmt, -d - dNdr + t, -w + t, -h, -d + t, -w + t, -h, d - t,
 		        w - dPwr - t, hmt, -d - dNdr + t, w - t, -h, -d + t, -w + t, -h, -d + t, -w - dNwr + t, hmt, -d - dNdr + t, 
 		        w - dPwr - t, hmt, d - dPdr - t, w - t, -h, d - t, w - t, -h, -d + t, w - dPwr - t, hmt, -d - dNdr + t, 
 		        w - dPwr - t, hmt, d - dPdr - t, -w - dNwr + t, hmt, d - dPdr - t, -w + t, -h, d - t, w - t, -h, d - t, 
 		        w - dPwr - t, hmt, d - dPdr - t, w - dPwr - t, hmt, -d - dNdr + t, -w - dNwr + t, hmt, -d - dNdr + t, -w - dNwr + t, hmt, d - dPdr - t,
-		        -w + t, -h, d - t, -w + t, -h, -d + t, -w, -h, -d, -w, -h, d,
+		       
+                -w + t, -h, d - t, -w + t, -h, -d + t, -w, -h, -d, -w, -h, d,
 		        w - t, -h, -d + t, w, -h, -d, -w, -h, -d, -w + t, -h, -d + t,
 		        w - t, -h, d - t, w, -h, d, w, -h, -d, w - t, -h, -d + t, 	
 		        w - t, -h, d - t, -w + t, -h, d - t, -w, -h, d, w, -h, d, 
@@ -107,25 +109,25 @@ SceneJS.Types.addType("roof/mansard",
 function roof_mansard_build(params) 
 {
     var positionSet = this._paramana.createPositions();
-    var indiceSet = utility.makeIndices(0, (positionSet.length / 3) - 1);
+    var indiceSet = utility.indicesReverse(utility.makeIndices(0, (positionSet.length / 3) - 1));
 	var uvSet = 
     [
 		0, 1, 0, 0, 1, 0, 1, 1,			// Front West
-		1, 1, 1, 0, 0, 0, 0, 1,			// Front Sourth
+		0, 1, 1, 1, 0, 0, 1, 0,			// Front Sourth
 		0, 1, 1, 1, 1, 0, 0, 0,			// Front East
 		0, 1, 0, 0, 1, 0, 1, 1,			// Front North
-		1, 1, 1, 0, 0, 0, 0, 1,			// Front Center
+		0, 0, 0, 0, 0, 0, 0, 0,			// Front Center
 		
-		0, 1, 0, 0, 1, 0, 1, 1,			// Back West
-		1, 1, 0, 1, 0, 0, 1, 1,			// Back Sourth
-		1, 0, 0, 0, 0, 1, 1, 1,			// Back East
-		1, 1, 0, 1, 0, 0, 1, 0,			// Back North
-		0, 1, 1, 1, 1, 0, 0, 0,			// Back Center
+		0, 0, 0, 0, 0, 0, 0, 0,			// Back West
+		0, 0, 0, 0, 0, 0, 0, 0,			// Back Sourth
+		0, 0, 0, 0, 0, 0, 0, 0,			// Back East
+		0, 0, 0, 0, 0, 0, 0, 0,			// Back North
+		0, 0, 0, 0, 0, 0, 0, 0,			// Back Center
 		
-		0, 1, 0, 0, 1, 0, 1, 1,			// Side West
-		1, 1, 0, 1, 0, 0, 1, 1,			// Side Sourth
-		1, 0, 0, 0, 0, 1, 1, 1,			// Side East
-		1, 1, 0, 1, 0, 0, 1, 0,			// Side North
+		0, 0, 0, 0, 0, 0, 0, 0,			// Side West
+		0, 0, 0, 0, 0, 0, 0, 0,			// Side Sourth
+		0, 0, 0, 0, 0, 0, 0, 0,			// Side East
+		0, 0, 0, 0, 0, 0, 0, 0,			// Side North
 	];
 
     var geometry = 
