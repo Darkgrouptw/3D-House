@@ -315,8 +315,14 @@ function ScenePick(){
                 var material;
 
                 if(lastid>0){
-                    material= housenode2Material(scene.findNode(lastid)); 
-                    material.setColor(none_select_material_color);
+                    var node = scene.findNode(lastid);
+                    if(node.getType() == "window/fixed"){
+
+                    }else{
+                        material= housenode2Material(node); 
+                        material.setColor(none_select_material_color);
+                    }
+                    
                 }
                 var id=hit.nodeId;
                 var element=TextureName2housenode(scene.findNode(id)); 
@@ -387,8 +393,14 @@ function ScenePick(){
                 uiPanel.style.display='none';
 
                 if(lastid>0){
-                    material= housenode2Material(scene.findNode(lastid)); 
-                    material.setColor({ r:0.8, g:0.8, b:0.8});
+                    var node = scene.findNode(lastid);
+                    if(node.getType() == "window/fixed"){
+
+                    }else{
+                        material= housenode2Material(node); 
+                        material.setColor({ r:0.8, g:0.8, b:0.8});
+                    }
+                    
                 }
                 lastid = -1;
                 lastFloor = -1;
@@ -899,7 +911,30 @@ function attachInput(pickId){
     var inputarea=document.createElement("div");
     inputarea.id="inputarea";
     uiarea.appendChild(inputarea);
+    if(n.getType() == "window/fixed"){
+        var div=document.createElement("div");
+        inputarea.appendChild(div);
 
+        //input
+        var deleteinput=document.createElement("input");
+            deleteinput.value = "white";
+            deleteinput.type="button";
+            div.appendChild(deleteinput);
+
+        deleteinput.addEventListener('click',function(event){
+            housenode2Material(n).setColor({r:1,g:1,b:1});
+        });
+
+        //input
+        var deleteinput=document.createElement("input");
+            deleteinput.value = "brown";
+            deleteinput.type="button";
+            div.appendChild(deleteinput);
+
+        deleteinput.addEventListener('click',function(event){
+            housenode2Material(n).setColor({r:204/255,g:141/255,b:85/255});
+        });
+    }
 	//roof backSide
 	if(n.getBackSide && n.getBackSide()){
 		var div=document.createElement("div");
@@ -2185,11 +2220,15 @@ function timeFuction(){
                     }
                 }
                 if(node.getType() == "material"){
-                    if(Material2housenode(node).getID() == select_node){
-                        node.setColor(select_material_color);
+                    if(Material2housenode(node).getType() != "window/fixed"){
+                        if(Material2housenode(node).getID() == select_node){
+                            node.setColor(select_material_color);
+                        }else{
+                            node.setColor(none_select_material_color);
+                        }
                     }else{
-                        node.setColor(none_select_material_color);
                     }
+                    
                 }
                 if(node.getType() == "texture"){
                     if(hasTexture){
@@ -2544,7 +2583,7 @@ function changeRoof(type){
                 Ratiob: roof.getRatio().b
             });
             var t_w =  getTrapezoidS({layerNumber: layerNumber,
-                Height: roof.getHeight(),
+                Height: roof.getHeight() - roof.getThickness()*4,
                 Width: roof.getWidth(),
                 Depth: roof.getDepth(),
                 Ratioa: roof.getRatio().a,
@@ -3075,7 +3114,7 @@ function getCrossGableS(param){
                 nodes:
                 [{
                     type: "name",
-                    name: "roof.jpg",
+                    name: "old_roof.jpg",
 
                     nodes:
                     [{
@@ -3085,7 +3124,7 @@ function getCrossGableS(param){
                         nodes:
                         [{
                             type: "texture",
-                            src: "images/GeometryTexture/roof.jpg",
+                            src: "images/GeometryTexture/old_roof.jpg",
                             applyTo: "color",
 
                             nodes: 
