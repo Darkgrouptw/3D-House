@@ -236,9 +236,9 @@ function ScenePick(){
                     {
                         switch(pickNode)
                         {
-                            case "base":
-                                baseOffsetY(objectId, tmpYlength, currentAxis);
-                                break;
+                            //case "base":
+                            //    baseOffsetY(objectId, tmpYlength, currentAxis);
+                            //    break;
                             case "interWall":
                                 interWallOffsetY(objectId, tmpYlength, currentAxis);
                                 break;
@@ -268,9 +268,9 @@ function ScenePick(){
                     {
                         switch(pickNode)
                         {
-                            case "base":
-                                baseOffsetX(objectId, tmpXlength, currentAxis);
-                                break;
+                            //case "base":
+                            //    baseOffsetX(objectId, tmpXlength, currentAxis);
+                            //    break;
                             case "interWall":
                                 interWallOffsetX(objectId, tmpXlength, currentAxis);
                                 break;

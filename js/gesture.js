@@ -4,11 +4,11 @@ var tmpNormal = null;
 var camDist = null;
 
 var numberOfType = ["base/basic","wall/door_entry","wall/single_window","wall/no_window","wall/multi_window",
-                    "roof/cross_gable","roof/gable","roof/hip","roof/mansard","wall/triangle","window/fixed"];
+                    "roof/cross_gable","roof/gable","roof/hip","roof/mansard","roof/cross_mansard","wall/triangle","window/fixed"];
 
 var numberOfName = ["base","rightWall","leftWall","backWall","roof","rightTriangle","leftTriangle","interWall","window"];
 
-var numberOfRoof = ["roof/cross_gable","roof/gable","roof/hip","roof/mansard"];
+var numberOfRoof = ["roof/cross_gable","roof/gable","roof/hip","roof/mansard","roof/cross_mansard"];
 
 var hitPos = {};
 function Sign(x) 
@@ -855,32 +855,29 @@ function horizontalAxis(id, tmpLength, tmpAxis)
     switch(tmpAxis)
     {
         case 0: 
-            if(nameNode == "window")
+            /*if(nameNode == "window")
             {
                 n = getNodeType(getWallID[getWindowID.indexOf(id)]);
                 setWindowWidth(n, tmpLength, 4);
             }
-            else if(nameNode == "backWall")
+            else */
+            if(nameNode == "backWall" || nameNode == "base")
             {
                 setObjectWidth(n, tmpLength, 24);
             }
             else if(nameNode == "roof" || nameNode == "rightTriangle" || nameNode == "leftTriangle")
             {
                 setObjectDepth(n, tmpLength, 24);
-            }
-            else if(nameNode == "base")
-            {
-                var tmpBackWall = getNodeBase("backWall", tmpLayer);
-                setObjectWidth(tmpBackWall, tmpLength, 24);
             }
             break;
         case 1:
-            if(nameNode == "window")
+            /*if(nameNode == "window")
             {
                 n = getNodeType(getWallID[getWindowID.indexOf(id)]);
                 setWindowWidth(n, tmpLength, 4);
             }
-            else if(nameNode == "rightWall" || nameNode == "leftWall")
+            else */
+            if(nameNode == "rightWall" || nameNode == "leftWall")
             {
                 if(partmode == 0)
                 {
@@ -901,17 +898,17 @@ function horizontalAxis(id, tmpLength, tmpAxis)
             }
             else if(nameNode == "base")
             {
-                var tmpRightWall = getNodeBase("rightWall", tmpLayer);
-                setObjectWidth(tmpRightWall, tmpLength, 15);
+                setObjectHeight(n, tmpLength, 16);
             }
             break;
         case 2:
-            if(nameNode == "window")
+            /*if(nameNode == "window")
             {
                 n = getNodeType(getWallID[getWindowID.indexOf(id)]);
                 setWindowWidth(n, tmpLength, 4);
             }
-            else if(nameNode == "backWall")
+            else */
+            if(nameNode == "backWall" || nameNode == "base")
             {
                 setObjectWidth(n, tmpLength, 24);
             }
@@ -919,19 +916,15 @@ function horizontalAxis(id, tmpLength, tmpAxis)
             {
                 setObjectDepth(n, tmpLength, 24);
             }
-            else if(nameNode == "base")
-            {
-                var tmpBackWall = getNodeBase("backWall", tmpLayer);
-                setObjectWidth(tmpBackWall, tmpLength, 24);
-            }
             break;
         case 3:
-            if(nameNode == "window")
+            /*if(nameNode == "window")
             {
                 n = getNodeType(getWallID[getWindowID.indexOf(id)]);
                 setWindowWidth(n, tmpLength, 4);
             }
-            else if(nameNode == "rightWall" || nameNode == "leftWall")
+            else */
+            if(nameNode == "rightWall" || nameNode == "leftWall")
             {
                 if(partmode == 0)
                 {
@@ -952,8 +945,7 @@ function horizontalAxis(id, tmpLength, tmpAxis)
             }
             else if(nameNode == "base")
             {
-                var tmpRightWall = getNodeBase("rightWall", tmpLayer);
-                setObjectWidth(tmpRightWall, tmpLength, 15);
+                setObjectHeight(n, tmpLength, 16);
             }
             break;
     }
@@ -976,12 +968,13 @@ function verticalAxis(id, tmpLength, tmpAxis)
     switch(tmpAxis)
     {
         case 0:
-            if(nameNode == "window")
+            /*if(nameNode == "window")
             {
                 n = getNodeType(getWallID[getWindowID.indexOf(id)]);
                 setWindowHeight(n, tmpLength, 4);
             }
-            else if(nameNode == "rightWall" || nameNode == "leftWall" || nameNode == "backWall")
+            else */
+            if(nameNode == "rightWall" || nameNode == "leftWall" || nameNode == "backWall")
             {
                 setObjectHeight(n, tmpLength, 8);
             }
@@ -991,12 +984,13 @@ function verticalAxis(id, tmpLength, tmpAxis)
             }
             break;
         case 1:
-            if(nameNode == "window")
+            /*if(nameNode == "window")
             {
                 n = getNodeType(getWallID[getWindowID.indexOf(id)]);
                 setWindowHeight(n, tmpLength, 4);
             }
-            else if(nameNode == "rightWall" || nameNode == "leftWall")
+            else */
+            if(nameNode == "rightWall" || nameNode == "leftWall")
             {
                 if(partmode == 0)
                 {
@@ -1021,12 +1015,13 @@ function verticalAxis(id, tmpLength, tmpAxis)
             }
             break;
         case 2:
-            if(nameNode == "window")
+            /*if(nameNode == "window")
             {
                 n = getNodeType(getWallID[getWindowID.indexOf(id)]);
                 setWindowHeight(n, tmpLength, 4);
             }
-            else if(nameNode == "rightWall" || nameNode == "leftWall")
+            else */
+            if(nameNode == "rightWall" || nameNode == "leftWall")
             {
                 setObjectWidth(n, tmpLength, 7);
             }
@@ -1036,17 +1031,17 @@ function verticalAxis(id, tmpLength, tmpAxis)
             }
             else if(nameNode == "base")
             {
-                var tmpRightWall = getNodeBase("rightWall", tmpLayer);
-                setObjectWidth(tmpRightWall, tmpLength, 7);
+                setObjectHeight(n, tmpLength, 16);
             }
             break;
         case 3:
-            if(nameNode == "window")
+            /*if(nameNode == "window")
             {
                 n = getNodeType(getWallID[getWindowID.indexOf(id)]);
                 setWindowHeight(n, tmpLength, 4);
             }
-            else if(nameNode == "rightWall" || nameNode == "leftWall")
+            else */
+            if(nameNode == "rightWall" || nameNode == "leftWall")
             {
                 if(partmode == 0)
                 {
@@ -1061,18 +1056,13 @@ function verticalAxis(id, tmpLength, tmpAxis)
                     setObjectHeight(n, tmpLength, 8);
                 }
             }
-            else if(nameNode == "backWall")
+            else if(nameNode == "backWall" || nameNode == "base")
             {
                 setObjectWidth(n, tmpLength, 24);
             }
             else if(nameNode == "roof" || nameNode == "rightTriangle" || nameNode == "leftTriangle")
             {
                 setObjectDepth(n, tmpLength, 24);
-            }
-            else if(nameNode == "base")
-            {
-                var tmpBackWall = getNodeBase("backWall", tmpLayer);
-                setObjectWidth(tmpBackWall, tmpLength, 24);
             }
             break;
     }
