@@ -536,8 +536,8 @@ function convertToMultiObj(inputNode, isDownload){
 				for(var i = 0;i<4;i++){
 					vStr[i] += "\n";
 					vnStr[i] += "\n";
-					console.log(vStr[i] + vnStr[i] + fStr[i]);
-					parseObj_withStoring(vStr[i] + vnStr[i] + fStr[i], false);
+					// console.log(vStr[i] + vnStr[i] + fStr[i]);
+					// parseObj_withStoring(vStr[i] + vnStr[i] + fStr[i], false);
 					if(isDownload)	download(vStr[i] + vnStr[i] + fStr[i], "model_part" + outNodeIndex + ".obj", 'text/plain');
 					//Append string of .objs
 					objs.push(vStr[i] + vnStr[i] + fStr[i]);
@@ -601,7 +601,7 @@ function convertToMultiObj(inputNode, isDownload){
 				}
 				fStr += "\n";
 
-				parseObj_withStoring(vStr + vnStr + fStr, isConnector(outNodeIndex));
+				// parseObj_withStoring(vStr + vnStr + fStr, isConnector(outNodeIndex));
 				if(isDownload)	download(vStr + vnStr + fStr, "model_part" + outNodeIndex + ".obj", 'text/plain');
 				outNodeIndex++;
 				objs.push(vStr + vnStr + fStr);
