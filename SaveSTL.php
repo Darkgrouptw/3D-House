@@ -195,6 +195,9 @@
                 case "roof/cross_gable":
                     $dup = 4;
                     break;
+                case "roof/cross_mansard":
+                    $dup = 8;
+                    break;
                 default:
                     $dup = 1;
                     break;
@@ -421,6 +424,53 @@
                     }
 
                     for($i = 0;$i<4;$i++){
+                        $vStr[$i] .= "\n";
+                        $vnStr[$i] .= "\n";
+                        parseObj_withStoring($vStr[$i] . $vnStr[$i] . $fStr[$i], false);
+                        //Append string of .objs
+                        array_push($objs, $vStr[$i] . $vnStr[$i] . $fStr[$i]);
+                        $outNodeIndex++;
+                    }
+                    break;
+                case "roof/cross_mansard":
+                    $vStr = ["", "", "", "", "", "", "", ""]; $vnStr = ["", "", "", "", "", "", "", ""]; $fStr = ["", "", "", "", "", "", "", ""];
+                    $mVIndex = [];
+                    array_push($mVIndex, [4,5,6,7,12,13,14,15,120,121,122,123]);        //left
+                    array_push($mVIndex, [0,1,2,3,8,9,10,11,116,117,118,119]);      //right
+                    array_push($mVIndex, [16,17,18,19,20,21,22,23]);    //top
+                    array_push($mVIndex, [24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67]);    //back
+                    array_push($mVIndex, [68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,124,125,126,127,136,137,138,139]);
+                    array_push($mVIndex, [100,101,102,103,104,105,106,107,132,133,134,135,148,149,150,151]);
+                    array_push($mVIndex, [92,93,94,95,96,97,98,99,128,129,130,131,140,141,142,143]);
+                    array_push($mVIndex, [108,109,110,111,112,113,114,115,144,145,146,147]);
+
+                    $mVFacesI = [];          //Array of 4 elements storing model's vertices (output face indices, ordered)
+                    array_push($mVFacesI, [1,2,3,1,3,4,5,6,7,5,7,8,9,10,11,9,11,12,11,10,4,6,4,10,6,5,4,4,5,1,1,5,12,12,5,9]);
+                    array_push($mVFacesI, [1,2,3,1,3,4,5,6,7,5,7,8,9,10,11,9,11,12,10,9,1,5,1,9,8,1,5,1,8,2,2,8,11,12,11,8]);
+                    array_push($mVFacesI, [1,2,3,1,3,4,5,6,7,5,7,8,3,5,4,8,4,5,8,7,4,4,7,1,7,6,1,1,6,2,6,5,2,2,5,3]);
+                    array_push($mVFacesI, [1,2,3,1,3,4,5,6,7,5,7,8,9,10,11,9,11,12,13,14,15,13,15,16,17,18,19,17,19,20,21,22,23,21,23,24,25,26,27,25,27,28,29,30,31,29,31,32,33,34,35,33,35,36,37,38,39,37,39,40,41,42,43,41,43,44,28,39,32,41,32,39,44,32,41,32,44,29,29,44,36,36,23,29]);
+                    array_push($mVFacesI, [1,2,3,1,3,4,5,6,7,5,7,8,9,10,11,9,11,12,13,14,15,13,15,16,17,18,19,17,19,20,21,22,23,21,23,24,25,26,27,25,27,28,29,30,31,29,31,32,15,11,26,26,25,15,11,15,18,24,18,15,18,24,32,32,31,18,30,29,17,21,17,29,17,21,10,16,10,21,10,16,28,28,27,10]);
+                    array_push($mVFacesI, [1,2,3,1,3,4,5,6,7,5,7,8,9,10,11,9,11,12,13,14,15,13,15,16,9,12,1,5,1,12,1,5,14,14,13,1]);
+                    array_push($mVFacesI, [1,2,3,1,3,4,5,6,7,5,7,8,9,10,11,9,11,12,13,14,15,13,15,16,14,13,2,8,2,13,2,8,9,12,2,9]);
+                    array_push($mVFacesI, [1,2,3,1,3,4,5,6,7,5,7,8,9,10,11,9,11,12,9,12,5,5,1,9,8,1,5,1,8,2,2,8,11,11,10,2]);
+
+                    //Adding to fStr
+                    for($i = 0;$i<count($mVIndex);$i++){
+                        for($j = 0;$j<count($mVFacesI[$i]);$j+=3){
+                            $fStr[$i] .= "f " . $mVFacesI[$i][$j] . "//" . $mVFacesI[$i][$j] . " " . $mVFacesI[$i][$j+1] . "//" . $mVFacesI[$i][$j+1] . " " . $mVFacesI[$i][$j+2] . "//" . $mVFacesI[$i][$j+2] . "\n";
+                        }
+                    }
+
+                    for($i = 0;$i<count($vArr);$i++){
+                        for($modelNo = 0;$modelNo<count($mVIndex);$modelNo++){
+                            if(array_search($i, $mVIndex[$modelNo]) !== false){
+                                $vStr[$modelNo] .= $vArr[$i];
+                                $vnStr[$modelNo] .= $vnArr[$i];
+                            }
+                        }
+                    }
+
+                    for($i = 0;$i<count($mVIndex);$i++){
                         $vStr[$i] .= "\n";
                         $vnStr[$i] .= "\n";
                         parseObj_withStoring($vStr[$i] . $vnStr[$i] . $fStr[$i], false);
@@ -1259,50 +1309,6 @@
 
         return $str;
     }
-    // function download(strData, strFileName, strMimeType) {
-    //     var D = document,
-    //         A = arguments,
-    //         a = D.createElement("a"),
-    //         d = A[0],
-    //         n = A[1],
-    //         t = A[2] || "text/plain";
-
-    //     //build download link:
-    //     a.href = "data:" + strMimeType + "charset=utf-8," + escape(strData);
-
-
-    //     if (window.MSBlobBuilder) { // IE10
-    //         var bb = new MSBlobBuilder();
-    //         bb.append(strData);
-    //         return navigator.msSaveBlob(bb, strFileName);
-    //     } /* end if(window.MSBlobBuilder) */
-
-
-
-    //     if ('download' in a) { //FF20, CH19
-    //         a.setAttribute("download", n);
-    //         a.innerHTML = "downloading...";
-    //         D.body.appendChild(a);
-    //         setTimeout(function() {
-    //             var e = D.createEvent("MouseEvents");
-    //             e.initMouseEvent("click", true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
-    //             a.dispatchEvent(e);
-    //             D.body.removeChild(a);
-    //         }, 66);
-    //         return true;
-    //     }; /* end if('download' in a) */
-
-
-
-    //     //do iframe dataURL download: (older W3)
-    //     var f = D.createElement("iframe");
-    //     D.body.appendChild(f);
-    //     f.src = "data:" + (A[2] ? A[2] : "application/octet-stream") + (window.btoa ? ";base64" : "") + "," + (window.btoa ? window.btoa : escape)(strData);
-    //     setTimeout(function() {
-    //         D.body.removeChild(f);
-    //     }, 333);
-    //     return true;
-    // }
 
 
     function cors() {
@@ -1354,7 +1360,7 @@
     if($DebugMode)
         if(count($_POST) != 0){
             $dataPOST = trim(file_get_contents('php://input', r));
-            file_put_contents("house.xml",$dataPOST);
+            // file_put_contents("house.xml",$dataPOST);
             
             $xml = new SimpleXMLElement($dataPOST);
             $nodes = makeNode($xml);
@@ -1363,17 +1369,12 @@
                 $node->makePoints();
             }
 
-            // file_put_contents("debug.txt", serialize($angle)."\n".serialize($vec));
+            $modeltext = exportMultiStl($nodes);
 
 
-            $objtext = exportMultiStl($nodes);
-
-            // file_put_contents("debug.txt", $debugArDiuNei);
-
-            for($i = 0;$i<count($objtext);$i++){
-                file_put_contents($i.".stl", $objtext[$i]);
+            for($i = 0;$i<count($modeltext);$i++){
+                file_put_contents("model_part".$i.".stl", $modeltext[$i]);
             }
-            // file_put_contents("3.obj", $objtext[4]);
 
 
         }
@@ -1482,6 +1483,9 @@
                 case "roof/cross_gable":
                     $dup = 4;
                     break;
+                case "roof/cross_mansard":
+                    $dup = 8;
+                    break;
                 default:
                     $dup = 1;
                     break;
@@ -1579,28 +1583,6 @@
                             array_push($vec, [0, 0]);
                             array_push($vec, [0, 1]);
                             array_push($vec, [0, 0]);
-                            // switch($parseRoof){
-                            //     case 0:
-                            //         $angle = [-90, 41.58];
-                            //         $vec = [0, 1];
-                            //         break;
-                            //     case 1:
-                            //         $vec = [0];
-                            //         $angle = [-17.5];
-                            //         break;
-                            //     case 2:
-                            //         $angle = [90, 221.58];
-                            //         $vec = [0, 1];
-                            //         break;
-                            //     case 3:
-                            //         $vec = [0];
-                            //         $angle = [-162.5];
-                            //         break;
-                            //     default:
-                            //         $angle = [0];
-                            //         $vec = [0];
-                            //         break;
-                            // }
                             break;
                         case "roof/mansard":
                             array_push($angle, [-90.0, -rad2deg(atan($h/($w*$r[0])))]);
@@ -1613,70 +1595,46 @@
                             array_push($vec, [0, 0]);
                             array_push($vec, [0, 1]);
                             array_push($vec, [0]);
-                            // switch($parseRoof){
-                            //     case 0:
-                            //         $vec = [0];
-                            //         $angle = [10];
-                            //         break;
-                            //     case 1:
-                            //         $vec = [1, 0];
-                            //         $angle = [270, 158];
-                            //         break;
-                            //     case 2:
-                            //         $vec = [0];  
-                            //         $angle = [170];
-                            //         break;
-                            //     case 3:
-                            //         $vec = [1, 0];
-                            //         $angle = [90, 158];
-                            //         break;
-                            //     case 4:
-                            //         $vec = [0];
-                            //         $angle = [90];
-                            //         break;
-                            //     default:
-                            //         $vec = [0];
-                            //         $angle = [0];
-                            //         break;
-                            // }
                             break;
                         case "roof/cross_gable":
-                            array_push($angle, [-90.0, -rad2deg(atan($h/($w*$r[0])))]);
-                            array_push($angle, [90.0, 270.0-rad2deg(atan($h/($d*$r[1])))]);
-                            array_push($angle, [90.0, 180.0+rad2deg(atan($h/($w*$r[0])))]);
-                            array_push($angle, [90.0, 180.0-rad2deg(atan($h/($d*$r[1])))]);
-                            array_push($angle, [270.0]);
+                            $coverH = floatval($this->properties["extrude_hgt"]) * $h;
+                            $coverB = floatval($this->properties["extrude_bas"]);
+
+                            array_push($angle, [-90.0, -rad2deg(atan($h*2.0/$w))]);
+                            array_push($angle, [270.0+rad2deg(atan($h*2.0/$w))]);
+                            array_push($angle, [90.0, rad2deg(atan($coverH*2.0/$coverB))]);
+                            array_push($angle, [90.0, -rad2deg(atan($coverH*2.0/$coverB))]);
                             array_push($vec, [0, 0]);
-                            array_push($vec, [0, 1]);
-                            array_push($vec, [0, 0]);
-                            array_push($vec, [0, 1]);
                             array_push($vec, [0]);
-                            // switch($parseRoof){
-                            //     case 0:
-                            //         $vec = [0];
-                            //         $angle = [10];
-                            //         break;
-                            //     case 1:
-                            //         $vec = [1, 0];
-                            //         $angle = [270, 158];
-                            //         break;
-                            //     case 2:
-                            //         $vec = [0];  
-                            //         $angle = [170];
-                            //         break;
-                            //     case 3:
-                            //         $vec = [1, 0];
-                            //         $angle = [90, 158];
-                            //         break;
-                            //     case 4:
-                            //         $vec = [0];
-                            //         $angle = [90];
-                            //         break;
-                            //     default:
-                            //         $vec = [0];
-                            //         $angle = [0];
-                            //         break;
-                            // }
+                            array_push($vec, [0, 1]);
+                            array_push($vec, [0, 1]);
+                            break;
+                        case "roof/cross_mansard":
+                            $coverH = floatval($this->properties["extrude_hgt"]) * $h;
+                            $coverB = floatval($this->properties["extrude_bas"]);
+
+                            array_push($angle, [0]);
+                            array_push($angle, [0]);
+                            array_push($angle, [0]);
+                            array_push($angle, [0]);
+                            array_push($angle, [0]);
+                            array_push($angle, [0]);
+                            array_push($angle, [0]);
+                            array_push($angle, [0]);
+                            // array_push($angle, [270.0+rad2deg(atan($h*2.0/$w))]);
+                            // array_push($angle, [90.0, rad2deg(atan($coverH*2.0/$coverB))]);
+                            // array_push($angle, [90.0, -rad2deg(atan($coverH*2.0/$coverB))]);
+                            array_push($vec, [0]);
+                            array_push($vec, [0]);
+                            array_push($vec, [0]);
+                            array_push($vec, [0]);
+                            array_push($vec, [0]);
+                            array_push($vec, [0]);
+                            array_push($vec, [0]);
+                            array_push($vec, [0]);
+                            // array_push($vec, [0]);
+                            // array_push($vec, [0, 1]);
+                            // array_push($vec, [0, 1]);
                             break;
                         default:
                             array_push($angle, [0]);
@@ -1968,6 +1926,377 @@
             $this->pushArrayElements($pset, $bspet);
             $this->pushArrayElements($pset, $fcont);
             $this->pushArrayElements($pset, $apet);
+            $this->points = [];
+            for($i = 0;$i < count($pset);$i+=3){
+                array_push($this->points, [$pset[$i], $pset[$i+1], $pset[$i+2]]);
+            }
+            $this->defaultIndices(count($this->points));
+        }
+
+        public function cross_mansardRatioCheck($r){
+            if($r[0] > 0.5) { $r[0] = 0.5; } if($r[1] > 0.5) { $r[1] = 0.5; }
+            if($r[0] < 0.0) { $r[0] = 0.0; } if($r[1] < 0.0) { $r[1] = 0.0; }
+            return $r;
+        }
+
+        public function cross_mansardExtrudef($padding){
+            //Using the properties :(
+            $this->properties = array_map("floatval", (array)$this->myElement->property);
+            $w = floatval($this->properties["width"]);
+            $d = floatval($this->properties["depth"]);
+            $h = floatval($this->properties["height"]);
+            $et = floatval($this->properties["extrude_tpl"]);
+            $t = floatval($this->properties["thickness"]); 
+
+            $el = floatval($this->properties["extrude_len"]);
+            $eb = floatval($this->properties["extrude_bas"]);
+
+            $eh = floatval($this->properties["extrude_hgt"]);
+            $ep = floatval($this->properties["extrude_pos"]);
+            $r = $this->cross_mansardRatioCheck(array_map("floatval", (array)explode(",", $this->myElement->property->ratio)));
+
+
+            $bgp = floatval($this->properties["back_grasp"]);
+            
+            $hmt = $h - $t;
+            
+            $dNwr = 2.0 * -$w * $r[0]; $dPwr = 2.0 * $w * $r[0]; 
+            $dNdr = 2.0 * -$d * $r[1]; $dPdr = 2.0 * $d * $r[1];
+
+            $tmeb = $eb - $padding;
+            $fulh = ((2.0 * $h) - $padding);
+            $pack = new stdClass;
+
+            // available range
+            $pack->ar = 2.0 * $w * (1.0 - ($r[0] * 2.0)) - (2.0 * $padding);
+            
+            // movable range 
+            $pack->mr = $pack->ar - (2.0 * $tmeb); 
+
+            // start base
+            $pack->sb = (($pack->ar * -1.0) / 2.0) + ($ep * $pack->mr);
+
+            // indent lenght
+            $pack->il = $tmeb * (1.0 - $et);
+
+            // height position
+            //pack.hp = (2 * (h - (1.5 * t)) * eh) + (2 * t);
+            
+            $pack->hp = (($fulh - (3.0 * $t) + $padding) * $eh) + (2.0 * $t) - $padding;
+            //pack.ihp = ((tmph - (3 * t)) * eh) + (2 * t); 
+
+            // depth add length
+            $pack->dal = $dPdr * (1.0 - ($pack->hp / $fulh));
+
+            $pack->teb = 2.0 * $tmeb;
+            $pack->tebet = $pack->teb * $et;
+
+            return $pack;
+        }
+
+        public function makePoints_roof_cross_mansard(){
+
+            $this->properties = array_map("floatval", (array)$this->myElement->property);
+            ////////////////////////////////////////////////////////
+            //seriously.. WTF??????????????????????????
+            $d = floatval($this->properties["width"]);
+            $w = floatval($this->properties["depth"]);
+            ////////////////////////////////////////////////////////
+            $h = floatval($this->properties["height"]);
+            $t = floatval($this->properties["thickness"]); 
+
+            $el = floatval($this->properties["extrude_len"]);
+            $eb = floatval($this->properties["extrude_bas"]);
+
+            $et = floatval($this->properties["extrude_tpl"]);
+            $eh = floatval($this->properties["extrude_hgt"]);
+            $ep = floatval($this->properties["extrude_pos"]);
+            $r = $this->cross_mansardRatioCheck(array_map("floatval", (array)explode(",", $this->myElement->property->ratio)));
+
+
+            $bgp = floatval($this->properties["back_grasp"]);
+            
+            $hmt = $h - $t;
+            
+            $dNwr = 2.0 * -$w * $r[0]; $dPwr = 2.0 * $w * $r[0]; 
+            $dNdr = 2.0 * -$d * $r[1]; $dPdr = 2.0 * $d * $r[1];
+            
+
+            $op = $this->cross_mansardExtrudef(0);
+            $ip = $this->cross_mansardExtrudef($t);
+            
+            $extdbs = $d - $dPdr;
+            $addl = $el * 2.0;
+            if($addl < ($dPdr + $op->dal)) { $addl = $dPdr + $op->dal; }
+
+            $idpd = $dPdr * (1.0 - ($bgp / ($hmt + $h)));
+            $odpd = $dPdr * (1.0 - (($bgp + $t) / (2.0 * $h)));
+            $wpd = $dPwr * (1.0 - ($bgp / ($hmt + $h)));
+    
+            $pset = [];
+                
+                // outside 2 side
+            $outside = 
+            [
+                -$w - $dNwr, $h, $d - $dPdr, -$w - $dNwr, $h, -$d - $dNdr, -$w, -$h, -$d, -$w, -$h, $d, 
+                $w - $dPwr, $h, $d - $dPdr, $w, -$h, $d, $w, -$h, -$d, $w - $dPwr, $h, -$d - $dNdr
+            ];
+            $pset = array_merge($pset, $outside);
+                
+                // inside 2 side
+            $inside = 
+            [
+                -$w - $dNwr + $t, $hmt, $d - $dPdr - $t, -$w + $t, -$h, $d - $t, -$w + $t, -$h, -$d + $t, -$w - $dNwr + $t, $hmt, -$d - $dNdr + $t, 
+                $w - $dPwr - $t, $hmt, $d - $dPdr - $t, $w - $dPwr - $t, $hmt, -$d - $dNdr + $t, $w - $t, -$h, -$d + $t,  $w - $t, -$h, $d - $t
+            ];
+            $pset = array_merge($pset, $inside);
+                
+                // outside top
+            $topside = 
+            [
+                -$w - $dNwr, $h, -$d - $dNdr, 
+                -$w - $dNwr, $h,$d - $dPdr, 
+                $w - $dPwr, $h, $d - $dPdr, 
+                $w - $dPwr, $h, -$d - $dNdr, 
+        
+               $w - $dPwr - $t, $hmt, $d - $dPdr - $t, 
+                -$w - $dNwr + $t, $hmt, $d -$dPdr - $t,
+                -$w - $dNwr + $t, $hmt, -$d - $dNdr + $t, 
+                $w - $dPwr - $t, $hmt, -$d - $dNdr + $t  
+            ];
+            $pset = array_merge($pset, $topside);
+
+                // back side necessary part
+                
+            $back_bottom =
+            [
+                $w, -$h, -$d, $w - $t, -$h, -$d + $t, $w - $t -$bgp, -$h, -$d + $t, $w - $t - $bgp, -$h, -$d,
+                -$w + $t, -$h, -$d + $t, -$w, -$h, -$d, -$w + $t + $bgp, -$h, -$d, -$w + $t + $bgp, -$h, -$d + $t
+            ];
+            $pset = array_merge($pset, $back_bottom);
+
+                // side 
+            $side =
+            [
+                // left side
+                $w - $wpd - $t - $bgp, $hmt - $bgp, -$d + $t + $idpd,
+                $w - $wpd - $t - $bgp, $hmt - $bgp, -$d + $odpd,
+                $w - $t - $bgp, -$h, -$d,
+                $w - $t - $bgp, -$h, -$d + $t,
+
+                // right side
+                -$w + $wpd + $t + $bgp, $hmt - $bgp, -$d + $odpd, 
+                -$w + $wpd + $t + $bgp, $hmt - $bgp, -$d + $t + $idpd,
+                -$w + $t + $bgp, -$h, -$d + $t,
+                -$w + $t + $bgp, -$h , -$d,
+
+                // center side
+                -$w + $wpd + $t + $bgp, $hmt - $bgp, -$d + $t + $idpd,
+                -$w + $wpd + $t + $bgp, $hmt - $bgp, -$d + $odpd, 
+                $w - $wpd - $t - $bgp, $hmt - $bgp, -$d + $odpd,
+                $w - $wpd - $t - $bgp, $hmt - $bgp, -$d + $t + $idpd
+            ];
+            $pset = array_merge($pset, $side);
+
+                // grasps
+            $grasps = 
+            [
+                // left out grasp
+                $w - $wpd - $t - $bgp, $hmt - $bgp, -$d + $odpd,
+                $w - $dPwr, $h, -$d - $dNdr,
+                $w, -$h, -$d,
+                $w - $t - $bgp, -$h, -$d,
+
+                // right out grasp
+                -$w - $dNwr, $h, -$d - $dNdr,
+                -$w + $wpd + $t + $bgp, $hmt - $bgp, -$d + $odpd,
+                -$w + $t + $bgp, -$h, -$d,
+                -$w, -$h, -$d,
+
+                // center out grasp
+                $w - $dPwr, $h, -$d - $dNdr,
+                $w - $wpd - $t - $bgp, $hmt - $bgp, -$d + $odpd,
+                -$w + $wpd + $t + $bgp, $hmt - $bgp, -$d + $odpd,
+                -$w - $dNwr, $h, -$d - $dNdr,
+
+                // left in grasp
+                $w - $dPwr - $t, $hmt, -$d - $dNdr + $t,
+                $w - $wpd - $t - $bgp, $hmt - $bgp, -$d + $t + $idpd,
+                $w - $t - $bgp, -$h, -$d + $t,
+                $w - $t, -$h, -$d + $t,
+
+                // right in grasp
+                -$w + $wpd + $t + $bgp, $hmt -$bgp, -$d + $t + $idpd,
+                -$w - $dNwr + $t, $hmt, -$d - $dNdr + $t,
+                -$w + $t, -$h, -$d + $t,
+                -$w + $t + $bgp, -$h, -$d + $t,
+
+                // center in grasp 
+                -$w - $dNwr + $t, $hmt, -$d - $dNdr + $t,
+                -$w + $wpd + $t + $bgp, $hmt - $bgp, -$d + $t + $idpd,
+                $w - $wpd - $t - $bgp, $hmt - $bgp, -$d + $t + $idpd,
+                $w - $dPwr - $t, $hmt, -$d - $dNdr + $t
+            ];
+            $pset = array_merge($pset, $grasps);
+                
+                // debug
+                //w, -h, -d,
+                //-w, -h, -d,
+                //-w - dNwr, h, -d - dNdr,
+                //w - dPwr, h, -d - dNdr,
+                
+                // extrude part 
+            $front_extrude =
+            [
+                // debug [D, C, B, A]     
+                //-w - dNwr, h, d - dPdr,
+                //-w, -h, d,
+                //w, -h, d,
+                //w - dPwr, h, d - dPdr,
+
+                // out [D', D, C, C']
+                -$w - $dNwr, $h, $d - $dPdr,
+                -$w, -$h, $d,
+                $op->sb, -$h, $d,
+                $op->sb + $op->il,$op->hp - $h, $d - $dPdr + $op->dal,
+
+                // in [D', C', C, D]
+                $ip->sb + $ip->il, $ip->hp - $h, $d - $dPdr - $t + $ip->dal,
+                $ip->sb, -$h, $d - $t,
+                -$w + $t, -$h, $d - $t,
+                -$w - $dNwr + $t,$hmt, $d - $dPdr -$t,
+
+                // out [A, D, D', A']
+                $w - $dPwr, $h, $d - $dPdr,
+                -$w - $dNwr, $h, $d - $dPdr,
+                $op->sb + $op->il, $op->hp - $h, $d - $dPdr + $op->dal,
+                $op->sb + $op->il + $op->tebet, $op->hp - $h, $d - $dPdr + $op->dal, 
+                
+                // in [A, A', D', D]
+                $w - $dPwr - $t, $hmt, $d - $dPdr - $t,
+                $ip->sb + $ip->il + $ip->tebet, $ip->hp - $h, $d - $dPdr - $t + $ip->dal,
+                $ip->sb + $ip->il, $ip->hp - $h, $d - $dPdr - $t + $ip->dal,
+                -$w - $dNwr + $t, $hmt, $d - $dPdr - $t,
+
+                // out [A, A', B', B]
+                $w - $dPwr, $h, $d - $dPdr,
+                $op->sb + $op->il + $op->tebet, $op->hp - $h, $d - $dPdr + $op->dal,
+                $op->sb + $op->teb, -$h, $d,
+                $w, -$h, $d,
+                
+                // in [A, B, B', A']
+                $w - $dPwr -$t, $hmt, $d - $dPdr - $t,
+                $w - $t, -$h, $d - $t,
+                $ip->sb + $ip->teb, -$h, $d - $t,
+                $ip->sb + $ip->il + $ip->tebet, $ip->hp - $h, $d - $dPdr - $t + $ip->dal,
+            ];
+            $pset = array_merge($pset, $front_extrude);
+
+                // extrude length
+            $extrude_length = 
+            [
+                // out [D'', D', C', C'']
+                $op->sb + $op->il, $op->hp - $h, $extdbs + $addl,
+                $op->sb + $op->il, $op->hp - $h, $d - $dPdr + $op->dal,
+                $op->sb, -$h, $d,
+                $op->sb, -$h, $extdbs + $addl,
+                
+                // in [D'', C'', C', D']
+                $ip->sb + $ip->il, $ip->hp - $h, $extdbs + $addl,
+                $ip->sb, -$h, $extdbs + $addl,
+                $ip->sb, -$h, $d - $t,
+                $ip->sb + $ip->il, $ip->hp - $h, $d - $dPdr - $t + $ip->dal,
+
+                // out [A', A'', B'', B']
+                $op->sb + $op->il + $op->tebet, $op->hp - $h, $d - $dPdr + $op->dal,
+                $op->sb + $op->il + $op->tebet, $op->hp - $h, $extdbs + $addl,
+                $op->sb + $op->teb, -$h, $extdbs + $addl,
+                $op->sb + $op->teb, -$h, $d,
+                
+                // in [A', B', B'', A'']
+                $ip->sb + $ip->il + $ip->tebet, $ip->hp - $h, $d - $dPdr - $t + $ip->dal,
+                $ip->sb + $ip->teb, -$h, $d - $t,
+                $ip->sb + $ip->teb, -$h, $extdbs + $addl,
+                $ip->sb + $ip->il + $ip->tebet, $ip->hp - $h, $extdbs + $addl,
+            ];
+            $pset = array_merge($pset, $extrude_length);
+
+                // extrude top
+            $extrude_top = 
+            [
+                // out [A', D', D'', A'']
+                $op->sb + $op->il + $op->tebet, $op->hp - $h, $d - $dPdr + $op->dal, 
+                $op->sb + $op->il, $op->hp - $h, $d - $dPdr + $op->dal,
+                $op->sb + $op->il, $op->hp - $h, $extdbs + $addl,
+                $op->sb + $op->il + $op->tebet, $op->hp - $h, $extdbs + $addl, 
+                
+                // in [A', A'', D'', D']
+                $ip->sb + $ip->il + $ip->tebet, $ip->hp - $h, $d - $dPdr - $t + $ip->dal,
+                $ip->sb + $ip->il + $ip->tebet, $ip->hp - $h, $extdbs + $addl,
+                $ip->sb + $ip->il, $ip->hp - $h, $extdbs + $addl,
+                $ip->sb + $ip->il, $ip->hp - $h, $d - $dPdr - $t + $ip->dal,
+            ];
+            $pset = array_merge($pset, $extrude_top);
+
+                // 2 side bottom
+            $side_bottom = 
+            [
+                -$w + $t, -$h, $d - $t, -$w, -$h, $d, -$w, -$h, -$d, -$w + $t, -$h, -$d + $t,
+                $w - $t, -$h, $d - $t, $w - $t, -$h, -$d + $t, $w, -$h, -$d, $w, -$h, $d,
+            ];
+            $pset = array_merge($pset, $side_bottom);
+                
+                // extrude bottom
+            $extrude_bottom =
+            [
+                // [iC', oC', oC, iC]
+                $ip->sb, -$h, $d - $t,
+                $op->sb, -$h, $d,
+                -$w, -$h, $d,
+                -$w + $t, -$h, $d - $t,
+                
+                // [iC', iC'', oC'', oC']
+                $ip->sb, -$h, $d - $t,
+                $ip->sb, -$h, $extdbs + $addl,
+                $op->sb, -$h, $extdbs + $addl,
+                $op->sb, -$h, $d,
+                
+                // [oB', oB'', iB'', iB']
+                $op->sb + $op->teb, -$h, $d,
+                $op->sb + $op->teb, -$h, $extdbs + $addl,
+                $ip->sb + $ip->teb, -$h, $extdbs + $addl,
+                $ip->sb + $ip->teb, -$h, $d - $t,
+                
+                // [iB, oB, oB', iB']
+                $w - $t, -$h, $d - $t,
+                $w, -$h, $d,
+                $op->sb + $op->teb, -$h, $d,
+                $ip->sb + $ip->teb, -$h, $d - $t, 
+            ];
+            $pset = array_merge($pset, $extrude_bottom);
+
+                // front cover
+            $front_cover = 
+            [
+                // [iD'', oD'', oC'', iC'']
+                $ip->sb + $ip->il, $ip->hp - $h, $extdbs + $addl,
+                $op->sb + $op->il, $op->hp - $h, $extdbs + $addl,
+                $op->sb, -$h, $extdbs + $addl,
+                $ip->sb, -$h, $extdbs + $addl,
+                
+                // [oA'', oD'', iD'', iA'']
+                $op->sb + $op->il + $op->tebet, $op->hp - $h, $extdbs + $addl, 
+                $op->sb + $op->il, $op->hp - $h, $extdbs + $addl,
+                $ip->sb + $ip->il, $ip->hp - $h, $extdbs + $addl,
+                $ip->sb + $ip->il + $ip->tebet, $ip->hp - $h, $extdbs + $addl,
+                
+                // [oA'', iA'', iB'', oB'']
+                $op->sb + $op->il + $op->tebet, $op->hp - $h, $extdbs + $addl,
+                $ip->sb + $ip->il + $ip->tebet, $ip->hp - $h, $extdbs + $addl,
+                $ip->sb + $ip->teb, -$h, $extdbs + $addl,
+                $op->sb + $op->teb, -$h, $extdbs + $addl,
+            ];
+            $pset = array_merge($pset, $front_cover);
             $this->points = [];
             for($i = 0;$i < count($pset);$i+=3){
                 array_push($this->points, [$pset[$i], $pset[$i+1], $pset[$i+2]]);
@@ -2539,7 +2868,7 @@
                     $inner = array_merge($inner, $this->sideIndices($t, $elem));
                 }
             }
-            
+
             $pset = array_merge($backside, $frontside, $outter, $inner, $doorL, $doorR);
             $this->points = [];
             for($i = 0;$i < count($pset);$i+=3){
@@ -2647,6 +2976,44 @@
             $this->triangleIndices(count($this->points));
         }
 
+        public function trapezoidRepeatf($q){
+            if($q > 1) { $q = 1; } if ($q < 0) { $q = 0; } return $q;
+        }
+
+        public function trapezoidRatioCheck($r){
+            $r[0] = $this->trapezoidRepeatf($r[0]);
+            $r[1] = $this->trapezoidRepeatf($r[1]);
+
+            return $r;
+        }
+
+        public function makePoints_wall_trapezoid(){
+
+            // Temporarlly do not make the half value.
+            $this->properties = array_map("floatval", (array)$this->myElement->property);
+            $w = floatval($this->properties["width"]);
+            $h = floatval($this->properties["height"]);
+            $t = floatval($this->properties["thickness"]); 
+            $r = $this->trapezoidRatioCheck(array_map("floatval", (array)explode(",", $this->myElement->property->ratio)));
+
+            $pset =
+            [
+                $w * $r[0], $h, $t, -$w * $r[0],$h, $t, -$w * $r[1], -$h, $t, $w * $r[1], -$h, $t,
+                
+                $w * $r[0], $h, $t, $w * $r[1], -$h, $t, $w * $r[1], -$h, -$t, $w * $r[0], $h, -$t,
+                $w * $r[0], $h, $t, $w * $r[0], $h, -$t, -$w * $r[0], $h, -$t, -$w * $r[0], $h, $t,
+                -$w * $r[0], $h, $t, -$w * $r[0], $h, -$t, -$w * $r[1], -$h, -$t, -$w * $r[1], -$h, $t,
+                -$w * $r[1], -$h, -$t, $w * $r[1], -$h, -$t, $w * $r[1], -$h, $t, -$w * $r[1], -$h, $t,
+                
+                $w * $r[1], -$h, -$t, -$w * $r[1], -$h, -$t, -$w * $r[0], $h, -$t, $w * $r[0], $h, -$t
+            ];
+            $this->points = [];
+            for($i = 0;$i < count($pset);$i+=3){
+                array_push($this->points, [$pset[$i], $pset[$i+1], $pset[$i+2]]);
+            }
+            $this->defaultIndices(count($this->points));
+        }
+
         public function makePoints_wall_no_window(){
             $this->properties = array_map("floatval", (array)$this->myElement->property);
             $w = floatval($this->properties["width"]);
@@ -2694,15 +3061,6 @@
             $scale = $this->transform["scale"];
             $rotate = $this->transform["rotate"];
             $translate = $this->transform["translate"];
-
-            // if($this->type == "wall/door_entry"){
-            //     $str = "";
-            //     $str .= serialize($scale) . "\n";
-            //     $str .= serialize($rotate) . "\n";
-            //     $str .= serialize($translate) . "\n";
-            //     $str .= serialize($this->points) . "\n";
-            //     file_put_contents("debug.txt", $str);
-            // }
             
             $smat = array(array($scale[0], 0, 0, 0), array(0, $scale[1], 0, 0), array(0, 0, $scale[2], 0), array(0, 0, 0, 1));
             $this->mat4x4ToFloat($smat);
