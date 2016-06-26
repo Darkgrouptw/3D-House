@@ -546,12 +546,12 @@ SceneJS.Types.addType("roof/cross_mansard",
         if(roof == -1) { console.log("ERROR"); return; }
 		if(frontTrapezoid != -1){
 
-			frontTrapezoid.setHeight(this.getHeight()-this.getThickness());
-            frontTrapezoid.setWidth(this.getExtrudeBas()*2.4);
+			frontTrapezoid.setHeight(this.getHeight()-this.getThickness()/2);
+            frontTrapezoid.setWidth(this.getExtrudeBas());
             var translateV = [];
             translateV.push(baseCenterX);
             translateV.push(baseCenterY - this.getHeight() + frontTrapezoid.getHeight());
-            translateV.push(baseCenterZ - base.getHeight() + this.getThickness());
+            translateV.push(baseCenterZ - this.getExactlyExtrudeLen() - this.getWidth()/2 - this.getThickness()/2);
 
             frontTrapezoid.setTranslate(translateV);
             frontTrapezoid.setLayer(this.getLayer());
