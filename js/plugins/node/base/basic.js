@@ -656,14 +656,10 @@ SceneJS.Types.addType("base/basic",
 						zmax = baseCenterZ + this.getRealHeight();
 					}
 				}
-				console.log(xmax);
-				console.log(xmin);
-				console.log(zmax);
-				console.log(zmin);
 				//set property
 				if(interWall[i].direction=="vertical"){
 					if(xmax-xmin<interWall[i].getThickness()){
-						console.log("bad Things happen with too close wall");
+						//console.log("bad Things happen with too close wall");
 					}
 					interWall[i].setTranslateZ((zmax + zmin)/2);
 					interWall[i].setWidth((zmax - zmin)/2);
@@ -671,12 +667,12 @@ SceneJS.Types.addType("base/basic",
 				}
 				else{
 					if(zmax - zmin < interWall[i].getThickness()){
-						console.log("bad Things happen with too close wall");
+						//console.log("bad Things happen with too close wall");
 					}
 					interWall[i].setTranslateX((xmax + xmin)/2);
 					interWall[i].setWidth((xmax - xmin)/2);
 				}
-				console.log(interWall[i].getTranslate()[2]);
+
 				interWall[i].setHeight(rightWall.getHeight());
 				interWall[i].setTranslateY(rightWall.getTranslate()[1]);
 				if(high)interWall[i].setHeight(high*1);
