@@ -131,6 +131,32 @@ SceneJS.Types.addType("wall/no_window",
             }
         }
     },
+    isTooClose: function(wall){
+    	var center=this.getTranslate();
+    	var up1,up2,down1,down2,left1,left2,right1,right2;
+    	if(this.direction == "vertical"){
+    		up1 = center[2] + this.getWidth();
+    		down1 = center[2] - this.getWidth();
+    		left1 = center[0] - this.getThickness();
+    		right1 = center[0] + this.getThickness();
+    	}else{
+    		up1 = center[2] + this.getThickness();
+    		down1 = center[2] - this.getThickness();
+    		left1 = center[0] - this.getWidth();
+    		right1 = center[0] + this.getWidth();
+    	}
+    	var center2 = wall.getTranslate();
+    	up2 = center2[2] + wall.getThickness();
+    	down2 = center2[2] - wall.getThickness();
+    	left2 = center2[0] - wall.getThickness();
+    	right2 = center2[0] + wall.getThickness();
+
+    	if(!(down2 > up1 || down1 > up2) && !(left1 > right2 || left2 > right1)){
+    		return true;
+    	}else{
+    		return false;
+    	}
+    },
 	callBaseCalibration: function()
 	{
 		var mnmte = function(n) { return n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0]; }

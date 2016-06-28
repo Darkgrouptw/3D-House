@@ -105,9 +105,8 @@ SceneJS.Types.addType("base/basic",
 		
 		//try {
 		//get all the element
-		
 		var mnmte = function(n) { return n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0]; }
-
+		//element in this layer
 		var backWall=-1;
 		var rightWall=-1;
 		var leftWall=-1;
@@ -122,6 +121,7 @@ SceneJS.Types.addType("base/basic",
 		var rightback_vertical_wall=-1;
 		var rightback_horizontal_wall=-1;
 		var nodes=scene.findNodes();
+		//find each elemt in this layer
 		for(var i=0;i<nodes.length;i++){
 			var n = nodes[i];
 			if(n.getType()=="name"){
@@ -163,7 +163,7 @@ SceneJS.Types.addType("base/basic",
 		
 		
 
-		//change self to fit down base
+		//change self size to fit down base
 		if(downBase !=-1){
 			//get the orign w and h
 			this.setWidth(this.getRealWidth());
@@ -182,10 +182,8 @@ SceneJS.Types.addType("base/basic",
 				this.setRealHeight(this.getHeight());
 			}
 		}
-		var float
-		//set four walls position
-		var havefrontWall = false;
-		var havebackWall = false;
+
+		//change self position by offset
 		var defaulthigh=0;
 		var baseCenter=this.getTranslate();
 		var baseCenterX=baseCenter[0]+this.getOffsetX();
@@ -213,6 +211,7 @@ SceneJS.Types.addType("base/basic",
 			//this.setOffsetY(0);
 		}
 		
+		//set concorner wall position and width
 		var left_back_cornor = {x: baseCenterX-this.getRealWidth(),y: baseCenterZ-this.getRealHeight() };
 		var left_front_cornor = {x: baseCenterX -this.getRealWidth(),y:baseCenterZ+this.getRealHeight() };
 		var right_back_cornor = {x: baseCenterX +this.getRealWidth(),y:baseCenterZ-this.getRealHeight()};
@@ -221,6 +220,7 @@ SceneJS.Types.addType("base/basic",
 		var left_back_y = this.getLeftBackY();
 		var right_back_x = this.getRightBackX();
 		var right_back_y = this.getRightBackY();
+		//if left has coner
 		if(left_back_x > this.getThickness() * 2 && left_back_y > this.getThickness() * 2){
 			var root = scene.findNode(3);
 			if(leftback_vertical_wall ==-1){
@@ -280,7 +280,7 @@ SceneJS.Types.addType("base/basic",
 			left_back_x = 0;
 			left_back_y = 0;
 		}
-		
+		//has right conor
 		if(right_back_x > this.getThickness() * 2 && right_back_y > this.getThickness() * 2){
 			var root = scene.findNode(3);
 			if(rightback_vertical_wall ==-1){
@@ -341,7 +341,9 @@ SceneJS.Types.addType("base/basic",
 			right_back_y = 0;
 		}
 		
-		//console.log("x:"+left_back_cornor.x+" y:"+left_back_cornor.y);
+		//set four wall
+		var havefrontWall = false;
+		var havebackWall = false;
 		if(frontWall!=-1){
 			havefrontWall = true;
 			frontWall.setWidth(this.getRealWidth());
@@ -461,18 +463,63 @@ SceneJS.Types.addType("base/basic",
 			}
 			if(roof.setLayer)roof.setLayer(this.getLayer()+1);
 		}
+
+
 		//set interwall in new way
 		if(interWall.length!=0){
 			//sort the inter wall in priority order
 			interWall.sort(function(a,b){return a.getPriority() - b.getPriority()});
 			//init strate the wall
 			for(var i = 0; i<interWall.length;i++){
-				
+				//wall's range
+				var zminrange = null,zmaxrange = null,xminrange = null,xmaxrange = null;
+				//set init position
+				interWall[i].setTranslateX(baseCenterX+(-this.getRealWidth()+(this.getRealWidth()*2)*interWall[i].getPercentX()/100));
+				interWall[i].setTranslateZ(baseCenterZ+(-this.getRealHeight()+(this.getRealHeight()*2)*interWall[i].getPercentY()/100));
+				var center=interWall[i].getTranslate();
+				//check there is position for interwall in limit times
+				var check_time = 0,check_limit = 20;
+				var is_occupy = true;
+				while(is_occupy){
+					if(check_time >= check_limit){
+						//kill the interWall QQ
+						break;
+					}
+					check_time++;
+					is_occupy = false;
+					//check interwall's position is ok 
+					if(backWall != -1 && backWall.isTooClose(interWall[i])){
+						is_occupy = true;
+						interWall[i].setTranslateZ(backWall.getTranslate()[2]+backWall.getThickness()+interWall[i].getThickness());
+							center=interWall[i].getTranslate();
+					}else if(frontWall != -1 && frontWall.isTooClose(interWall[i])){
+						is_occupy = true;
+					}else if(leftWall != -1 && leftWall.isTooClose(interWall[i])){
+						is_occupy = true;
+					}else if(rightWall != -1 && rightWall.isTooClose(interWall[i])){
+						is_occupy = true;
+						console.log("wow");
+						interWall[i].setTranslateX(rightWall.getTranslate()[0]-rightWall.getThickness()-interWall[i].getThickness());
+							center=interWall[i].getTranslate();
+					}else if(leftback_vertical_wall != -1 && leftback_vertical_wall.isTooClose(interWall[i])){
+						is_occupy = true;
+					}else if(leftback_horizontal_wall != -1 && leftback_horizontal_wall.isTooClose(interWall[i])){
+						is_occupy = true;
+					}else if(rightback_vertical_wall != -1 && rightback_vertical_wall.isTooClose(interWall[i])){
+						is_occupy = true;
+					}else if(rightback_horizontal_wall != -1 && rightback_horizontal_wall.isTooClose(interWall[i])){
+						is_occupy = true;
+					}
+				}
+				//there is position for interwall
+				//find interwall's range and position
+
+
 			}
 			//first find good position that not being OQPi
 		}
 		//set interWall
-		if(interWall.length!=0){
+		if(interWall.length!=0 && false){
 			interWall.sort(function(a,b){return a.getPriority() - b.getPriority()});
 			//for every interwall
 			for(var i=0;i<interWall.length;i++){
@@ -482,6 +529,7 @@ SceneJS.Types.addType("base/basic",
 				interWall[i].setTranslateX(baseCenterX+(-this.getRealWidth()+(this.getRealWidth()*2)*interWall[i].getPercentX()/100));
 				interWall[i].setTranslateZ(baseCenterZ+(-this.getRealHeight()+(this.getRealHeight()*2)*interWall[i].getPercentY()/100));
 				var center=interWall[i].getTranslate();
+				//this is bad init value
 				var zminrange=9999;
 				var zmaxrange=9999;
 				var xminrange=9999;
@@ -494,6 +542,7 @@ SceneJS.Types.addType("base/basic",
 					check=false;
 					//setin back
 					if(backWall!=-1){
+						// range = this distance between two wall's center
 						var range=Math.sqrt(Math.pow(center[0] - backWall.getTranslate()[0],2)+
 							Math.pow(center[1] - backWall.getTranslate()[1],2)+
 							Math.pow(center[2] - backWall.getTranslate()[2],2));
@@ -529,7 +578,7 @@ SceneJS.Types.addType("base/basic",
 						}
 					}
 					//set in front
-					if(rightWall!=-1){
+					if(rightWall!=-1 && false){
 						var range=Math.sqrt(Math.pow(center[0] - rightWall.getTranslate()[0],2)+
 							Math.pow(center[1] - rightWall.getTranslate()[1],2)+
 							Math.pow(center[2] - rightWall.getTranslate()[2],2));
@@ -541,9 +590,48 @@ SceneJS.Types.addType("base/basic",
 						}
 					}
 					if(leftback_vertical_wall!=-1){
-						
+						var range = Math.sqrt(Math.pow(center[0] - leftback_vertical_wall.getTranslate()[0],2)+
+							Math.pow(center[1] - leftback_vertical_wall.getTranslate()[1],2)+
+							Math.pow(center[2] - leftback_vertical_wall.getTranslate()[2],2));
+						if(range < interWall[i].getThickness() + leftback_vertical_wall.getThickness() ||
+							leftback_vertical_wall.isInside(center)){
+							interWall[i].setTranslateX(rightWall.getTranslate()[0] + leftback_vertical_wall.getThickness() + interWall[i].getThickness());
+							center = interWall[i].getTranslate();
+							check = true;
+						}
 					}
 					if(leftback_horizontal_wall!=-1){
+						var range = Maht.sqrt(Maht.pow(center[0] - leftback_horizontal_wall.getTranslate()[0],2)+
+							Math.pow(center[1] - leftback_horizontal_wall.getTranslate()[1],2)+
+							Math.pow(center[2] - leftback_horizontal_wall.getTranslate()[2],2));
+						if(range < interWall[i].getThickness + leftback_horizontal_wall.getThickness() ||
+							leftback_horizontal_wall.isInside(center)){
+							interWall[i].setTranslateZ(leftback_horizontal_wall.getTranslate[2] + leftback_horizontal_wall.getThickness() + interWall[i].getThickness());
+							center = interWall[i].getTranslate();
+							check = true;
+						}
+					}
+					if(rightback_vertical_wall!=-1){
+						var range = Math.sqrt(Math.pow(center[0] - rightback_vertical_wall.getTranslate()[0],2)+
+							Math.pow(center[1] - rightback_vertical_wall.getTranslate()[1],2)+
+							Math.pow(center[2] - rightback_vertical_wall.getTranslate()[2],2));
+						if(range < interWall[i].getThickness() + rightback_vertical_wall.getThickness() ||
+							rightback_vertical_wall.isInside(center)){
+							interWall[i].setTranslateX(rightWall.getTranslate()[0] - rightback_vertical_wall.getThickness() - interWall[i].getThickness());
+							center = interWall[i].getTranslate();
+							check = true;
+						}
+					}
+					if(rightback_horizontal_wall!=-1){
+						var range = Maht.sqrt(Maht.pow(center[0] - rightback_horizontal_wall.getTranslate()[0],2)+
+							Math.pow(center[1] - rightback_horizontal_wall.getTranslate()[1],2)+
+							Math.pow(center[2] - rightback_horizontal_wall.getTranslate()[2],2));
+						if(range < interWall[i].getThickness + rightback_horizontal_wall.getThickness() ||
+							rightback_horizontal_wall.isInside(center)){
+							interWall[i].setTranslateZ(rightback_horizontal_wall.getTranslate[2] + rightback_horizontal_wall.getThickness() + interWall[i].getThickness());
+							center = interWall[i].getTranslate();
+							check = true;
+						}
 					}
 					for (var j = 0; j < i; j++){
 						var range=Math.sqrt(Math.pow(center[0] - interWall[j].getTranslate()[0],2)+
