@@ -471,8 +471,10 @@ SceneJS.Types.addType("base/basic",
 			interWall.sort(function(a,b){return a.getPriority() - b.getPriority()});
 			//init strate the wall
 			for(var i = 0; i<interWall.length;i++){
+				//setmin and max edge
+				var zmin=0,zmax=0,xmin=0,xmax=0;
 				//wall's range
-				var zminrange = null,zmaxrange = null,xminrange = null,xmaxrange = null;
+				var zminrange = 9999,zmaxrange = 9999,xminrange = 9999,xmaxrange = 9999;
 				//set init position
 				interWall[i].setTranslateX(baseCenterX+(-this.getRealWidth()+(this.getRealWidth()*2)*interWall[i].getPercentX()/100));
 				interWall[i].setTranslateZ(baseCenterZ+(-this.getRealHeight()+(this.getRealHeight()*2)*interWall[i].getPercentY()/100));
@@ -483,162 +485,50 @@ SceneJS.Types.addType("base/basic",
 				while(is_occupy){
 					if(check_time >= check_limit){
 						//kill the interWall QQ
+						//housenode2flag(interWall[i]).destroy();
 						break;
 					}
 					check_time++;
 					is_occupy = false;
 					//check interwall's position is ok 
+					//check the outside wall
 					if(backWall != -1 && backWall.isTooClose(interWall[i])){
 						is_occupy = true;
 						interWall[i].setTranslateZ(backWall.getTranslate()[2]+backWall.getThickness()+interWall[i].getThickness());
-							center=interWall[i].getTranslate();
+						center=interWall[i].getTranslate();
 					}else if(frontWall != -1 && frontWall.isTooClose(interWall[i])){
 						is_occupy = true;
+						interWall[i].setTranslateZ(frontWall.getTranslate()[2] - frontWall.getThickness() - interWall[i].getThickness());
+						center=interWall[i].getTranslate();
 					}else if(leftWall != -1 && leftWall.isTooClose(interWall[i])){
 						is_occupy = true;
+						interWall[i].setTranslateX(leftWall.getTranslate()[0] + leftWall.getThickness() + interWall[i].getThickness());
+						center=interWall[i].getTranslate();
 					}else if(rightWall != -1 && rightWall.isTooClose(interWall[i])){
 						is_occupy = true;
-						console.log("wow");
-						interWall[i].setTranslateX(rightWall.getTranslate()[0]-rightWall.getThickness()-interWall[i].getThickness());
-							center=interWall[i].getTranslate();
+						interWall[i].setTranslateX(rightWall.getTranslate()[0] - rightWall.getThickness() - interWall[i].getThickness());
+						center=interWall[i].getTranslate();
 					}else if(leftback_vertical_wall != -1 && leftback_vertical_wall.isTooClose(interWall[i])){
 						is_occupy = true;
+						interWall[i].setTranslateX(leftback_vertical_wall.getTranslate()[0] + leftback_vertical_wall.getThickness() + interWall[i].getThickness());
+						center=interWall[i].getTranslate();
 					}else if(leftback_horizontal_wall != -1 && leftback_horizontal_wall.isTooClose(interWall[i])){
 						is_occupy = true;
+						interWall[i].setTranslateZ(leftback_horizontal_wall.getTranslate()[2]+leftback_horizontal_wall.getThickness()+interWall[i].getThickness());
+						center=interWall[i].getTranslate();
 					}else if(rightback_vertical_wall != -1 && rightback_vertical_wall.isTooClose(interWall[i])){
 						is_occupy = true;
+						interWall[i].setTranslateX(rightback_vertical_wall.getTranslate()[0] - rightback_vertical_wall.getThickness() - interWall[i].getThickness());
+						center=interWall[i].getTranslate();
 					}else if(rightback_horizontal_wall != -1 && rightback_horizontal_wall.isTooClose(interWall[i])){
 						is_occupy = true;
+						interWall[i].setTranslateZ(rightback_horizontal_wall.getTranslate()[2]+rightback_horizontal_wall.getThickness()+interWall[i].getThickness());
+						center=interWall[i].getTranslate();
 					}
-				}
-				//there is position for interwall
-				//find interwall's range and position
 
-
-			}
-			//first find good position that not being OQPi
-		}
-		//set interWall
-		if(interWall.length!=0 && false){
-			interWall.sort(function(a,b){return a.getPriority() - b.getPriority()});
-			//for every interwall
-			for(var i=0;i<interWall.length;i++){
-				//setmin and max edge
-				var zmin,zmax,xmin,xmax;
-				//set init position
-				interWall[i].setTranslateX(baseCenterX+(-this.getRealWidth()+(this.getRealWidth()*2)*interWall[i].getPercentX()/100));
-				interWall[i].setTranslateZ(baseCenterZ+(-this.getRealHeight()+(this.getRealHeight()*2)*interWall[i].getPercentY()/100));
-				var center=interWall[i].getTranslate();
-				//this is bad init value
-				var zminrange=9999;
-				var zmaxrange=9999;
-				var xminrange=9999;
-				var xmaxrange=9999;
-				//set check time if time is more than maxmun tr => kill it!
-				var time=0;
-				var check =true
-				//check the wall is fit
-				while(check){
-					check=false;
-					//setin back
-					if(backWall!=-1){
-						// range = this distance between two wall's center
-						var range=Math.sqrt(Math.pow(center[0] - backWall.getTranslate()[0],2)+
-							Math.pow(center[1] - backWall.getTranslate()[1],2)+
-							Math.pow(center[2] - backWall.getTranslate()[2],2));
-						if(range < interWall[i].getThickness() + backWall.getThickness() ||
-							backWall.isInside(center)){
-							interWall[i].setTranslateZ(backWall.getTranslate()[2]+backWall.getThickness()+interWall[i].getThickness());
-							center=interWall[i].getTranslate();
-							check=true;
-						}
-					}
-					//setin front
-					if(frontWall!=-1){
-						var range=Math.sqrt(Math.pow(center[0] - frontWall.getTranslate()[0],2)+
-							Math.pow(center[1] - frontWall.getTranslate()[1],2)+
-							Math.pow(center[2] - frontWall.getTranslate()[2],2));
-						if(range < interWall[i].getThickness() + frontWall.getThickness() ||
-							frontWall.isInside(center)){
-							interWall[i].setTranslateZ(frontWall.getTranslate()[2]-frontWall.getThickness()-interWall[i].getThickness());
-							center=interWall[i].getTranslate();
-							check=true;
-						}
-					}
-					//set in left
-					if(leftWall!=-1){
-						var range=Math.sqrt(Math.pow(center[0] - leftWall.getTranslate()[0],2)+
-							Math.pow(center[1] - leftWall.getTranslate()[1],2)+
-							Math.pow(center[2] - leftWall.getTranslate()[2],2));
-						if(range < interWall[i].getThickness() + leftWall.getThickness() ||
-							leftWall.isInside(center)){
-							interWall[i].setTranslateX(leftWall.getTranslate()[0]+leftWall.getThickness()+interWall[i].getThickness());
-							center=interWall[i].getTranslate();
-							check=true;
-						}
-					}
-					//set in front
-					if(rightWall!=-1 && false){
-						var range=Math.sqrt(Math.pow(center[0] - rightWall.getTranslate()[0],2)+
-							Math.pow(center[1] - rightWall.getTranslate()[1],2)+
-							Math.pow(center[2] - rightWall.getTranslate()[2],2));
-						if(range < interWall[i].getThickness() + rightWall.getThickness() ||
-							rightWall.isInside(center)){
-							interWall[i].setTranslateX(rightWall.getTranslate()[0]-rightWall.getThickness()-interWall[i].getThickness());
-							center=interWall[i].getTranslate();
-							check=true;
-						}
-					}
-					if(leftback_vertical_wall!=-1){
-						var range = Math.sqrt(Math.pow(center[0] - leftback_vertical_wall.getTranslate()[0],2)+
-							Math.pow(center[1] - leftback_vertical_wall.getTranslate()[1],2)+
-							Math.pow(center[2] - leftback_vertical_wall.getTranslate()[2],2));
-						if(range < interWall[i].getThickness() + leftback_vertical_wall.getThickness() ||
-							leftback_vertical_wall.isInside(center)){
-							interWall[i].setTranslateX(rightWall.getTranslate()[0] + leftback_vertical_wall.getThickness() + interWall[i].getThickness());
-							center = interWall[i].getTranslate();
-							check = true;
-						}
-					}
-					if(leftback_horizontal_wall!=-1){
-						var range = Maht.sqrt(Maht.pow(center[0] - leftback_horizontal_wall.getTranslate()[0],2)+
-							Math.pow(center[1] - leftback_horizontal_wall.getTranslate()[1],2)+
-							Math.pow(center[2] - leftback_horizontal_wall.getTranslate()[2],2));
-						if(range < interWall[i].getThickness + leftback_horizontal_wall.getThickness() ||
-							leftback_horizontal_wall.isInside(center)){
-							interWall[i].setTranslateZ(leftback_horizontal_wall.getTranslate[2] + leftback_horizontal_wall.getThickness() + interWall[i].getThickness());
-							center = interWall[i].getTranslate();
-							check = true;
-						}
-					}
-					if(rightback_vertical_wall!=-1){
-						var range = Math.sqrt(Math.pow(center[0] - rightback_vertical_wall.getTranslate()[0],2)+
-							Math.pow(center[1] - rightback_vertical_wall.getTranslate()[1],2)+
-							Math.pow(center[2] - rightback_vertical_wall.getTranslate()[2],2));
-						if(range < interWall[i].getThickness() + rightback_vertical_wall.getThickness() ||
-							rightback_vertical_wall.isInside(center)){
-							interWall[i].setTranslateX(rightWall.getTranslate()[0] - rightback_vertical_wall.getThickness() - interWall[i].getThickness());
-							center = interWall[i].getTranslate();
-							check = true;
-						}
-					}
-					if(rightback_horizontal_wall!=-1){
-						var range = Maht.sqrt(Maht.pow(center[0] - rightback_horizontal_wall.getTranslate()[0],2)+
-							Math.pow(center[1] - rightback_horizontal_wall.getTranslate()[1],2)+
-							Math.pow(center[2] - rightback_horizontal_wall.getTranslate()[2],2));
-						if(range < interWall[i].getThickness + rightback_horizontal_wall.getThickness() ||
-							rightback_horizontal_wall.isInside(center)){
-							interWall[i].setTranslateZ(rightback_horizontal_wall.getTranslate[2] + rightback_horizontal_wall.getThickness() + interWall[i].getThickness());
-							center = interWall[i].getTranslate();
-							check = true;
-						}
-					}
+					//check the other interWall
 					for (var j = 0; j < i; j++){
-						var range=Math.sqrt(Math.pow(center[0] - interWall[j].getTranslate()[0],2)+
-							Math.pow(center[1] - interWall[j].getTranslate()[1],2)+
-							Math.pow(center[2] - interWall[j].getTranslate()[2],2));
-						if(range < interWall[i].getThickness() + interWall[j].getThickness() ||
-							interWall[j].isInside(center)){
+						if(interWall[j].isTooClose(interWall[i])){
 							check=true;
 							if(interWall[j].getDirection()=="horizontal"){
 								if(interWall[j].getTranslate()[2] < center[2]){
@@ -652,14 +542,13 @@ SceneJS.Types.addType("base/basic",
 									interWall[i].setTranslateX(interWall[j].getTranslate()[0]+interWall[j].getThickness()+interWall[i].getThickness());
 								}else{
 									interWall[i].setTranslateX(interWall[j].getTranslate()[0]-interWall[j].getThickness()-interWall[i].getThickness());
-								}
-								
+								}	
 							}
 							center=interWall[i].getTranslate();
-
 							break;
 						}
 					}
+					//check the interwall is outside the house
 					if(center[0]+interWall[i].getThickness() > baseCenterX + this.getRealWidth()){
 						interWall[i].setTranslateX(baseCenterX+this.getRealWidth() - interWall[i].getThickness());
 						center=interWall[i].getTranslate();
@@ -680,23 +569,15 @@ SceneJS.Types.addType("base/basic",
 						center=interWall[i].getTranslate();
 						check=true;
 					}
-					time++;
-					if(time>20){
-						break;
-					}
 				}
 
-				if(time>20){
-					//no wall can be fit in
-					interWall[i].getParent().getParent().getParent().getParent().getParent().getParent().getParent().getParent().destroy();
-				}
+				//there is position for interwall
+				//find interwall's range and position
 				//find z x min,max
 				for(var j=0;j<i;j++){
-					
-					//if direction is no different no need for caucluct z x min max
+					//if direction is the same no need for caucluct z x min max
 					if(interWall[i].getDirection() != interWall[j].getDirection()){
-
-						//if no close no need for z x min max
+						//if not close no need for cauclate z x min max
 						var point = [interWall[i].getTranslate()[0],
 										interWall[i].getTranslate()[1],
 										interWall[i].getTranslate()[2]];
@@ -723,10 +604,44 @@ SceneJS.Types.addType("base/basic",
 								xmax = interWall[j].getTranslate()[0] - interWall[j].getThickness();
 							}
 						}
-						
 					}
-					
 				}
+
+				var walls = []
+				walls.push(backWall);walls.push(frontWall);walls.push(leftWall);walls.push(rightWall);
+				walls.push(leftback_horizontal_wall);walls.push(leftback_vertical_wall);walls.push(rightback_vertical_wall);walls.push(rightback_horizontal_wall);
+				for (var j=0;j<walls.length;j++) {
+					if(walls[j] != -1){
+						var wall = walls[j];
+						var point = [interWall[i].getTranslate()[0],
+										interWall[i].getTranslate()[1],
+										interWall[i].getTranslate()[2]];
+						if(interWall[i].getDirection() == "vertical"){
+							point[2] = walls[j].getTranslate()[2];
+						}else{
+							point[0] = walls[j].getTranslate()[0];
+						}
+						if(walls[j].isInside(point)){
+							if(center[2]-walls[j].getTranslate()[2]<zminrange && center[2]-walls[j].getTranslate()[2] >0){
+								zminrange=center[2]-walls[j].getTranslate()[2]; 
+								zmin=walls[j].getTranslate()[2] + walls[j].getThickness();
+							}
+							if(walls[j].getTranslate()[2] - center[2] < zmaxrange && walls[j].getTranslate()[2] - center[2] >0){
+								zmaxrange=walls[j].getTranslate()[2] - center[2];
+								zmax=walls[j].getTranslate()[2] - walls[j].getThickness();
+							}
+							if(center[0] - walls[j].getTranslate()[0] < xminrange && center[0] - walls[j].getTranslate()[0] >0){
+								xminrange=center[0] - walls[j].getTranslate()[0];
+								xmin = walls[j].getTranslate()[0] + walls[j].getThickness();
+							}
+							if(walls[j].getTranslate()[0] - center[0] < xmaxrange && walls[j].getTranslate()[0] - center[0] >0){
+								xmaxrange = walls[j].getTranslate()[0] - center[0];
+								xmax = walls[j].getTranslate()[0] - walls[j].getThickness();
+							}
+						}
+					}
+				}
+				//check frontWall edge
 				if(zminrange>=8888){
 					if(backWall!=-1){
 						zmin=backWall.getTranslate()[2] + backWall.getThickness();
@@ -741,20 +656,11 @@ SceneJS.Types.addType("base/basic",
 						zmax = baseCenterZ + this.getRealHeight();
 					}
 				}
-				if(xminrange>=8888){
-					if(leftWall!=-1){
-						xmin=leftWall.getTranslate()[0] + leftWall.getThickness();
-					}else{
-						xmin = baseCenterX -this.getRealWidth();
-					}
-				}
-				if(xmaxrange>=8888){
-					if(rightWall!=-1){
-						xmax = rightWall.getTranslate()[0] -rightWall.getThickness();
-					}else{
-						xmax = baseCenterX + this.getRealWidth();
-					}
-				}
+				console.log(xmax);
+				console.log(xmin);
+				console.log(zmax);
+				console.log(zmin);
+				//set property
 				if(interWall[i].direction=="vertical"){
 					if(xmax-xmin<interWall[i].getThickness()){
 						console.log("bad Things happen with too close wall");
@@ -770,6 +676,7 @@ SceneJS.Types.addType("base/basic",
 					interWall[i].setTranslateX((xmax + xmin)/2);
 					interWall[i].setWidth((xmax - xmin)/2);
 				}
+				console.log(interWall[i].getTranslate()[2]);
 				interWall[i].setHeight(rightWall.getHeight());
 				interWall[i].setTranslateY(rightWall.getTranslate()[1]);
 				if(high)interWall[i].setHeight(high*1);
@@ -778,10 +685,9 @@ SceneJS.Types.addType("base/basic",
 				if(interWall[i] && interWall[i].adjustChildren){
 					interWall[i].adjustChildren()
 				};
-			};
-			
+			}
 		}
-
+		
 		//call 
 		for(var i=0;i<nodes.length;i++){
 			var n = nodes[i];
