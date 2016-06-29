@@ -1,4 +1,5 @@
-var HOST_IP = "140.118.175.76:8098";
+//var HOST_IP = "140.118.175.76:8098";
+var HOST_IP = "140.118.155.219"
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Wouldn't be changed stuff
 var typeDefined = ["roof", "base", "wall", "wind", "ligh"];
@@ -1673,6 +1674,17 @@ function obj2Text(obj){
 
 function sendingRequestXML(){
 	var xml = generateXML();
+	var xmlData = $(xml);						// 把 string 轉成 XML
+	var listofType = xmlData.find("type");		// 把 Type 拿出來
+	var listofName = [];
+	console.log(listofType);	
+	for(var i =0; i < listofType.length; i++)
+	{
+		var tempStrList = listofType[i].innerText.split("/");
+		listofName.push(tempStrList[tempStrList.length - 1] + "");
+	}
+	//console.log(listofName);				
+	//console.log(xml);
 	$.support.cors = true;
 	$.ajax({
     url : "http://" + HOST_IP + "/SaveSTL.php",
@@ -1690,7 +1702,18 @@ function sendingRequestXML(){
             'Response: ' + jqXHR.responseText
         );
     }
-});
+	});
+	
+	// 傳到 server 上面
+	$.get("http://" + HOST_IP + "/ask.php",
+	{
+		Device_ID:		1,
+		path:			"files/model",
+		task_name:		"model",
+		numofparts:		listofType.length,
+		username:		"ac",
+		name:			listofName
+	}).done(function(){})	
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
