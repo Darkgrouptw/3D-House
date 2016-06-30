@@ -243,8 +243,15 @@ SceneJS.Types.addType("base/basic",
 				leftback_vertical_wall.setWidth(left_back_y/2);
 			}
 			leftback_vertical_wall.setTranslateX(left_back_cornor.x + left_back_x + (this.getThickness()));
-			leftback_vertical_wall.setTranslateY(backWall.getTranslate()[1]);
 			leftback_vertical_wall.setTranslateZ(left_back_cornor.y+(left_back_y/2));
+			if(roof != -1 && roof.getLayer() - 1 == this.getLayer()){
+				leftback_vertical_wall.setHeight(rightWall.getHeight() - this.getThickness())
+				leftback_vertical_wall.setTranslateY(backWall.getTranslate()[1] - this.getThickness());
+			}else{
+				leftback_vertical_wall.setHeight(rightWall.getHeight() )
+				leftback_vertical_wall.setTranslateY(backWall.getTranslate()[1]);
+			}
+			
 			//console.log(leftback_vertical_wall.getTranslate())
 			if(leftback_horizontal_wall == -1){
 				var param = {
@@ -266,8 +273,14 @@ SceneJS.Types.addType("base/basic",
 				leftback_horizontal_wall.setWidth((left_back_x+this.getThickness()*2)/2);
 			}
 			leftback_horizontal_wall.setTranslateX(left_back_cornor.x + (left_back_x/2)+(this.getThickness()));
-			leftback_horizontal_wall.setTranslateY(backWall.getTranslate()[1]);
 			leftback_horizontal_wall.setTranslateZ(left_back_cornor.y +(left_back_y + (this.getThickness())));
+			if(roof != -1 && roof.getLayer() - 1 == this.getLayer()){
+				leftback_horizontal_wall.setHeight(rightWall.getHeight() - this.getThickness())
+				leftback_horizontal_wall.setTranslateY(backWall.getTranslate()[1] - this.getThickness());
+			}else{
+				leftback_horizontal_wall.setHeight(rightWall.getHeight() )
+				leftback_horizontal_wall.setTranslateY(backWall.getTranslate()[1]);
+			}
 		}else{
 			if(leftback_vertical_wall != -1){
 				housenode2flag(leftback_vertical_wall).destroy();
@@ -303,8 +316,14 @@ SceneJS.Types.addType("base/basic",
 				rightback_vertical_wall.setWidth(right_back_y/2);
 			}
 			rightback_vertical_wall.setTranslateX(right_back_cornor.x - right_back_x - (this.getThickness()));
-			rightback_vertical_wall.setTranslateY(backWall.getTranslate()[1]);
 			rightback_vertical_wall.setTranslateZ(right_back_cornor.y+(right_back_y/2));
+			if(roof != -1 && roof.getLayer() - 1 == this.getLayer()){
+				rightback_vertical_wall.setHeight(rightWall.getHeight() - this.getThickness())
+				rightback_vertical_wall.setTranslateY(backWall.getTranslate()[1] - this.getThickness());
+			}else{
+				rightback_vertical_wall.setHeight(rightWall.getHeight() )
+				rightback_vertical_wall.setTranslateY(backWall.getTranslate()[1]);
+			}
 			//console.log(rightback_vertical_wall.getTranslate())
 			if(rightback_horizontal_wall == -1){
 				var param = {
@@ -326,8 +345,14 @@ SceneJS.Types.addType("base/basic",
 				rightback_horizontal_wall.setWidth((right_back_x+this.getThickness()*2)/2);
 			}
 			rightback_horizontal_wall.setTranslateX(right_back_cornor.x - (right_back_x/2)-(this.getThickness()));
-			rightback_horizontal_wall.setTranslateY(backWall.getTranslate()[1]);
 			rightback_horizontal_wall.setTranslateZ(right_back_cornor.y +(right_back_y + (this.getThickness())));
+			if(roof != -1 && roof.getLayer() - 1 == this.getLayer()){
+				rightback_horizontal_wall.setHeight(rightWall.getHeight() - this.getThickness())
+				rightback_horizontal_wall.setTranslateY(backWall.getTranslate()[1] - this.getThickness());
+			}else{
+				rightback_horizontal_wall.setHeight(rightWall.getHeight() )
+				rightback_horizontal_wall.setTranslateY(backWall.getTranslate()[1]);
+			}
 		}else{
 			if(rightback_vertical_wall != -1){
 				housenode2flag(rightback_vertical_wall).destroy();
@@ -672,10 +697,15 @@ SceneJS.Types.addType("base/basic",
 					interWall[i].setTranslateX((xmax + xmin)/2);
 					interWall[i].setWidth((xmax - xmin)/2);
 				}
-
-				interWall[i].setHeight(rightWall.getHeight());
-				interWall[i].setTranslateY(rightWall.getTranslate()[1]);
-				if(high)interWall[i].setHeight(high*1);
+				if(roof != -1 && roof.getLayer() - 1  == this.getLayer()){
+					interWall[i].setHeight(rightWall.getHeight() - this.getThickness() );
+					interWall[i].setTranslateY(rightWall.getTranslate()[1] - this.getThickness());
+				}else{
+					interWall[i].setHeight(rightWall.getHeight());
+					interWall[i].setTranslateY(rightWall.getTranslate()[1]);
+				}
+				
+				//if(high)interWall[i].setHeight(high*1);
 				interWall[i].setPercentX((100*(interWall[i].getTranslate()[0] - baseCenterX + this.getRealWidth()))/(this.getRealWidth()*2));
 				interWall[i].setPercentY((100*(interWall[i].getTranslate()[2] - baseCenterZ + this.getRealHeight()))/(this.getRealHeight()*2));
 				if(interWall[i] && interWall[i].adjustChildren){

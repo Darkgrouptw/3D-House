@@ -107,8 +107,9 @@ SceneJS.Types.addType("roof/gable",
         var baseCenterZ = baseCenter[2];
 
     	var leftTriangle = -1, rightTriangle = -1, roof = -1, base = -1;
+        var roof_base = -1;
         var nodes = scene.findNodes();
-        
+
         //                                 material     name   matrix  texture  element
         var mnmte = function(n) { return n.nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0].nodes[0]; }
         
@@ -117,10 +118,11 @@ SceneJS.Types.addType("roof/gable",
             var n = nodes[i];
             if(n.getType() == "name")
             {
-                if(n.getName() =="roof") { roof = mnmte(n); }
-                else if(n.getName() == "leftTriangle") { leftTriangle = mnmte(n); }
-                else if(n.getName() == "rightTriangle") { rightTriangle = mnmte(n); }
-                else if(n.getName() == "base") { base = mnmte(n); }
+                if(n.getName() =="roof") { roof = Pos2housenode(n); }
+                else if(n.getName() == "leftTriangle") { leftTriangle = Pos2housenode(n); }
+                else if(n.getName() == "rightTriangle") { rightTriangle = Pos2housenode(n); }
+                else if(n.getName() == "base") { base = Pos2housenode(n); }
+                else if(n.getName() == "roof_base") { roof_base = Pos2housenode(n);}
             }
         }
         
@@ -152,6 +154,14 @@ SceneJS.Types.addType("roof/gable",
         	rightTriangle.setTranslate(translateV);
 
             rightTriangle.setLayer(this.getLayer());
+        }
+        if(roof_base != -1 ){
+            roof_base.setWidth(this.getDepth());
+            roof_base.setHeight(this.getWidth());
+            roof_base.setTranslateZ(baseCenterZ);
+            roof_base.setTranslateX(baseCenterX);
+            roof_base.setTranslateY(baseCenterY - this.getHeight() - roof_base.getThickness());
+            console.log("YO");
         }
     },
     KillChildren: function(){

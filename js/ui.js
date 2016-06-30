@@ -2497,7 +2497,17 @@ function changeRoof(type){
                 Ratioa: roof.getRatio().a,
                 Ratiob: roof.getRatio().b
             });
-            root.addNode(leftTriangleS);
+            var baseS = getBaseS({layer: layerNumber,
+                Height: roof.getHeight(),
+                Width: roof.getWidth(),
+                thick: 1,
+                rotateX: 0,
+                rotateY: 0,
+                rotateZ: 0,
+                pos: "roof_base"
+            });
+            console.log(root.addNode(baseS));
+            console.log(root.addNode(leftTriangleS));
             root.addNode(rightTriangleS);
             root.addNode(gableS);
             housenode2flag(roof).destroy();
@@ -2544,6 +2554,16 @@ function changeRoof(type){
                 Ratioa: roof.getRatio().a,
                 Ratiob: roof.getRatio().b
             });
+            var baseS = getBaseS({layer: layerNumber,
+                Height: roof.getHeight(),
+                Width: roof.getWidth(),
+                thick: 1,
+                rotateX: 0,
+                rotateY: 0,
+                rotateZ: 0,
+                pos: "roof_base"
+            });
+            root.addNode(baseS);
 			root.addNode(frontTriangleS);
 			root.addNode(leftTriangleS);
             root.addNode(rightTriangleS);
@@ -3637,6 +3657,69 @@ function getMultiWallS(param){
         }]
 	};
 	return multi_wall;
+}
+function getBaseS(param){
+    var base = {
+        type: "flags",
+        flags:{transparent:false},
+        nodes:
+        [{
+            type: "name",
+            name: param.pos,
+
+            nodes:
+            [{
+                type: "material",
+                color:none_select_material_color,
+                alpha:0.2,
+                nodes:
+                [{
+                    type: "name",
+                    name: "ground.jpg",
+
+                    nodes:
+                    [{
+                        type: "matrix",
+                        elements:[0,0,1,0,1,0,0,0,0,1,0,0,9,8.5,0,1],
+
+                        nodes:
+                        [{
+                            type: "texture",
+                            src: "images/GeometryTexture/ground.jpg",
+                            applyTo: "color",
+
+                            nodes: 
+                            [{
+                                type: "texture",
+                                src: "images/GeometryTexture/groundSpecularMap.png",
+                                applyTo: "specular", // Apply to specularity
+
+                                nodes: 
+                                [{
+                                    type: "texture",
+                                    src: "images/GeometryTexture/groundNormalMap.png",
+                                    applyTo: "normals", // Apply to geometry normal vectors
+
+                                    nodes:
+                                    [{
+                                        type: "base/basic",
+                                        layer: param.layer,
+                                        height: param.height,
+                                        width: param.width,
+                                        thickness: param.thick,
+                                        scale: {x: 1, y: 1, z: 1},
+                                        rotate: {x: param.rotateX, y: param.rotateY, z: param.rotateZ},
+                                        translate: {x: 0, y: 0, z: 0}
+                                    }]
+                                }]
+                            }]
+                        }]
+                    }]
+                }]
+            }]
+        }]
+    };
+    return base;
 }
 function changeWall(wall_id,wall_type){
 	var n = scene.findNode(wall_id);
