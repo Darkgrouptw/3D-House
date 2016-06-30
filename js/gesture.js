@@ -16,39 +16,6 @@ function Sign(x)
     return typeof x === 'number' ? x ? x < 0 ? -1 : 1 : x === x ? 0 : NaN : NaN;
 }
 
-/*function getDependencyWall(id)
-{
-    var tmpNode = getNodeType(getWallID[getWindowID.indexOf(id)]);
-    var tmpWidth = tmpNode.getWidth();
-    var tmpHeight = tmpNode.getHeight();
-    var tmpWindowCenter = tmpNode.getWindowCenter();
-    var tmpCenter = getNodeCenter(id);
-    console.log("tmpNode ", tmpNode);
-    console.log("tmpWidth ", tmpWidth, " tmpHeight ", tmpHeight);
-    console.log("tmpCenter ", tmpCenter, " tmpWindowCenter ", tmpWindowCenter);
-
-    var centerX = (tmpWidth + tmpCenter[0]) / (2 * tmpWidth);
-    var centerY = (2 * tmpHeight - tmpCenter[1]) / (2 * tmpHeight);
-    console.log("centerX ", centerX, " centerY ", centerY);
-
-    var getX = 999, index = 0;
-    for(var i = 0; i < (tmpWindowCenter.length / 2); i++)
-    {
-        var tmpX = Math.sqrt(Math.pow((centerX - tmpWindowCenter[i * 2]), 2));
-        console.log("i ", i, " tmpX ", tmpX);
-        if(tmpX < getX)
-        {
-            getX = tmpX;
-            index = i;
-        }
-    }
-    console.log("index ", index * 2, " [index * 2]", tmpWindowCenter[index * 2]);
-    console.log("tmpWindowCenter[0]", tmpWindowCenter[0]);
-    console.log("tmpWindowCenter[1]", tmpWindowCenter[1]);
-    console.log("tmpWindowCenter[2]", tmpWindowCenter[2]);
-    console.log("tmpWindowCenter[3]", tmpWindowCenter[3]);
-}*/
-
 function trackPosition(id)
 {
     //var count = 0;
@@ -112,51 +79,6 @@ function calVertex(id)
     Bounding.push(maxZ);
 
     return Bounding;
-}
-
-function getTopLeftCorner(id)
-{
-    var currentAxis = getAxis();
-    var camera = scene.getNode(3).getEye();
-    var corner = [];
-    var VertexX = [];
-    var VertexY = [];
-    var VertexZ = [];
-    var center = [];
-    var tmpNode = getNodeType(id);
-
-    var tmpT = {};
-    tmpT.rotate = tmpNode.getRotate();
-    tmpT.scale = tmpNode.getScale();
-    tmpT.translate = tmpNode.getTranslate();
-    var transMatrix = utility.transformMatrix(tmpT);
-
-    var getPos = tmpNode.nodes[0].getPositions();
-    for(var j = 0; j < getPos.length; j += 3)
-    {
-        var tmpP = [];
-        tmpP.push(getPos[j]);
-        tmpP.push(getPos[j + 1]);
-        tmpP.push(getPos[j + 2]);
-        tmpP.push(1);
-        var transPos = SceneJS_math_mulMat4v4(transMatrix, tmpP);
-        VertexX.push(transPos[0]);
-        VertexY.push(transPos[1]);
-        VertexZ.push(transPos[2]);
-    }
-    //console.log(VertexX);
-
-    var minX = Math.min(...VertexX);
-    var maxX = Math.max(...VertexX);
-    var minY = Math.min(...VertexY);
-    var maxY = Math.max(...VertexY);
-    var minZ = Math.min(...VertexZ);
-    var maxZ = Math.max(...VertexZ);
-    console.log("minX ", minX, " maxX ", maxX);
-    console.log("minY ", minY, " maxY ", maxY);
-    console.log("minZ ", minZ, " maxZ ", maxZ);
-
-
 }
 
 function multiWindowOffsetX(id, tmpLength, tmpAxis)
