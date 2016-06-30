@@ -356,8 +356,10 @@ function ScenePick(){
                 var pickLayer = getNodeLayer(objectId);
                 if(pickNode == "window") { 
                     isRotation = false; 
+                    getDecoration(objectId);
+                    /*isRotation = false; 
                     var changeId = getWallID[getWindowID.indexOf(objectId)];
-                    changeViewpoint(getNodeName(changeId)); 
+                    changeViewpoint(getNodeName(changeId)); */
                 } 
                 else if(pickNode == "base" && pickLayer != 1) { isRotation = false; }
                 else if(pickNode == "interWall") { isRotation = false; }

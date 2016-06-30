@@ -62,6 +62,58 @@ function trackPosition(id)
         });
 }
 
+function calVertex(id)
+{
+    var Bounding = [];
+    var VertexX = [];
+    var VertexY = [];
+    var VertexZ = [];
+    var tmpNode = getNodeType(id);
+
+    var tmpT = {};
+    tmpT.rotate = tmpNode.getRotate();
+    tmpT.scale = tmpNode.getScale();
+    tmpT.translate = tmpNode.getTranslate();
+    var transMatrix = utility.transformMatrix(tmpT);
+
+    var getPos = tmpNode.nodes[0].getPositions();
+    //console.log("getPos", getPos);
+    for(var j = 0; j < getPos.length; j += 3)
+    {
+        var tmpP = [];
+        tmpP.push(getPos[j]);
+        tmpP.push(getPos[j + 1]);
+        tmpP.push(getPos[j + 2]);
+        tmpP.push(1);
+        var transPos = SceneJS_math_mulMat4v4(transMatrix, tmpP);
+        VertexX.push(transPos[0]);
+        VertexY.push(transPos[1]);
+        VertexZ.push(transPos[2]);
+    }
+    //console.log("X", VertexX);
+    //console.log("Y", VertexY);
+    //console.log("Z", VertexZ);
+
+    var minX = Math.min(...VertexX);
+    var maxX = Math.max(...VertexX);
+    var minY = Math.min(...VertexY);
+    var maxY = Math.max(...VertexY);
+    var minZ = Math.min(...VertexZ);
+    var maxZ = Math.max(...VertexZ);
+    //console.log("hello minX ", minX, " maxX ", maxX);
+    //console.log("minY ", minY, " maxY ", maxY);
+    //console.log("minZ ", minZ, " maxZ ", maxZ);
+
+    Bounding.push(minX);
+    Bounding.push(maxX);
+    Bounding.push(minY);
+    Bounding.push(maxY);
+    Bounding.push(minZ);
+    Bounding.push(maxZ);
+
+    return Bounding;
+}
+
 function getTopLeftCorner(id)
 {
     var currentAxis = getAxis();
@@ -1138,6 +1190,36 @@ function changeInterWallDirention(id)
     {
         tmpNode.setDirection("vertical");
         tmpNode.callBaseCalibration();
+    }
+}
+
+function getDecoration(id)
+{
+    var camPos = scene.getNode(3).getEye();
+    var changeId = getWallID[getWindowID.indexOf(id)];
+    var nodeName = getNodeName(changeId);
+
+    var dist;
+    switch(nodeName)
+    {
+        case "backWall":
+            var max = calVertex(changeId);
+            tmpNormal = [0,0,-1];
+            dist = (60 / Math.tan(45 / 2)) + Math.abs(max[4]);
+            camDist = dist;
+            break;
+        case "rightWall":
+            var max = calVertex(changeId);
+            tmpNormal = [1,0,0];
+            dist = (60 / Math.tan(45 / 2)) + Math.abs(max[1]);
+            camDist = dist;
+            break;
+        case "leftWall":
+            var max = calVertex(changeId);
+            tmpNormal = [-1,0,0];
+            dist = (60 / Math.tan(45 / 2)) + Math.abs(max[0]);
+            camDist = dist;
+            break;            
     }
 }
 
