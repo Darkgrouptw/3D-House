@@ -104,8 +104,11 @@ function ScenePick(){
                 tmpNormal = null;
                 camDist = null;
 
+                if(pickObjId != null && scene.getNode(pickObjId) != null) { delete scene.getNode(pickObjId)._topicSubs.rendered; } // delete render event from trackPosition
+                
                 firstX = event.clientX;
                 firstY = event.clientY;
+
             }, true);
 
     canvas.addEventListener('mouseup',
@@ -347,7 +350,6 @@ function ScenePick(){
                 //console.log("getWindowID ", getWindowID);
                 console.log("ID: ", element.getID(), " partmode: ", partmode);
                 console.log("id: ", hit.nodeId);
-                if(pickObjId != null && scene.getNode(pickObjId) != null) { delete scene.getNode(pickObjId)._topicSubs.rendered; } // delete render event from trackPosition
                 objectId = hit.nodeId;
 				pickObjId = objectId;
 				selectLayer();

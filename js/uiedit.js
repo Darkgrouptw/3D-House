@@ -141,8 +141,8 @@ function moveComponent(pickObj)
 	var W;	var H;
 	if (pickObj == "window")
 	{
-		W = 4;
-		H = 4;
+		W = getNodeType(pickObjId).getSize().a * 20;
+		H = getNodeType(pickObjId).getSize().b * 20;
 	}
 	else
 	{
@@ -187,6 +187,50 @@ function DragController(point)
 		{
 			target.style.left = (elementRect.left + event.clientX - lastX) + "px";
 			target.style.top = (elementRect.top + event.clientY - lastY) + "px";
+
+			var posX = event.clientX;
+            var posY = event.clientY;
+
+            var vecC = [];
+            var vecD = [];
+            vecC.push(lastX - posX);
+            vecC.push(lastY - posY);
+            vecD.push(lastX - posX);
+            vecD.push(0);
+            var offsetCos = (vecC[0]*vecD[0] + vecC[1]*vecD[1]) /
+                        ( Math.sqrt(vecC[0]*vecC[0] + vecC[1]*vecC[1]) * Math.sqrt(vecD[0]*vecD[0] + vecD[1]*vecD[1] ) );
+
+			//console.log("index of window ", getWindowID.indexOf(pickObjId));
+			//console.log("index of Wall ", getWallID[getWindowID.indexOf(pickObjId)]);
+			//console.log("index of Type ", getNodeType(getWallID[getWindowID.indexOf(pickObjId)]));
+			var currentAxis = getAxis();
+			var changeId = getWallID[getWindowID.indexOf(pickObjId)];
+			var type = getNodeType(changeId).getType();
+
+			var Xlength = posX - lastX;
+            var Ylength = posY - lastY;
+			if(offsetCos < (1 / Math.sqrt(2)) && offsetCos >= 0)
+            {
+            	if(type != "wall/multi_window")
+				{
+					windowOffsetY(changeId, Ylength , currentAxis);
+				}
+				else
+                {
+                    multiWindowOffsetY(pickObjId, Ylength, currentAxis);
+                }
+            }
+            else
+            {
+            	if(type != "wall/multi_window")
+				{
+					windowOffsetX(changeId, Xlength, currentAxis);
+				}
+				else
+                {
+                    multiWindowOffsetX(pickObjId, Xlength, currentAxis);
+                }
+            }
 		};     
 	});
 }
