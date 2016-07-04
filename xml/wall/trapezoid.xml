@@ -8,7 +8,9 @@
             <translate>0,0,0</translate>
         </transform>
         
-		<texture>wall.jpg</texture>
+        <texture>wall.jpg</texture>
+        <specular>wallSpecularMap.png</specular>
+		<normalmap>wallNormalMap.png</normalmap>
         
         <property>
             <width>10</width>

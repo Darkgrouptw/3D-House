@@ -9,7 +9,10 @@
             <translate>0,0,0</translate>
         </transform>
 		
-		<texture>roof.jpg</texture>
+        <texture>roof.jpg</texture>
+        <specular>roofSpecularMap.png</specular>
+		<normalmap>roofNormalMap.png</normalmap>
+
         <pos></pos>		
         <property>
             <width>18</width>

@@ -399,7 +399,7 @@ SceneJS.Types.addType("roof/cross_mansard",
                 var tmpcat = [];
                 for(var i = 0; i < points.length; i = i + 3)
                 {
-                   tmpcat = tmpcat.concat([(points[i] - d) / dd, (points[i + 1] - h) / dh]); 
+                   tmpcat = tmpcat.concat([(points[i + 2] + d) / dd, (points[i + 1] + h) / dh]); 
                 }
                 return tmpcat;
             };
@@ -409,10 +409,16 @@ SceneJS.Types.addType("roof/cross_mansard",
                 var tmpcat = [];
                 for(var i = 0; i < points.length; i = i + 3)
                 {
-                    tmpcat = tmpcat.concat([(points[i + 2] - w) / dw, (points[i + 1] - h) / dh]);
+                    tmpcat = tmpcat.concat([(points[i] - w) / dw, (points[i + 1] - h) / dh]);
                 }
                 return tmpcat;
             };
+
+            var outsdie = 
+            [
+                0, 1, 1, 1, 1, 0, 0, 0,
+                0, 1, 0, 0, 1, 0, 1, 1
+            ];
 
             return uvs.concat(depthHeightTexture(share.outside))
                     .concat(depthHeightTexture(share.inside))
