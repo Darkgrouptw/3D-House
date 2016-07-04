@@ -18,20 +18,24 @@ SceneJS.Types.addType("wall/trapezoid",
 
                 return r;
             }
+        
+			var w = 2 * property.width, h = property.height, t = property.thickness, r = ratio_check(property.ratio);
+            // r.a = top, r.b = base 
 
-			// Temporarlly do not make the half value.
-			var w = property.width, h = property.height, t = property.thickness, r = ratio_check(property.ratio);
+            // height fix
+            w = w - (2 * t);
+            var hmt = h - t;
 
 			var pset =
             [
-				w * r.a, h, t, -w * r.a, h, t, -w * r.b, -h, t, w * r.b, -h, t,
+				w * r.a, hmt, t, -w * r.a, hmt, t, -w * r.b, -h, t, w * r.b, -h, t,
                 
-                w * r.a, h, t, w * r.b, -h, t, w * r.b, -h, -t, w * r.a, h, -t,
-                w * r.a, h, t, w * r.a, h, -t, -w * r.a, h, -t, -w * r.a, h, t,
-                -w * r.a, h, t, -w * r.a, h, -t, -w * r.b, -h, -t, -w * r.b, -h, t,
+                w * r.a, hmt, t, w * r.b, -h, t, w * r.b, -h, -t, w * r.a, hmt, -t,
+                w * r.a, hmt, t, w * r.a, hmt, -t, -w * r.a, hmt, -t, -w * r.a, hmt, t,
+                -w * r.a, hmt, t, -w * r.a, hmt, -t, -w * r.b, -h, -t, -w * r.b, -h, t,
                 -w * r.b, -h, -t, w * r.b, -h, -t, w * r.b, -h, t, -w * r.b, -h, t,
                 
-                w * r.b, -h, -t, -w * r.b, -h, -t, -w * r.a, h, -t, w * r.a, h, -t
+                w * r.b, -h, -t, -w * r.b, -h, -t, -w * r.a, hmt, -t, w * r.a, hmt, -t
 			];
 			return pset;
 		});
@@ -42,7 +46,6 @@ SceneJS.Types.addType("wall/trapezoid",
             var repeatf = function(q) { if(q > 1) { q = 1; } if (q < 0) { q = 0; } return q; };
             r.a = repeatf(r.a) / 2;
             r.b = repeatf(r.b) / 2;
-
 
             var uvs = 
             [
@@ -91,6 +94,9 @@ SceneJS.Types.addType("wall/trapezoid",
 			}
 		}
 	},
+
+    getRatio: function() { return this._paramana.get('ratio'); },
+    setRatio: function(r) { this._paramana.set('ratio', r); this._paramana.updateGeometryNode(this); },
 
 	setPercentX: function(x) { this._percentX = x; },
 	getPercentX: function() { return this._percentX; },

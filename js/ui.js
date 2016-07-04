@@ -2610,8 +2610,8 @@ function changeRoof(type){
                 Height: roof.getHeight() - roof.getThickness()*4,
                 Width: roof.getWidth(),
                 Depth: roof.getDepth(),
-                Ratioa: roof.getRatio().a,
-                Ratiob: roof.getRatio().b,
+                Ratioa: 0.2,
+                Ratiob: 1.0,
                 pos: "frontTrapezoid"
             });
             root.addNode(t_w);
@@ -3305,7 +3305,7 @@ function getTrapezoidS(param){
                                         height: param.Height,
                                         width: param.Width,
                                         thickness: 1,
-                                        ratio: {a: 0.2 , b: 0.8},
+                                        ratio: {a: 0.2 , b: 1.0},
                                         scale: {x: 1, y: 1, z: 1},
                                         rotate: {x: 0, y: 0, z: 0},
                                         translate: {x: 0, y: 0, z: 0}
