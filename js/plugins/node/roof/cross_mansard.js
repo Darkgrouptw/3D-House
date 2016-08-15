@@ -77,6 +77,7 @@ SceneJS.Types.addType("roof/cross_mansard",
             var idpd = dPdr * (1 - (bgp / (hmt + h)));
             var odpd = dPdr * (1 - ((bgp + t) / (2 * h)));
             var wpd = dPwr * (1 - (bgp / (hmt + h)));
+            property.misc_value.wpd = wpd;
 	
 	        var pset = [];
                 
@@ -366,6 +367,8 @@ SceneJS.Types.addType("roof/cross_mansard",
         this._paramana.addAttribute('back_side', params.back_side);
         this._paramana.addAttribute('back_grasp', params.back_grasp);
 
+        this._paramana.addAttribute('misc_value', {});
+
         this._paramana.addAttribute('shared', {});
         this._paramana.addAttribute('exactlyExtrudeLen', undefined);
 
@@ -445,6 +448,8 @@ SceneJS.Types.addType("roof/cross_mansard",
         this._paramana.updateGeometryNode(this);;
         this._paramana.updateTextureCoord(this);
     },
+
+    getMiscValue: function() { return this._paramana.get('misc_value'); },
 
     getWidth: function() { return this._paramana.get('width'); },
 	setWidth: function(w) { this._paramana.set('width', w); this.update(); },

@@ -49,11 +49,13 @@ SceneJS.Types.addType("wall/door_entry",
                     .concat(attachToLast(inter[tmpra], t)).concat(attachToLast(inter[tmpra], -t));
             }
 
-            for(var y = 0; y <= 3; y = y + 3)
-            {
-                pset = pset.concat(attachToLast(inter[0], -t)).concat(attachToLast(inter[0], t))
-                    .concat(attachToLast(exter[0], t)).concat(attachToLast(exter[0], -t));
-            }
+            // bottom
+            pset = pset.concat(attachToLast(inter[0], -t)).concat(attachToLast(inter[0], t))
+                .concat(attachToLast(exter[0], t)).concat(attachToLast(exter[0], -t));
+
+            pset = pset.concat(attachToLast(inter[3], -t)).concat(attachToLast(exter[3], -t))
+                .concat(attachToLast(exter[3], t)).concat(attachToLast(inter[3], t));
+
 
             return pset;
         });
