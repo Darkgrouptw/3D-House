@@ -17,12 +17,12 @@ SceneJS.Types.addType("roof/gable",
 	
 	        var pset = 
             [
-		        wr, h + be, -d, -w - be, -h, -d, -w - be, -h, d, wr, h + be, d,
+		        //--wr, h + be, -d, -w - be, -h, -d, -w - be, -h, d, wr, h + be, d,
 		        wr, h + be, -d, -w - be, -h, -d, -w, -h, -d, wr, h, -d,
 		        -w - be, -h, -d, -w - be, -h, d, -w, -h, d, -w, -h, -d,
 		        wr, h + be, d, -w - be, -h, d, -w, -h, d, wr, h, d,
 		
-		        wr, h + be, -d, w + be, -h, -d,	 w + be, -h, d, wr, h + be, d,
+		        //--wr, h + be, -d, w + be, -h, -d, w + be, -h, d, wr, h + be, d,
 		        wr, h + be, -d, w + be, -h, -d,	w, -h, -d, wr, h, -d,
 		        w + be, -h, -d, w + be, -h, d, w, -h, d, w, -h, -d,
 		        wr, h + be, d, w + be, -h, d, w, -h, d, wr, h, d,
@@ -30,9 +30,28 @@ SceneJS.Types.addType("roof/gable",
 		        wr, h, -d, wr, h, d, -w, -h, d, -w, -h, -d,
 		        wr, h, -d, wr, h, d, w, -h, d, w, -h, -d
 	        ]; 
+
+            // 0 1 2 3 -> 3 2 1 0
+            var plane_a = [wr, h + be, d, -w - be, -h, d, -w - be, -h, -d, wr, h + be, -d];
+            var zigzag_a = buildZigzag(plane_a, 5, [-1, 0, 0], 0.1);
+
+            var plane_b = [ wr, h + be, -d, w + be, -h, -d, w + be, -h, d, wr, h + be, d ];
+            var zigzag_b = buildZigzag(plane_b, 5, [1, 0, 0], 0.1);
+
+            var all_positions = zigzag_a.positions.concat(zigzag_b.positions);
+            var max_base = Math.max(...zigzag_a.indices) + 1;
+            var ori_indices = utility.makeIndices(0, (pset.length / 3) - 1);
+            property.all_indices = zigzag_a.indices.concat(zigzag_b.indices.map(function(c) { return c + max_base; }));
+            property.all_indices = ori_indices.concat(property.all_indices.map(function(c){ return c + (pset.length / 3); }));
+
+            property.zigzag_texture = zigzag_a.uv.concat(zigzag_b.uv);
 	        
-	        return pset;
+            return pset.concat(all_positions);
 	    });
+
+        this._paramana.addAttribute('all_indices', []);
+        this._paramana.addAttribute('zigzag_texture', []);
+
         this.addNode(roof_gable_build.call(this, params)); 
     },
     
@@ -205,7 +224,8 @@ SceneJS.Types.addType("roof/gable",
 function roof_gable_build(params) 
 {
     var positionSet = this._paramana.createPositions();
-    var indiceSet = utility.makeIndices(0, (positionSet.length / 3) - 1);
+    var indiceSet = this._paramana.get('all_indices');
+
     var uvSet = 
     [
 	    0, 1, 0, 0, 1, 0, 1, 1,			// Back 
@@ -219,8 +239,10 @@ function roof_gable_build(params)
 	    1, 0, 0, 0, 0, 1, 1, 1,			// Front Left
 	
 	    1, 1, 0, 1, 0, 0, 1, 0,			// Back Inside
-	    0, 1, 1, 1, 1, 0, 0, 0			// Front Inside
+	    0, 1, 1, 1, 1, 0, 0, 0,			// Front Inside
     ];
+
+    uvSet = uvSet.concat(this._paramana.get('zigzag_texture'));
 
     var geometry = 
 	{

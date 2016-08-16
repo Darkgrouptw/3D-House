@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">
 	<script src = "js/scenejs.js"></script>
 	<script src = "js/paramanager.js"></script>
+	<script src = "js/buildTexture.js"></script>
 	<script src = "js/ui.js"></script>
 	<script src = "js/gesture.js"></script>
     <script src = "js/common.js"></script>

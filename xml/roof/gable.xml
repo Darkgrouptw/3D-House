@@ -17,7 +17,9 @@
             <thickness>1</thickness>
             <ratio>0.5,0.5</ratio>
         </property>
-		
+	    
+        <specular>roofSpecularMap.png</specular>
+        <normalmap>roofNormalMap.png</normalmap>
         <texture>roof.jpg</texture>
 		
 		<!--decorate>	
