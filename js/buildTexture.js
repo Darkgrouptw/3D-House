@@ -58,11 +58,6 @@ function buildZigzag(mainPos, segH, paramE, boundS)
     pos.push(mainPos[10] - v3[1]);
     pos.push(mainPos[11] - v3[2]);
 
-    var positions = [];
-    var normals = [];
-    var uvs = [];
-    var indices = [];
-
 	var VertexY = [];
 	VertexY.push(pos[1]);
 	VertexY.push(pos[4]);
@@ -224,9 +219,8 @@ function buildZigzag(mainPos, segH, paramE, boundS)
     indices.push(idx - 2);
 
     return {
-        //positions:new Float32Array(positions),
         positions: positions,
-        normals: normals,
+        normals: "auto", //normals,
         uv: uvs,
         indices:indices
     };
