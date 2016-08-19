@@ -5,19 +5,9 @@ function buildZigzag(mainPos, segH, paramE, boundS)
     var p3 = [mainPos[6], mainPos[7], mainPos[8]];
     var p4 = [mainPos[9], mainPos[10], mainPos[11]];
 
-    var v1 = [];
-    var v2 = [];
     var v3 = [];
-    var norV1 = [];
-    var norV2 = [];
-
-    SceneJS_math_subVec3(p1,p2,v1);
-    SceneJS_math_subVec3(p1,p4,v2);
-    SceneJS_math_normalizeVec3(v1,norV1);
-    SceneJS_math_normalizeVec3(v2,norV2);
-    SceneJS_math_addVec3(norV1,norV2,v3);
-
     var mulBound = function(c) { return c*boundS; };
+	v3 = scaleUnitVector(p1, p2, p4);
     v3 = v3.map(mulBound);
 
     var pos = [];
@@ -25,33 +15,21 @@ function buildZigzag(mainPos, segH, paramE, boundS)
     pos.push(mainPos[1] - v3[1]);
     pos.push(mainPos[2] - v3[2]);
 
-    SceneJS_math_subVec3(p2,p3,v1);
-    SceneJS_math_subVec3(p2,p1,v2);
-    SceneJS_math_normalizeVec3(v1,norV1);
-    SceneJS_math_normalizeVec3(v2,norV2);
-    SceneJS_math_addVec3(norV1,norV2,v3);
+	v3 = scaleUnitVector(p2, p3, p1);
     v3 = v3.map(mulBound);
 
     pos.push(mainPos[3] - v3[0]);
     pos.push(mainPos[4] - v3[1]);
     pos.push(mainPos[5] - v3[2]);
 
-    SceneJS_math_subVec3(p3,p4,v1);
-    SceneJS_math_subVec3(p3,p2,v2);
-    SceneJS_math_normalizeVec3(v1,norV1);
-    SceneJS_math_normalizeVec3(v2,norV2);
-    SceneJS_math_addVec3(norV1,norV2,v3);
+	v3 = scaleUnitVector(p3, p4, p2);
     v3 = v3.map(mulBound);
 
     pos.push(mainPos[6] - v3[0]);
     pos.push(mainPos[7] - v3[1]);
     pos.push(mainPos[8] - v3[2]);
 
-    SceneJS_math_subVec3(p4,p1,v1);
-    SceneJS_math_subVec3(p4,p3,v2);
-    SceneJS_math_normalizeVec3(v1,norV1);
-    SceneJS_math_normalizeVec3(v2,norV2);
-    SceneJS_math_addVec3(norV1,norV2,v3);
+	v3 = scaleUnitVector(p4, p1, p3);
     v3 = v3.map(mulBound);
 
     pos.push(mainPos[9] - v3[0]);
@@ -66,7 +44,7 @@ function buildZigzag(mainPos, segH, paramE, boundS)
 	VertexY.sort(function(a, b){return a-b});
 
 	var positions = [];
-	var normals = [];
+	// var normals = [];
 	var uvs = [];
 	var indices = [];
 
@@ -110,9 +88,9 @@ function buildZigzag(mainPos, segH, paramE, boundS)
 
     for (iz = 0; iz < (segH * 2) + 1; iz++) {
         for (ix = 0; ix < (segW + 1); ix++) {
-            normals.push(0);
-            normals.push(0);
-            normals.push(1);
+            // normals.push(0);
+            // normals.push(0);
+            // normals.push(1);
 
             uvs.push(ix / 1 );
             uvs.push(1 - iz / (segH * 2 ));
@@ -172,23 +150,43 @@ function buildZigzag(mainPos, segH, paramE, boundS)
     {
         positions.push(mainPos[i]);
 
-        if(i % 3 != 2)
-        {
-            normals.push(0);
-        }
-        else
-        {
-            normals.push(1);
-        }
+        // if(i % 3 != 2)
+        // {
+            // normals.push(0);
+        // }
+        // else
+        // {
+            // normals.push(1);
+        // }
     }
+	
+	// for (iz = 0; iz < (segW + 1); iz++) {
+        // for (ix = 0; ix < (segW + 1); ix++) {
 
-    for (iz = 0; iz < (segW + 1); iz++) {
-        for (ix = 0; ix < (segW + 1); ix++) {
+            // uvs.push(ix / segW);
+            // uvs.push(1 - iz / (segH * 2));
+        // }
+    // }
 
-            uvs.push(ix / segW);
-            uvs.push(1 - iz / (segH * 2));
-        }
-    }
+    for (iz = 0; iz < (segH * 2); iz++) {
+		for (ix = 0; ix < segW; ix++) {
+			// normals.push(0);
+			// normals.push(0);
+			// normals.push(1);
+
+			uvs.push(ix / 1 );
+			uvs.push(1 - iz / (segH * 2 ));
+
+			uvs.push(ix / 1 );
+			uvs.push(1 - (iz + 1) / (segH * 2 ));
+
+			uvs.push((ix + 1) / 1 );
+			uvs.push(1 - (iz + 1) / (segH * 2 ));
+
+			uvs.push((ix + 1) / 1 );
+			uvs.push(1 - iz / (segH * 2 ));
+		}
+	}
 
     indices.push(idx + 1);
     indices.push(idx);
@@ -224,6 +222,23 @@ function buildZigzag(mainPos, segH, paramE, boundS)
         uv: uvs,
         indices:indices
     };
+}
+
+function scaleUnitVector(p0, p1, p2)
+{
+	var v1 = [];
+    var v2 = [];
+    var v3 = [];
+    var norV1 = [];
+    var norV2 = [];
+
+    SceneJS_math_subVec3(p0,p1,v1);
+    SceneJS_math_subVec3(p0,p2,v2);
+    SceneJS_math_normalizeVec3(v1,norV1);
+    SceneJS_math_normalizeVec3(v2,norV2);
+    SceneJS_math_addVec3(norV1,norV2,v3);
+	
+	return v3;
 }
 
 function LinearInterpolate(p0, p1, mu)
