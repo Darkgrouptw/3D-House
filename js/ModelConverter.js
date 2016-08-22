@@ -364,61 +364,103 @@ function convertToMultiObj(inputNode, isDownload){
 
 		switch(traverse(nodesArr[nodeI], typeDefined).type){
 			case "roof/gable":
-				//Functions about modifying the vertices' number of each face
-				function decrFace1(param){
-					return (param<32?16:20);
+				var vStr = ["", ""], vnStr = ["", ""], fStr = ["", ""];
+				var mVIndex = new Array;			//Array of 5 elements storing model's vertices (original face indices)
+				mVIndex.push([0,1,2,3,4,5,6,7,8,9,10,11,24,25,26,27,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57]);		//Left
+				mVIndex.push([12,13,14,15,16,17,18,19,20,21,22,23,28,29,30,31,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83]);		//Back
+				
+
+				var mVFacesI = new Array;			//Array of 5 elements storing model's vertices (output face indices, ordered)
+				mVFacesI.push([1,2,3,1,3,4,5,6,7,5,7,8,9,10,11,9,11,12,13,14,15,13,15,16,17,19,20,17,20,18,19,21,22,19,22,20,17,21,19,18,22,20,21,23,24,21,24,22,23,25,26,23,26,24,21,25,23,22,26,24,25,27,28,25,28,26,27,29,30,27,30,28,25,29,27,26,30,28,29,31,32,29,32,30,31,33,34,31,34,32,29,33,31,30,34,32,33,35,36,33,36,34,35,37,38,35,38,36,33,37,35,34,38,36,40,39,37,37,17,40,40,17,18,18,41,40,41,18,38,38,42,41,37,39,42,42,38,37,39,14,42,14,13,42]);
+				mVFacesI.push([1,2,3,1,3,4,5,6,7,5,7,8,9,10,11,9,11,12,13,14,15,13,15,16,17,19,20,17,20,18,19,21,22,19,22,20,17,21,19,18,22,20,21,23,24,21,24,22,23,25,26,23,26,24,21,25,23,22,26,24,25,27,28,25,28,26,27,29,30,27,30,28,25,29,27,26,30,28,29,31,32,29,32,30,31,33,34,31,34,32,29,33,31,30,34,32,33,35,36,33,36,34,35,37,38,35,38,36,33,37,35,34,38,36,40,39,37,37,17,40,40,17,18,18,41,40,41,18,38,38,42,41,37,39,42,42,38,37,39,13,42,13,42,14]);
+				
+				
+				//Adding to fStr
+				for(var i = 0;i<2;i++){
+					for(var j = 0;j<mVFacesI[i].length;j+=3){
+						fStr[i] += "f " + mVFacesI[i][j] + "//" + mVFacesI[i][j] + " " + mVFacesI[i][j+1] + "//" + mVFacesI[i][j+1] + " " + mVFacesI[i][j+2] + "//" + mVFacesI[i][j+2] + "\n";
+					}
 				}
 
-				function decrFace2(param){
-					return (param<16?0:16);
-				}
-
-				var f1Str = "", f2Str = "";
-				var m1VIndex = [16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 36, 37, 38, 39];
-				for(i = 0;i<tmpFaces.length;i += 3){
-					if(m1VIndex.indexOf(tmpFaces[i]) > -1 && m1VIndex.indexOf(tmpFaces[i+1]) > -1 && m1VIndex.indexOf(tmpFaces[i+2]) > -1)
-						f1Str += "f " + (tmpFaces[i]+1 - decrFace1(tmpFaces[i])) + "//" + (tmpFaces[i]+1 - decrFace1(tmpFaces[i])) + " " + (tmpFaces[i+1]+1 - decrFace1(tmpFaces[i+1])) + "//" + (tmpFaces[i+1]+1 - decrFace1(tmpFaces[i+1])) + " " + (tmpFaces[i+2]+1 - decrFace1(tmpFaces[i+2])) + "//" + (tmpFaces[i+2]+1 - decrFace1(tmpFaces[i+2])) + "\n";
-					else
-						f2Str += "f " + (tmpFaces[i]+1 - decrFace2(tmpFaces[i])) + "//" + (tmpFaces[i]+1 - decrFace2(tmpFaces[i])) + " " + (tmpFaces[i+1]+1 - decrFace2(tmpFaces[i+1])) + "//" + (tmpFaces[i+1]+1 - decrFace2(tmpFaces[i+1])) + " " + (tmpFaces[i+2]+1 - decrFace2(tmpFaces[i+2])) + "//" + (tmpFaces[i+2]+1 - decrFace2(tmpFaces[i+2])) + "\n";
-				}
-				//Dealing with inter face
-				f1Str += "f " + (4) + "//" + (4) + " " + (18) + "//" + (18) + " " + (1) + "//" + (1) + "\n";
-				f1Str += "f " + (1) + "//" + (1) + " " + (18) + "//" + (18) + " " + (17) + "//" + (17) + "\n";
-				f2Str += "f " + (4) + "//" + (4) + " " + (18) + "//" + (18) + " " + (1) + "//" + (1) + "\n";
-				f2Str += "f " + (1) + "//" + (1) + " " + (18) + "//" + (18) + " " + (17) + "//" + (17) + "\n";
-				vStr = "";
-				vnStr = "";
-				var v2Str = "", vn2Str = "";
 				for(i = 0;i<vArr.length;i++){
-					if(m1VIndex.indexOf(i) > -1){
-						vStr += vArr[i];
-					}else{
-						v2Str += vArr[i];
+					for(var modelNo = 0;modelNo<2;modelNo++){
+						if(mVIndex[modelNo].indexOf(i) > -1){
+							vStr[modelNo] += vArr[i];
+							vnStr[modelNo] += vnArr[i];
+						}
 					}
 				}
-				vStr += "\n";
-				v2Str += "\n";
-				for(i = 0;i<vnArr.length;i++){
-					if(m1VIndex.indexOf(i) > -1){
-						vnStr += vnArr[i];
-					}else{
-						vn2Str += vnArr[i];
-					}
+
+				for(var i = 0;i<2;i++){
+					vStr[i] += "\n";
+					vnStr[i] += "\n";
+
+					// parseObj_withStoring(vStr[i] + vnStr[i] + fStr[i], false);
+					if(isDownload)	download(vStr[i] + vnStr[i] + fStr[i], "model_part" + outNodeIndex + ".obj", 'text/plain');
+					//Append string of .objs
+					objs.push(vStr[i] + vnStr[i] + fStr[i]);
+					outNodeIndex++;
 				}
-				vnStr += "\n";
-				vn2Str += "\n";
-
-				parseObj_withStoring(vStr + vnStr + f1Str, false);
-				if(isDownload)	download(vStr + vnStr + f1Str, "model_part" + outNodeIndex + ".obj", 'text/plain');
-				outNodeIndex++;
-				parseObj_withStoring(v2Str + vn2Str + f2Str, false);
-				if(isDownload)	download(v2Str + vn2Str + f2Str, "model_part" + outNodeIndex + ".obj", 'text/plain');
-				outNodeIndex++;
-
-				//Append string of .objs
-				objs.push(vStr + vnStr + f1Str);
-				objs.push(v2Str + vn2Str + f2Str);
 				break;
+
+
+			//Old roof gable
+			// case "roof/gable":
+			// 	//Functions about modifying the vertices' number of each face
+			// 	function decrFace1(param){
+			// 		return (param<32?16:20);
+			// 	}
+
+			// 	function decrFace2(param){
+			// 		return (param<16?0:16);
+			// 	}
+
+			// 	var f1Str = "", f2Str = "";
+			// 	var m1VIndex = [16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 36, 37, 38, 39];
+			// 	for(i = 0;i<tmpFaces.length;i += 3){
+			// 		if(m1VIndex.indexOf(tmpFaces[i]) > -1 && m1VIndex.indexOf(tmpFaces[i+1]) > -1 && m1VIndex.indexOf(tmpFaces[i+2]) > -1)
+			// 			f1Str += "f " + (tmpFaces[i]+1 - decrFace1(tmpFaces[i])) + "//" + (tmpFaces[i]+1 - decrFace1(tmpFaces[i])) + " " + (tmpFaces[i+1]+1 - decrFace1(tmpFaces[i+1])) + "//" + (tmpFaces[i+1]+1 - decrFace1(tmpFaces[i+1])) + " " + (tmpFaces[i+2]+1 - decrFace1(tmpFaces[i+2])) + "//" + (tmpFaces[i+2]+1 - decrFace1(tmpFaces[i+2])) + "\n";
+			// 		else
+			// 			f2Str += "f " + (tmpFaces[i]+1 - decrFace2(tmpFaces[i])) + "//" + (tmpFaces[i]+1 - decrFace2(tmpFaces[i])) + " " + (tmpFaces[i+1]+1 - decrFace2(tmpFaces[i+1])) + "//" + (tmpFaces[i+1]+1 - decrFace2(tmpFaces[i+1])) + " " + (tmpFaces[i+2]+1 - decrFace2(tmpFaces[i+2])) + "//" + (tmpFaces[i+2]+1 - decrFace2(tmpFaces[i+2])) + "\n";
+			// 	}
+			// 	//Dealing with inter face
+			// 	f1Str += "f " + (4) + "//" + (4) + " " + (18) + "//" + (18) + " " + (1) + "//" + (1) + "\n";
+			// 	f1Str += "f " + (1) + "//" + (1) + " " + (18) + "//" + (18) + " " + (17) + "//" + (17) + "\n";
+			// 	f2Str += "f " + (4) + "//" + (4) + " " + (18) + "//" + (18) + " " + (1) + "//" + (1) + "\n";
+			// 	f2Str += "f " + (1) + "//" + (1) + " " + (18) + "//" + (18) + " " + (17) + "//" + (17) + "\n";
+			// 	vStr = "";
+			// 	vnStr = "";
+			// 	var v2Str = "", vn2Str = "";
+			// 	for(i = 0;i<vArr.length;i++){
+			// 		if(m1VIndex.indexOf(i) > -1){
+			// 			vStr += vArr[i];
+			// 		}else{
+			// 			v2Str += vArr[i];
+			// 		}
+			// 	}
+			// 	vStr += "\n";
+			// 	v2Str += "\n";
+			// 	for(i = 0;i<vnArr.length;i++){
+			// 		if(m1VIndex.indexOf(i) > -1){
+			// 			vnStr += vnArr[i];
+			// 		}else{
+			// 			vn2Str += vnArr[i];
+			// 		}
+			// 	}
+			// 	vnStr += "\n";
+			// 	vn2Str += "\n";
+
+			// 	parseObj_withStoring(vStr + vnStr + f1Str, false);
+			// 	if(isDownload)	download(vStr + vnStr + f1Str, "model_part" + outNodeIndex + ".obj", 'text/plain');
+			// 	outNodeIndex++;
+			// 	parseObj_withStoring(v2Str + vn2Str + f2Str, false);
+			// 	if(isDownload)	download(v2Str + vn2Str + f2Str, "model_part" + outNodeIndex + ".obj", 'text/plain');
+			// 	outNodeIndex++;
+
+			// 	//Append string of .objs
+			// 	objs.push(vStr + vnStr + f1Str);
+			// 	objs.push(v2Str + vn2Str + f2Str);
+			// 	break;
 			case "roof/hip":
 				var vStr = ["", "", "", ""], vnStr = ["", "", "", ""], fStr = ["", "", "", ""];
 				var mVIndex = new Array;			//Array of 4 elements storing model's vertices (original face indices)
