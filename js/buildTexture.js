@@ -36,15 +36,7 @@ function buildZigzag(mainPos, segH, paramE, boundS)
     pos.push(mainPos[10] - v3[1]);
     pos.push(mainPos[11] - v3[2]);
 
-	var VertexY = [];
-	VertexY.push(pos[1]);
-	VertexY.push(pos[4]);
-	VertexY.push(pos[7]);
-	VertexY.push(pos[10]);
-	VertexY.sort(function(a, b){return a-b});
-
 	var positions = [];
-	// var normals = [];
 	var uvs = [];
 	var indices = [];
 
@@ -55,26 +47,15 @@ function buildZigzag(mainPos, segH, paramE, boundS)
     {
         var len = 1 / segH;
 
-        var beforeY = LinearInterpolate(VertexY[3], VertexY[0], len * num);
-        var afterY = LinearInterpolate(VertexY[3], VertexY[0], len * (num + 1) );
-        //console.log("before Y ", beforeY, " after Y ", afterY);
-
         var newLX = LinearInterpolate(pos[3], pos[0], len * num);
         var newLY = LinearInterpolate(pos[4], pos[1], len * num);
         var newLZ = LinearInterpolate(pos[5], pos[2], len * num);
 
-        positions.push(newLX);
-        positions.push(newLY);
-        positions.push(newLZ);
-
         var newRX = LinearInterpolate(pos[6], pos[9], len * num);
         var newRY = LinearInterpolate(pos[7], pos[10], len * num);
         var newRZ = LinearInterpolate(pos[8], pos[11], len * num);
-        positions.push(newRX);
-        positions.push(newRY);
-        positions.push(newRZ);
 
-        if(num != segH)
+        if(num != 0)
         {
             positions.push(newLX + paramE[0]);
             positions.push(newLY + paramE[1]);
@@ -83,19 +64,56 @@ function buildZigzag(mainPos, segH, paramE, boundS)
             positions.push(newRX + paramE[0]);
             positions.push(newRY + paramE[1]);
             positions.push(newRZ + paramE[2]);
+
+            if(num != segH)
+            {
+                positions.push(newLX);
+                positions.push(newLY);
+                positions.push(newLZ);
+
+                positions.push(newRX);
+                positions.push(newRY);
+                positions.push(newRZ);
+            }
+            else
+            {
+                positions.push(newLX);
+                positions.push(newLY);
+                positions.push(newLZ);
+
+                positions.push(newRX);
+                positions.push(newRY);
+                positions.push(newRZ);
+            }
         }
+        else
+        {
+            positions.push(newLX);
+            positions.push(newLY);
+            positions.push(newLZ);
+
+            positions.push(newRX);
+            positions.push(newRY);
+            positions.push(newRZ);
+        }
+
     }
 
-    for (iz = 0; iz < (segH * 2) + 1; iz++) {
-        for (ix = 0; ix < (segW + 1); ix++) {
-            // normals.push(0);
-            // normals.push(0);
-            // normals.push(1);
+	for (iz = 0; iz < (segH * 2); iz++) {
+		for (ix = 0; ix < segW; ix++) {
+			uvs.push(1);
+			uvs.push(0);
 
-            uvs.push(ix / 1 );
-            uvs.push(1 - iz / (segH * 2 ));
-        }
-    }
+			uvs.push(0);
+			uvs.push(0);
+			
+			uvs.push(1);
+			uvs.push(1);
+			
+			uvs.push(0);
+			uvs.push(1);
+		}
+	}
 
     var a;
     var b;
@@ -105,11 +123,11 @@ function buildZigzag(mainPos, segH, paramE, boundS)
     for (iz = 0; iz < (segH * 2); iz++) {
         for (ix = 0; ix < segW; ix++) {
 
-            a = ix + 2 * iz;
-            b = ix + 2 * ( iz + segW );
-            c = ( ix + segW ) + 2 * ( iz + segW );
-            d = ( ix + segW ) + 2 * iz;
-
+            a = ix + 2 * iz; // 0
+            b = ix + 2 * ( iz + segW ); // 2
+            c = ( ix + segW ) + 2 * ( iz + segW ); // 3
+            d = ( ix + segW ) + 2 * iz; // 1
+			
             indices.push(a);
             indices.push(b);
             indices.push(c);
@@ -117,74 +135,124 @@ function buildZigzag(mainPos, segH, paramE, boundS)
             indices.push(a);
             indices.push(c);
             indices.push(d);
+        }
+    }
 
-            var tmpA, tmpB, tmpC, tmpD;
-            if(iz % 2 != 0 && iz > 0)
+    // uvs.push(0.5);
+    // uvs.push(1);
+    // uvs.push(0);
+    // uvs.push(0);
+    // uvs.push(1);
+    // uvs.push(0);
+
+    // uvs.push(0.5);
+    // uvs.push(1);
+    // uvs.push(0);
+    // uvs.push(0);
+    // uvs.push(1);
+    // uvs.push(0);
+
+
+    // uvs.push(0.5);
+    // uvs.push(1);
+    // uvs.push(0);
+    // uvs.push(0);
+    // uvs.push(1);
+    // uvs.push(0);
+
+
+    // uvs.push(0.5);
+    // uvs.push(1);
+    // uvs.push(0);
+    // uvs.push(0);
+    // uvs.push(1);
+    // uvs.push(0);
+
+    // // ----- indices
+    // indices.push(0);
+    // indices.push(4);
+    // indices.push(2);
+
+    // indices.push(4);
+    // indices.push(8);
+    // indices.push(6);
+
+    // indices.push(1);
+    // indices.push(3);
+    // indices.push(5);
+
+    // indices.push(5);
+    // indices.push(7);
+    // indices.push(9);
+
+
+    for (iz = 0; iz < (segH * 2); iz++) {
+        for (ix = 0; ix < segW; ix++) {
+
+            a = ix + 2 * iz; // 0
+            b = ix + 2 * ( iz + segW ); // 2
+            c = ( ix + segW ) + 2 * ( iz + segW ); // 3
+            d = ( ix + segW ) + 2 * iz; // 1
+
+            if(iz % 2 == 0)
             {
-                indices.push(tmpA);
+                uvs.push(0.5);
+                uvs.push(1);
+                uvs.push(0);
+                uvs.push(0);
+                uvs.push(1);
+                uvs.push(0);
+
+                indices.push(a);
+                indices.push(b + 2);
                 indices.push(b);
-                indices.push(tmpB);
-
-                indices.push(tmpD);
+                
+                uvs.push(0.5);
+                uvs.push(1);
+                uvs.push(0);
+                uvs.push(0);
+                uvs.push(1);
+                uvs.push(0);
+                indices.push(d);
                 indices.push(c);
-                indices.push(tmpC);
-
-                tmpA = a;
-                tmpB = b;
-                tmpC = c;
-                tmpD = d;
-            }
-            else
-            {
-                tmpA = a;
-                tmpB = b;
-                tmpC = c;
-                tmpD = d;
+                indices.push(c + 2);
             }
         }
     }
 
-
+	
     var idx = positions.length / 3;
     for(var i = 0; i < mainPos.length; i++)
     {
         positions.push(mainPos[i]);
-
-        // if(i % 3 != 2)
-        // {
-            // normals.push(0);
-        // }
-        // else
-        // {
-            // normals.push(1);
-        // }
     }
 	
-	// for (iz = 0; iz < (segW + 1); iz++) {
-        // for (ix = 0; ix < (segW + 1); ix++) {
-
-            // uvs.push(ix / segW);
-            // uvs.push(1 - iz / (segH * 2));
-        // }
-    // }
 
     for (iz = 0; iz < (segH * 2); iz++) {
 		for (ix = 0; ix < segW; ix++) {
-			// normals.push(0);
-			// normals.push(0);
-			// normals.push(1);
+            uvs.push(1);
+            uvs.push(0);
 
-			uvs.push(ix / 1 );
-			uvs.push(1 - iz / (segH * 2 ));
+            uvs.push(0);
+            uvs.push(0);
+            
+            uvs.push(1);
+            uvs.push(1);
+            
+            uvs.push(0);
+            uvs.push(1);
 
-			uvs.push(ix / 1 );
-			uvs.push(1 - (iz + 1) / (segH * 2 ));
+			// uvs.push(ix / 1 );
+			// uvs.push(1 - iz / (segH * 2 ));
 
-			uvs.push((ix + 1) / 1 );
-			uvs.push(1 - (iz + 1) / (segH * 2 ));
+			// uvs.push(ix / 1 );
+			// uvs.push(1 - (iz + 1) / (segH * 2 ));
 
-			uvs.push((ix + 1) / 1 );
-			uvs.push(1 - iz / (segH * 2 ));
+			// uvs.push((ix + 1) / 1 );
+			// uvs.push(1 - (iz + 1) / (segH * 2 ));
+
+			// uvs.push((ix + 1) / 1 );
+			// uvs.push(1 - iz / (segH * 2 ));
 		}
 	}
 
@@ -214,11 +282,11 @@ function buildZigzag(mainPos, segH, paramE, boundS)
     indices.push(idx + 3);
     indices.push(idx + 3);
     indices.push(idx - 1);
-    indices.push(idx - 2);
+    indices.push(idx - 2); 
 
     return {
         positions: positions,
-        normals: "auto", //normals,
+        normals: "auto", 
         uv: uvs,
         indices:indices
     };

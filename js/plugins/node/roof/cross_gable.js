@@ -45,6 +45,7 @@ SceneJS.Types.addType("roof/cross_gable",
 
 	        var wr = (w * r.a + -w * r.b) / 2;
             var db = (d - (eb * 0.5)) - (3 * t);
+			
             var dr = (2 * db) * (1 - ep), dl = (2 * db) * ep;
             var ldb = db * 2 * ep, rdb = db * 2 * (1 - ep);
             
@@ -62,7 +63,7 @@ SceneJS.Types.addType("roof/cross_gable",
             var gs = property.back_grasp * 0.7;
             var gsr = property.back_grasp / Math.sqrt((Math.pow((2 * h),2) + Math.pow((2 * w), 2)));
             var mh = (gsr * h * 2), mw = (gsr * w);
-	
+			
                 //front bottom
             var fbtm =
             [
@@ -73,8 +74,11 @@ SceneJS.Types.addType("roof/cross_gable",
             property.shared.front.bottom = fbtm;
 
                 // backside: nesseary part, L M R
-            var bside = 
-            [
+            var bside = [];
+			
+			if(!bs){ //打勾
+				
+				var bside = [
                 -d, h, wr, -d, -h, -w, -d + gs, -h, -w, -d + gs, h - mh, wr - mw,
                 -d, h, wr, -d + gs, h - mh, wr - mw, d - gs, h - mh, wr - mw, d, h, wr,
                 d - gs, h - mh, wr - mw, d - gs, -h, -w, d, -h, -w, d, h, wr,
@@ -82,7 +86,23 @@ SceneJS.Types.addType("roof/cross_gable",
                 -d, h + st, wr, -d + gs, h - mh + st, wr - mw, -d + gs, -h, -w - dt, -d, -h, -w - dt,
                 -d, h + st, wr, d, h + st, wr, d - gs, h - mh + st, wr - mw, -d + gs, h - mh + st, wr - mw,
                 d - gs, h - mh + st, wr - mw, d, h + st, wr, d, -h, -w - dt, d - gs, -h, -w - dt,
-            ];
+                ];
+			}else{
+				
+				var bside = [
+                             0,0,0,0,0,0,0,0,0,0,0,0,
+							 0,0,0,0,0,0,0,0,0,0,0,0,
+							 0,0,0,0,0,0,0,0,0,0,0,0,
+							 
+							 0,0,0,0,0,0,0,0,0,0,0,0,
+							 0,0,0,0,0,0,0,0,0,0,0,0,
+							 0,0,0,0,0,0,0,0,0,0,0,0,
+                
+                ];
+				
+			}
+			
+			
             property.shared.back = {};
             property.shared.back.side = bside;
 
@@ -96,12 +116,35 @@ SceneJS.Types.addType("roof/cross_gable",
                 //db - dr, sh + st, wr + whr, -db + dl, sh + st, wr + el, td - rdb + dtt, -h, base_len, td - rdb + dtt, -h, w + dt,
 
                 -db + dl, sh, base_len, -td + ldb, -h, base_len, -td + ldb, -h, w, -db + dl, sh, wr + whr,
-                -db + dl, sh + st, base_len, -db + dl, sh + st, wr + whr, -td + ldb - dtt, -h, w + dt, -td + ldb - dtt, -h, base_len,
+               // -db + dl, sh + st, base_len, -db + dl, sh + st, wr + whr, -td + ldb - dtt, -h, w + dt, -td + ldb - dtt, -h, base_len,//左斜
 
                 -db + dl, sh, wr + whr, td - rdb, -h, w, td - rdb, -h, base_len, -db + dl, sh, base_len,
-                db - dr, sh + st, wr + whr, -db + dl, sh + st, base_len, td - rdb + dtt, -h, base_len, td - rdb + dtt, -h, w + dt,
+             //   db - dr, sh + st, wr + whr, -db + dl, sh + st, base_len, td - rdb + dtt, -h, base_len, td - rdb + dtt, -h, w + dt,//右斜
 
             ];
+			
+			var plane_right_exd = [   td - rdb + dtt, -h, base_len,
+			                         -db + dl, sh + st, base_len,
+                          			 db - dr, sh + st, wr + whr,
+									 td - rdb + dtt, -h, w + dt,
+							      ];
+			var zigzag_right_exd = buildZigzag(plane_right_exd, 6 , [1.5, 0, 0], 0.1);
+			
+			var plane_left_exd = [  
+									-td + ldb - dtt, -h, w + dt,
+									-db + dl, sh + st, wr + whr, 
+									-db + dl, sh + st, base_len,
+									-td + ldb - dtt, -h, base_len, 
+								];
+			var zigzag_left_exd = buildZigzag(plane_left_exd, 6 , [-1.5, 0, 0], 0.1);
+			
+			
+			
+			//var plane_exd_left = [ -db + dl, sh + st, base_len, -db + dl, sh + st, wr + whr, -td + ldb - dtt, -h, w + dt, -td + ldb - dtt, -h, base_len];
+            
+			//var zigzag_a = buildZigzag(plane_exd_left, 5, [-1, 0, 0], 0.1);
+			//exd= exd.concat(zigzag_a.positions);
+			
             property.shared.extrude = {};
             property.shared.extrude.content = exd;
             property.shared.extrude.paraH = sh + st + h;
@@ -157,18 +200,39 @@ SceneJS.Types.addType("roof/cross_gable",
                     d - gs, h - mh, wr - mw, d - gs, h - mh + st, wr - mw,
                     d - gs, -h, -w - dt, d - gs, -h, -w,
                 ];
+				
+				var plane_back = [     0,0,0,
+				                       0,0,0,
+									   0,0,0,
+									   
+							     ];
+			    var zigzag_back = buildZigzag(plane_back, 7 , [0, 0, -1.5], 0.1);
+				
+				
             }
             else
             {
                 bspet = 
                 [
                     // full backside
-                    -d + gs, h - mh, wr - mw, -d + gs, -h, -w, d - gs, -h, -w, d - gs, h - mh, wr - mw,
-                    -d + gs, h - mh + st, wr - mw, d - gs, h - mh + st, wr - mw, d - gs, -h, -w - dt, -d + gs, -h, -w - dt,
+                   // -d + gs, h - mh, wr - mw, -d + gs, -h, -w, d - gs, -h, -w, d - gs, h - mh, wr - mw,
+                    //-d + gs, h - mh + st, wr - mw, d - gs, h - mh + st, wr - mw, d - gs, -h, -w - dt, -d + gs, -h, -w - dt,
+					-d , h , wr , -d , -h, -w, d , -h, -w, d , h , wr ,
+                   // -d , h  + st, wr , d , h + st, wr , d , -h, -w - dt, -d , -h, -w - dt,
 
                     // bottom
-                    -d + gs, -h, -w - dt, d - gs, -h, -w - dt, d - gs, -h, -w, -d + gs, -h, -w
+                    -d + gs, -h, -w - dt, d - gs, -h, -w - dt, d - gs, -h, -w, -d + gs, -h, -w,
+					
+					0,0,0,0,0,0,0,0,0,0,0,0
                 ];
+				var plane_back = [      d , -h, -w - dt,
+				                        d , h + st, wr,
+				                        -d , h  + st, wr ,
+										-d , -h, -w - dt,
+										
+							     ];
+			    var zigzag_back = buildZigzag(plane_back, 7 , [0, 0, -1], 0.1);
+				
             }
             property.shared.back.cover = bspet;
 	        
@@ -176,16 +240,33 @@ SceneJS.Types.addType("roof/cross_gable",
             var fcont =
             [
                 // frontside
-                -db + dl, sh, wr + whr, -td + ldb, -h, w, -d, -h, w, -d, h, wr, 
-                d, h, wr, d, -h, w, td - rdb, -h, w, db - dr, sh, wr + whr,
+                -db + dl, sh, wr + whr, -td + ldb, -h, w, -d, -h, w, -d, sh, wr + whr,  // 左前後
+                d, sh, wr + whr, d, -h, w, td - rdb, -h, w, db - dr, sh, wr + whr, // 右前後
                
-                d, h + st, wr, db - dr, sh + st, wr + whr, td - rdb + dtt, -h, w + dt, d, -h, w + dt,
-                //-db + dl, sh + st, wr + whr, -d, h + st, wr, -d, -h, w + dt, -td + ldb - dt, -h, w + dt,
-                -db + dl, sh + st, wr + whr, -d, h + st, wr, -d, -h, w + dt, -td + ldb - dtt, -h, w + dt,
+               // d, sh + st, wr + whr, db - dr, sh + st, wr + whr, td - rdb + dtt, -h, w + dt, d, -h, w + dt, // 右前
+               // -db + dl, sh + st, wr + whr, -d, h + st, wr, -d, -h, w + dt, -td + ldb - dt, -h, w + dt,
+              // -db + dl, sh + st, wr + whr, -d, sh + st, wr + whr, -d, -h, w + dt, -td + ldb - dtt, -h, w + dt//左前
 
             ];
             property.shared.front.content = fcont;
-
+			
+			var plane_right_lower = [  td - rdb + dtt, -h, w + dt,
+			                           db - dr, sh + st, wr + whr,
+									   d, sh + st, wr + whr,
+			                           d, -h, w + dt,
+			                           
+									]; 
+			var zigzag_right_lower = buildZigzag(plane_right_lower, 6 ,[0, 0, 1.5], 0.1);
+			
+			var plane_left_lower = [-d, -h, w + dt,
+			                        -d, sh + st, wr + whr,
+			                        -db + dl, sh + st, wr + whr,
+			                        -td + ldb - dtt, -h, w + dt,
+									
+									];
+			var zigzag_left_lower = buildZigzag(plane_left_lower, 6 , [0, 0, 1.5], 0.1);
+			
+			
             /*var ap = [-db + dl, sh + st, wr + whr];
             var bp = [-td + ldb - dtt, -h, w + dt];
             var cp = [-td + ldb, -h, w];
@@ -210,29 +291,81 @@ SceneJS.Types.addType("roof/cross_gable",
             {
                 apet = 
                 [
-                    //-d, h + st, wr, 
-                    -db + dl, sh + st, wr + whr, 
-                    d, h + st, wr,
-                    0, h + st, wr,
-                    -d, h + st, wr,
-                    //-d, h + st, wr,
-                    
-                    -db + dl, sh, wr + whr,
-                    -d, h, wr,
-                    0, h, wr,
-                    d, h, wr
+                    -d, sh, wr + whr,
+					-d, h, wr,	
+					d, h, wr,
+					d, sh, wr + whr,
+               	
                 ];
+				
+				var plane_upper = [    
+				                       
+									   -d, sh + st, wr + whr,
+                                       -d, h + st, wr,
+									   d, h + st, wr,
+									   d, sh + st, wr + whr
+								];
+                var zigzag_upper = buildZigzag(plane_upper, 1, [0, 0, 1.5], 0.1);
+				
+				//d, h + st, wr,d, sh + st, wr + whr,-db + dl, sh + st, wr + whr,0, h + st, wr
+				//var plane_left_upper = [0, h + st, wr,-db + dl, sh + st, wr + whr,-d, sh + st, wr + whr,-d, h + st, wr];
+                //var zigzag_left_upper = buildZigzag(plane_left_upper, 1, [0, 0, 1.5], 0.1);
+			
             }
-            else { apet = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; }
+            else { 
+			        apet = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; 
+			        var plane_upper = [  
+									    0,0,0,
+									    0,0,0,
+									    0,0,0,
+									    0,0,0
+								      ];
+                var zigzag_upper = buildZigzag(plane_upper, 1, [0, 0, 1.5], 0.1);
+			
+			}
             property.shared.append = apet;
 
             var pset = [];
 	        pset = pset.concat(fbtm).concat(bside).concat(exd).concat(ebtm).concat(eside).concat(bbtm)
                 .concat(oside).concat(bspet).concat(fcont).concat(apet);
+			
+			var all_positions = zigzag_right_lower.positions.concat(zigzag_left_lower.positions)
+							   .concat(zigzag_upper.positions)
+							   .concat(zigzag_right_exd.positions).concat(zigzag_left_exd.positions)
+							   .concat(zigzag_back.positions);
+							   
+							   
+            var max_base = Math.max(...zigzag_right_lower.indices) + 1;
+            var ori_indices = utility.makeIndices(0, (pset.length / 3) - 1);
+			
+            property.all_indices = zigzag_right_lower.indices.concat(zigzag_left_lower.indices.map(function(c) { return c + max_base; }));
+		    var max_base_1 = Math.max(...property.all_indices)+1;
+			property.all_indices = property.all_indices.concat(zigzag_upper.indices.map(function(c) { return c + max_base_1; }));
+		    var max_base_2 = Math.max(...property.all_indices)+1;
+			property.all_indices = property.all_indices.concat(zigzag_right_exd.indices.map(function(c) { return c + max_base_2; }));
+			var max_base_3 = Math.max(...property.all_indices)+1;
+			property.all_indices = property.all_indices.concat(zigzag_left_exd.indices.map(function(c) { return c + max_base_3; }));
+			var max_base_4 = Math.max(...property.all_indices)+1;
+			property.all_indices = property.all_indices.concat(zigzag_back.indices.map(function(c) { return c + max_base_4; }));
+			
+			
             
-            return pset;
+            
+			
+			property.zigzag_texture = zigzag_right_lower.uv.concat(zigzag_left_lower.uv)
+									  .concat(zigzag_upper.uv)                                  
+									  .concat(zigzag_right_exd.uv).concat(zigzag_left_exd.uv)
+									  .concat(zigzag_back.uv);
+	
+		    
+			property.all_indices = ori_indices.concat(property.all_indices.map(function(c){ return c + (pset.length / 3); }));
+            return pset.concat(all_positions);
 
 	    });
+		
+		this._paramana.addAttribute('all_indices', []);
+		this._paramana.addAttribute('zigzag_texture', []);
+		
 
         this._paramana.addAttribute('extrude_pos', params.extrude_pos);
         this._paramana.addAttribute('extrude_hgt', params.extrude_hgt);
@@ -292,7 +425,7 @@ SceneJS.Types.addType("roof/cross_gable",
                 }
                 return tmpcat;
             };
-
+            
             uvs = uvs.concat(sideTexture(ts.front.bottom))
                 .concat(depthHeightTexture(ts.back.side))
                 .concat(extrudeTexture(ts.extrude.content))
@@ -302,18 +435,22 @@ SceneJS.Types.addType("roof/cross_gable",
                 .concat(sideTexture(ts.side))
                 .concat(depthHeightTexture(ts.back.cover))
                 .concat(depthHeightTexture(ts.front.content))
-                .concat(depthHeightTexture(ts.append));
+                .concat(depthHeightTexture(ts.append))
+				.concat(property.zigzag_texture);
 
             return uvs;
         });
-
+        
         this.addNode(roof_cross_gable_build.call(this, params)); 
+		
     },
    
     update: function()
     {
+		
         this._paramana.updateGeometryNode(this);
         this._paramana.updateTextureCoord(this);
+		
     },
 
     getLayer:function(){ return this._layer; },
@@ -521,11 +658,10 @@ SceneJS.Types.addType("roof/cross_gable",
 function roof_cross_gable_build(params) 
 {
     var positionSet = this._paramana.createPositions();
-
-    var indiceSet = utility.makeIndices(0, (positionSet.length / 3) - 1);
-
+    var indiceSet = this._paramana.get('all_indices');
     var uvSet = this._paramana.createTextures();
-    
+    console.log(positionSet.length);
+	
     var geometry = 
 	{
         type: "geometry",
