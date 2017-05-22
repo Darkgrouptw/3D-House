@@ -59,8 +59,8 @@
 	<?php
 		//儲存使用者名稱帳號
 		session_start();
-		$account=$_SESSION['account'];
-		$username=$_SESSION['username'];
+		$account = $_SESSION['account'];
+		$username = $_SESSION['username'];
 		
 		
 	?>
