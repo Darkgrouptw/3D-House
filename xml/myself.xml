@@ -1,0 +1,23 @@
+<layer>
+    <element>
+        <type>test/myplugin</type>
+        
+        <transform>
+            <scale>1,1,1</scale> 
+            <rotate>0,0,0</rotate>
+            <translate>0,0,0</translate>
+        </transform>
+        
+		<texture>roof.jpg</texture>
+        <specular>roofSpecularMap.png</specular>
+		<normalmap>roofNormalMap.png</normalmap>
+        
+		<property>
+            <width>3</width>
+            <height>3</height>
+            <depth>3</depth>
+        </property>
+		
+    </element>     
+ 
+</layer>  

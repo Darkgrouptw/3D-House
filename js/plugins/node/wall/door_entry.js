@@ -339,7 +339,7 @@ SceneJS.Types.addType("wall/door_entry",
     }
 });
 
-function wall_door_entry_build(params) 
+function wall_door_entry_build() 
 {
 	var positionSet = this._paramana.createPositions();
 	var indiceSet = utility.makeIndices(0, (positionSet.length / 3) - 1);

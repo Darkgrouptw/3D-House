@@ -136,22 +136,6 @@ html, body
 	font-family: Segoe UI Emoji;
 	z-index: 1;
 }
-#PREVIOUSMENU
-{
-	position: absolute;
-	top: 0%;
-	right: 0%;
-	bottom: 0%;
-	left: 0%;
-	margin: auto;
-	background-color:white;
-	border-radius: 5%;
-	border: 1px solid #BDC3C7;
-	box-shadow: 5px 5px 30px #888888;
-	text-align: center;
-	font-family: Segoe UI Emoji;
-	z-index: 1;
-}
 #PARTBAR
 {
 	position: absolute;

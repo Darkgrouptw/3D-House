@@ -7,6 +7,8 @@ function initial()
 	TrashCan = getElem("TRASHCAN");
 	Modal = getStyle("MODAL");
 	ExportMenu = getElem("EXPORTMENU");
+	PreviousMenu = getElem("PREVIOUSMENU");
+	
 	ScreenController = getElem("ScreenController");
 	Mode = getElem("Mode");
 	if (Mobile)
@@ -135,6 +137,7 @@ function setComponent()
 	
 	setMultiStyle(getElemByClass("funcsquare"),["width","height"], [0.12*RefSize + "px", 0.12*RefSize + "px"]);
 	setMultiStyle(getSubElem(FuncBar,"p"), ["textAlign", "verticalAlign", "fontSize", "lineHeight"], ["center", "middile", 0.03*RefSize + "px", 0.12*RefSize + "px"]);
+	setPreviousMenu();
 	setExportMenu();
 	setTrashCan();
 }
@@ -164,6 +167,14 @@ function setExportMenu()
 	setMultiStyle(getSubElem(ExportMenu,"h1"),"font-size",0.03*RefSize + "px");
 	setMultiStyle(getSubElem(ExportMenu,"h2"),["font-size","line-height"],[0.02*RefSize + "px", 0.04*RefSize + "px"]);
 }
+
+function setPreviousMenu()
+{
+	changeSize(PreviousMenu,0.2*Width,0.2*Height);
+	RefSize = Math.min(Width,Height);
+}
+
+
 function setTrashCan()
 {
 	changeSize(TrashCan, 0.05*Height, 0.05*Height);

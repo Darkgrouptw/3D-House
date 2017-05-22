@@ -6,7 +6,6 @@ SceneJS.Types.addType("window/fixed",
         this._paramana = new ParameterManager(params, function(property)
         {
             var e = property.extend, t = property.thickness, s = property.size;
-
             var expand = function(q)
             {
                 r = [];
@@ -14,7 +13,7 @@ SceneJS.Types.addType("window/fixed",
                 r.push([-q.a, -q.b, 0]); r.push([q.a, -q.b, 0]);
                 return r;
             };
-
+            
             var deep_copy = function(c) { cp = []; c.forEach(function(v) { cp = cp.concat(v); }); return cp; }
             var modifier = function(p, i, v) { q = deep_copy(p); q[i] = v; return q; };
          
@@ -24,14 +23,16 @@ SceneJS.Types.addType("window/fixed",
             var inset_bi = expand(c);
 
             var t2 = 2 * t;
-            var hlafpt2 = t2 + 0.5;
-
+            var hlafpt2 = t2 + 0.5; //2.5
+             
             var pset = [];
 
             var sign = [1, -1, -1, 1];
             var helper = [true, true, false, false];
             var main = [1, 0, 1,  0];
             var sub = [0, 1, 0, 1];
+			
+		
 
             for(var idx = 0; idx < 4; idx++)
             {
@@ -68,7 +69,7 @@ SceneJS.Types.addType("window/fixed",
 
                 pset = pset.concat(topbia).concat(paddboa).concat(paddbob).concat(topbib);
             }
-
+           		
             return pset;
 
         });
@@ -134,6 +135,8 @@ function window_fixed_build(params)
         0.8, 0.2, 0.8, 0.8, 1, 1, 1, 0,
         1, 1, 0, 0, 0, 1, 0, 0,
         0.8, 0.2, 1, 0, 1, 1, 0.8, 0.8,
+
+		
     ];
 
     var geometry = 

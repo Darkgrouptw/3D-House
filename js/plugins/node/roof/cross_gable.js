@@ -46,8 +46,9 @@ SceneJS.Types.addType("roof/cross_gable",
 	        var wr = (w * r.a + -w * r.b) / 2;
             var db = (d - (eb * 0.5)) - (3 * t);
 			
-            var dr = (2 * db) * (1 - ep), dl = (2 * db) * ep;
+            var dr = (2 * db) * (1 - ep), dl = (2 * db) * ep;			
             var ldb = db * 2 * ep, rdb = db * 2 * (1 - ep);
+			property.exactlyExtrudePos = ((-d+dr)+(d-dl))/2;
             
             var base_len = w + (2 * t);
             if(base_len < (wr + el)) { base_len = wr + el; }
@@ -63,6 +64,21 @@ SceneJS.Types.addType("roof/cross_gable",
             var gs = property.back_grasp * 0.7;
             var gsr = property.back_grasp / Math.sqrt((Math.pow((2 * h),2) + Math.pow((2 * w), 2)));
             var mh = (gsr * h * 2), mw = (gsr * w);
+			
+			var gable_hypotenuse = Math.sqrt(Math.pow((2*h+st),2) + Math.pow((w+dt),2));
+			var upper_hypotenuse = Math.sqrt(Math.pow((h-sh),2)+Math.pow((wr+whr),2));  //上面那塊的斜邊長
+			var lower_hypotenuse = gable_hypotenuse-upper_hypotenuse;
+			
+			
+			
+			var length_each_tiles = 2;
+			
+			var num_upper_tiles= parseInt(upper_hypotenuse / length_each_tiles);
+			if(upper_hypotenuse !=0 && num_upper_tiles == 0){
+				num_upper_tiles = 1;
+			}
+            var num_lower_tiles = parseInt(lower_hypotenuse / length_each_tiles);
+			var num_back_tiles = parseInt(gable_hypotenuse / length_each_tiles);
 			
                 //front bottom
             var fbtm =
@@ -187,7 +203,8 @@ SceneJS.Types.addType("roof/cross_gable",
             property.shared.side = oside;
 
             var bspet = [];
-            if(!bs)
+			
+            if(!bs)//打勾
             {
                 bspet = 
                 [
@@ -204,9 +221,9 @@ SceneJS.Types.addType("roof/cross_gable",
 				var plane_back = [     0,0,0,
 				                       0,0,0,
 									   0,0,0,
-									   
+									   0,0,0
 							     ];
-			    var zigzag_back = buildZigzag(plane_back, 7 , [0, 0, -1.5], 0.1);
+			    var zigzag_back = buildZigzag(plane_back, num_back_tiles , [0, 0, -1.5], 0.1);
 				
 				
             }
@@ -231,7 +248,7 @@ SceneJS.Types.addType("roof/cross_gable",
 										-d , -h, -w - dt,
 										
 							     ];
-			    var zigzag_back = buildZigzag(plane_back, 7 , [0, 0, -1], 0.1);
+			    var zigzag_back = buildZigzag(plane_back, num_back_tiles , [0, 0, -1], 0.1);
 				
             }
             property.shared.back.cover = bspet;
@@ -256,7 +273,7 @@ SceneJS.Types.addType("roof/cross_gable",
 			                           d, -h, w + dt,
 			                           
 									]; 
-			var zigzag_right_lower = buildZigzag(plane_right_lower, 6 ,[0, 0, 1.5], 0.1);
+			var zigzag_right_lower = buildZigzag(plane_right_lower, num_lower_tiles ,[0, 0, 1.5], 0.1);
 			
 			var plane_left_lower = [-d, -h, w + dt,
 			                        -d, sh + st, wr + whr,
@@ -264,7 +281,7 @@ SceneJS.Types.addType("roof/cross_gable",
 			                        -td + ldb - dtt, -h, w + dt,
 									
 									];
-			var zigzag_left_lower = buildZigzag(plane_left_lower, 6 , [0, 0, 1.5], 0.1);
+			var zigzag_left_lower = buildZigzag(plane_left_lower, num_lower_tiles , [0, 0, 1.5], 0.1);
 			
 			
             /*var ap = [-db + dl, sh + st, wr + whr];
@@ -298,14 +315,13 @@ SceneJS.Types.addType("roof/cross_gable",
                	
                 ];
 				
-				var plane_upper = [    
-				                       
+				var plane_upper = [   
 									   -d, sh + st, wr + whr,
                                        -d, h + st, wr,
 									   d, h + st, wr,
 									   d, sh + st, wr + whr
 								];
-                var zigzag_upper = buildZigzag(plane_upper, 1, [0, 0, 1.5], 0.1);
+                var zigzag_upper = buildZigzag(plane_upper, num_upper_tiles, [0, 0, 1.5], 0.1);
 				
 				//d, h + st, wr,d, sh + st, wr + whr,-db + dl, sh + st, wr + whr,0, h + st, wr
 				//var plane_left_upper = [0, h + st, wr,-db + dl, sh + st, wr + whr,-d, sh + st, wr + whr,-d, h + st, wr];
@@ -314,13 +330,13 @@ SceneJS.Types.addType("roof/cross_gable",
             }
             else { 
 			        apet = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; 
-			        var plane_upper = [  
-									    0,0,0,
-									    0,0,0,
-									    0,0,0,
-									    0,0,0
-								      ];
-                var zigzag_upper = buildZigzag(plane_upper, 1, [0, 0, 1.5], 0.1);
+			      //  var plane_upper = [  
+					//				    0,0,0,
+						//			    0,0,0,
+							//		    0,0,0,
+								//	    0,0,0
+								  //    ];
+                   //var zigzag_upper = buildZigzag(plane_upper, num_upper_tiles, [0, 0, 1.5], 0.1);
 			
 			}
             property.shared.append = apet;
@@ -378,6 +394,7 @@ SceneJS.Types.addType("roof/cross_gable",
         this._paramana.addAttribute('shared', {});
 
         this._paramana.addAttribute('exactlyExtrudeLen', undefined);
+		this._paramana.addAttribute('exactlyExtrudePos', undefined);
 
         this._paramana.addFunction('texture', function(property)
         {
@@ -447,6 +464,9 @@ SceneJS.Types.addType("roof/cross_gable",
    
     update: function()
     {
+		this.addNode(roof_cross_gable_build.call(this));
+        var geometry_id = scene.getNode(this.id).nodes[0].id;
+		scene.getNode(geometry_id).destroy();
 		
         this._paramana.updateGeometryNode(this);
         this._paramana.updateTextureCoord(this);
@@ -472,6 +492,7 @@ SceneJS.Types.addType("roof/cross_gable",
 	setThickness: function(t) { this._paramana.set('thickness', t); this.update(); },
 
     getExactlyExtrudeLen: function() { return this._paramana.get('exactlyExtrudeLen'); },
+	getExactlyExtrudePos: function() { return this._paramana.get('exactlyExtrudePos'); },
 
     getExtrudePos: function() { return this._paramana.get('extrude_pos'); },
     setExtrudePos: function(ep) { this._paramana.set('extrude_pos', ep); this.update(); },
@@ -597,9 +618,11 @@ SceneJS.Types.addType("roof/cross_gable",
 			frontTriangle.setHeight(this.getHeight() * (0.5 + 0.5 * this.getExtrudeHgt()));
             frontTriangle.setWidth(this.getExtrudeBas());
             var translateV = [];
-            translateV.push(baseCenterX);
+            translateV.push(this.getExactlyExtrudePos());
+			//console.log("Pos " + this.getExactlyExtrudePos());
             translateV.push(baseCenterY - this.getHeight() + frontTriangle.getHeight());
             translateV.push(-this.getExactlyExtrudeLen() + this.getThickness());
+			//console.log("Len " + this.getExactlyExtrudeLen());
 
             frontTriangle.setTranslate(translateV);
             frontTriangle.setLayer(this.getLayer());
@@ -660,8 +683,7 @@ function roof_cross_gable_build(params)
     var positionSet = this._paramana.createPositions();
     var indiceSet = this._paramana.get('all_indices');
     var uvSet = this._paramana.createTextures();
-    console.log(positionSet.length);
-	
+   	
     var geometry = 
 	{
         type: "geometry",

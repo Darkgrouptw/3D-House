@@ -27,6 +27,7 @@
 	<script src = "js/animation.js"></script> 
     <script src = "js/superXReProduction.js"></script>
 	<script src = "js/uiedit.js"></script>
+	<script src = "js/percent2RGB.js"></script>
 	<?php
 		include	"HouseXML.php";
 		
@@ -55,10 +56,22 @@
 		}
 		
 	?>
-<?php
-	//header('Location: login.php');
-	//exit;
-?>
+	<?php
+		//儲存使用者名稱帳號
+		session_start();
+		$account=$_SESSION['account'];
+		$username=$_SESSION['username'];
+		
+		
+	?>
+	
+	<script type='text/javascript'>		
+	    
+	//存取登入帳號
+		var account = "<?php echo($_SESSION['account']); ?>";
+		setAccount(account);
+	</script>
+	
 </head>
 <body onresize = "setLayout()" onload = "initial();loadsrc()" onclick = "showstate()" ondblclick = "showstate()">
 <i id = "Mode" class="fa fa-eye"></i>
@@ -90,6 +103,23 @@
 		<div id = "scaleHControll" class = "H" data-draggable="true"></div>
 		<div id = "scaleVControll" class = "V" data-draggable="true"></div>
 	</div>
+
+	<script>
+	function checkserAgent(){
+	var userAgentInfo=navigator.userAgent;
+	var userAgentKeywords=new Array("Android", "iPhone" ,"SymbianOS", "Windows Phone", "iPad", "iPod", "MQQBrowser");
+	var flag=false;
+		if(userAgentInfo.indexOf("Windows NT")==-1){
+			flag=true;
+		}
+	return flag;
+	}
+	if(checkserAgent()){
+	   
+	}else{
+		document.getElementById("SCALECONTROLL").style.visibility = "hidden";		
+	}
+	</script>
 	
 	<div id="DRAGCONTROLL" data-draggable="true">
 		<i class="fa fa-arrows" aria-hidden="true"></i>
@@ -107,12 +137,12 @@
 	?>
 <div id = "FUNCBAR">
 	<div class = "funcsquare File invisible" onclick = "ExportClick()"><p>Export</p></div>
-	<div class = "funcsquare File invisible" onclick = "saveXML()"><p>Save</p></div>
+	<div class = "funcsquare File invisible" onclick = "PreviousClick()"><p>Previous</p></div>
+	<div class = "funcsquare File invisible" onclick = "SaveClick()"><p>Save</p></div>
 	<div class = "funcsquare File invisible" onclick = "PrintClick()"><p>Print</p></div>
 	<div id = "File_close" class = "funcsquare File" onclick = "FuncBarClick(this.className, 'funcsquare edit')"><p id = "File">File</p></div>
 	
 	<div class = "funcsquare Edit invisible" onclick = "PartClick()"><p>Part</p></div>
-	<div id = "Texture" class = "funcsquare Edit invisible" onclick = "TextureClick()" style = "background-color:rgb(247,202,24);"><p>Texture</p></div>
 	<div id = "Edit_close" class = "funcsquare Edit" onclick = "FuncBarClick(this.className, 'funcsquare file')"><p id = "Edit">Edit</p></div>
 </div>
 
@@ -123,6 +153,15 @@
 	<h2 onclick = "multiStlButtonFunc()">Export as multiple .stl</h2>
 	<h2 onclick = "oneObjButtonFunc()">Export as one .obj</</h2>
 	<h2 onclick = "multiObjButtonFunc()">Export as multiple .obj</h2>
+	<h1 style="position:absolute;right:0%;bottom:0%;" onclick = "closeExportMenu()">X</h1>
+</div>
+
+<div id = "PREVIOUSMENU" class = "invisible" >
+	<h1>Previous House:</h1>
+	<HR>
+	<select id="XMLSELECT"></select>
+	<br><br><br>
+	<button type="button" onclick="changeXML()">Select</button>
 	<h1 style="position:absolute;right:0%;bottom:0%;" onclick = "closeExportMenu()">X</h1>
 </div>
 

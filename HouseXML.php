@@ -99,8 +99,8 @@ class HouseXML
 						"		zoom: 100,\n".
 						"		zoomSensitivity: 5.0,\n".
 						"		showCursor: false,\n".
-						"		maxPitch: -10,\n".
-						"		minPitch: -80,\n\n".
+						//"		maxPitch: -10,\n".
+						//"		minPitch: -80,\n\n".
 						$this->RenderList.
 						"\n	}]";
 		if($this->DebugMode)

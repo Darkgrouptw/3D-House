@@ -1,75 +1,5 @@
 <layer>
 	<element>
-		<type>base/basic</type>
-		<transform>
-			<scale>1,1,1</scale>
-			<rotate>0,0,0</rotate>
-			<translate>0,0,0</translate>
-		</transform>
-		<texture>ground.jpg</texture>
-		<pos>base</pos>
-		<property>
-			<layer>1</layer>
-			<height>16</height>
-			<width>24</width>
-			<thickness>1</thickness>
-		</property>
-	</element>
-	<element>
-		<type>wall/no_window</type>
-		<transform>
-			<scale>1,1,1</scale>
-			<rotate>0,90,0</rotate>
-			<translate>0,11,1</translate>
-		</transform>
-		<texture>wall.jpg</texture>
-		<pos>interWall</pos>
-		<property>
-			<layer>1</layer>
-			<height>10</height>
-			<width>15</width>
-			<thickness>1</thickness>
-			<percentX>50</percentX>
-			<percentY>53.125</percentY>
-			<priority>1</priority>
-			<direction>vertical</direction>
-		</property>
-	</element>
-	<element>
-		<type>wall/triangle</type>
-		<transform>
-			<scale>1,1,1</scale>
-			<rotate>0,90,0</rotate>
-			<translate>-23,26,0</translate>
-		</transform>
-		<texture>wall.jpg</texture>
-		<pos>leftTriangle</pos>
-		<property>
-			<layer>2</layer>
-			<height>5</height>
-			<width>16</width>
-			<thickness>1</thickness>
-			<ratio>0.5,0.5</ratio>
-		</property>
-	</element>
-	<element>
-		<type>wall/triangle</type>
-		<transform>
-			<scale>1,1,1</scale>
-			<rotate>0,90,0</rotate>
-			<translate>23,26,0</translate>
-		</transform>
-		<texture>wall.jpg</texture>
-		<pos>rightTriangle</pos>
-		<property>
-			<layer>2</layer>
-			<height>5</height>
-			<width>16</width>
-			<thickness>1</thickness>
-			<ratio>0.5,0.5</ratio>
-		</property>
-	</element>
-	<element>
 		<type>roof/gable</type>
 		<transform>
 			<scale>1,1,1</scale>
@@ -77,6 +7,8 @@
 			<translate>0,26,0</translate>
 		</transform>
 		<texture>roof.jpg</texture>
+		<specular>roofSpecularMap.png</specular>
+		<normalmap>roofNormalMap.png</normalmap>
 		<pos>roof</pos>
 		<property>
 			<layer>2</layer>
@@ -88,14 +20,78 @@
 		</property>
 	</element>
 	<element>
-		<type>wall/window_tiles</type>
+		<type>wall/triangle</type>
 		<transform>
 			<scale>1,1,1</scale>
 			<rotate>0,90,0</rotate>
-			<translate>23,11,1</translate>
+			<translate>23,26,0</translate>
+		</transform>
+		<texture>wall.jpg</texture>
+		<specular>wallSpecularMap.png</specular>
+		<normalmap>wallNormalMap.png</normalmap>
+		<pos>rightTriangle</pos>
+		<property>
+			<layer>2</layer>
+			<height>5</height>
+			<width>16</width>
+			<thickness>1</thickness>
+			<ratio>0.5,0.5</ratio>
+		</property>
+	</element>
+	<element>
+		<type>wall/triangle</type>
+		<transform>
+			<scale>1,1,1</scale>
+			<rotate>0,-90,0</rotate>
+			<translate>-23,26,0</translate>
+		</transform>
+		<texture>wall.jpg</texture>
+		<specular>wallSpecularMap.png</specular>
+		<normalmap>wallNormalMap.png</normalmap>
+		<pos>leftTriangle</pos>
+		<property>
+			<layer>2</layer>
+			<height>5</height>
+			<width>16</width>
+			<thickness>1</thickness>
+			<ratio>0.5,0.5</ratio>
+		</property>
+	</element>
+	<element>
+		<type>base/basic</type>
+		<transform>
+			<scale>1,1,1</scale>
+			<rotate>0,0,0</rotate>
+			<translate>0,0,0</translate>
+		</transform>
+		<texture>ground.jpg</texture>
+		<specular>groundSpecularMap.png</specular>
+		<normalmap>groundNormalMap.png</normalmap>
+		<pos>base</pos>
+		<property>
+			<layer>1</layer>
+			<realheight>16</realheight>
+			<height>16</height>
+			<realwidth>24</realwidth>
+			<width>24</width>
+			<thickness>1</thickness>
+			<LeftBackX>0</LeftBackX>
+			<LeftBackY>0</LeftBackY>
+			<RightBackX>0</RightBackX>
+			<RightBackY>0</RightBackY>
+		</property>
+	</element>
+	<element>
+		<type>wall/no_window</type>
+		<transform>
+			<scale>1,1,1</scale>
+			<rotate>0,90,0</rotate>
+			<translate>-23,11,1</translate>
 		</transform>
 		<texture>Wall.jpg</texture>
-		<pos>rightWall</pos>
+		<specular>wallSpecularMap.png</specular>
+		<normalmap>wallNormalMap.png</normalmap>
+		<pos>leftWall</pos>
 		<property>
 			<layer>1</layer>
 			<height>10</height>
@@ -105,13 +101,15 @@
 		</property>
 	</element>
 	<element>
-		<type>wall/window_tiles</type>
+		<type>wall/no_window</type>
 		<transform>
 			<scale>1,1,1</scale>
-			<rotate>0,180,0</rotate>
+			<rotate>0,0,0</rotate>
 			<translate>0,11,-15</translate>
 		</transform>
 		<texture>Wall.jpg</texture>
+		<specular>wallSpecularMap.png</specular>
+		<normalmap>wallNormalMap.png</normalmap>
 		<pos>backWall</pos>
 		<property>
 			<layer>1</layer>
@@ -122,14 +120,16 @@
 		</property>
 	</element>
 	<element>
-		<type>wall/window_tiles</type>
+		<type>wall/no_window</type>
 		<transform>
 			<scale>1,1,1</scale>
-			<rotate>0,270,0</rotate>
-			<translate>-23,11,1</translate>
+			<rotate>0,90,0</rotate>
+			<translate>23,11,1</translate>
 		</transform>
 		<texture>Wall.jpg</texture>
-		<pos>leftWall</pos>
+		<specular>wallSpecularMap.png</specular>
+		<normalmap>wallNormalMap.png</normalmap>
+		<pos>rightWall</pos>
 		<property>
 			<layer>1</layer>
 			<height>10</height>

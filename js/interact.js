@@ -181,8 +181,8 @@ function deleteTab(){
 //For FuncBar
 function PrintClick()
 {
-	sendingRequestXML();
-	window.open("print.html");
+	inputTaskName("yes");		
+	
 }
 function ExportClick()
 {
@@ -191,9 +191,22 @@ function ExportClick()
 	setInvisibleFuncBar();
 }
 
+function SaveClick(){
+	inputTaskName("no");	
+}
+
+function PreviousClick()
+{
+	console.log("login_account : "+login_account);
+	getPreviousXML();
+	PreviousMenu.style.display = "block";
+	setInvisibleFuncBar();
+}
+
 function closeExportMenu()
 {
 	ExportMenu.style.display = "none";
+	PreviousMenu.style.display = "none";
 	Modal.display = "none";
 	Export_click_flag = 0;
 	setOriFuncBar();
@@ -276,4 +289,37 @@ function TextureClick()
 	else
 		Texture.backgroundColor = "rgba(34,167,240,0.6)";
 	textureToggle();
+}
+
+//取得使用者之前放在server的xml
+function getPreviousXML(){
+    
+	$.ajax({
+			url : "http://54.250.173.124/main_server/readxml.php",
+			type: 'GET',	
+			data: {"user":login_account},
+			dataType:'json',
+			success: function (json) {		
+				
+				
+				var list = document.getElementById("XMLSELECT");
+				for(var i in json) {
+				  list.add(new Option(json[i]));
+				  
+				}
+			},
+			error: function (jqXHR, tranStatus, errorThrown) {
+				alert(
+					'Status: ' + jqXHR.status + ' ' + jqXHR.statusText + '. ' +
+					'Response: ' + jqXHR.responseText
+				);
+			}
+			});	
+	
+}
+//load的之前編輯過的xml
+function changeXML(){
+	var xmlSelector = document.getElementById("XMLSELECT");
+	var selectedXML = xmlSelector.value.replace(".xml","");
+	document.location.href="http://54.250.173.124/main_server/3D-House-master/draw.php?XML=../../xml/"+login_account+"/"+selectedXML;	
 }

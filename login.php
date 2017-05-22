@@ -1,32 +1,28 @@
-<html lang = "en">
-<head>
-	<meta charset = "utf-8">
-	<meta http-equiv = "X-UA-Compatible" content = "IE=edge">
-	<meta name = "viewport" content = "width=device-width, initial-scale=1">
-	
-	<title>3D House - login</title>
-	
-	<!-- Bootstrap -->
-	<link href = "../Bootstrap/css/bootstrap.min.css" rel = "stylesheet">
-	<link href = "../Bootstrap/css/ie10-viewport-bug-workaround.css" rel = "stylesheet">
-	<link href = "../Bootstrap/css/login.css" rel = "stylesheet">
-	
-</head>
-<body>
-	<div class = "container">
-		<form class = "form-signin" method = "post">
-			<h2 class = "form-signin-heading" style = "text-align:center">登入頁面</h2>
-			<!--<label for="inputEmail" class="sr-only">Email address</label>-->
-			<input type="text" id="inputEmail" class="form-control" placeholder="帳號" required="" autofocus="">
-			<!--<label for="inputPassword" class="sr-only">Password</label>-->
-			<input type="password" id="inputPassword" class="form-control" placeholder="密碼" required="">
-			<div class="checkbox">
-			  <label>
-				<input type="checkbox" value="remember-me"> 記住
-			  </label>
-			</div>
-			<button class="btn btn-lg btn-primary btn-block" type="submit">登入</button>
-      </form>
-	</div>
-</body>
+<html>
+	<head>
+		<title>3D House-login</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <!-- Bootstrap core CSS -->
+        <link href="css/login/bootstrap.min.css" rel="stylesheet">
+        <link href="css/login/bootstrap-reset.css" rel="stylesheet">
+        <!-- Custom styles for this template -->
+        <link href="css/login/style1.css" rel="stylesheet">
+        <link href="css/login/style-responsive.css" rel="stylesheet" />
+	</head>
+	<body>
+        <div class="container">
+            <form class="form-signin" method="post" action="testURL_POST.php">
+                <h2 class="form-signin-heading">sign in now</h2>
+                <div class="login-wrap">
+                    <input type="text" class="form-control" placeholder="帳號" name="account" required>
+                    <input type="password" class="form-control" placeholder="密碼" name="password" required>      
+                    <span class="pull-right"> <a href="register.php">註冊資料</a></span>
+					<input type="hidden" name="device">
+                    <input name="login" type="submit" class="btn btn-lg btn-login btn-block" value="login">
+                </div>
+
+            </form>
+        </div>
+	</body>
 </html>

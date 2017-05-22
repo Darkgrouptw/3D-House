@@ -93,7 +93,7 @@ function changeSize(Elem, W, H)
 
 function pixel(v) { return v + "px"; };
 //Component
-var FloorTab, FuncBar, PartBar, TrashCan, Modal, ExportMenu, ScreenController, Mode;
+var FloorTab, FuncBar, PartBar, TrashCan, Modal, ExportMenu, ScreenController, Mode,PreviousMenu;
 var PropertyFT, ValueFT, PropertyPBul, ValuePBli, PropertyPBimgclose, PropertyPBContent, Propertycloseli,Valuecloseli,RefSize;
 var Height,Width;//window size
 var pickObjId;  var dragControll;

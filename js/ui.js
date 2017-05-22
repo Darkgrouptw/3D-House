@@ -966,7 +966,7 @@ function attachInput(pickId){
 	}
 	
     //hight
-    if(n.getHeight && housenode2Pos(n).getName() != "interWall"){
+    if(n.getHeight && housenode2Pos(n).getName() != "interWall"&& housenode2Pos(n).getName() !="frontTriangle"){
         var heightismove=false;
         var div=document.createElement("div");
         inputarea.appendChild(div);
@@ -977,9 +977,9 @@ function attachInput(pickId){
         //input
         var heightinput=document.createElement("input");
             heightinput.type="range";
-            heightinput.min="1";
+            heightinput.min="5";
             heightinput.max="50";
-            heightinput.step="0.1";
+            heightinput.step="1";
             heightinput.value=n.getHeight();
 			if(n.getLayer && n.getLayer() == 1){
 				
@@ -1020,7 +1020,7 @@ function attachInput(pickId){
     }
 
     //width
-    if(n.getWidth && housenode2Pos(n).getName() != "interWall"){
+    if(n.getWidth && housenode2Pos(n).getName() != "interWall"&& housenode2Pos(n).getName() !="frontTriangle"){
         var widthismove=false;
         var div=document.createElement("div");
         inputarea.appendChild(div);
@@ -1031,9 +1031,9 @@ function attachInput(pickId){
         //input
         var widthinput=document.createElement("input");
             widthinput.type="range";
-            widthinput.min="1";
+            widthinput.min="14";
             widthinput.max="50";
-            widthinput.step="0.1";
+            widthinput.step="1";
             widthinput.value=n.getWidth();
 			if(n.getLayer && n.getLayer() == 1){
 				
@@ -1299,9 +1299,9 @@ function attachInput(pickId){
         //input
         var percentXinput=document.createElement("input");
             percentXinput.type="range";
-            percentXinput.min="0";
-            percentXinput.max="100";
-            percentXinput.step="0.1";
+            percentXinput.min="10";
+            percentXinput.max="90";
+            percentXinput.step="1";
             percentXinput.value=n.getPercentX();
             div.appendChild(percentXinput);
     
@@ -1466,7 +1466,7 @@ function attachInput(pickId){
         });
     }
 	//multi wall
-	if(n.getDirection){
+	if(n.getDirection&& housenode2Pos(n).getName() !="leftWall"&& housenode2Pos(n).getName() !="rightWall"){
 		var div = document.createElement("div");
 		inputarea.appendChild(div);
 		//text
@@ -2055,8 +2055,8 @@ function attachInput(pickId){
 		var roof_extrudeBas_input = document.createElement("input");
 			roof_extrudeBas_input.type = "range";
 			roof_extrudeBas_input.min = "1";
-			roof_extrudeBas_input.max = "50";
-			roof_extrudeBas_input.step = "0.1";
+			roof_extrudeBas_input.max = "20";
+			roof_extrudeBas_input.step = "1";
 			roof_extrudeBas_input.value = n.getExtrudeBas();
 			div.appendChild(roof_extrudeBas_input);
 		var roof_extrudeBas_propertyValue = document.createElement("lable");
@@ -2090,8 +2090,8 @@ function attachInput(pickId){
 		var roof_extrudeLen_input = document.createElement("input");
 			roof_extrudeLen_input.type = "range";
 			roof_extrudeLen_input.min = "1";
-			roof_extrudeLen_input.max = "50";
-			roof_extrudeLen_input.step = "0.1";
+			roof_extrudeLen_input.max = "15";
+			roof_extrudeLen_input.step = "1";
 			roof_extrudeLen_input.value = n.getExtrudeLen();
 			div.appendChild(roof_extrudeLen_input);
 		var roof_extrudeLen_propertyValue = document.createElement("lable");
@@ -2158,7 +2158,7 @@ function attachInput(pickId){
 		var roof_extrudeHgt_input = document.createElement("input");
 			roof_extrudeHgt_input.type = "range";
 			roof_extrudeHgt_input.min = "0";
-			roof_extrudeHgt_input.max = "1";
+			roof_extrudeHgt_input.max = "0.8";
 			roof_extrudeHgt_input.step = "0.1";
 			roof_extrudeHgt_input.value = n.getExtrudeHgt();
 			div.appendChild(roof_extrudeHgt_input);
@@ -2244,8 +2244,8 @@ function timeFuction(){
 				
 				if(node.getType() == "wall/door_entry"){
 					if(housenode2Pos(node).getName() != "interWall"){
-						//the_number_of_door++;
-						//Wall_id.push(i);
+						// the_number_of_door++;
+						// Wall_id.push(i);
 					}
 				}else if(node.getType() == "wall/single_window"){
 					if(housenode2Pos(node).getName() != "interWall"){
@@ -2501,16 +2501,16 @@ function changeRoof(type){
                 Ratioa: roof.getRatio().a,
                 Ratiob: roof.getRatio().b
             });
-            var baseS = getBaseS({layer: layerNumber,
-                Height: roof.getHeight(),
-                Width: roof.getWidth(),
-                thick: 1,
-                rotateX: 0,
-                rotateY: 0,
-                rotateZ: 0,
-                pos: "roof_base"
-            });
-            console.log(root.addNode(baseS));
+            // var baseS = getBaseS({layer: layerNumber,
+                // Height: roof.getHeight(),
+                // Width: roof.getWidth(),
+                // thick: 1,
+                // rotateX: 0,
+                // rotateY: 0,
+                // rotateZ: 0,
+                // pos: "roof_base"
+            // });
+            //console.log(root.addNode(baseS));
             console.log(root.addNode(leftTriangleS));
             root.addNode(rightTriangleS);
             root.addNode(gableS);
@@ -2558,16 +2558,16 @@ function changeRoof(type){
                 Ratioa: roof.getRatio().a,
                 Ratiob: roof.getRatio().b
             });
-            var baseS = getBaseS({layer: layerNumber,
-                Height: roof.getHeight(),
-                Width: roof.getWidth(),
-                thick: 1,
-                rotateX: 0,
-                rotateY: 0,
-                rotateZ: 0,
-                pos: "roof_base"
-            });
-            root.addNode(baseS);
+            // var baseS = getBaseS({layer: layerNumber,
+                // Height: roof.getHeight(),
+                // Width: roof.getWidth(),
+                // thick: 1,
+                // rotateX: 0,
+                // rotateY: 0,
+                // rotateZ: 0,
+                // pos: "roof_base"
+            // });
+            // root.addNode(baseS);
 			root.addNode(frontTriangleS);
 			root.addNode(leftTriangleS);
             root.addNode(rightTriangleS);
@@ -2706,15 +2706,17 @@ function getElementXML(n){
             if(n.getDoorSize && n.getDoorSize().w)xml+='\t\t\t'+'<doorW>'+n.getDoorSize().w+'</doorW>'+'\n';
             if(n.getDoorSize && n.getDoorSize().h)xml+='\t\t\t'+'<doorH>'+n.getDoorSize().h+'</doorH>'+'\n';
             if(n.getPosratio && n.getPosratio())xml+='\t\t\t'+'<posratio>'+n.getPosratio()+'</posratio>'+'\n';
-            if(n.getDoorPosratio && n.getDoorPosratio()){
-                xml+='\t\t\t'+'<doorPosratio>';
-                var doorpostatios = n.getDoorPosratio();
-                for(var i=0;i<doorpostatios.length;i++){
-                    if(i==0)xml+=doorpostatios[i];
-                    else xml+=','+doorpostatios[i];
-                }
-                xml+='</doorPosratio>'+'\n';
-            }
+			
+			
+            // if(n.getDoorPosratio && n.getDoorPosratio()){
+                // xml+='\t\t\t'+'<doorPosratio>';
+                // var doorpostatios = n.getDoorPosratio();
+                // for(var i=0;i<doorpostatios.length;i++){
+                    // if(i==0)xml+=doorpostatios[i];
+                    // else xml+=','+doorpostatios[i];
+                // }
+                // xml+='</doorPosratio>'+'\n';
+            // }
             if(n.getDoorSize && n.getDoorSize()){
                 xml+='\t\t\t'+'<doorSize>';
                 var values = n.getDoorSize();
@@ -3138,7 +3140,7 @@ function getCrossGableS(param){
                 nodes:
                 [{
                     type: "name",
-                    name: "old_roof.jpg",
+                    name: "roof.jpg",
 
                     nodes:
                     [{
@@ -3148,7 +3150,7 @@ function getCrossGableS(param){
                         nodes:
                         [{
                             type: "texture",
-                            src: "images/GeometryTexture/old_roof.jpg",
+                            src: "images/GeometryTexture/roof.jpg",
                             applyTo: "color",
 
                             nodes: 
@@ -3804,3 +3806,5 @@ function moveDoor(wall_id,pos_ration){
 		dirty = true;
 	}
 }
+
+

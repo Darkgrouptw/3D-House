@@ -42,8 +42,10 @@ function buildZigzag(mainPos, segH, paramE, boundS)
 
 	var segW = 1;
 	var ix, iz;
-		
-    for(var num = 0; num < segH + 1 ; num++)
+	
+
+    //階梯狀的position	
+    for(var num = 0; num < (segH + 1) ; num++)
     {
         var len = 1 / segH;
 
@@ -60,20 +62,146 @@ function buildZigzag(mainPos, segH, paramE, boundS)
             positions.push(newLX + paramE[0]);
             positions.push(newLY + paramE[1]);
             positions.push(newLZ + paramE[2]);
-
+           			
             positions.push(newRX + paramE[0]);
             positions.push(newRY + paramE[1]);
             positions.push(newRZ + paramE[2]);
-
+        
+			
+			positions.push(newLX + paramE[0]);
+            positions.push(newLY + paramE[1]);
+            positions.push(newLZ + paramE[2]);
+            			
+            positions.push(newRX + paramE[0]);
+            positions.push(newRY + paramE[1]);
+            positions.push(newRZ + paramE[2]);
+           
+			
             if(num != segH)
             {
                 positions.push(newLX);
                 positions.push(newLY);
                 positions.push(newLZ);
-
+                				
                 positions.push(newRX);
                 positions.push(newRY);
                 positions.push(newRZ);
+								
+				positions.push(newLX);
+                positions.push(newLY);
+                positions.push(newLZ);
+                				
+                positions.push(newRX);
+                positions.push(newRY);
+                positions.push(newRZ);
+			}
+            else
+            {
+                positions.push(newLX);
+                positions.push(newLY);
+                positions.push(newLZ);
+				
+                positions.push(newRX);
+                positions.push(newRY);
+                positions.push(newRZ);
+		    }
+        }
+        else
+        {
+            positions.push(newLX);
+            positions.push(newLY);
+            positions.push(newLZ);
+			
+            positions.push(newRX);
+            positions.push(newRY);
+            positions.push(newRZ);
+        }
+
+    }
+	var ladder_indices=(positions.length / 3);
+	
+    //階梯狀的UV
+	for (iz = 0; iz < (segH * 2); iz++) {
+		for (ix = 0; ix < segW; ix++) {
+			uvs.push(1);
+			uvs.push(0);
+
+			uvs.push(0);
+			uvs.push(0);
+			
+			uvs.push(1);
+			uvs.push(1);
+			
+			uvs.push(0);
+			uvs.push(1);
+		}
+	}
+    
+    var a;
+    var b;
+    var c;
+    var d;
+	
+    //階梯狀的Indices
+    for (iz = 0; iz < (segH * 2); iz++) {
+        for (ix = 0; ix < segW; ix++) {
+
+            a =  0 + 4 * iz; // 0
+            b =  2 + 4 * iz; // 2
+            c =  3 + 4 * iz; // 3
+            d =  1 + 4 * iz; // 1
+			
+            indices.push(a);
+            indices.push(b);
+            indices.push(c);
+
+            indices.push(a);
+            indices.push(c);
+            indices.push(d);
+        }
+    }
+	
+	//側邊三角形的position
+    for(var num = 0; num < (segH + 1) ; num++)
+    {
+        var len = 1 / segH;
+
+        var newLX = LinearInterpolate(pos[3], pos[0], len * num);
+        var newLY = LinearInterpolate(pos[4], pos[1], len * num);
+        var newLZ = LinearInterpolate(pos[5], pos[2], len * num);
+
+        var newRX = LinearInterpolate(pos[6], pos[9], len * num);
+        var newRY = LinearInterpolate(pos[7], pos[10], len * num);
+        var newRZ = LinearInterpolate(pos[8], pos[11], len * num);
+
+        if(num != 0)
+        {
+            positions.push(newLX + paramE[0]);
+            positions.push(newLY + paramE[1]);
+            positions.push(newLZ + paramE[2]);
+           			
+            positions.push(newRX + paramE[0]);
+            positions.push(newRY + paramE[1]);
+            positions.push(newRZ + paramE[2]);
+      			
+            if(num != segH)
+            {
+                positions.push(newLX);
+                positions.push(newLY);
+                positions.push(newLZ);
+                				
+                positions.push(newRX);
+                positions.push(newRY);
+                positions.push(newRZ);
+								
+				positions.push(newLX);
+                positions.push(newLY);
+                positions.push(newLZ);
+                				
+                positions.push(newRX);
+                positions.push(newRY);
+                positions.push(newRZ);				
+				
             }
             else
             {
@@ -98,192 +226,125 @@ function buildZigzag(mainPos, segH, paramE, boundS)
         }
 
     }
-
+	
+	//側邊三角形的uv
 	for (iz = 0; iz < (segH * 2); iz++) {
 		for (ix = 0; ix < segW; ix++) {
-			uvs.push(1);
+			uvs.push(0);
 			uvs.push(0);
 
 			uvs.push(0);
 			uvs.push(0);
 			
-			uvs.push(1);
-			uvs.push(1);
-			
 			uvs.push(0);
-			uvs.push(1);
+			uvs.push(0);
 		}
 	}
-
-    var a;
-    var b;
-    var c;
-    var d;
-
-    for (iz = 0; iz < (segH * 2); iz++) {
+	
+	//側邊三角形的indices
+	for (iz = 0; iz < segH ; iz++) {
         for (ix = 0; ix < segW; ix++) {
 
-            a = ix + 2 * iz; // 0
-            b = ix + 2 * ( iz + segW ); // 2
-            c = ( ix + segW ) + 2 * ( iz + segW ); // 3
-            d = ( ix + segW ) + 2 * iz; // 1
+            a =  0 + 6 * iz + ladder_indices; // 0
+            b =  2 + 6 * iz + ladder_indices; // 2
+            c =  3 + 6 * iz + ladder_indices; // 3
+            d =  1 + 6 * iz + ladder_indices; // 1
 			
             indices.push(a);
+            indices.push(b+2);
             indices.push(b);
-            indices.push(c);
 
-            indices.push(a);
-            indices.push(c);
             indices.push(d);
+            indices.push(c+2);
+            indices.push(c);
         }
     }
-
-    // uvs.push(0.5);
-    // uvs.push(1);
-    // uvs.push(0);
-    // uvs.push(0);
-    // uvs.push(1);
-    // uvs.push(0);
-
-    // uvs.push(0.5);
-    // uvs.push(1);
-    // uvs.push(0);
-    // uvs.push(0);
-    // uvs.push(1);
-    // uvs.push(0);
-
-
-    // uvs.push(0.5);
-    // uvs.push(1);
-    // uvs.push(0);
-    // uvs.push(0);
-    // uvs.push(1);
-    // uvs.push(0);
-
-
-    // uvs.push(0.5);
-    // uvs.push(1);
-    // uvs.push(0);
-    // uvs.push(0);
-    // uvs.push(1);
-    // uvs.push(0);
-
-    // // ----- indices
-    // indices.push(0);
-    // indices.push(4);
-    // indices.push(2);
-
-    // indices.push(4);
-    // indices.push(8);
-    // indices.push(6);
-
-    // indices.push(1);
-    // indices.push(3);
-    // indices.push(5);
-
-    // indices.push(5);
-    // indices.push(7);
-    // indices.push(9);
-
-
-    for (iz = 0; iz < (segH * 2); iz++) {
-        for (ix = 0; ix < segW; ix++) {
-
-            a = ix + 2 * iz; // 0
-            b = ix + 2 * ( iz + segW ); // 2
-            c = ( ix + segW ) + 2 * ( iz + segW ); // 3
-            d = ( ix + segW ) + 2 * iz; // 1
-
-            if(iz % 2 == 0)
-            {
-                uvs.push(0.5);
-                uvs.push(1);
-                uvs.push(0);
-                uvs.push(0);
-                uvs.push(1);
-                uvs.push(0);
-
-                indices.push(a);
-                indices.push(b + 2);
-                indices.push(b);
-                
-                uvs.push(0.5);
-                uvs.push(1);
-                uvs.push(0);
-                uvs.push(0);
-                uvs.push(1);
-                uvs.push(0);
-                indices.push(d);
-                indices.push(c);
-                indices.push(c + 2);
-            }
-        }
-    }
-
 	
-    var idx = positions.length / 3;
+	//階梯加上三角的indices
+	var current_indices = (positions.length / 3); 
+    
+	//最外面四個點
+	var idx = positions.length / 3;
     for(var i = 0; i < mainPos.length; i++)
     {
         positions.push(mainPos[i]);
     }
 	
+	//裡面四個點
+	for(var num = 0; num < (segH + 1) ; num++)
+    {
+        var len = 1 / segH;
 
-    for (iz = 0; iz < (segH * 2); iz++) {
-		for (ix = 0; ix < segW; ix++) {
-            uvs.push(1);
-            uvs.push(0);
+        var newLX = LinearInterpolate(pos[3], pos[0], len * num);
+        var newLY = LinearInterpolate(pos[4], pos[1], len * num);
+        var newLZ = LinearInterpolate(pos[5], pos[2], len * num);
 
-            uvs.push(0);
-            uvs.push(0);
+        var newRX = LinearInterpolate(pos[6], pos[9], len * num);
+        var newRY = LinearInterpolate(pos[7], pos[10], len * num);
+        var newRZ = LinearInterpolate(pos[8], pos[11], len * num);
+
+        if(num != 0)
+        {
+            if(num == segH){
             
-            uvs.push(1);
-            uvs.push(1);
-            
-            uvs.push(0);
-            uvs.push(1);
+                positions.push(newLX);
+                positions.push(newLY);
+                positions.push(newLZ);
 
-			// uvs.push(ix / 1 );
-			// uvs.push(1 - iz / (segH * 2 ));
+                positions.push(newRX);
+                positions.push(newRY);
+                positions.push(newRZ);
+            }
+        }
+        else
+        {
+            positions.push(newLX);
+            positions.push(newLY);
+            positions.push(newLZ);
 
-			// uvs.push(ix / 1 );
-			// uvs.push(1 - (iz + 1) / (segH * 2 ));
+            positions.push(newRX);
+            positions.push(newRY);
+            positions.push(newRZ);
+        }
 
-			// uvs.push((ix + 1) / 1 );
-			// uvs.push(1 - (iz + 1) / (segH * 2 ));
+    }
+	
+	for(var i = 0 ; i < 8 ; i++){
+		    uvs.push(0);
+			uvs.push(0);
 
-			// uvs.push((ix + 1) / 1 );
-			// uvs.push(1 - iz / (segH * 2 ));
-		}
 	}
+	
+	indices.push(current_indices+1);
+    indices.push(current_indices+4);
+    indices.push(current_indices+2);
+    indices.push(current_indices+2);
+    indices.push(current_indices+4);
+    indices.push(current_indices+5);
 
-    indices.push(idx + 1);
-    indices.push(idx);
-    indices.push(idx - 2);
-    indices.push(idx - 2);
-    indices.push(0);
-    indices.push(idx + 1);
+    indices.push(current_indices+2);
+    indices.push(current_indices+5);
+    indices.push(current_indices+3);
+    indices.push(current_indices+3);
+    indices.push(current_indices+5);
+    indices.push(current_indices+7);
 
-    indices.push(idx + 1);
-    indices.push(0);
-    indices.push(1);
-    indices.push(1);
-    indices.push(idx + 2);
-    indices.push(idx + 1);
+    indices.push(current_indices+3);
+    indices.push(current_indices+7);
+    indices.push(current_indices);
+    indices.push(current_indices);
+    indices.push(current_indices+7);
+    indices.push(current_indices+6);
 
-    indices.push(idx + 2);
-    indices.push(1);
-    indices.push(idx - 1);
-    indices.push(idx - 1);
-    indices.push(idx + 3);
-    indices.push(idx + 2);
-
-    indices.push(idx - 2);
-    indices.push(idx);
-    indices.push(idx + 3);
-    indices.push(idx + 3);
-    indices.push(idx - 1);
-    indices.push(idx - 2); 
-
+    indices.push(current_indices);
+    indices.push(current_indices+6);
+    indices.push(current_indices+1);
+    indices.push(current_indices+1);
+    indices.push(current_indices+6);
+    indices.push(current_indices+4);
+	
+	
+	
     return {
         positions: positions,
         normals: "auto", 

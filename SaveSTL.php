@@ -6,7 +6,7 @@
     $treePrior = array("base" => 0, "interWall" => 1, "backWall" => 2, "rightWall" => 3, "leftWall" => 3, "rightTriangle" => 4, "leftTriangle" => 4, "roof" => 5);
     $treePriorMap = $treePrior;
     $maxPrior = $treePrior[count($treePrior) - 1][1];
-
+    
     //Global variables
     $outNodeIndex = 0;
     $infoStr = "";   //Storing the string in info.txt
@@ -1359,9 +1359,12 @@
     $DebugMode = true;
     if($DebugMode)
         if(count($_POST) != 0){
-            $dataPOST = trim(file_get_contents('php://input', r));
-            // file_put_contents("house.xml",$dataPOST);
-            
+            //$dataPOST = trim(file_get_contents('php://input', r));
+            $dataPOST= trim($_POST['xml']);
+			$task_name = $_POST['task_name'];
+			$account = $_POST['account'];
+			//file_put_contents("house.xml",$dataPOST);
+								            
             $xml = new SimpleXMLElement($dataPOST);
             $nodes = makeNode($xml);
 
@@ -1370,13 +1373,19 @@
             }
 
             $modeltext = exportMultiStl($nodes);
-
+			
+			if(!file_exists($account)){
+				mkdir($account);
+				if(!file_exists($account."/".$task_name)){
+					mkdir($account."/".$task_name);
+				}
+			}
+            
 
             for($i = 0;$i<count($modeltext);$i++){
-                file_put_contents("model_part".$i.".stl", $modeltext[$i]);
+                file_put_contents($account."/".$task_name."/model_part".$i.".stl", $modeltext[$i]);
             }
-
-
+            
         }
         else
            echo "No post params";

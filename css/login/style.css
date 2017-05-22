@@ -1,0 +1,139 @@
+html 
+{
+    height: 100%;
+}
+body 
+{
+    background: black;
+    margin: 0;
+    -moz-user-select: -moz-none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+
+    padding: 0;
+    display: block !important;
+
+    height: 100%;
+    min-height: 740px;
+
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+}
+#codewrapper
+{
+    position: fixed;
+    top: 50px;
+    left: 20px;
+}
+
+#codewrapper p
+{
+    margin: 0px 0px 0px 30px;
+    font-size: 25px;
+    font-family: monospace;
+    color: #FFFFFF;
+    padding: 2px 0px 0px 15px;
+}
+
+#srcbutton
+{
+    width: 150px;
+    background: #477AAE;
+    height: 35px;
+    cursor: pointer;
+    color: white;
+}
+
+#dragsquare
+{
+    width: 25px;
+    height: 25px;
+    float: left;
+    background: #FFFFFF;
+    margin: 5px 10px;
+    border-radius: 5px;
+    cursor: move;
+}
+
+#codeblock
+{
+    position: relative;
+    color: #FFFFFF;
+    z-index: 1;
+    transition: box-shadow 0.3s ease;
+    width: 700px;
+    height: 400px;
+    background: #4E4A42;
+    opacity: 0.7;
+    padding: 5px;
+    box-sizing: border-box;
+    border: none;
+    font-size: 15px;
+    overflow-x: hidden;
+}
+
+#codeblock:hover
+{
+    box-shadow: inset 0 0 10px #FFFFFF;
+    transition: box-shadow 0.3s ease;
+}
+
+.RightUpButton
+{
+    position: fixed;
+    top: 50;
+    right: 20;
+    width: 150px;
+    background: #477AAE;
+    height: 35px;
+    cursor: pointer;
+    color: white;
+}
+
+.MultiObjButtonStyle
+{
+    position: fixed;
+    top: 200;
+    right: 20;
+    width: 150px;
+    background: #477AAE;
+    height: 35px;
+    cursor: pointer;
+    color: white;
+}
+
+.OneObjButtonStyle
+{
+    position: fixed;
+    top: 250;
+    right: 20;
+    width: 150px;
+    background: #477AAE;
+    height: 35px;
+    cursor: pointer;
+    color: white;
+}
+
+.MultiStlButtonStyle
+{
+    position: fixed;
+    top: 200;
+    right: 200;
+    width: 150px;
+    background: #477AAE;
+    height: 35px;
+    cursor: pointer;
+    color: white;
+}
+
+.OneStlButtonStyle
+{
+    position: fixed;
+    top: 250;
+    right: 200;
+    width: 150px;
+    background: #477AAE;
+    height: 35px;
+    cursor: pointer;
+    color: white;
+}

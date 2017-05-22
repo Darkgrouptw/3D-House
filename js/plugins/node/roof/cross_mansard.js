@@ -30,7 +30,8 @@ SceneJS.Types.addType("roof/cross_mansard",
 	        var hmt = h - t; 
             
             var dNwr = 2 * -w * r.a, dPwr = 2 * w * r.a; 
-	        var dNdr = 2 * -d * r.b, dPdr = 2 * d * r.b;
+	        var dNdr = 2 * -d * r.b, dPdr = 2 * d * r.b;			
+			
             
             var extrudef = function(padding)
             {
@@ -65,12 +66,15 @@ SceneJS.Types.addType("roof/cross_mansard",
 
                 return pack;
             };
+			
 
             op = extrudef();
             ip = extrudef(t);
+			property.exactlyExtrudePos =(((ip.ar-ip.mr)/2)+ip.sb);
+			
 			
 			var extdbs = d - dPdr;
-			var addl = el * 2;;
+			var addl = el * 2;
 			if(addl < (dPdr + op.dal)) { addl = dPdr + op.dal; }
             property.exactlyExtrudeLen = addl - (0.5 * t);
 
@@ -371,7 +375,8 @@ SceneJS.Types.addType("roof/cross_mansard",
 
         this._paramana.addAttribute('shared', {});
         this._paramana.addAttribute('exactlyExtrudeLen', undefined);
-
+		this._paramana.addAttribute('exactlyExtrudePos', undefined);
+		
         this._paramana.addFunction('texture', function(property)
         {
             var tmpUV = [[0, 0], [1, 0], [0, 1], [1, 1]];
@@ -461,6 +466,7 @@ SceneJS.Types.addType("roof/cross_mansard",
 	setDepth: function(d) { this._paramana.set('depth', d); this.update(); },
 
     getExactlyExtrudeLen: function() { return this._paramana.get('exactlyExtrudeLen'); },
+	getExactlyExtrudePos: function() { return this._paramana.get('exactlyExtrudePos'); },
 
     getBackSide: function() { return this._paramana.get('back_side'); },
     setBackSide: function() { this._paramana.set('back_side', bs); this.update(); },
@@ -557,13 +563,15 @@ SceneJS.Types.addType("roof/cross_mansard",
         if(roof == -1) { console.log("ERROR"); return; }
 		if(frontTrapezoid != -1){
 
-			frontTrapezoid.setHeight(this.getHeight()-this.getThickness()/2);
+			//frontTrapezoid.setHeight(this.getHeight()-this.getThickness()/2);
+			frontTrapezoid.setHeight(this.getHeight() * (0.5+0.5*this.getExtrudeHgt())-this.getThickness()/2);
             frontTrapezoid.setWidth(this.getExtrudeBas());
             var translateV = [];
-            translateV.push(baseCenterX);
+            //translateV.push(baseCenterX);
+			translateV.push(-this.getExactlyExtrudePos());
             translateV.push(baseCenterY - this.getHeight() + frontTrapezoid.getHeight());
             translateV.push(baseCenterZ - this.getExactlyExtrudeLen() - this.getWidth()/2 - this.getThickness()/2);
-
+			
             frontTrapezoid.setTranslate(translateV);
             frontTrapezoid.setLayer(this.getLayer());
 		}
