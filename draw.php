@@ -17,6 +17,7 @@
 	<script src = "js/scenejs.js"></script>
 	<script src = "js/paramanager.js"></script>
 	<script src = "js/buildTexture.js"></script>
+	<script src = "js/ui_attachinput.js"></script>
 	<script src = "js/ui.js"></script>
 	<script src = "js/gesture.js"></script>
     <script src = "js/common.js"></script>
@@ -59,8 +60,21 @@
 	<?php
 		//儲存使用者名稱帳號
 		session_start();
-		$account = $_SESSION['account'];
-		$username = $_SESSION['username'];
+		if(isset($_SESSION['account'])){
+			$account = $_SESSION['account'];
+		}else{
+			$account = 'none';
+		}
+		if(isset($_SESSION['username'])){
+			$username = $_SESSION['username'];
+		}else{
+			$username = 'none';
+
+		}
+
+		
+		
+		
 		
 		
 	?>
@@ -71,6 +85,7 @@
 		var account = "<?php echo($_SESSION['account']); ?>";
 		setAccount(account);
 	</script>
+		}
 	
 </head>
 <body onresize = "setLayout()" onload = "initial();loadsrc()" onclick = "showstate()" ondblclick = "showstate()">
