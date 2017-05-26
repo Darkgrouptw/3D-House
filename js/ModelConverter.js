@@ -41,7 +41,8 @@ function traverse(curNode, target){
 		for(;newArr.indexOf(curNode.type) == -1;curNode = curNode.nodes[0]);
 	}else{
 		for(;typeof curNode.type !== 'undefined' && newArr.indexOf(String(curNode.type).substring(0, 4)) == -1;curNode = curNode.nodes[0]){
-			console.log(curNode.type);
+            // 這邊會略過很多不必要的東西
+			// console.log(curNode.type);
 		}
 	}
 	return curNode;
@@ -999,7 +1000,7 @@ function convertToMultiObj(inputNode, isDownload){
 		infoStr += latchStrArr.length + "\n";                                           //幾個model
 
 		for(var i = 0;i<latchStrArr.length;i++){
-			infoStr += "model_part" + i + " " + posArray[i] + "\n";          			//model_part _ model名稱
+			infoStr += "model_part" + i + " " + typeArray[i] + "\n";          			//model_part _ model名稱
 			var total = latchStrArr[i].length + latch2StrArr[i].length;
 			infoStr += total + "\n";                                        			//幾個連接的面
 			for(var j = 0;j<latchStrArr[i].length;j++){
