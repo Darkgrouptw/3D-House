@@ -18,6 +18,7 @@
 	<script src = "js/paramanager.js"></script>
 	<script src = "js/buildTexture.js"></script>
 	<script src = "js/ui_attachinput.js"></script>
+	<script src = "js/ui_getModelS.js"></script>
 	<script src = "js/ui.js"></script>
 	<script src = "js/gesture.js"></script>
     <script src = "js/common.js"></script>

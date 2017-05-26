@@ -1,0 +1,25 @@
+<layer>
+    <element>
+		
+        <type>base/Tbasic</type>
+        
+        <transform>
+            <scale>1,1,1</scale>
+            <rotate>0,0,0</rotate>
+            <translate>0,0,0</translate>
+        </transform>
+        
+        <texture>ground.jpg</texture>
+        
+        <property>
+			<width>20</width>
+			<height>20</height>
+            <thickness>1</thickness>
+            <LeftBackX>0</LeftBackX>
+            <LeftBackY>0</LeftBackY>
+            <RightBackX>20</RightBackX>
+            <RightBackY>20</RightBackY>
+        </property>
+        
+    </element>
+</layer> 
