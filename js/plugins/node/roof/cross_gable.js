@@ -1,4 +1,4 @@
-
+var zigzagOut = 1.5;
 SceneJS.Types.addType("roof/cross_gable", 
 { 
     construct:function (params) 
@@ -144,7 +144,7 @@ SceneJS.Types.addType("roof/cross_gable",
                           			 db - dr, sh + st, wr + whr,
 									 td - rdb + dtt, -h, w + dt,
 							      ];
-			var zigzag_right_exd = buildZigzag(plane_right_exd, 6 , [1.5, 0, 0], 0.1);
+			var zigzag_right_exd = buildZigzag(plane_right_exd, 6 , [zigzagOut, 0, 0], 0.1);
 			
 			var plane_left_exd = [  
 									-td + ldb - dtt, -h, w + dt,
@@ -152,7 +152,7 @@ SceneJS.Types.addType("roof/cross_gable",
 									-db + dl, sh + st, base_len,
 									-td + ldb - dtt, -h, base_len, 
 								];
-			var zigzag_left_exd = buildZigzag(plane_left_exd, 6 , [-1.5, 0, 0], 0.1);
+			var zigzag_left_exd = buildZigzag(plane_left_exd, 6 , [-zigzagOut, 0, 0], 0.1);
 			
 			
 			
@@ -223,7 +223,7 @@ SceneJS.Types.addType("roof/cross_gable",
 									   0,0,0,
 									   0,0,0
 							     ];
-			    var zigzag_back = buildZigzag(plane_back, num_back_tiles , [0, 0, -1.5], 0.1);
+			    var zigzag_back = buildZigzag(plane_back, num_back_tiles , [0, 0, -zigzagOut], 0.1);
 				
 				
             }
@@ -248,7 +248,7 @@ SceneJS.Types.addType("roof/cross_gable",
 										-d , -h, -w - dt,
 										
 							     ];
-			    var zigzag_back = buildZigzag(plane_back, num_back_tiles , [0, 0, -1], 0.1);
+			    var zigzag_back = buildZigzag(plane_back, num_back_tiles , [0, 0, -zigzagOut], 0.1);
 				
             }
             property.shared.back.cover = bspet;
@@ -273,7 +273,7 @@ SceneJS.Types.addType("roof/cross_gable",
 			                           d, -h, w + dt,
 			                           
 									]; 
-			var zigzag_right_lower = buildZigzag(plane_right_lower, num_lower_tiles ,[0, 0, 1.5], 0.1);
+			var zigzag_right_lower = buildZigzag(plane_right_lower, num_lower_tiles ,[0, 0, zigzagOut], 0.1);
 			
 			var plane_left_lower = [-d, -h, w + dt,
 			                        -d, sh + st, wr + whr,
@@ -281,7 +281,7 @@ SceneJS.Types.addType("roof/cross_gable",
 			                        -td + ldb - dtt, -h, w + dt,
 									
 									];
-			var zigzag_left_lower = buildZigzag(plane_left_lower, num_lower_tiles , [0, 0, 1.5], 0.1);
+			var zigzag_left_lower = buildZigzag(plane_left_lower, num_lower_tiles , [0, 0, zigzagOut], 0.1);
 			
 			
             /*var ap = [-db + dl, sh + st, wr + whr];
@@ -321,7 +321,7 @@ SceneJS.Types.addType("roof/cross_gable",
 									   d, h + st, wr,
 									   d, sh + st, wr + whr
 								];
-                var zigzag_upper = buildZigzag(plane_upper, num_upper_tiles, [0, 0, 1.5], 0.1);
+                var zigzag_upper = buildZigzag(plane_upper, num_upper_tiles, [0, 0, zigzagOut], 0.1);
 				
 				//d, h + st, wr,d, sh + st, wr + whr,-db + dl, sh + st, wr + whr,0, h + st, wr
 				//var plane_left_upper = [0, h + st, wr,-db + dl, sh + st, wr + whr,-d, sh + st, wr + whr,-d, h + st, wr];

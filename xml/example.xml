@@ -89,7 +89,7 @@
     </element>
     
     <element>
-        <type>base/basic</type>
+        <type>base/Tbasic</type>
 		<transform>
 			<scale>1,1,1</scale>
 			<rotate>0,0,0</rotate>

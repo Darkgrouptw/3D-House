@@ -251,7 +251,7 @@ function getNodeLayer(id)
     var currentNode = scene.getNode(id).nodes[0];
     var nodeType;
     var nodeLayer;
-    while(true)
+    while(currentNode != null)
     {
         nodeType = currentNode.type;
         // Move to next node
@@ -270,7 +270,7 @@ function getNodeType(id)
 {
     var currentNode = scene.getNode(id).nodes[0];
     var nodeType;
-    while(true)
+    while(currentNode !=null)
     {
         nodeType = currentNode.type;
         // Move to next node

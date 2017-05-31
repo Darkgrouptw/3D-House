@@ -33,6 +33,8 @@ function ModifyComponent()
 function resizeComponent()
 {
 	var node = getNodeType(pickObjId);
+	if(node == null || node.getWidth || node.getHeight)
+		return;
 	var w = node.getWidth()*30;
 	var h = node.getHeight()*30;
 	var leftPoint = [hitPos.x-(w/2), hitPos.y-(h/2)];

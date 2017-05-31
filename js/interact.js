@@ -42,6 +42,8 @@ function toggleFullScreen()
 function modifyWall()
 {
 	var n = getNodeType(pickObjId);
+	if(n == null)
+		return;
 	var type = n.getType();
 	type = type.split('/')[0];
 	if (type == "wall")

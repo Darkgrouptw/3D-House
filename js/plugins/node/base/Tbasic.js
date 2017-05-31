@@ -72,16 +72,16 @@ SceneJS.Types.addType("base/Tbasic",
 	},
 	
 	getLeftBackX:function(){return this._paramana.get("_leftback_X");},
-	setLeftBackX:function(x){this._paramana.set("_leftback_X",x);},
+	setLeftBackX:function(x){this._paramana.set("_leftback_X",x);this._paramana.updateGeometryNode(this);},
 	
 	getLeftBackY:function(){return this._paramana.get("_leftback_Y");},
-	setLeftBackY:function(y){this._paramana.set("_leftback_Y",y);},
+	setLeftBackY:function(y){this._paramana.set("_leftback_Y",y);this._paramana.updateGeometryNode(this);},
 	
 	getRightBackX:function(){return this._paramana.get("_rightback_X");},
-	setRightBackX:function(x){this._paramana.set("_rightback_X",x);},
+	setRightBackX:function(x){this._paramana.set("_rightback_X",x);this._paramana.updateGeometryNode(this);},
 	
 	getRightBackY:function(){return this._paramana.get("_rightback_Y");},
-	setRightBackY:function(y){this._paramana.set("_rightback_Y",y);},
+	setRightBackY:function(y){this._paramana.set("_rightback_Y",y);this._paramana.updateGeometryNode(this);},
 	
 	getOffsetX:function(){return this._offsetX;},
 	setOffsetX:function(x){this._offsetX = x;},
