@@ -598,7 +598,7 @@ function addBase(){
 	var top_base;
     console.log(layerNumber);
 	for(var i=0;i<nodes.length;i++){
-		if(nodes[i].getType() == "base/basic"){
+		if(nodes[i].getType() == "base/basic" || nodes[i].getType() == "base/Tbasic"){
 			if(nodes[i].getLayer() == layerNumber -1){
 				top_base = nodes[i];
 			}
